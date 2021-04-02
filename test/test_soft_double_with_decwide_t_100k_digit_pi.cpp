@@ -45,9 +45,6 @@ bool test_soft_double_with_decwide_t_100k_digit_pi()
 
   constexpr std::uint32_t wide_decimal_digits10 = UINT32_C(100001);
 
-  constexpr std::int32_t local_elem_number =
-    math::wide_decimal::detail::decwide_t_helper<wide_decimal_digits10, local_limb_type>::elem_number;
-
   constexpr std::int32_t local_elem_digits10 =
     math::wide_decimal::detail::decwide_t_helper<wide_decimal_digits10, local_limb_type>::elem_digits10;
 

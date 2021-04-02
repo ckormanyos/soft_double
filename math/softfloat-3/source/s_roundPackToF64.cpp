@@ -62,7 +62,7 @@ uint64_t softfloat_roundPackToF64(bool sign, int_fast16_t exp, uint64_t sig)
 
   sig = (sig + roundIncrement) >> 10U;
 
-  sig &= ~(uint64_t) (!(roundBits ^ 0x200U) & 1U);
+  sig &= (uint64_t) (~(uint64_t) (((roundBits ^ 0x200U) == 0U ? 1U : 0U) & 1U));
 
   if(!sig)
   {

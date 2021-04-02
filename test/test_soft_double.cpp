@@ -38,7 +38,7 @@ namespace math
 }
 
 template<typename real_value_type,
-          typename real_function_type>
+         typename real_function_type>
 real_value_type derivative(const real_value_type& x,
                            const real_value_type& dx,
                            real_function_type real_function)
@@ -267,6 +267,7 @@ bool test_eq_(const std::uint32_t n, std::uint_fast8_t op_index)
     if     (op_index == 0U) { get_sf_float64_t_and_double(x, d); x_result = (*(double*) &x == d); }
     else if(op_index == 1U) { get_sf_float64_t_and_double(x, d); const sf::float64_t x2 = x / 2; x_result = (*(double*) &x <= d) && ((d > 0) ? (*(double*) &x2 < d) : (*(double*) &x2 > d)); }
     else if(op_index == 2U) { get_sf_float64_t_and_double(x, d); const sf::float64_t x2 = x * 2; x_result = (*(double*) &x <= d) && ((d > 0) ? (*(double*) &x2 > d) : (*(double*) &x2 < d)); }
+    else                    { x_result = false; d = 0.0; }
 
     result_is_ok &= x_result;
 
