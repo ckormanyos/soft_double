@@ -47,6 +47,10 @@
     <ClInclude Include="util\utility\util_noncopyable.h" />
     <ClInclude Include="util\utility\util_numeric_cast.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include=".github\workflows\soft_double.yml" />
+    <None Include="README.md" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{FF0108B1-1056-4704-81BD-4AEB8CA435BD}</ProjectGuid>

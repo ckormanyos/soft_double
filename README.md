@@ -10,7 +10,7 @@ This work is in a preliminary state. Changes are planned including:
   - Better namespace names for the `soft_double` type.
   - Specialize further the template `std::numeric_limits<soft_double>`.
   - Consider header-only design.
-  - Some `constexpr` sequences an't be resolved in C++11 and need C++14. Strive for 11 through 20 compatibility.
+  - Some `constexpr` sequences can't be resolved in C++11 and need C++14. Strive for C++11 through C++20 compatibility.
   - Add more tests and depth of CI.
 
 ---

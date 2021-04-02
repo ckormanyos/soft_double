@@ -35,6 +35,15 @@
     <Filter Include="math\constants">
       <UniqueIdentifier>{40faca56-a6d0-4300-8339-fcc6ce62b688}</UniqueIdentifier>
     </Filter>
+    <Filter Include=".github">
+      <UniqueIdentifier>{3d779015-acbe-4b19-9668-9be66032d54a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include=".github\workflows">
+      <UniqueIdentifier>{be8cd4a8-c394-4fb6-b9a5-6ce6e9fa7cee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="_doc">
+      <UniqueIdentifier>{bcc0050f-a474-43f0-a86b-08829548d745}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="math\softfloat-3\source\s_normRoundPackToF64.cpp">
@@ -114,5 +123,13 @@
     <ClInclude Include="math\constants\constants_pi_control_for_decwide_t.h">
       <Filter>math\constants</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".github\workflows\soft_double.yml">
+      <Filter>.github\workflows</Filter>
+    </None>
+    <None Include="README.md">
+      <Filter>_doc</Filter>
+    </None>
   </ItemGroup>
 </Project>

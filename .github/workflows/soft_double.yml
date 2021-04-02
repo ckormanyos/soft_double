@@ -1,4 +1,4 @@
-name: wide_decimal
+name: soft_double
 on:
   push:
 jobs:
