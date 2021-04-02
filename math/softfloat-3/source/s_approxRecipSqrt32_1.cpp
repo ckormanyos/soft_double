@@ -73,11 +73,11 @@ uint32_t softfloat_approxRecipSqrt32_1(uint32_t oddExpA, uint32_t a)
 
   const uint32_t sigma0 = ~(uint32_t) (((uint32_t) ESqrR0 * (uint64_t) a) >> 23U);
 
-  uint32_t r = ((uint32_t) r0 << 16U) + ((r0 * (uint64_t) sigma0) >> 25U);
+  uint32_t r = (((uint32_t) r0) << 16U) + (uint32_t) ((r0 * (uint64_t) sigma0) >> 25U);
 
-  const uint32_t sqrSigma0 = ((uint64_t) sigma0 * sigma0) >> 32U;
+  const uint32_t sqrSigma0 = (uint32_t) ((uint64_t) ((uint64_t) sigma0 * sigma0) >> 32U);
 
-  r += ((uint32_t) ((r >> 1U) + (r >> 3U) - ((uint32_t) r0 << 14U)) * (uint64_t) sqrSigma0) >> 48U;
+  r += (uint32_t) ((uint64_t) ((uint32_t) ((uint32_t) ((r >> 1U) + (r >> 3U)) - ((uint32_t) r0 << 14U)) * (uint64_t) sqrSigma0) >> 48U);
 
   if(!(r & UINT32_C(0x80000000)))
   {

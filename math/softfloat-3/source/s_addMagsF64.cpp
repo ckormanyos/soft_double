@@ -42,9 +42,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 -----------------------------------------------------------------------------*/
 
-#include <stdbool.h>
-#include <stdint.h>
-
 #include <internals.h>
 
 uint64_t softfloat_addMagsF64(uint64_t uiA, uint64_t uiB, bool signZ)

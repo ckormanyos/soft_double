@@ -30,3 +30,8 @@
 *.exe
 *.out
 *.app
+.vs/
+soft_double.vcxproj.user
+x64/
+Debug/
+Release/

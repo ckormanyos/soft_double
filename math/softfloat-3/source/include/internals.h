@@ -45,8 +45,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef INTERNALS_2020_11_13_H_
 #define INTERNALS_2020_11_13_H_
 
-#include <stdbool.h>
-#include <stdint.h>
+#include <cstdint>
 
 constexpr bool         signF32UI(uint32_t a) { return ((bool) ((uint32_t) (a)>>31)); }
 constexpr int_fast16_t expF32UI (uint32_t a) { return ((int_fast16_t) ((a)>>23) & 0xFF); }
@@ -71,33 +70,6 @@ struct uint128      { uint64_t v64, v0; };
 struct uint64_extra { uint64_t v, extra; };
 #endif
 
-/*----------------------------------------------------------------------------
-| These macros are used to isolate the differences in word
-| order between big-endian and little-endian platforms.
-*----------------------------------------------------------------------------*/
-#ifdef LITTLEENDIAN
-#define wordIncr 1
-#define indexWord( total, n ) (n)
-#define indexWordHi( total ) ((total) - 1)
-#define indexWordLo( total ) 0
-#define indexMultiword( total, m, n ) (n)
-#define indexMultiwordHi( total, n ) ((total) - (n))
-#define indexMultiwordLo( total, n ) 0
-#define indexMultiwordHiBut( total, n ) (n)
-#define indexMultiwordLoBut( total, n ) 0
-#define INIT_UINTM4( v3, v2, v1, v0 ) { v0, v1, v2, v3 }
-#else
-#define wordIncr -1
-#define indexWord( total, n ) ((total) - 1 - (n))
-#define indexWordHi( total ) 0
-#define indexWordLo( total ) ((total) - 1)
-#define indexMultiword( total, m, n ) ((total) - 1 - (m))
-#define indexMultiwordHi( total, n ) 0
-#define indexMultiwordLo( total, n ) ((total) - (n))
-#define indexMultiwordHiBut( total, n ) 0
-#define indexMultiwordLoBut( total, n ) (n)
-#define INIT_UINTM4( v3, v2, v1, v0 ) { v3, v2, v1, v0 }
-#endif
 
 uint32_t softfloat_roundToUI32(bool, uint64_t);
 uint64_t softfloat_roundToUI64(bool, uint64_t);
