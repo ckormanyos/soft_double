@@ -1,4 +1,7 @@
-# soft_double
+soft_double
+[![Build Status](https://github.com/ckormanyos/soft_double/actions/workflows/soft_double.yml/badge.svg)](https://github.com/ckormanyos/soft_double/actions)
+==================
+
 soft_double provides a C++ software implementation of a double-precision floating-point data type
 
 ---
