@@ -1,0 +1,25 @@
+name: wide_decimal
+on:
+  push:
+jobs:
+  gcc-clang-native:
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [ g++, clang++ ]
+        standard: [ c++14, c++17, c++2a ]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'
+      - name: gcc-clang-native
+        run: |
+          echo "compile ./soft_double.exe"
+          ${{ matrix.compiler }} -v
+          ${{ matrix.compiler }} -finline-functions -finline-limit=64 -march=native -mtune=native -O3 -Wall -Wextra -pedantic -Wno-strict-aliasing -std=${{ matrix.standard }} -Imath/softfloat-3/source/include -I. math/softfloat-3/source/f64_add_sub_mul_div.cpp math/softfloat-3/source/f64_sqrt.cpp math/softfloat-3/source/f64_to_integral_types.cpp math/softfloat-3/source/round_to_integral_types.cpp math/softfloat-3/source/s_addMagsF64.cpp math/softfloat-3/source/s_approxRecipSqrt32_1.cpp math/softfloat-3/source/s_normRoundPackToF64.cpp math/softfloat-3/source/s_roundPackToF64.cpp math/softfloat-3/source/s_subMagsF64.cpp test/test.cpp test/test_soft_double.cpp test/test_soft_double_with_decwide_t_100k_digit_pi.cpp -o soft_double.exe
+          ls -la ./soft_double.exe
+          ./soft_double.exe
