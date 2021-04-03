@@ -46,20 +46,24 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <internals.h>
 
-constexpr std::array<uint16_t, 16U> softfloat_approxRecipSqrt_1k0s =
-{{
-  0xB4C9U, 0xFFABU, 0xAA7DU, 0xF11CU, 0xA1C5U, 0xE4C7U, 0x9A43U, 0xDA29U,
-  0x93B5U, 0xD0E5U, 0x8DEDU, 0xC8B7U, 0x88C6U, 0xC16DU, 0x8424U, 0xBAE1U
-}};
-
-constexpr std::array<uint16_t, 16U> softfloat_approxRecipSqrt_1k1s =
-{{
-  0xA5A5U, 0xEA42U, 0x8C21U, 0xC62DU, 0x788FU, 0xAA7FU, 0x6928U, 0x94B6U,
-  0x5CC7U, 0x8335U, 0x52A6U, 0x74E2U, 0x4A3EU, 0x68FEU, 0x432BU, 0x5EFDU
-}};
-
 uint32_t softfloat_approxRecipSqrt32_1(uint32_t oddExpA, uint32_t a)
 {
+  constexpr std::array<uint16_t, 16U> softfloat_approxRecipSqrt_1k0s =
+  {{
+    UINT16_C(0xB4C9), UINT16_C(0xFFAB), UINT16_C(0xAA7D), UINT16_C(0xF11C),
+    UINT16_C(0xA1C5), UINT16_C(0xE4C7), UINT16_C(0x9A43), UINT16_C(0xDA29),
+    UINT16_C(0x93B5), UINT16_C(0xD0E5), UINT16_C(0x8DED), UINT16_C(0xC8B7),
+    UINT16_C(0x88C6), UINT16_C(0xC16D), UINT16_C(0x8424), UINT16_C(0xBAE1)
+  }};
+
+  constexpr std::array<uint16_t, 16U> softfloat_approxRecipSqrt_1k1s =
+  {{
+    UINT16_C(0xA5A5), UINT16_C(0xEA42), UINT16_C(0x8C21), UINT16_C(0xC62D),
+    UINT16_C(0x788F), UINT16_C(0xAA7F), UINT16_C(0x6928), UINT16_C(0x94B6),
+    UINT16_C(0x5CC7), UINT16_C(0x8335), UINT16_C(0x52A6), UINT16_C(0x74E2),
+    UINT16_C(0x4A3E), UINT16_C(0x68FE), UINT16_C(0x432B), UINT16_C(0x5EFD)
+  }};
+
   int_fast16_t index  = (int_fast16_t) (((uint32_t) (a >> 27U) & 0xEU) + oddExpA);
   uint16_t     eps    = (uint16_t) (a >> 12);
   uint16_t     r0     =     softfloat_approxRecipSqrt_1k0s[index]

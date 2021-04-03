@@ -55,19 +55,10 @@
     <ClCompile Include="math\softfloat-3\source\s_subMagsF64.cpp">
       <Filter>math\softfloat-3\source</Filter>
     </ClCompile>
-    <ClCompile Include="math\softfloat-3\source\f64_sqrt.cpp">
-      <Filter>math\softfloat-3\source</Filter>
-    </ClCompile>
     <ClCompile Include="math\softfloat-3\source\s_addMagsF64.cpp">
       <Filter>math\softfloat-3\source</Filter>
     </ClCompile>
     <ClCompile Include="math\softfloat-3\source\s_approxRecipSqrt32_1.cpp">
-      <Filter>math\softfloat-3\source</Filter>
-    </ClCompile>
-    <ClCompile Include="math\softfloat-3\source\f64_add_sub_mul_div.cpp">
-      <Filter>math\softfloat-3\source</Filter>
-    </ClCompile>
-    <ClCompile Include="math\softfloat-3\source\f64_to_integral_types.cpp">
       <Filter>math\softfloat-3\source</Filter>
     </ClCompile>
     <ClCompile Include="math\softfloat-3\source\round_to_integral_types.cpp">
@@ -101,9 +92,6 @@
     </ClInclude>
     <ClInclude Include="util\memory\util_n_slot_array_allocator.h">
       <Filter>util\memory</Filter>
-    </ClInclude>
-    <ClInclude Include="math\softfloat-3\source\include\softfloat.h">
-      <Filter>math\softfloat-3\source\include</Filter>
     </ClInclude>
     <ClInclude Include="math\softfloat-3\source\include\internals.h">
       <Filter>math\softfloat-3\source\include</Filter>

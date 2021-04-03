@@ -19,9 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="math\softfloat-3\source\f64_sqrt.cpp" />
-    <ClCompile Include="math\softfloat-3\source\f64_add_sub_mul_div.cpp" />
-    <ClCompile Include="math\softfloat-3\source\f64_to_integral_types.cpp" />
     <ClCompile Include="math\softfloat-3\source\s_addMagsF64.cpp" />
     <ClCompile Include="math\softfloat-3\source\s_approxRecipSqrt32_1.cpp" />
     <ClCompile Include="math\softfloat-3\source\s_normRoundPackToF64.cpp" />
@@ -35,7 +32,6 @@
   <ItemGroup>
     <ClInclude Include="math\constants\constants_pi_control_for_decwide_t.h" />
     <ClInclude Include="math\softfloat-3\source\include\internals.h" />
-    <ClInclude Include="math\softfloat-3\source\include\softfloat.h" />
     <ClInclude Include="math\soft_double\soft_double.h" />
     <ClInclude Include="math\soft_double\soft_double_decwide_t_detail_fft_bindings.h" />
     <ClInclude Include="math\wide_decimal\decwide_t.h" />
@@ -125,7 +121,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>LITTLEENDIAN=1;INLINE_LEVEL=3;SOFTFLOAT_FAST_DIV32TO16;SOFTFLOAT_FAST_DIV64TO32;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>LITTLEENDIAN;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
@@ -143,7 +139,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>LITTLEENDIAN=1;INLINE_LEVEL=3;SOFTFLOAT_FAST_DIV32TO16;SOFTFLOAT_FAST_DIV64TO32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>LITTLEENDIAN;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
@@ -163,7 +159,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>LITTLEENDIAN=1;INLINE_LEVEL=3;SOFTFLOAT_FAST_DIV32TO16;SOFTFLOAT_FAST_DIV64TO32;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>LITTLEENDIAN;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
@@ -185,7 +181,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>LITTLEENDIAN=1;INLINE_LEVEL=3;SOFTFLOAT_FAST_DIV32TO16;SOFTFLOAT_FAST_DIV64TO32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>LITTLEENDIAN;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
