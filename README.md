@@ -3,10 +3,11 @@ soft_double
 ==================
 
 soft_double provides a C++ software implementation of
-a double-precision floating-point data type.
+a 64-bit double-precision floating-point data type.
 
-Some ecompilers do not support 64-bit `double`. The `avr-gcc` tool chain,
-in particular, commonly used for embedded systems like Arduino
+Some compilers do not support common built-in 64-bit `double`.
+The `avr-gcc` tool chain, for instance, commonly used
+for embedded systems like Arduino
 or standalone _bare metal_ AVR does not support 64-bit double
 prior to versoin 10. soft_double can be used on such
 systems to provide a software-emulated portable implementation
@@ -39,3 +40,11 @@ This work is in a preliminary state. Changes are planned including:
   - Add more tests and depth of CI.
 
 ---
+
+## Examples
+
+TBD
+
+## Testing and CI
+
+TBD
