@@ -21,7 +21,8 @@ soft_double implements common algebraic operations,
 `sqrt` and comparison operations,
 and also includes full support for `std::numeric_limits`.
 
-soft_double is written in header-only C++11, and compatible through C++14, 17, 20.
+soft_double is written in header-only C++14, and is compatible through C++14, 17, 20
+(note back-compatibility with C++11 is in progress).
 
 ## Implementation goals
 
@@ -35,7 +36,6 @@ soft_double is written in header-only C++11, and compatible through C++14, 17, 2
 This work is in a preliminary state. Changes are planned including:
   - Better namespace names for the `soft_double` type.
   - Specialize further the template `std::numeric_limits<soft_double>`.
-  - Consider header-only design.
   - Some `constexpr` sequences can't be resolved in C++11 and need C++14. Strive for C++11 through C++20 compatibility.
   - Add more tests and depth of CI.
 
