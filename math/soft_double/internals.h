@@ -55,17 +55,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   struct uint64_extra { uint64_t v, extra; };
   #endif
 
-  uint32_t softfloat_roundToUI32(bool, uint64_t);
-  uint64_t softfloat_roundToUI64(bool, uint64_t);
-   int32_t softfloat_roundToI32 (bool, uint64_t);
-   int64_t softfloat_roundToI64 (bool, uint64_t);
-
-  uint64_t softfloat_roundPackToF64    (bool, int_fast16_t, uint64_t);
-  uint64_t softfloat_normRoundPackToF64(bool, int_fast16_t, uint64_t);
-
-  uint64_t softfloat_addMagsF64(uint64_t, uint64_t, bool);
-  uint64_t softfloat_subMagsF64(uint64_t, uint64_t, bool);
-
   constexpr bool         signF32UI(uint32_t a) { return ((bool) ((uint32_t) (a)>>31)); }
   constexpr int_fast16_t expF32UI (uint32_t a) { return ((int_fast16_t) ((a)>>23) & 0xFF); }
   constexpr uint32_t     fracF32UI(uint32_t a) { return ((a) & 0x007FFFFF); }
@@ -218,26 +207,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   {
     return (uint32_t) (UINT64_C( 0x7FFFFFFFFFFFFFFF ) / a);
   }
-
-  /*----------------------------------------------------------------------------
-  | Returns an approximation to the reciprocal of the square root of the number
-  | represented by 'a', where 'a' is interpreted as an unsigned fixed-point
-  | number either with one integer bit and 31 fraction bits or with two integer
-  | bits and 30 fraction bits.  The format of 'a' is determined by 'oddExpA',
-  | which must be either 0 or 1.  If 'oddExpA' is 1, 'a' is interpreted as
-  | having one integer bit, and if 'oddExpA' is 0, 'a' is interpreted as having
-  | two integer bits.  The 'a' input must be "normalized", meaning that its
-  | most-significant bit (bit 31) must be 1.  Thus, if A is the value of the
-  | fixed-point interpretation of 'a', it follows that 1 <= A < 2 when 'oddExpA'
-  | is 1, and 2 <= A < 4 when 'oddExpA' is 0.
-  |   The returned value is interpreted as a pure unsigned fraction, having
-  | no integer bits and 32 fraction bits.  The approximation returned is never
-  | greater than the true reciprocal 1/sqrt(A), and it differs from the true
-  | reciprocal by at most 2.06 ulp (units in the last place).  The approximation
-  | returned is also always within the range 0.5 to 1; thus, the most-
-  | significant bit of the result is always set.
-  *----------------------------------------------------------------------------*/
-  uint32_t softfloat_approxRecipSqrt32_1(uint32_t oddExpA, uint32_t a);
 
   /*----------------------------------------------------------------------------
   | Shifts the 128 bits formed by concatenating 'a' and 'extra' right by 64

@@ -8,11 +8,12 @@
 #ifndef SOFT_DOUBLE_2020_10_27_H_
   #define SOFT_DOUBLE_2020_10_27_H_
 
+  #include <array>
   #include <cstddef>
   #include <cstdint>
   #include <type_traits>
 
-  #include <internals.h>
+  #include <math/soft_double/internals.h>
 
   namespace sf {
 
@@ -548,6 +549,338 @@
       return (!a) ? (uint64_t) 0U
                   : (a & UINT64_C(0x8000000000000000)) ? softfloat_roundPackToF64(0, 0x43D, softfloat_shortShiftRightJam64(a, 1))
                                                        : softfloat_normRoundPackToF64(0, 0x43C, a);
+    }
+
+    static int32_t softfloat_roundToI32(bool sign, uint64_t sig)
+    {
+      uint32_t sig32;
+
+      uint_fast16_t roundIncrement = (sign ? 0xFFF : 0);
+
+      sig += roundIncrement;
+
+      sig32 = (uint32_t) (sig >> 12);
+
+      union
+      {
+        uint32_t ui;
+         int32_t  i;
+      } uZ;
+
+      uZ.ui = sign ? -sig32 : sig32;
+
+      return uZ.i;
+    }
+
+    static int64_t softfloat_roundToI64(bool sign, uint64_t sig)
+    {
+      if(sign)
+      {
+        ++sig;
+      }
+
+      union
+      {
+        uint64_t ui;
+        int64_t i;
+      } uZ;
+
+      uZ.ui = sign ? -sig : sig;
+
+      return uZ.i;
+    }
+
+    static uint32_t softfloat_roundToUI32(bool sign, uint64_t sig)
+    {
+      uint_fast16_t roundIncrement = 0;
+
+      if(sign)
+      {
+        if(!sig)
+        {
+          return 0;
+        }
+      }
+
+      sig += roundIncrement;
+
+      const uint32_t z = (uint32_t) (sig >> 12);
+
+      return z;
+    }
+
+    static uint64_t softfloat_roundToUI64(bool sign, uint64_t sig)
+    {
+      if(sign)
+      {
+        if(!(sig))
+        {
+          return 0;
+        }
+      }
+
+      return sig;
+    }
+
+    static uint64_t softfloat_addMagsF64(uint64_t uiA, uint64_t uiB, bool signZ)
+    {
+      const int_fast16_t  expA = expF64UI (uiA);
+            uint64_t sigA = fracF64UI(uiA);
+      const int_fast16_t  expB = expF64UI (uiB);
+            uint64_t sigB = fracF64UI(uiB);
+
+      const int_fast16_t expDiff = expA - expB;
+
+      int_fast16_t  expZ;
+      uint64_t sigZ;
+
+      if(!expDiff)
+      {
+        expZ = expA;
+        sigZ = (uint64_t) (UINT64_C(0x0020000000000000) + sigA) + sigB;
+        sigZ <<= 9U;
+      }
+      else
+      {
+        sigA <<= 9U;
+        sigB <<= 9U;
+
+        if(expDiff < 0)
+        {
+          expZ = expB;
+
+          if(expA)
+          {
+            sigA += UINT64_C(0x2000000000000000);
+          }
+          else
+          {
+            sigA <<= 1;
+          }
+
+          sigA = softfloat_shiftRightJam64(sigA, (uint32_t) (-expDiff));
+        }
+        else
+        {
+          expZ = expA;
+
+          if(expB)
+          {
+            sigB += UINT64_C(0x2000000000000000);
+          }
+          else
+          {
+            sigB <<= 1U;
+          }
+
+          sigB = softfloat_shiftRightJam64(sigB, (uint32_t) expDiff);
+        }
+
+        sigZ = (uint64_t) (UINT64_C(0x2000000000000000) + sigA) + sigB;
+
+        if(sigZ < UINT64_C(0x4000000000000000))
+        {
+          --expZ;
+
+          sigZ <<= 1U;
+        }
+      }
+
+      return softfloat_roundPackToF64(signZ, expZ, sigZ);
+    }
+
+    /*----------------------------------------------------------------------------
+    | Returns an approximation to the reciprocal of the square root of the number
+    | represented by 'a', where 'a' is interpreted as an unsigned fixed-point
+    | number either with one integer bit and 31 fraction bits or with two integer
+    | bits and 30 fraction bits.  The format of 'a' is determined by 'oddExpA',
+    | which must be either 0 or 1.  If 'oddExpA' is 1, 'a' is interpreted as
+    | having one integer bit, and if 'oddExpA' is 0, 'a' is interpreted as having
+    | two integer bits.  The 'a' input must be "normalized", meaning that its
+    | most-significant bit (bit 31) must be 1.  Thus, if A is the value of the
+    | fixed-point interpretation of 'a', it follows that 1 <= A < 2 when 'oddExpA'
+    | is 1, and 2 <= A < 4 when 'oddExpA' is 0.
+    |   The returned value is interpreted as a pure unsigned fraction, having
+    | no integer bits and 32 fraction bits.  The approximation returned is never
+    | greater than the true reciprocal 1/sqrt(A), and it differs from the true
+    | reciprocal by at most 2.06 ulp (units in the last place).  The approximation
+    | returned is also always within the range 0.5 to 1; thus, the most-
+    | significant bit of the result is always set.
+    *----------------------------------------------------------------------------*/
+    static uint32_t softfloat_approxRecipSqrt32_1(uint32_t oddExpA, uint32_t a)
+    {
+      constexpr std::array<uint16_t, 16U> softfloat_approxRecipSqrt_1k0s =
+      {{
+        UINT16_C(0xB4C9), UINT16_C(0xFFAB), UINT16_C(0xAA7D), UINT16_C(0xF11C),
+        UINT16_C(0xA1C5), UINT16_C(0xE4C7), UINT16_C(0x9A43), UINT16_C(0xDA29),
+        UINT16_C(0x93B5), UINT16_C(0xD0E5), UINT16_C(0x8DED), UINT16_C(0xC8B7),
+        UINT16_C(0x88C6), UINT16_C(0xC16D), UINT16_C(0x8424), UINT16_C(0xBAE1)
+      }};
+
+      constexpr std::array<uint16_t, 16U> softfloat_approxRecipSqrt_1k1s =
+      {{
+        UINT16_C(0xA5A5), UINT16_C(0xEA42), UINT16_C(0x8C21), UINT16_C(0xC62D),
+        UINT16_C(0x788F), UINT16_C(0xAA7F), UINT16_C(0x6928), UINT16_C(0x94B6),
+        UINT16_C(0x5CC7), UINT16_C(0x8335), UINT16_C(0x52A6), UINT16_C(0x74E2),
+        UINT16_C(0x4A3E), UINT16_C(0x68FE), UINT16_C(0x432B), UINT16_C(0x5EFD)
+      }};
+
+      int_fast16_t index  = (int_fast16_t) (((uint32_t) (a >> 27U) & 0xEU) + oddExpA);
+      uint16_t     eps    = (uint16_t) (a >> 12);
+      uint16_t     r0     =     softfloat_approxRecipSqrt_1k0s[index]
+                            - ((softfloat_approxRecipSqrt_1k1s[index] * (uint32_t) eps) >> 20U);
+      uint32_t     ESqrR0 = (uint32_t) r0 * r0;
+
+      if(!oddExpA)
+      {
+        ESqrR0 <<= 1U;
+      }
+
+      const uint32_t sigma0 = ~(uint32_t) (((uint32_t) ESqrR0 * (uint64_t) a) >> 23U);
+
+      uint32_t r = (((uint32_t) r0) << 16U) + (uint32_t) ((r0 * (uint64_t) sigma0) >> 25U);
+
+      const uint32_t sqrSigma0 = (uint32_t) ((uint64_t) ((uint64_t) sigma0 * sigma0) >> 32U);
+
+      r += (uint32_t) ((uint64_t) ((uint32_t) ((uint32_t) ((r >> 1U) + (r >> 3U)) - ((uint32_t) r0 << 14U)) * (uint64_t) sqrSigma0) >> 48U);
+
+      if(!(r & UINT32_C(0x80000000)))
+      {
+        r = UINT32_C(0x80000000);
+      }
+
+      return r;
+    }
+
+    static uint64_t softfloat_normRoundPackToF64(bool sign, int_fast16_t exp, uint64_t sig)
+    {
+      const int_fast8_t shiftDist = (int_fast8_t) (softfloat_countLeadingZeros64(sig) - 1U);
+
+      exp -= shiftDist;
+
+      if((10 <= shiftDist) && ((uint32_t) exp < 0x7FD))
+      {
+        const uint64_t uZ = packToF64UI(sign, sig ? exp : 0, sig << (shiftDist - 10));
+
+        return uZ;
+      }
+      else
+      {
+        return softfloat_roundPackToF64(sign, exp, sig << shiftDist);
+      }
+    }
+
+    static uint64_t softfloat_roundPackToF64(bool sign, int_fast16_t exp, uint64_t sig)
+    {
+      uint_fast16_t roundIncrement = 0x200U;
+
+      uint_fast16_t roundBits = sig & 0x3FFU;
+
+      if(0x7FD <= (uint16_t) exp)
+      {
+        if(exp < 0)
+        {
+          sig = softfloat_shiftRightJam64(sig, (uint32_t) -exp);
+          exp = 0;
+          roundBits = sig & 0x3FFU;
+        }
+      }
+
+      sig = (sig + roundIncrement) >> 10U;
+
+      sig &= (uint64_t) (~(uint64_t) (((roundBits ^ 0x200U) == 0U ? 1U : 0U) & 1U));
+
+      if(!sig)
+      {
+        exp = 0;
+      }
+
+      const uint64_t uiZ = packToF64UI(sign, exp, sig);
+
+      return uiZ;
+    }
+
+    static uint64_t softfloat_subMagsF64(uint64_t uiA, uint64_t uiB, bool signZ)
+    {
+      uint64_t     uiZ;
+      int_fast16_t expZ;
+
+      int_fast16_t  expA = expF64UI(uiA);
+      uint64_t      sigA = fracF64UI(uiA);
+      int_fast16_t  expB = expF64UI(uiB);
+      uint64_t      sigB = fracF64UI(uiB);
+
+      const int_fast16_t expDiff = expA - expB;
+
+      if(!expDiff)
+      {
+        int64_t sigDiff = (int64_t) (sigA - sigB);
+
+        if(!sigDiff)
+        {
+          uiZ = packToF64UI(false, 0, 0);
+        }
+        else
+        {
+          if(expA)
+          {
+            --expA;
+          }
+
+          if(sigDiff < 0)
+          {
+            signZ   = (!signZ);
+            sigDiff = -sigDiff;
+          }
+
+          int_fast8_t shiftDist = (int_fast8_t) (softfloat_countLeadingZeros64((uint64_t) sigDiff) - 11U);
+
+          expZ = expA - shiftDist;
+
+          if(expZ < 0)
+          {
+            shiftDist = (int_fast8_t) expA;
+
+            expZ = 0;
+          }
+
+          uiZ = packToF64UI(signZ, expZ, sigDiff << shiftDist);
+        }
+      }
+      else
+      {
+        sigA <<= 10U;
+        sigB <<= 10U;
+
+        uint64_t sigZ;
+
+        if(expDiff < 0)
+        {
+          signZ = (!signZ);
+
+          sigA += ((expA != 0) ? UINT64_C(0x4000000000000000) : sigA);
+          sigA  = softfloat_shiftRightJam64(sigA, (uint32_t) -expDiff);
+
+          sigB |= UINT64_C(0x4000000000000000);
+
+          expZ = expB;
+          sigZ = sigB - sigA;
+        }
+        else
+        {
+          sigB += ((expB != 0) ? UINT64_C(0x4000000000000000) : sigB);
+          sigB  = softfloat_shiftRightJam64(sigB, (uint32_t) expDiff);
+
+          sigA |= UINT64_C(0x4000000000000000);
+
+          expZ = expA;
+          sigZ = sigA - sigB;
+        }
+
+        return softfloat_normRoundPackToF64(signZ, (int_fast16_t) (expZ - 1), sigZ);
+      }
+
+      return uiZ;
     }
 
     friend bool isfinite(const soft_double x) { return ((isnan(x) == false) && (isinf(x) == false)); }
