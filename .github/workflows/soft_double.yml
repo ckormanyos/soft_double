@@ -1,6 +1,8 @@
 name: soft_double
 on:
   push:
+  schedule:
+    - cron: '30 23 * * *' # run at 11:30 PM UTC
 jobs:
   gcc-clang-native:
     runs-on: ubuntu-20.04
@@ -17,6 +19,29 @@ jobs:
         with:
           fetch-depth: '0'
       - name: gcc-clang-native
+        run: |
+          echo "compile ./soft_double.exe"
+          ${{ matrix.compiler }} -v
+          ${{ matrix.compiler }} -finline-functions -finline-limit=64 -march=native -mtune=native -O3 -Wall -Wextra -pedantic -Wno-strict-aliasing -std=${{ matrix.standard }} -Imath/softfloat-3/source/include -I. math/softfloat-3/source/f64_add_sub_mul_div.cpp math/softfloat-3/source/f64_sqrt.cpp math/softfloat-3/source/f64_to_integral_types.cpp math/softfloat-3/source/round_to_integral_types.cpp math/softfloat-3/source/s_addMagsF64.cpp math/softfloat-3/source/s_approxRecipSqrt32_1.cpp math/softfloat-3/source/s_normRoundPackToF64.cpp math/softfloat-3/source/s_roundPackToF64.cpp math/softfloat-3/source/s_subMagsF64.cpp test/test.cpp test/test_soft_double.cpp test/test_soft_double_with_decwide_t_100k_digit_pi.cpp -o soft_double.exe
+          ls -la ./soft_double.exe
+          ./soft_double.exe
+  gcc-clang-10:
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [ g++-10, clang++-10 ]
+        standard: [ c++14, c++17, c++20 ]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'
+      - name: update-tools
+        run: sudo apt install g++-10 clang-10
+      - name: gcc-clang-10
         run: |
           echo "compile ./soft_double.exe"
           ${{ matrix.compiler }} -v
