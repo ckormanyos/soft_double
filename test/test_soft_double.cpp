@@ -149,36 +149,38 @@ namespace
   }
 }
 
-void add__sf_float64_t_and_double(sf::float64_t& x_result, const sf::float64_t& xa, const sf::float64_t& xb,
-                                  double&        d_result, const double&        da, const double&        db)
+void add____sf_float64_t_and_double(sf::float64_t& x_result, const sf::float64_t& xa, const sf::float64_t& xb,
+                                    double&        d_result, const double&        da, const double&        db)
 {
   x_result = xa + xb;
   d_result = da + db;
 }
 
-void sub__sf_float64_t_and_double(sf::float64_t& x_result, const sf::float64_t& xa, const sf::float64_t& xb,
-                                  double&        d_result, const double&        da, const double&        db)
+void sub____sf_float64_t_and_double(sf::float64_t& x_result, const sf::float64_t& xa, const sf::float64_t& xb,
+                                    double&        d_result, const double&        da, const double&        db)
 {
   x_result = xa - xb;
   d_result = da - db;
 }
 
-void mul__sf_float64_t_and_double(sf::float64_t& x_result, const sf::float64_t& xa, const sf::float64_t& xb,
-                                  double&        d_result, const double&        da, const double&        db)
+void mul____sf_float64_t_and_double(sf::float64_t& x_result, const sf::float64_t& xa, const sf::float64_t& xb,
+                                    double&        d_result, const double&        da, const double&        db)
 {
   x_result = xa * xb;
   d_result = da * db;
 }
 
-void div__sf_float64_t_and_double(sf::float64_t& x_result, const sf::float64_t& xa, const sf::float64_t& xb,
-                                  double&        d_result, const double&        da, const double&        db)
+void div____sf_float64_t_and_double(sf::float64_t& x_result, const sf::float64_t& xa, const sf::float64_t& xb,
+                                    double&        d_result, const double&        da, const double&        db)
 {
   x_result = xa / xb;
   d_result = da / db;
 }
 
-void sqrt_sf_float64_t_and_double(sf::float64_t& x_result, const sf::float64_t& xa,
-                                  double&        d_result, const double&        da)
+volatile int debug = 0U;
+
+void sqrt___sf_float64_t_and_double(sf::float64_t& x_result, const sf::float64_t& xa,
+                                    double&        d_result, const double&        da)
 {
   using std::sqrt;
 
@@ -192,29 +194,27 @@ bool test_ops(const std::uint32_t n, std::uint_fast8_t op_index)
 
   for(std::uint32_t i = 0U; i < n; ++i)
   {
-    sf::float64_t xa, xb;
-    double        da, db;
+    sf::float64_t xa;
+    sf::float64_t xb;
+    sf::float64_t xr;
 
-    sf::float64_t x_result;
-    double        d_result;
+    double        da;
+    double        db;
+    double        dr;
 
-    if     (op_index == 4U) { get_sf_float64_t_and_double(xa, da, true);                                sqrt_sf_float64_t_and_double(x_result, xa, d_result, da); }
-    else if(op_index == 3U) { get_sf_float64_t_and_double(xa, da); get_sf_float64_t_and_double(xb, db); div__sf_float64_t_and_double(x_result, xa, xb, d_result, da, db); }
-    else if(op_index == 2U) { get_sf_float64_t_and_double(xa, da); get_sf_float64_t_and_double(xb, db); mul__sf_float64_t_and_double(x_result, xa, xb, d_result, da, db); }
-    else if(op_index == 1U) { get_sf_float64_t_and_double(xa, da); get_sf_float64_t_and_double(xb, db); sub__sf_float64_t_and_double(x_result, xa, xb, d_result, da, db); }
-    else                    { get_sf_float64_t_and_double(xa, da); get_sf_float64_t_and_double(xb, db); add__sf_float64_t_and_double(x_result, xa, xb, d_result, da, db); }
+    if     (op_index == 4U) { get_sf_float64_t_and_double(xa, da, true);                                sqrt___sf_float64_t_and_double(xr, xa,     dr, da); }
+    else if(op_index == 3U) { get_sf_float64_t_and_double(xa, da); get_sf_float64_t_and_double(xb, db); div____sf_float64_t_and_double(xr, xa, xb, dr, da, db); }
+    else if(op_index == 2U) { get_sf_float64_t_and_double(xa, da); get_sf_float64_t_and_double(xb, db); mul____sf_float64_t_and_double(xr, xa, xb, dr, da, db); }
+    else if(op_index == 1U) { get_sf_float64_t_and_double(xa, da); get_sf_float64_t_and_double(xb, db); sub____sf_float64_t_and_double(xr, xa, xb, dr, da, db); }
+    else                    { get_sf_float64_t_and_double(xa, da); get_sf_float64_t_and_double(xb, db); add____sf_float64_t_and_double(xr, xa, xb, dr, da, db); }
 
-    const double x_result_as_double = *(double*) &x_result;
+    const uint64_t d_result_as_uint64 = *(volatile uint64_t*) &dr;
 
-    using std::fabs;
-
-    const double relative = fabs(1.0 - fabs(d_result / x_result_as_double));
-
-    result_is_ok &= (relative < std::numeric_limits<double>::epsilon());
+    result_is_ok &= (xr.crepresentation() == d_result_as_uint64);
 
     if(result_is_ok == false)
     {
-      std::cout << d_result << std::endl;
+      std::cout << dr << std::endl;
 
       break;
     }
@@ -262,14 +262,14 @@ bool test_eq_(const std::uint32_t n, std::uint_fast8_t op_index)
     sf::float64_t x;
     double        d;
 
-    bool x_result;
+    bool x_ok;
 
-    if     (op_index == 0U) { get_sf_float64_t_and_double(x, d); x_result = (*(double*) &x == d); }
-    else if(op_index == 1U) { get_sf_float64_t_and_double(x, d); const sf::float64_t x2 = x / 2; x_result = (*(double*) &x <= d) && ((d > 0) ? (*(double*) &x2 < d) : (*(double*) &x2 > d)); }
-    else if(op_index == 2U) { get_sf_float64_t_and_double(x, d); const sf::float64_t x2 = x * 2; x_result = (*(double*) &x <= d) && ((d > 0) ? (*(double*) &x2 > d) : (*(double*) &x2 < d)); }
-    else                    { x_result = false; d = 0.0; }
+    if     (op_index == 0U) { get_sf_float64_t_and_double(x, d);                                 x_ok = (*(double*) &x == d); }
+    else if(op_index == 1U) { get_sf_float64_t_and_double(x, d); const sf::float64_t x2 = x / 2; x_ok = (*(double*) &x <= d) && ((d > 0) ? (*(double*) &x2 < d) : (*(double*) &x2 > d)); }
+    else if(op_index == 2U) { get_sf_float64_t_and_double(x, d); const sf::float64_t x2 = x * 2; x_ok = (*(double*) &x <= d) && ((d > 0) ? (*(double*) &x2 > d) : (*(double*) &x2 < d)); }
+    else                    { x_ok = false; d = 0.0; }
 
-    result_is_ok &= x_result;
+    result_is_ok &= x_ok;
 
     if(result_is_ok == false)
     {
@@ -291,42 +291,42 @@ bool test_soft_double()
   bool result_is_ok = true;
 
   {
-    std::cout << "testing cast... ";
+    std::cout << "testing cast___... ";
 
     const sf::float64_t xp = math::constants::pi<sf::float64_t>();
     const std::uint64_t u64 = (std::uint64_t) xp;
-    const bool result_cast_is_ok = (u64 == 3U);
-    std::cout << std::boolalpha << result_cast_is_ok << std::endl;
-    result_is_ok &= result_cast_is_ok;
+    const bool result_cast___is_ok = (u64 == 3U);
+    std::cout << std::boolalpha << result_cast___is_ok << std::endl;
+    result_is_ok &= result_cast___is_ok;
   }
 
   {
-    std::cout << "testing f32_... ";
+    std::cout << "testing f32____... ";
 
     sf::float64_t xf = sf::float64_t(0.125F) + sf::float64_t(0.5F);
     double df = *(double*) &xf;
-    const bool result_f32__is_ok = fabs(1.0 - (df / 0.625)) < std::numeric_limits<double>::epsilon();
-    std::cout << std::boolalpha << result_f32__is_ok << std::endl;
-    result_is_ok &= result_f32__is_ok;
+    const bool result_f32____is_ok = fabs(1.0 - (df / 0.625)) < std::numeric_limits<double>::epsilon();
+    std::cout << std::boolalpha << result_f32____is_ok << std::endl;
+    result_is_ok &= result_f32____is_ok;
   }
 
   {
-    std::cout << "testing neg_... ";
+    std::cout << "testing neg____... ";
 
     sf::float64_t  xn(1 / sf::float64_t(3));
     xn = -xn;
     double dn = *(double*) &xn;
-    bool result_neg__is_ok = fabs(1.0 - (dn / -0.33333333333333333)) < std::numeric_limits<double>::epsilon();
+    bool result_neg____is_ok = fabs(1.0 - (dn / -0.33333333333333333)) < std::numeric_limits<double>::epsilon();
 
     xn = -xn;
     dn = *(double*) &xn;
-    result_neg__is_ok &= fabs(1.0 - (dn / 0.33333333333333333)) < std::numeric_limits<double>::epsilon();
-    std::cout << std::boolalpha << result_neg__is_ok << std::endl;
-    result_is_ok &= result_neg__is_ok;
+    result_neg____is_ok &= fabs(1.0 - (dn / 0.33333333333333333)) < std::numeric_limits<double>::epsilon();
+    std::cout << std::boolalpha << result_neg____is_ok << std::endl;
+    result_is_ok &= result_neg____is_ok;
   }
 
   {
-    std::cout << "testing ddx_... ";
+    std::cout << "testing ddx____... ";
 
     sf::float64_t  x(1 / sf::float64_t(2));
     sf::float64_t dx(1 / sf::float64_t(8388608));
@@ -342,54 +342,22 @@ bool test_soft_double()
 
     using std::fabs;
 
-    const bool result_ddx__is_ok = fabs(1.0 - (d / 1.33333333333333333)) < std::numeric_limits<double>::epsilon() * 1.0E6;
-    std::cout << std::boolalpha << result_ddx__is_ok << std::endl;
-    result_is_ok &= result_ddx__is_ok;
+    const bool result_ddx____is_ok = fabs(1.0 - (d / 1.33333333333333333)) < std::numeric_limits<double>::epsilon() * 1.0E6;
+    std::cout << std::boolalpha << result_ddx____is_ok << std::endl;
+    result_is_ok &= result_ddx____is_ok;
   }
 
-  std::cout << "testing add_... ";
-  const bool result_add__is_ok = test_ops(10000000U, 0U);
-  std::cout << std::boolalpha << result_add__is_ok << std::endl;
-
-  std::cout << "testing sub_... ";
-  const bool result_sub__is_ok = test_ops(10000000U, 1U);
-  std::cout << std::boolalpha << result_sub__is_ok << std::endl;
-
-  std::cout << "testing mul_... ";
-  const bool result_mul__is_ok = test_ops(10000000U, 2U);
-  std::cout << std::boolalpha << result_mul__is_ok << std::endl;
-
-  std::cout << "testing div_... ";
-  const bool result_div__is_ok = test_ops(10000000U, 3U);
-  std::cout << std::boolalpha << result_div__is_ok << std::endl;
-
-  std::cout << "testing sqrt... ";
-  const bool result_sqrt_is_ok = test_ops(25000000U, 4U);
-  std::cout << std::boolalpha << result_sqrt_is_ok << std::endl;
-
-  std::cout << "testing lt__... ";
-  const bool result_lt___is_ok = test_neq(10000000U, 0U);
-  std::cout << std::boolalpha << result_lt___is_ok << std::endl;
-
-  std::cout << "testing gt__... ";
-  const bool result_gt___is_ok = test_neq(10000000U, 1U);
-  std::cout << std::boolalpha << result_gt___is_ok << std::endl;
-
-  std::cout << "testing neq_... ";
-  const bool result_neq__is_ok = test_neq(10000000U, 2U);
-  std::cout << std::boolalpha << result_neq__is_ok << std::endl;
-
-  std::cout << "testing eq__... ";
-  const bool result_eq___is_ok = test_neq(10000000U, 0U);
-  std::cout << std::boolalpha << result_eq___is_ok << std::endl;
-
-  std::cout << "testing leq_... ";
-  const bool result_leq__is_ok = test_neq(10000000U, 1U);
-  std::cout << std::boolalpha << result_leq__is_ok << std::endl;
-
-  std::cout << "testing geq_... ";
-  const bool result_geq__is_ok = test_neq(10000000U, 2U);
-  std::cout << std::boolalpha << result_geq__is_ok << std::endl;
+  std::cout << "testing add____... "; const bool result_add____is_ok = test_ops(10000000U, 0U); std::cout << std::boolalpha << result_add____is_ok << std::endl;
+  std::cout << "testing sub____... "; const bool result_sub____is_ok = test_ops(10000000U, 1U); std::cout << std::boolalpha << result_sub____is_ok << std::endl;
+  std::cout << "testing mul____... "; const bool result_mul____is_ok = test_ops(10000000U, 2U); std::cout << std::boolalpha << result_mul____is_ok << std::endl;
+  std::cout << "testing div____... "; const bool result_div____is_ok = test_ops(10000000U, 3U); std::cout << std::boolalpha << result_div____is_ok << std::endl;
+  std::cout << "testing sqrt___... "; const bool result_sqrt___is_ok = test_ops(25000000U, 4U); std::cout << std::boolalpha << result_sqrt___is_ok << std::endl;
+  std::cout << "testing lt_____... "; const bool result_lt_____is_ok = test_neq(10000000U, 0U); std::cout << std::boolalpha << result_lt_____is_ok << std::endl;
+  std::cout << "testing gt_____... "; const bool result_gt_____is_ok = test_neq(10000000U, 1U); std::cout << std::boolalpha << result_gt_____is_ok << std::endl;
+  std::cout << "testing neq____... "; const bool result_neq____is_ok = test_neq(10000000U, 2U); std::cout << std::boolalpha << result_neq____is_ok << std::endl;
+  std::cout << "testing eq_____... "; const bool result_eq_____is_ok = test_neq(10000000U, 0U); std::cout << std::boolalpha << result_eq_____is_ok << std::endl;
+  std::cout << "testing leq____... "; const bool result_leq____is_ok = test_neq(10000000U, 1U); std::cout << std::boolalpha << result_leq____is_ok << std::endl;
+  std::cout << "testing geq____... "; const bool result_geq____is_ok = test_neq(10000000U, 2U); std::cout << std::boolalpha << result_geq____is_ok << std::endl;
 
   const std::clock_t stop = std::clock();
 
@@ -397,17 +365,17 @@ bool test_soft_double()
             << float(stop - start) / float(CLOCKS_PER_SEC)
             << std::endl;
 
-  const bool result_algebra_is_ok = (   result_add__is_ok
-                                     && result_sub__is_ok
-                                     && result_mul__is_ok
-                                     && result_div__is_ok
-                                     && result_sqrt_is_ok
-                                     && result_lt___is_ok
-                                     && result_gt___is_ok
-                                     && result_neq__is_ok
-                                     && result_eq___is_ok
-                                     && result_leq__is_ok
-                                     && result_geq__is_ok);
+  const bool result_algebra_is_ok = (   result_add____is_ok
+                                     && result_sub____is_ok
+                                     && result_mul____is_ok
+                                     && result_div____is_ok
+                                     && result_sqrt___is_ok
+                                     && result_lt_____is_ok
+                                     && result_gt_____is_ok
+                                     && result_neq____is_ok
+                                     && result_eq_____is_ok
+                                     && result_leq____is_ok
+                                     && result_geq____is_ok);
 
   const bool result_double_is_ok = (result_is_ok && result_algebra_is_ok);
 

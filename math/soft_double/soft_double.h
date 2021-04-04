@@ -45,9 +45,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef SOFT_DOUBLE_2020_10_27_H_
   #define SOFT_DOUBLE_2020_10_27_H_
 
-  #include <array>
   #include <cstddef>
-  #include <cstdint>
   #include <type_traits>
 
   #include <math/soft_double/internals.h>
@@ -56,49 +54,47 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   namespace detail { struct nothing { }; }
 
-  template<const std::size_t BitCount>
-  class soft_double final { };
+  class soft_double;
 
-  template<const std::size_t BitCount> soft_double<64U> operator+(const soft_double<64U>& a, const soft_double<64U>& b);
-  template<const std::size_t BitCount> soft_double<64U> operator-(const soft_double<64U>& a, const soft_double<64U>& b);
-  template<const std::size_t BitCount> soft_double<64U> operator*(const soft_double<64U>& a, const soft_double<64U>& b);
-  template<const std::size_t BitCount> soft_double<64U> operator/(const soft_double<64U>& a, const soft_double<64U>& b);
+  inline soft_double operator+(const soft_double& a, const soft_double& b);
+  inline soft_double operator-(const soft_double& a, const soft_double& b);
+  inline soft_double operator*(const soft_double& a, const soft_double& b);
+  inline soft_double operator/(const soft_double& a, const soft_double& b);
 
-  template<const std::size_t BitCount, typename BuiltinIntegralType>
+  template<typename BuiltinIntegralType>
   typename std::enable_if<   (std::is_integral   <BuiltinIntegralType>::value == true)
-                          && (std::is_fundamental<BuiltinIntegralType>::value == true), soft_double<64U>>::type
-  operator+(const soft_double<64U>& u, BuiltinIntegralType n);
+                          && (std::is_fundamental<BuiltinIntegralType>::value == true), soft_double>::type
+  operator+(const soft_double& u, BuiltinIntegralType n);
 
-  template<const std::size_t BitCount, typename BuiltinIntegralType>
+  template<typename BuiltinIntegralType>
   typename std::enable_if<   (std::is_integral   <BuiltinIntegralType>::value == true)
-                          && (std::is_fundamental<BuiltinIntegralType>::value == true), soft_double<64U>>::type
-  operator-(const soft_double<64U>& u, BuiltinIntegralType n);
+                          && (std::is_fundamental<BuiltinIntegralType>::value == true), soft_double>::type
+  operator-(const soft_double& u, BuiltinIntegralType n);
 
-  template<const std::size_t BitCount, typename BuiltinIntegralType>
+  template<typename BuiltinIntegralType>
   typename std::enable_if<   (std::is_integral   <BuiltinIntegralType>::value == true)
-                          && (std::is_fundamental<BuiltinIntegralType>::value == true), soft_double<64U>>::type
-  operator*(const soft_double<64U>& u, BuiltinIntegralType n);
+                          && (std::is_fundamental<BuiltinIntegralType>::value == true), soft_double>::type
+  operator*(const soft_double& u, BuiltinIntegralType n);
 
-  template<const std::size_t BitCount, typename BuiltinIntegralType>
+  template<typename BuiltinIntegralType>
   typename std::enable_if<   (std::is_integral   <BuiltinIntegralType>::value == true)
-                          && (std::is_fundamental<BuiltinIntegralType>::value == true), soft_double<64U>>::type
-  operator/(const soft_double<64U>& u, BuiltinIntegralType n);
+                          && (std::is_fundamental<BuiltinIntegralType>::value == true), soft_double>::type
+  operator/(const soft_double& u, BuiltinIntegralType n);
 
-  template<const std::size_t BitCount> bool operator< (const soft_double<64U>& a, const soft_double<64U>& b);
-  template<const std::size_t BitCount> bool operator<=(const soft_double<64U>& a, const soft_double<64U>& b);
-  template<const std::size_t BitCount> bool operator==(const soft_double<64U>& a, const soft_double<64U>& b);
-  template<const std::size_t BitCount> bool operator!=(const soft_double<64U>& a, const soft_double<64U>& b);
-  template<const std::size_t BitCount> bool operator>=(const soft_double<64U>& a, const soft_double<64U>& b);
-  template<const std::size_t BitCount> bool operator> (const soft_double<64U>& a, const soft_double<64U>& b);
+  inline bool operator< (const soft_double& a, const soft_double& b);
+  inline bool operator<=(const soft_double& a, const soft_double& b);
+  inline bool operator==(const soft_double& a, const soft_double& b);
+  inline bool operator!=(const soft_double& a, const soft_double& b);
+  inline bool operator>=(const soft_double& a, const soft_double& b);
+  inline bool operator> (const soft_double& a, const soft_double& b);
 
-  template<const std::size_t BitCount> bool                   isnan   (const soft_double<64U> x);
-  template<const std::size_t BitCount> bool                   isinf   (const soft_double<64U> x);
-  template<const std::size_t BitCount> bool                   isfinite(const soft_double<64U> x);
-  template<const std::size_t BitCount> soft_double<64U> fabs    (const soft_double<64U> x);
-  template<const std::size_t BitCount> soft_double<64U> sqrt    (const soft_double<64U> x);
+  inline bool        isnan   (const soft_double x);
+  inline bool        isinf   (const soft_double x);
+  inline bool        isfinite(const soft_double x);
+  inline soft_double fabs    (const soft_double x);
+  inline soft_double sqrt    (const soft_double x);
 
-  template<>
-  class soft_double<64U>
+  class soft_double final
   {
   public:
     using representation_type = uint64_t;
@@ -924,8 +920,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     friend bool isnan   (const soft_double x) { return  (x.my_value == my_value_quiet_NaN().my_value); }
     friend bool isinf   (const soft_double x) { return ((x.my_value & my_value_infinity().my_value) == my_value_infinity().my_value); }
 
-    friend inline soft_double fabs(const soft_double x) { return soft_double((((int64_t) x.my_value < 0) ? (uint64_t) (-((int64_t) x.my_value)) : x.my_value), detail::nothing()); }
-    friend inline soft_double sqrt(const soft_double x) { return soft_double(f64_sqrt(x.my_value), detail::nothing()); }
+    friend inline soft_double fabs (const soft_double x) { return soft_double((((int64_t) x.my_value < 0) ? (uint64_t) (-((int64_t) x.my_value)) : x.my_value), detail::nothing()); }
+    friend inline soft_double sqrt (const soft_double x) { return soft_double(f64_sqrt(x.my_value), detail::nothing()); }
 
     friend inline soft_double operator+(const soft_double& a, const soft_double& b) { soft_double result; result.my_value = f64_add(a.my_value, b.my_value); return result; }
     friend inline soft_double operator-(const soft_double& a, const soft_double& b) { soft_double result; result.my_value = f64_sub(a.my_value, b.my_value); return result; }
@@ -973,7 +969,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     friend inline bool operator> (const soft_double& a, const soft_double& b) { return ((a <= b) == false); }
   };
 
-  using float64_t = soft_double<64U>;
+  using float64_t = soft_double;
   }
 
   namespace std {

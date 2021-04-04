@@ -45,6 +45,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef INTERNALS_2020_11_13_H_
   #define INTERNALS_2020_11_13_H_
 
+  #include <array>
   #include <cstdint>
 
   #ifdef LITTLEENDIAN
@@ -116,7 +117,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   *----------------------------------------------------------------------------*/
   constexpr uint_least8_t softfloat_countLeadingZeros8(const uint_fast8_t index)
   {
-    const uint_least8_t z_table[16U] =
+    constexpr std::array<uint_least8_t, 16U> z_table =
     {
       4, 3, 2, 2,
       1, 1, 1, 1,
