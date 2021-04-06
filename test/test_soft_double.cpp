@@ -293,7 +293,7 @@ bool test_soft_double()
   {
     std::cout << "testing cast___... ";
 
-    const sf::float64_t xp = math::constants::pi<sf::float64_t>();
+    const sf::float64_t xp  = math::constants::pi<sf::float64_t>();
     const std::uint64_t u64 = (std::uint64_t) xp;
     const bool result_cast___is_ok = (u64 == 3U);
     std::cout << std::boolalpha << result_cast___is_ok << std::endl;
@@ -305,7 +305,7 @@ bool test_soft_double()
 
     sf::float64_t xf = sf::float64_t(0.125F) + sf::float64_t(0.5F);
     double df = *(double*) &xf;
-    const bool result_f32____is_ok = fabs(1.0 - (df / 0.625)) < std::numeric_limits<double>::epsilon();
+    const bool result_f32____is_ok = (df == 0.625);
     std::cout << std::boolalpha << result_f32____is_ok << std::endl;
     result_is_ok &= result_f32____is_ok;
   }
