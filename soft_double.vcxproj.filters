@@ -83,6 +83,9 @@
     <ClInclude Include="math\soft_double\internals.h">
       <Filter>math\soft_double</Filter>
     </ClInclude>
+    <ClInclude Include="math\wide_decimal\decwide_t_detail_ops.h">
+      <Filter>math\wide_decimal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".github\workflows\soft_double.yml">
