@@ -1,17 +1,19 @@
-soft_double
+soft_double\
 [![Build Status](https://github.com/ckormanyos/soft_double/actions/workflows/soft_double.yml/badge.svg)](https://github.com/ckormanyos/soft_double/actions)
 ==================
 
 soft_double provides a C++ software implementation of
 a 64-bit double-precision floating-point data type.
 
-Some compilers do not support common built-in 64-bit `double`.
+Some compilers do not support a built-in 64-bit floating-point type,
+such as might be commonly known as `double` or `long` `double`.
 The `avr-gcc` tool chain, for instance, commonly used
-for embedded systems like Arduino
-or standalone _bare metal_ AVR does not support 64-bit double
-prior to versoin 10. soft_double can be used on such
-systems to provide a software-emulated portable implementation
-of 64-bit `double`.
+for 8-bit embedded systems like Arduino
+or standalone _bare metal_ AVR does not support 64-bit `double`
+(prior to versoin 10).
+
+soft_double can be used on such systems to provide a software-emulated,
+portable implementation of 64-bit `double`.
 
 This C++ template header-only library implements a drop-in double-precision
 float type that can be used essentially like the regular built-in 64-bit
@@ -21,8 +23,9 @@ soft_double implements common algebraic operations,
 `sqrt` and comparison operations,
 and also includes full support for `std::numeric_limits`.
 
-soft_double is written in header-only C++14, and is compatible through C++14, 17, 20
-(note back-compatibility with C++11 is in progress).
+soft_double is written in header-only C++14, and is compatible through C++14, 17, 20.
+Note: backward compatibility with C++11 is in progress, and simple refactoring
+of certain `constexpr` functions is all that is needed to extend back to C++11 as well.
 
 ## Implementation goals
 
