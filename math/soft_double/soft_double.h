@@ -363,6 +363,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     const soft_double& operator+() const { return *this; }
           soft_double  operator-() const { return soft_double(my_value ^ (uint64_t) (1ULL << 63U), detail::nothing()); }
 
+    static constexpr representation_type get_value(soft_double x) { return x.my_value; }
+
     static constexpr soft_double my_value_zero() { return soft_double(UINT64_C(0),                   detail::nothing()); }
     static constexpr soft_double my_value_one () { return soft_double(UINT64_C(1),                   detail::nothing()); }
     static constexpr soft_double my_value_pi  () { return soft_double(UINT64_C(4614256656552045848), detail::nothing()); }
