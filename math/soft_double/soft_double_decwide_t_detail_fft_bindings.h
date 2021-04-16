@@ -15,10 +15,10 @@
   namespace math { namespace wide_decimal { namespace detail { namespace fft {
 
   template<typename float_type>
-  constexpr float_type template_half();
+  inline constexpr float_type template_half();
 
   template<typename float_type>
-  float_type template_fast_div_by_two(float_type);
+  inline constexpr float_type template_fast_div_by_two(float_type);
 
   template<typename float_type>
   float_type template_sin_order_1(const std::uint32_t);
@@ -28,18 +28,16 @@
   namespace math { namespace wide_decimal { namespace detail { namespace fft {
 
   template<>
-  constexpr sf::float64_t template_half<sf::float64_t>()
+  inline constexpr sf::float64_t template_half<sf::float64_t>()
   {
     return sf::float64_t(UINT64_C(4602678819172646912), sf::detail::nothing());
   }
 
   template<>
-  sf::float64_t template_fast_div_by_two<sf::float64_t>(sf::float64_t a)
+  inline constexpr sf::float64_t template_fast_div_by_two<sf::float64_t>(sf::float64_t a)
   {
-    const int_fast16_t em1 = (int_fast16_t) ((uint_fast16_t) (a.crepresentation() >> 52U) & 0x7FFU) - 1;
-
     return sf::float64_t(  (uint64_t) (a.crepresentation() & ~(uint64_t) (0x7FFULL << 52U))
-                         | (uint64_t) (((uint64_t) em1) << 52U),
+                         | (uint64_t) (((uint64_t) ((int_fast16_t) ((int_fast16_t) ((uint_fast16_t) (a.crepresentation() >> 52U) & 0x7FFU) - 1))) << 52U),
                          sf::detail::nothing());
   }
 

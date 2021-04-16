@@ -9,6 +9,10 @@
 // "Algorithm 910: A Portable C++ Multiple-Precision System for Special-Function Calculations",
 // in ACM TOMS, {VOL 37, ISSUE 4, (February 2011)} (C) ACM, 2011. http://doi.acm.org/10.1145/1916461.1916469
 
+// This file implements the class decwide_t and most of its
+// basic functions including constructors, binary arithmetic
+// operations, comparison operators and more.
+
 #ifndef DECWIDE_T_2004_06_01_H_
   #define DECWIDE_T_2004_06_01_H_
 
@@ -31,7 +35,6 @@
   #endif
   #include <type_traits>
 
-  #include <math/wide_decimal/decwide_t_detail_fft.h>
   #include <math/wide_decimal/decwide_t_detail_ops.h>
 
   #include <util/utility/util_baselexical_cast.h>
@@ -723,9 +726,11 @@
         return operator=(v);
       }
 
+      const std::int32_t prec_elems_for_add_sub = (std::min)(my_prec_elem, v.my_prec_elem);
+
       // Get the offset for the add/sub operation.
-      constexpr exponent_type max_delta_exp =
-        static_cast<exponent_type>(decwide_t_elem_number * decwide_t_elem_digits10);
+      const exponent_type max_delta_exp =
+        static_cast<exponent_type>(prec_elems_for_add_sub * decwide_t_elem_digits10);
 
       using local_unsigned_wrap_type = detail::unsigned_wrap<unsigned_exponent_type, exponent_type>;
 
@@ -796,11 +801,13 @@
           detail::eval_add_n(p_u,
                              typename std::add_const<limb_type*>::type(p_u),
                              typename std::add_const<limb_type*>::type(p_v),
-                             decwide_t_elem_number);
+                             prec_elems_for_add_sub);
 
         if(b_copy)
         {
-          std::copy(my_n_data_for_add_sub.cbegin(), my_n_data_for_add_sub.cend(), my_data.begin());
+          std::copy(my_n_data_for_add_sub.cbegin(),
+                    my_n_data_for_add_sub.cbegin() + prec_elems_for_add_sub,
+                    my_data.begin());
           my_exp  = v.my_exp;
         }
 
@@ -808,7 +815,7 @@
         if(carry != static_cast<limb_type>(0U))
         {
           std::copy_backward(my_data.cbegin(),
-                             my_data.cend() - static_cast<std::uint_fast32_t>(1U),
+                             my_data.cend() - static_cast<std::uint_fast32_t>((std::int32_t(my_data.size()) - prec_elems_for_add_sub) + 1),
                              my_data.end());
 
           my_data[0U] = carry;
@@ -822,7 +829,7 @@
         // might have to be treated with a positive, negative or zero offset.
         if(       (ofs >  static_cast<std::int32_t>(0))
            || (   (ofs == static_cast<std::int32_t>(0))
-               && (detail::compare_ranges(my_data.data(), v.my_data.data(), decwide_t_elem_number) > static_cast<std::int_fast8_t>(0))))
+               && (detail::compare_ranges(my_data.data(), v.my_data.data(), static_cast<std::uint_fast32_t>(prec_elems_for_add_sub)) > 0)))
         {
           // In this case, |u| > |v| and ofs is positive.
           // Copy the data of v, shifted down to a lower value
@@ -857,7 +864,9 @@
           // Set the u-pointer p_u to point to m_n and the
           // operand pointer p_v to point to the shifted
           // data m_data.
-          std::copy(v.my_data.cbegin(), v.my_data.cend(), my_n_data_for_add_sub.begin());
+          std::copy(v.my_data.cbegin(),
+                    v.my_data.cbegin() + prec_elems_for_add_sub,
+                    my_n_data_for_add_sub.begin());
           p_u    = my_n_data_for_add_sub.data();
           p_v    = my_data.data();
           b_copy = true;
@@ -868,13 +877,15 @@
           detail::eval_subtract_n(p_u,
                                   typename std::add_const<limb_type*>::type(p_u),
                                   typename std::add_const<limb_type*>::type(p_v),
-                                  decwide_t_elem_number);
+                                  prec_elems_for_add_sub);
 
         static_cast<void>(has_borrow);
 
         if(b_copy)
         {
-          std::copy(my_n_data_for_add_sub.cbegin(), my_n_data_for_add_sub.cend(), my_data.begin());
+          std::copy(my_n_data_for_add_sub.cbegin(),
+                    my_n_data_for_add_sub.cbegin() + prec_elems_for_add_sub,
+                    my_data.begin());
           my_exp  = v.my_exp;
           my_neg  = v.my_neg;
         }
@@ -882,7 +893,7 @@
         // Is it necessary to justify the data?
         const typename array_type::const_iterator first_nonzero_elem =
           std::find_if(my_data.cbegin(),
-                       my_data.cend(),
+                       my_data.cbegin() + prec_elems_for_add_sub,
                        [](const limb_type& d) -> bool
                        {
                          return (d != static_cast<limb_type>(0U));
@@ -890,9 +901,9 @@
 
         if(first_nonzero_elem != my_data.cbegin())
         {
-          if(first_nonzero_elem == my_data.cend())
+          if(first_nonzero_elem == my_data.cbegin() + prec_elems_for_add_sub)
           {
-            // This result of the subtraction is exactly zero.
+            // This result of the subtraction is exactly zero (within precision).
             // Reset the sign and the exponent.
             my_neg = false;
             my_exp = static_cast<exponent_type>(0);
@@ -984,7 +995,7 @@
       const bool u_and_v_are_identical =
         (   (my_fpclass == v.my_fpclass)
          && (my_exp     == v.my_exp)
-         && (detail::compare_ranges(my_data.data(), v.my_data.data(), decwide_t_elem_number) == static_cast<std::int_fast8_t>(0)));
+         && (detail::compare_ranges(my_data.data(), v.my_data.data(), static_cast<std::uint_fast32_t>(decwide_t_elem_number)) == 0));
 
       if(u_and_v_are_identical)
       {
@@ -1227,7 +1238,8 @@
         {
           // The signs are the same and the exponents are the same.
           // Compare the data.
-          const std::int_fast8_t val_cmp_data = detail::compare_ranges(my_data.data(), v.my_data.data(), decwide_t_elem_number);
+          const std::int_fast8_t val_cmp_data =
+            detail::compare_ranges(my_data.data(), v.my_data.data(), static_cast<std::uint_fast32_t>(decwide_t_elem_number));
 
           return ((!my_neg) ? val_cmp_data : static_cast<std::int_fast8_t>(-val_cmp_data));
         }
@@ -1482,11 +1494,13 @@
 
         using std::pow;
 
-        // Estimate the one over the root using simple manipulations.
+        // Estimate the initial guess of one over the root using simple manipulations.
         const InternalFloatType one_over_rtn_d = pow(dd, InternalFloatType(-1) / static_cast<InternalFloatType>(p));
 
         // Set the result equal to the initial guess.
         result = decwide_t(one_over_rtn_d, static_cast<exponent_type>(-ne / p));
+
+        const decwide_t my_local_one(one<MyDigits10, LimbType, AllocatorType, InternalFloatType, ExponentType, FftFloatType>());
 
         for(std::int32_t digits  = (std::int32_t) (std::numeric_limits<InternalFloatType>::digits10 - 1);
                          digits  < (std::int32_t) (original_prec_elem * decwide_t_elem_digits10);
@@ -1498,17 +1512,17 @@
             + (std::max)((std::int32_t) (decwide_t_elem_digits10  + 1), (std::int32_t) 9);
 
           result.precision(new_prec_as_digits10);
+               x.precision(new_prec_as_digits10);
 
           // Perform the next iteration.
-          decwide_t term =
-              (((-pow(result, p) * x) + one<MyDigits10, LimbType, AllocatorType, InternalFloatType, ExponentType, FftFloatType>()) / p)
-            + one<MyDigits10, LimbType, AllocatorType, InternalFloatType, ExponentType, FftFloatType>();
+          decwide_t term = (((-pow(result, p) * x) + my_local_one) / p) + my_local_one;
 
           term.precision(new_prec_as_digits10);
 
           result *= term;
         }
 
+             x.my_prec_elem = original_prec_elem;
         result.my_prec_elem = original_prec_elem;
       }
 
@@ -1917,94 +1931,6 @@
       }
     }
 
-    static void mul_loop_fft(limb_type* u, const limb_type* v, const std::int32_t prec_elems_for_multiply)
-    {
-      // Determine the required FFT size n_fft,
-      // where n_fft must be a power of two.
-
-      // We use half-limbs in the FFT in order to reduce
-      // the size of the data points in the FFTs.
-      // This helps preserve precision for large
-      // array lengths.
-
-      // The size is doubled in order to contain the multiplication
-      // result. This is because we are performing (n * n -> 2n)
-      // multiplication. Furthermore, the FFT size is doubled again
-      // since half-limbs are used.
-
-      // Obtain the needed FFT size doubled (and doubled again),
-      // with the added condition of needing to be a power of 2.
-      const std::uint32_t n_fft = detail::a000079::a000079_as_constexpr(std::uint32_t(prec_elems_for_multiply)) * 4UL;
-
-      #if !defined(WIDE_DECIMAL_DISABLE_DYNAMIC_MEMORY_ALLOCATION)
-      fft_float_type* my_af_fft_mul_pool = new fft_float_type[n_fft];
-      fft_float_type* my_bf_fft_mul_pool = new fft_float_type[n_fft];
-      #endif
-
-      fft_float_type* af = my_af_fft_mul_pool;
-      fft_float_type* bf = my_bf_fft_mul_pool;
-
-      for(std::uint32_t i = static_cast<std::uint32_t>(0U); i < static_cast<std::uint32_t>(prec_elems_for_multiply); ++i)
-      {
-        af[(i * 2U)]      = fft_float_type(u[i] / decwide_t_elem_mask_half);
-        af[(i * 2U) + 1U] = fft_float_type(u[i] % decwide_t_elem_mask_half);
-
-        bf[(i * 2U)]      = fft_float_type(v[i] / decwide_t_elem_mask_half);
-        bf[(i * 2U) + 1U] = fft_float_type(v[i] % decwide_t_elem_mask_half);
-      }
-
-      std::fill(af + (2 * prec_elems_for_multiply), af + n_fft, fft_float_type(0));
-      std::fill(bf + (2 * prec_elems_for_multiply), bf + n_fft, fft_float_type(0));
-
-      // Perform forward FFTs on the data arrays a and b.
-      detail::fft::rfft_lanczos_rfft<fft_float_type, true>(n_fft, af);
-      detail::fft::rfft_lanczos_rfft<fft_float_type, true>(n_fft, bf);
-
-      // Perform the convolution of a and b in the transform space.
-      // This does, in fact, execute the actual multiplication of (a * b).
-      af[0U] *= bf[0U];
-      af[1U] *= bf[1U];
-
-      for(std::uint32_t j = static_cast<std::uint32_t>(2U); j < n_fft; j += 2U)
-      {
-        const fft_float_type tmp_aj = af[j];
-
-        af[j + 0U] = (tmp_aj * bf[j + 0U]) - (af[j + 1U] * bf[j + 1U]);
-        af[j + 1U] = (tmp_aj * bf[j + 1U]) + (af[j + 1U] * bf[j + 0U]);
-      }
-
-      // Perform the reverse FFT on the result of the convolution.
-      detail::fft::rfft_lanczos_rfft<fft_float_type, false>(n_fft, af);
-
-      // Release the carries and re-combine the low and high parts.
-      // This sets the integral data elements in the big number
-      // to the result of multiplication.
-      using fft_carry_type = std::uint_fast64_t;
-
-      fft_carry_type carry = static_cast<fft_carry_type>(0U);
-
-      for(std::uint32_t j = static_cast<std::uint32_t>((prec_elems_for_multiply * 2L) - 2L); static_cast<std::int32_t>(j) >= 0; j -= 2U)
-      {
-        fft_float_type         xaj = af[j] / (n_fft / 2U);
-        const fft_carry_type xlo = static_cast<fft_carry_type>(xaj + detail::fft::template_half<fft_float_type>()) + carry;
-        carry                    = static_cast<fft_carry_type>(xlo / static_cast<limb_type>(decwide_t_elem_mask_half));
-        const limb_type      nlo = static_cast<limb_type>     (xlo - static_cast<fft_carry_type>(carry * static_cast<limb_type>(decwide_t_elem_mask_half)));
-
-                             xaj = ((j != 0) ? (af[j - 1U] / (n_fft / 2U)) : fft_float_type(0));
-        const fft_carry_type xhi = static_cast<fft_carry_type>(xaj + detail::fft::template_half<fft_float_type>()) + carry;
-        carry                    = static_cast<fft_carry_type>(xhi / static_cast<limb_type>(decwide_t_elem_mask_half));
-        const limb_type      nhi = static_cast<limb_type>     (xhi - static_cast<fft_carry_type>(carry * static_cast<limb_type>(decwide_t_elem_mask_half)));
-
-        u[(j / 2U)] = static_cast<limb_type>(static_cast<limb_type>(nhi * static_cast<limb_type>(decwide_t_elem_mask_half)) + nlo);
-      }
-
-      #if !defined(WIDE_DECIMAL_DISABLE_DYNAMIC_MEMORY_ALLOCATION)
-      // De-allocate the dynamic memory for the FFT result arrays.
-      delete [] my_af_fft_mul_pool;
-      delete [] my_bf_fft_mul_pool;
-      #endif
-    }
-
     template<const std::int32_t OtherDigits10>
     void eval_mul_dispatch_multiplication_method(
       const decwide_t<OtherDigits10, LimbType, AllocatorType, InternalFloatType, ExponentType, FftFloatType>& v,
@@ -2246,7 +2172,38 @@
       {
         // Use FFT-based multiplication.
 
-        mul_loop_fft(my_data.data(), v.my_data.data(), static_cast<std::int32_t>(prec_elems_for_multiply));
+        // Determine the required FFT size n_fft,
+        // where n_fft must be a power of two.
+
+        // We use half-limbs in the FFT in order to reduce
+        // the size of the data points in the FFTs.
+        // This helps preserve precision for large
+        // array lengths.
+
+        // The size is doubled in order to contain the multiplication
+        // result. This is because we are performing (n * n -> 2n)
+        // multiplication. Furthermore, the FFT size is doubled again
+        // since half-limbs are used.
+
+        // Obtain the needed FFT size doubled (and doubled again),
+        // with the added condition of needing to be a power of 2.
+        const std::uint32_t n_fft = detail::a000079::a000079_as_constexpr(std::uint32_t(prec_elems_for_multiply)) * 4UL;
+
+        #if !defined(WIDE_DECIMAL_DISABLE_DYNAMIC_MEMORY_ALLOCATION)
+        fft_float_type* my_af_fft_mul_pool = new fft_float_type[n_fft];
+        fft_float_type* my_bf_fft_mul_pool = new fft_float_type[n_fft];
+        #endif
+
+        fft_float_type* af = my_af_fft_mul_pool;
+        fft_float_type* bf = my_bf_fft_mul_pool;
+
+        detail::mul_loop_fft(my_data.data(),
+                             typename std::add_const<limb_type*>::type(my_data.data()),
+                             typename std::add_const<limb_type*>::type(v.my_data.data()),
+                             af,
+                             bf,
+                             static_cast<std::int32_t>(prec_elems_for_multiply),
+                             n_fft);
 
         if(my_data.front() != static_cast<limb_type>(0U))
         {
@@ -2262,6 +2219,12 @@
 
           my_data.back() = static_cast<limb_type>(0U);
         }
+
+        #if !defined(WIDE_DECIMAL_DISABLE_DYNAMIC_MEMORY_ALLOCATION)
+        // De-allocate the dynamic memory for the FFT result arrays.
+        delete [] my_af_fft_mul_pool;
+        delete [] my_bf_fft_mul_pool;
+        #endif
       }
       else
       {
@@ -3874,30 +3837,6 @@
 
     return result;
   }
-
-  bool example000_multiply_nines         ();
-  bool example000a_multiply_pi_squared   ();
-  bool example001_roots_sqrt             ();
-  bool example001a_roots_seventh         ();
-  bool example001b_roots_almost_integer  ();
-  bool example001c_roots_sqrt_limb08     ();
-  bool example001d_pow2_from_list        ();
-  bool example002_pi                     ();
-  bool example002a_pi_small_limb         ();
-  bool example002b_pi_100k               ();
-  bool example002c_pi_quintic            ();
-  bool example002d_pi_limb08             ();
-  bool example003_zeta                   ();
-  bool example004_bessel_recur           ();
-  bool example005_polylog_series         ();
-  bool example006_logarithm              ();
-  bool example007_catalan_series         ();
-  bool example008_bernoulli_tgamma       ();
-  bool example009_boost_math_standalone  ();
-  bool example009a_boost_math_standalone ();
-  bool example010_hypergeometric_2f1     ();
-  bool example010a_hypergeometric_1f1    ();
-  bool example011_trig_trapezoid_integral();
 
   } } // namespace math::wide_decimal
 

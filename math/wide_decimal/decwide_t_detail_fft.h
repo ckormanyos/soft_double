@@ -9,6 +9,9 @@
 // "Algorithm 910: A Portable C++ Multiple-Precision System for Special-Function Calculations",
 // in ACM TOMS, {VOL 37, ISSUE 4, (February 2011)} (C) ACM, 2011. http://doi.acm.org/10.1145/1916461.1916469
 
+// This file implements a naive FFT used for large-digit
+// FFT multiplication in decwide_t.
+
 #ifndef DECWIDE_T_DETAIL_FFT_2013_01_08_H_
   #define DECWIDE_T_DETAIL_FFT_2013_01_08_H_
 
@@ -18,28 +21,28 @@
   namespace math { namespace wide_decimal { namespace detail { namespace fft {
 
   template<typename float_type>
-  constexpr float_type template_half();
+  inline constexpr float_type template_half() { float_type(float_type(1) / 2); }
 
   template<>
-  constexpr float template_half<float>() { return float(0.5L); }
+  inline constexpr float template_half<float>() { return float(0.5L); }
 
   template<>
-  constexpr double template_half<double>() { return double(0.5L); }
+  inline constexpr double template_half<double>() { return double(0.5L); }
 
   template<>
-  constexpr long double template_half<long double>() { return (long double) (0.5L); }
+  inline constexpr long double template_half<long double>() { return (long double) (0.5L); }
 
   template<typename float_type>
-  float_type template_fast_div_by_two(float_type a);
+  inline constexpr float_type template_fast_div_by_two(float_type a);
 
   template<>
-  inline float template_fast_div_by_two<float>(float a) { return a / 2; }
+  inline constexpr float template_fast_div_by_two<float>(float a) { return a / 2; }
 
   template<>
-  inline double template_fast_div_by_two<double>(double a) { return a / 2; }
+  inline constexpr double template_fast_div_by_two<double>(double a) { return a / 2; }
 
   template<>
-  inline long double template_fast_div_by_two<long double>(long double a) { return a / 2; }
+  inline constexpr long double template_fast_div_by_two<long double>(long double a) { return a / 2; }
 
   template<typename float_type>
   float_type template_sin_order_1(const std::uint32_t NumPoints)

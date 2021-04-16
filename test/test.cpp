@@ -3,7 +3,7 @@
 
 // Build locally for test on MinGW or Strawberry via Git bash.
 // cd C:\Users\User\Documents\Ks\PC_Software\NumericalPrograms\ExtendedNumberTypes\soft_double
-// g++ -finline-functions -finline-limit=64 -march=native -mtune=native -O3 -Wall -Wextra -pedantic -Wno-strict-aliasing -std=c++14 -I. test/test.cpp test/test_soft_double.cpp test/test_soft_double_with_decwide_t_100k_digit_pi.cpp -o test_soft_double.exe
+// g++ -finline-functions -finline-limit=64 -march=native -mtune=native -O3 -Wall -Wextra -pedantic -Wno-strict-aliasing -std=c++14 -I. test/test.cpp test/test_soft_double.cpp test/test_soft_double_with_decwide_t_100k_digit_pi.cpp -o soft_double.exe
 
 extern bool test_soft_double();
 extern bool test_soft_double_with_decwide_t_100k_digit_pi();

@@ -45,14 +45,199 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef SOFT_DOUBLE_2020_10_27_H_
   #define SOFT_DOUBLE_2020_10_27_H_
 
+  #include <array>
+  #include <cstdint>
   #include <cstddef>
   #include <type_traits>
 
-  #include <math/soft_double/internals.h>
-
   namespace sf {
 
-  namespace detail { struct nothing { }; }
+  namespace detail {
+
+  struct uint128_as_struct  { uint64_t v0, v64; };
+  struct uint64_extra       { uint64_t extra, v; };
+
+  constexpr bool         signF32UI(uint32_t a) { return ((bool) ((uint32_t) (a)>>31)); }
+  constexpr int_fast16_t expF32UI (uint32_t a) { return ((int_fast16_t) ((a)>>23) & 0xFF); }
+  constexpr uint32_t     fracF32UI(uint32_t a) { return ((a) & UINT32_C(0x007FFFFF)); }
+
+  constexpr bool         signF64UI(uint64_t a) { return ((bool) ((uint64_t) (a)>>63)); }
+  constexpr int_fast16_t expF64UI (uint64_t a) { return ((int_fast16_t) ((a)>>52) & 0x7FF); }
+  constexpr uint64_t     fracF64UI(uint64_t a) { return ((a) & UINT64_C(0x000FFFFFFFFFFFFF)); }
+
+  template<typename IntegralTypeExp,
+           typename IntegralTypeSig>
+  constexpr uint64_t packToF64UI(bool sign, IntegralTypeExp exp, IntegralTypeSig sig)
+  {
+    return ((uint64_t) ((((uint64_t) (sign ? 1ULL : 0ULL))<<63) + (((uint64_t) (exp))<<52) + (uint64_t) (sig)));
+  }
+
+  /*----------------------------------------------------------------------------
+  | Shifts 'a' right by the number of bits given in 'dist', which must be in
+  | the range 1 to 63.  If any nonzero bits are shifted off, they are "jammed"
+  | into the least-significant bit of the shifted value by setting the least-
+  | significant bit to 1.  This shifted-and-jammed value is returned.
+  *----------------------------------------------------------------------------*/
+  constexpr uint64_t softfloat_shortShiftRightJam64(uint64_t a, uint_fast8_t dist)
+  {
+    return a >> dist | ((a & (((uint64_t) 1 << dist) - 1)) != 0);
+  }
+
+  /*----------------------------------------------------------------------------
+  | Shifts 'a' right by the number of bits given in 'dist', which must not
+  | be zero.  If any nonzero bits are shifted off, they are "jammed" into the
+  | least-significant bit of the shifted value by setting the least-significant
+  | bit to 1.  This shifted-and-jammed value is returned.
+  |   The value of 'dist' can be arbitrarily large.  In particular, if 'dist' is
+  | greater than 32, the result will be either 0 or 1, depending on whether 'a'
+  | is zero or nonzero.
+  *----------------------------------------------------------------------------*/
+  constexpr uint32_t softfloat_shiftRightJam32(uint32_t a, uint_fast16_t dist)
+  {
+    return (dist < 31) ? a >> dist | ((uint32_t)(a << (-dist & 31)) != 0) : (a != 0);
+  }
+
+  /*----------------------------------------------------------------------------
+  | Shifts 'a' right by the number of bits given in 'dist', which must not
+  | be zero.  If any nonzero bits are shifted off, they are "jammed" into the
+  | least-significant bit of the shifted value by setting the least-significant
+  | bit to 1.  This shifted-and-jammed value is returned.
+  |   The value of 'dist' can be arbitrarily large.  In particular, if 'dist' is
+  | greater than 64, the result will be either 0 or 1, depending on whether 'a'
+  | is zero or nonzero.
+  *----------------------------------------------------------------------------*/
+  constexpr uint64_t softfloat_shiftRightJam64(uint64_t a, uint32_t dist)
+  {
+    return (dist < 63) ? a >> dist | ((uint64_t)(a << (-dist & 63)) != 0) : (a != 0);
+  }
+
+  /*----------------------------------------------------------------------------
+  | A constant table that translates an 8-bit unsigned integer (the array index)
+  | into the number of leading 0 bits before the most-significant 1 of that
+  | integer.  For integer zero (index 0), the corresponding table element is 8.
+  *----------------------------------------------------------------------------*/
+  constexpr uint_least8_t softfloat_countLeadingZeros8_z_table(const uint_fast8_t index)
+  {
+    return ((index < 0x1U) ? 4U :
+           ((index < 0x2U) ? 3U :
+           ((index < 0x4U) ? 2U :
+           ((index < 0x8U) ? 1U : 0U))));
+  }
+
+  constexpr uint_least8_t softfloat_countLeadingZeros8(const uint_fast8_t index)
+  {
+    return (index < 0x10U) ? 4U + softfloat_countLeadingZeros8_z_table(index &  0xFU)
+                           :      softfloat_countLeadingZeros8_z_table(index >>   4U);
+  }
+
+  constexpr uint_fast8_t softfloat_countLeadingZeros16(uint16_t a)
+  {
+    return (a < UINT16_C(0x100)) ? 8U + softfloat_countLeadingZeros8((uint_fast8_t) a)
+                                 :      softfloat_countLeadingZeros8((uint_fast8_t) (a >> 8U));
+  }
+
+  constexpr uint_fast8_t softfloat_countLeadingZeros32(uint32_t a)
+  {
+    // TBD: Finding MSB to count leading zeros can probably be done more efficiently.
+    uint_fast8_t count = 0;
+
+    if(a < UINT32_C(0x10000))
+    {
+      count = 16U;
+      a   <<= 16U;
+    }
+
+    if(a < UINT32_C(0x1000000))
+    {
+      count += 8U;
+      a    <<= 8U;
+    }
+
+    count += softfloat_countLeadingZeros8((uint_fast8_t) (a >> 24U));
+
+    return count;
+  }
+
+  /*----------------------------------------------------------------------------
+  | Returns the number of leading 0 bits before the most-significant 1 bit of
+  | 'a'.  If 'a' is zero, 64 is returned.
+  *----------------------------------------------------------------------------*/
+  constexpr uint_fast8_t softfloat_countLeadingZeros64(uint64_t a)
+  {
+    uint_fast8_t count = 0U;
+
+    uint32_t a32   = (uint32_t) (a >> 32);
+
+    if(!a32)
+    {
+      count = 32U;
+      a32 = (uint32_t) a;
+    }
+
+    /*------------------------------------------------------------------------
+    | From here, result is current count + count leading zeros of `a32'.
+    *------------------------------------------------------------------------*/
+    if(a32 < UINT32_C(0x10000))
+    {
+      count += 16U;
+      a32  <<= 16U;
+    }
+
+    if(a32 < UINT32_C(0x1000000))
+    {
+      count += 8U;
+      a32  <<= 8U;
+    }
+
+    count += softfloat_countLeadingZeros8(a32 >> 24U);
+
+    return count;
+  }
+
+  /*----------------------------------------------------------------------------
+  | Returns an approximation to the reciprocal of the number represented by 'a',
+  | where 'a' is interpreted as an unsigned fixed-point number with one integer
+  | bit and 31 fraction bits.  The 'a' input must be "normalized", meaning that
+  | its most-significant bit (bit 31) must be 1.  Thus, if A is the value of
+  | the fixed-point interpretation of 'a', then 1 <= A < 2.  The returned value
+  | is interpreted as a pure unsigned fraction, having no integer bits and 32
+  | fraction bits.  The approximation returned is never greater than the true
+  | reciprocal 1/A, and it differs from the true reciprocal by at most 2.006 ulp
+  | (units in the last place).
+  *----------------------------------------------------------------------------*/
+  constexpr uint32_t softfloat_approxRecip32_1(uint32_t a)
+  {
+    return (uint32_t) (UINT64_C( 0x7FFFFFFFFFFFFFFF ) / a);
+  }
+
+  /*----------------------------------------------------------------------------
+  | Shifts the 128 bits formed by concatenating 'a' and 'extra' right by 64
+  | _plus_ the number of bits given in 'dist', which must not be zero.  This
+  | shifted value is at most 64 nonzero bits and is returned in the 'v' field
+  | of the 'struct uint64_extra' result.  The 64-bit 'extra' field of the result
+  | contains a value formed as follows from the bits that were shifted off:  The
+  | _last_ bit shifted off is the most-significant bit of the 'extra' field, and
+  | the other 63 bits of the 'extra' field are all zero if and only if _all_but_
+  | _the_last_ bits shifted off were all zero.
+  |   (This function makes more sense if 'a' and 'extra' are considered to form
+  | an unsigned fixed-point number with binary point between 'a' and 'extra'.
+  | This fixed-point value is shifted right by the number of bits given in
+  | 'dist', and the integer part of this shifted value is returned in the 'v'
+  | field of the result.  The fractional part of the shifted value is modified
+  | as described above and returned in the 'extra' field of the result.)
+  *----------------------------------------------------------------------------*/
+  constexpr struct uint64_extra softfloat_shiftRightJam64Extra(uint64_t a, uint64_t extra, uint32_t dist)
+  {
+    return
+    {
+      (dist < 64) ? (a << (-dist & 63)) | (extra != 0 ? 1 : 0) : ((dist == 64) ? a : (a != 0 ? 1 : 0))  | (extra != 0 ? 1 : 0),
+      (dist < 64) ?  a >> dist                                 : 0
+    };
+  }
+
+  struct nothing { };
+
+  }
 
   class soft_double;
 
@@ -101,7 +286,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     soft_double() { }
 
-    // TBD: Can we use bit twiddling here to attain constexpr construction?
     constexpr soft_double(const std::int8_t  n) : my_value(my__i32_to_f64((std::int32_t) n)) { }
     constexpr soft_double(const std::int16_t n) : my_value(my__i32_to_f64((std::int32_t) n)) { }
     constexpr soft_double(const std::int32_t n) : my_value(my__i32_to_f64(               n)) { }
@@ -119,17 +303,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     {
       const uint32_t uiA = *((volatile uint32_t*) &f);
 
-      const bool         sign = signF32UI(uiA);
-      const int_fast16_t exp  = expF32UI(uiA);
-      const uint32_t     frac = fracF32UI(uiA);
+      const bool         sign = detail::signF32UI(uiA);
+      const int_fast16_t exp  = detail::expF32UI(uiA);
+      const uint32_t     frac = detail::fracF32UI(uiA);
 
       if((!exp) && (!frac))
       {
-        my_value = packToF64UI(sign, 0, 0);
+        my_value = detail::packToF64UI(sign, 0, 0);
       }
       else
       {
-        my_value = packToF64UI(sign, exp + 0x380, (uint64_t) frac << 29);
+        my_value = detail::packToF64UI(sign, exp + 0x380, (uint64_t) frac << 29);
       }
     }
 
@@ -198,8 +382,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     bool my_le(const soft_double& b) const
     {
-      const bool signA = signF64UI(  my_value);
-      const bool signB = signF64UI(b.my_value);
+      const bool signA = detail::signF64UI(  my_value);
+      const bool signB = detail::signF64UI(b.my_value);
 
       return (signA != signB) ? (signA || !((my_value | b.my_value) & UINT64_C(0x7FFFFFFFFFFFFFFF)))
                               : (my_value == b.my_value) || (signA ^ (my_value < b.my_value));
@@ -207,8 +391,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     bool my_lt(const soft_double& b) const
     {
-      const bool signA = signF64UI(  my_value);
-      const bool signB = signF64UI(b.my_value);
+      const bool signA = detail::signF64UI(  my_value);
+      const bool signB = detail::signF64UI(b.my_value);
 
       return (signA != signB) ? signA && ((my_value | b.my_value) & UINT64_C(0x7FFFFFFFFFFFFFFF))
                               : (my_value != b.my_value) && (signA ^ (my_value < b.my_value));
@@ -216,8 +400,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static uint64_t f64_add(const uint64_t a, const uint64_t b)
     {
-      const bool signA = signF64UI(a);
-      const bool signB = signF64UI(b);
+      const bool signA = detail::signF64UI(a);
+      const bool signB = detail::signF64UI(b);
 
       if(signA == signB)
       {
@@ -231,8 +415,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static uint64_t f64_sub(const uint64_t a, const uint64_t b)
     {
-      const bool signA = signF64UI(a);
-      const bool signB = signF64UI(b);
+      const bool signA = detail::signF64UI(a);
+      const bool signB = detail::signF64UI(b);
 
       if(signA == signB)
       {
@@ -246,19 +430,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static uint64_t f64_mul(const uint64_t a, const uint64_t b)
     {
-      const bool         signA = signF64UI(a);
-      const int_fast16_t expA  = expF64UI (a);
-            uint64_t     sigA  = fracF64UI(a);
+      const bool         signA = detail::signF64UI(a);
+      const int_fast16_t expA  = detail::expF64UI (a);
+            uint64_t     sigA  = detail::fracF64UI(a);
 
-      const bool         signB = signF64UI(b);
-      const int_fast16_t expB  = expF64UI (b);
-            uint64_t     sigB  = fracF64UI(b);
+      const bool         signB = detail::signF64UI(b);
+      const int_fast16_t expB  = detail::expF64UI (b);
+            uint64_t     sigB  = detail::fracF64UI(b);
 
       const bool signZ = signA ^ signB;
 
       if(((!expA) && (!sigA)) || ((!expB) && (!sigB)))
       {
-        return packToF64UI(signZ, 0, 0);
+        return detail::packToF64UI(signZ, 0, 0);
       }
       else
       {
@@ -275,7 +459,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         const uint32_t b32 = (uint32_t) (sigB >> 32U);
         const uint32_t b0  = (uint32_t)  sigB;
 
-        struct uint128 sig128Z;
+        struct detail::uint128_as_struct sig128Z;
 
         sig128Z.v0 = ((uint64_t) a0) * b0;
 
@@ -308,19 +492,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static uint64_t f64_div(const uint64_t a, const uint64_t b)
     {
-      const bool         signA = signF64UI(a);
-            int_fast16_t expA  = expF64UI (a);
-            uint64_t     sigA  = fracF64UI(a);
+      const bool         signA = detail::signF64UI(a);
+            int_fast16_t expA  = detail::expF64UI (a);
+            uint64_t     sigA  = detail::fracF64UI(a);
 
-      const bool         signB = signF64UI(b);
-            int_fast16_t expB  = expF64UI (b);
-            uint64_t     sigB  = fracF64UI(b);
+      const bool         signB = detail::signF64UI(b);
+            int_fast16_t expB  = detail::expF64UI (b);
+            uint64_t     sigB  = detail::fracF64UI(b);
 
       const bool signZ = signA ^ signB;
 
       if((!expA) && (!sigA))
       {
-        return packToF64UI(signZ, 0, 0);
+        return detail::packToF64UI(signZ, 0, 0);
       }
       else
       {
@@ -342,7 +526,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
         sigB <<= 11U;
 
-        const uint32_t recip32    = softfloat_approxRecip32_1(sigB >> 32U) - 2U;
+        const uint32_t recip32    = detail::softfloat_approxRecip32_1(sigB >> 32U) - 2U;
         const uint32_t sig32Z     = ((uint32_t) (sigA >> 32U) * (uint64_t) recip32) >> 32U;
 
         uint32_t doubleTerm = sig32Z << 1U;
@@ -383,9 +567,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static uint64_t f64_sqrt(const uint64_t a)
     {
-      bool         signA = signF64UI(a);
-      int_fast16_t expA  = expF64UI (a);
-      uint64_t     sigA  = fracF64UI(a);
+      bool         signA = detail::signF64UI(a);
+      int_fast16_t expA  = detail::expF64UI (a);
+      uint64_t     sigA  = detail::fracF64UI(a);
 
       if(((!expA) && (!sigA)) || signA)
       {
@@ -448,9 +632,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static uint32_t f64_to_ui32(const uint64_t a)
     {
-      bool          sign = signF64UI(a);
-      int_fast16_t  exp  = expF64UI (a);
-      uint64_t sig  = fracF64UI(a);
+      bool          sign = detail::signF64UI(a);
+      int_fast16_t  exp  = detail::expF64UI (a);
+      uint64_t      sig  = detail::fracF64UI(a);
 
       if(exp)
       {
@@ -461,7 +645,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       if(0 < shiftDist)
       {
-        sig = softfloat_shiftRightJam64(sig, (uint32_t) shiftDist);
+        sig = detail::softfloat_shiftRightJam64(sig, (uint32_t) shiftDist);
       }
 
       return softfloat_roundToUI32(sign, sig);
@@ -469,9 +653,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static int32_t f64_to__i32(const uint64_t a)
     {
-      bool          sign = signF64UI(a);
-      int_fast16_t  exp  = expF64UI (a);
-      uint64_t sig  = fracF64UI(a);
+      bool          sign = detail::signF64UI(a);
+      int_fast16_t  exp  = detail::expF64UI (a);
+      uint64_t      sig  = detail::fracF64UI(a);
 
       if(exp)
       {
@@ -482,7 +666,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       if(0 < shiftDist)
       {
-        sig = softfloat_shiftRightJam64(sig, (uint32_t) shiftDist);
+        sig = detail::softfloat_shiftRightJam64(sig, (uint32_t) shiftDist);
       }
 
       return softfloat_roundToI32(sign, sig);
@@ -490,9 +674,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static uint64_t f64_to_ui64(const uint64_t a)
     {
-      const bool          sign = signF64UI(a);
-      const int_fast16_t  exp  = expF64UI (a);
-            uint64_t sig  = fracF64UI(a);
+      const bool          sign = detail::signF64UI(a);
+      const int_fast16_t  exp  = detail::expF64UI (a);
+            uint64_t      sig  = detail::fracF64UI(a);
 
       if(exp)
       {
@@ -501,7 +685,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       int_fast16_t shiftDist = 0x433 - exp;
 
-      struct uint64_extra sigExtra;
+      struct detail::uint64_extra sigExtra;
 
       if(shiftDist <= 0)
       {
@@ -515,7 +699,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       }
       else
       {
-        sigExtra = softfloat_shiftRightJam64Extra(sig, 0U, (uint32_t) shiftDist);
+        sigExtra = detail::softfloat_shiftRightJam64Extra(sig, 0U, (uint32_t) shiftDist);
       }
 
       return softfloat_roundToUI64(sign, sigExtra.v);
@@ -523,9 +707,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static int64_t f64_to__i64(const uint64_t a)
     {
-      const bool          sign = signF64UI(a);
-      const int_fast16_t  exp  = expF64UI (a);
-            uint64_t sig  = fracF64UI(a);
+      const bool          sign = detail::signF64UI(a);
+      const int_fast16_t  exp  = detail::expF64UI (a);
+            uint64_t      sig  = detail::fracF64UI(a);
 
       if(exp)
       {
@@ -534,7 +718,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       int_fast16_t shiftDist = 0x433 - exp;
 
-      struct uint64_extra sigExtra;
+      struct detail::uint64_extra sigExtra;
 
       if(shiftDist <= 0)
       {
@@ -548,7 +732,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       }
       else
       {
-        sigExtra = softfloat_shiftRightJam64Extra(sig, 0U, (uint32_t) shiftDist);
+        sigExtra = detail::softfloat_shiftRightJam64Extra(sig, 0U, (uint32_t) shiftDist);
       }
 
       return softfloat_roundToI64(sign, sigExtra.v);
@@ -558,14 +742,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     {
       return
         (!a) ? 0U
-             : packToF64UI((a < 0), 0x432 - int_fast8_t((int_fast8_t) (softfloat_countLeadingZeros32(uint32_t((a < 0) ? -(uint32_t) a : (uint32_t) a)) + 21U)), (uint64_t) uint32_t((a < 0) ? -(uint32_t) a : (uint32_t) a) << int_fast8_t((int_fast8_t) (softfloat_countLeadingZeros32(uint32_t((a < 0) ? -(uint32_t) a : (uint32_t) a)) + 21U)));
+             : detail::packToF64UI((a < 0), 0x432 - int_fast8_t((int_fast8_t) (detail::softfloat_countLeadingZeros32(uint32_t((a < 0) ? -(uint32_t) a : (uint32_t) a)) + 21U)), (uint64_t) uint32_t((a < 0) ? -(uint32_t) a : (uint32_t) a) << int_fast8_t((int_fast8_t) (detail::softfloat_countLeadingZeros32(uint32_t((a < 0) ? -(uint32_t) a : (uint32_t) a)) + 21U)));
     }
 
     static constexpr uint64_t my__i64_to_f64(const int64_t a)
     {
       return
         (!((uint64_t) a & UINT64_C(0x7FFFFFFFFFFFFFFF)))
-          ? ((a < 0) ? packToF64UI(1, 0x43E, 0) : 0U)
+          ? ((a < 0) ? detail::packToF64UI(1, 0x43E, 0) : 0U)
           : softfloat_normRoundPackToF64((a < 0), 0x43C, uint64_t((a < 0) ? -(uint64_t) a : (uint64_t) a));
     }
 
@@ -574,13 +758,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       return
         ((a == 0U)
           ? 0U
-          : packToF64UI(0, 0x432 - int_fast8_t((int_fast8_t) (softfloat_countLeadingZeros32(a) + 21U)), ((uint64_t) a) << int_fast8_t((int_fast8_t) (softfloat_countLeadingZeros32(a) + 21U))));
+          : detail::packToF64UI(0, 0x432 - int_fast8_t((int_fast8_t) (detail::softfloat_countLeadingZeros32(a) + 21U)), ((uint64_t) a) << int_fast8_t((int_fast8_t) (detail::softfloat_countLeadingZeros32(a) + 21U))));
     }
 
     static constexpr uint64_t my_ui64_to_f64(const uint64_t a)
     {
       return (!a) ? (uint64_t) 0U
-                  : (a & UINT64_C(0x8000000000000000)) ? softfloat_roundPackToF64(0, 0x43D, softfloat_shortShiftRightJam64(a, 1))
+                  : (a & UINT64_C(0x8000000000000000)) ? softfloat_roundPackToF64(0, 0x43D, detail::softfloat_shortShiftRightJam64(a, 1))
                                                        : softfloat_normRoundPackToF64(0, 0x43C, a);
     }
 
@@ -657,10 +841,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static uint64_t softfloat_addMagsF64(uint64_t uiA, uint64_t uiB, bool signZ)
     {
-      const int_fast16_t  expA = expF64UI (uiA);
-            uint64_t sigA = fracF64UI(uiA);
-      const int_fast16_t  expB = expF64UI (uiB);
-            uint64_t sigB = fracF64UI(uiB);
+      const int_fast16_t expA = detail::expF64UI (uiA);
+            uint64_t     sigA = detail::fracF64UI(uiA);
+      const int_fast16_t expB = detail::expF64UI (uiB);
+            uint64_t     sigB = detail::fracF64UI(uiB);
 
       const int_fast16_t expDiff = expA - expB;
 
@@ -691,7 +875,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             sigA <<= 1;
           }
 
-          sigA = softfloat_shiftRightJam64(sigA, (uint32_t) (-expDiff));
+          sigA = detail::softfloat_shiftRightJam64(sigA, (uint32_t) (-expDiff));
         }
         else
         {
@@ -706,7 +890,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             sigB <<= 1U;
           }
 
-          sigB = softfloat_shiftRightJam64(sigB, (uint32_t) expDiff);
+          sigB = detail::softfloat_shiftRightJam64(sigB, (uint32_t) expDiff);
         }
 
         sigZ = (uint64_t) (UINT64_C(0x2000000000000000) + sigA) + sigB;
@@ -787,13 +971,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static uint64_t softfloat_normRoundPackToF64(bool sign, int_fast16_t exp, uint64_t sig)
     {
-      const int_fast8_t shiftDist = (int_fast8_t) (softfloat_countLeadingZeros64(sig) - 1U);
+      const int_fast8_t shiftDist = (int_fast8_t) (detail::softfloat_countLeadingZeros64(sig) - 1U);
 
       exp -= shiftDist;
 
       if((10 <= shiftDist) && ((uint32_t) exp < 0x7FD))
       {
-        const uint64_t uZ = packToF64UI(sign, sig ? exp : 0, sig << (shiftDist - 10));
+        const uint64_t uZ = detail::packToF64UI(sign, sig ? exp : 0, sig << (shiftDist - 10));
 
         return uZ;
       }
@@ -813,7 +997,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       {
         if(exp < 0)
         {
-          sig = softfloat_shiftRightJam64(sig, (uint32_t) -exp);
+          sig = detail::softfloat_shiftRightJam64(sig, (uint32_t) -exp);
           exp = 0;
           roundBits = sig & 0x3FFU;
         }
@@ -828,7 +1012,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         exp = 0;
       }
 
-      const uint64_t uiZ = packToF64UI(sign, exp, sig);
+      const uint64_t uiZ = detail::packToF64UI(sign, exp, sig);
 
       return uiZ;
     }
@@ -838,10 +1022,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       uint64_t     uiZ;
       int_fast16_t expZ;
 
-      int_fast16_t  expA = expF64UI(uiA);
-      uint64_t      sigA = fracF64UI(uiA);
-      int_fast16_t  expB = expF64UI(uiB);
-      uint64_t      sigB = fracF64UI(uiB);
+      int_fast16_t expA = detail::expF64UI(uiA);
+      uint64_t     sigA = detail::fracF64UI(uiA);
+      int_fast16_t expB = detail::expF64UI(uiB);
+      uint64_t     sigB = detail::fracF64UI(uiB);
 
       const int_fast16_t expDiff = expA - expB;
 
@@ -851,7 +1035,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
         if(!sigDiff)
         {
-          uiZ = packToF64UI(false, 0, 0);
+          uiZ = detail::packToF64UI(false, 0, 0);
         }
         else
         {
@@ -866,7 +1050,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             sigDiff = -sigDiff;
           }
 
-          int_fast8_t shiftDist = (int_fast8_t) (softfloat_countLeadingZeros64((uint64_t) sigDiff) - 11U);
+          int_fast8_t shiftDist = (int_fast8_t) (detail::softfloat_countLeadingZeros64((uint64_t) sigDiff) - 11U);
 
           expZ = expA - shiftDist;
 
@@ -877,7 +1061,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             expZ = 0;
           }
 
-          uiZ = packToF64UI(signZ, expZ, sigDiff << shiftDist);
+          uiZ = detail::packToF64UI(signZ, expZ, sigDiff << shiftDist);
         }
       }
       else
@@ -892,7 +1076,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           signZ = (!signZ);
 
           sigA += ((expA != 0) ? UINT64_C(0x4000000000000000) : sigA);
-          sigA  = softfloat_shiftRightJam64(sigA, (uint32_t) -expDiff);
+          sigA  = detail::softfloat_shiftRightJam64(sigA, (uint32_t) -expDiff);
 
           sigB |= UINT64_C(0x4000000000000000);
 
@@ -902,7 +1086,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         else
         {
           sigB += ((expB != 0) ? UINT64_C(0x4000000000000000) : sigB);
-          sigB  = softfloat_shiftRightJam64(sigB, (uint32_t) expDiff);
+          sigB  = detail::softfloat_shiftRightJam64(sigB, (uint32_t) expDiff);
 
           sigA |= UINT64_C(0x4000000000000000);
 
