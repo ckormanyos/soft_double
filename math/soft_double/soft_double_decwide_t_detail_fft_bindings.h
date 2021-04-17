@@ -15,6 +15,9 @@
   namespace math { namespace wide_decimal { namespace detail { namespace fft {
 
   template<typename float_type>
+  inline constexpr float_type template_one();
+
+  template<typename float_type>
   inline constexpr float_type template_half();
 
   template<typename float_type>
@@ -30,13 +33,19 @@
   template<>
   inline constexpr sf::float64_t template_half<sf::float64_t>()
   {
-    return sf::float64_t(UINT64_C(4602678819172646912), sf::detail::nothing());
+    return sf::float64_t(UINT64_C(0X3FE0000000000000), sf::detail::nothing());
+  }
+
+  template<>
+  inline constexpr sf::float64_t template_one<sf::float64_t>()
+  {
+    return sf::float64_t(UINT64_C(0X3FF0000000000000), sf::detail::nothing());
   }
 
   template<>
   inline constexpr sf::float64_t template_fast_div_by_two<sf::float64_t>(sf::float64_t a)
   {
-    return sf::float64_t(  (uint64_t) (a.crepresentation() & ~(uint64_t) (0x7FFULL << 52U))
+    return sf::float64_t(  (uint64_t) (sf::float64_t::get_value(a) & ~(uint64_t) (0x7FFULL << 52U))
                          | (uint64_t) (((uint64_t) ((int_fast16_t) ((int_fast16_t) ((uint_fast16_t) (sf::float64_t::get_value(a) >> 52U) & 0x7FFU) - 1))) << 52U),
                          sf::detail::nothing());
   }

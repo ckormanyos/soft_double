@@ -205,7 +205,7 @@
     data[0U] += tmp_real;
     data[1U] += tmp_imag;
 
-    const float_type real_part(const_unique_wp_real<float_type, is_forward_fft>(4U) + float_type(1));
+    const float_type real_part(const_unique_wp_real<float_type, is_forward_fft>(4U) + template_one<float_type>());
     const float_type imag_part(const_unique_wp_imag<float_type, is_forward_fft>(4U));
 
     tmp_real = (real_part * data[6U]) - (imag_part * data[7U]);
