@@ -34,19 +34,43 @@ of certain `constexpr` functions is all that is needed to extend back to C++11 a
   - Efficiency suitable for _bare-metal_ embedded systems, particularly if 64-bit.
   - Use trusted algorithms based on [softfloat 3e](  https://github.com/ucb-bar/berkeley-softfloat-3).
 
----
+## Quick Start
 
-This work is in a preliminary state. Changes are planned including:
-  - Better namespace names for the `soft_double` type.
-  - Specialize further the template `std::numeric_limits<soft_double>`.
-  - Some `constexpr` sequences can't be resolved in C++11 and need C++14. Strive for C++11 through C++20 compatibility.
-  - Add more tests and depth of CI.
+Using `soft_double` is simple. Simply `#include <math/soft_double/soft_double.h>` and
+the `soft_double`type can be used almost like familiar built-in 64-bit `double`.
+The following example, for instance, computes and checks the value of
+<img src="https://render.githubusercontent.com/render/math?math=\sqrt{\pi}">.
 
----
+```
+#include <cmath>
+#include <iomanip>
+#include <iostream>
 
-## Examples
+#include <math/soft_double/soft_double.h>
 
-TBD
+int main()
+{
+  // Use a convenient alias for float64_t.
+  using float64_t = ::math::sd::soft_double;
+
+  // Use a cached value for pi.
+  const float64_t my_pi = float64_t::my_value_pi();
+
+  // Compute soft_double sqrt(pi).
+  const float64_t s = sqrt(my_pi);
+
+  using std::sqrt;
+
+  // Compare with native double sqrt(pi).
+  const double control = static_cast<double>(sqrt(3.1415926535897932384626433832795028841972L));
+
+  const uint64_t d_sqrt_pi_as_uint64 = *(volatile uint64_t*) &control;
+
+  const bool result_is_ok = (s.crepresentation() == d_sqrt_pi_as_uint64);
+
+  std::cout << "result_is_ok: " << std::boolalpha << result_is_ok << std::endl;
+}
+```
 
 ## Testing and CI
 

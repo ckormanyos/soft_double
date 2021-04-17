@@ -21,7 +21,19 @@
   namespace math { namespace wide_decimal { namespace detail { namespace fft {
 
   template<typename float_type>
-  inline constexpr float_type template_half() { float_type(float_type(1) / 2); }
+  inline constexpr float_type template_one() { return float_type(1); }
+
+  template<typename float_type>
+  inline constexpr float_type template_half() { return float_type(float_type(1) / 2); }
+
+  template<>
+  inline constexpr float template_one<float>() { return float(1.0L); }
+
+  template<>
+  inline constexpr double template_one<double>() { return double(1.0L); }
+
+  template<>
+  inline constexpr long double template_one<long double>() { return (long double) (1.0L); }
 
   template<>
   inline constexpr float template_half<float>() { return float(0.5L); }

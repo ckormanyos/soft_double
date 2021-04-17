@@ -48,9 +48,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   #include <array>
   #include <cstdint>
   #include <cstddef>
+  #include <limits>
   #include <type_traits>
 
-  namespace sf {
+  namespace math { namespace sd {
 
   namespace detail {
 
@@ -1156,24 +1157,24 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   };
 
   using float64_t = soft_double;
-  }
+  } } // namespace math::sd
 
   namespace std {
 
   // TBD: Do not derive directly from numeric_limits,
   // as some members such as is_iec559, etc. should be false.
-  template<> class numeric_limits<sf::float64_t> : public std::numeric_limits<double>
+  template<> class numeric_limits< ::math::sd::float64_t> : public std::numeric_limits<double>
   {
   public:
-    static constexpr sf::float64_t (min)        () noexcept { return sf::float64_t::my_value_min(); }
-    static constexpr sf::float64_t (max)        () noexcept { return sf::float64_t::my_value_max(); }
-    static constexpr sf::float64_t lowest       () noexcept { return sf::float64_t::my_value_lowest(); }
-    static constexpr sf::float64_t epsilon      () noexcept { return sf::float64_t::my_value_epsilon(); }
-    static constexpr sf::float64_t round_error  () noexcept { return sf::float64_t::my_value_round_error(); }
-    static constexpr sf::float64_t denorm_min   () noexcept { return sf::float64_t::my_value_denorm_min(); }
-    static constexpr sf::float64_t infinity     () noexcept { return sf::float64_t::my_value_infinity(); }
-    static constexpr sf::float64_t quiet_NaN    () noexcept { return sf::float64_t::my_value_quiet_NaN(); }
-    static constexpr sf::float64_t signaling_NaN() noexcept { return sf::float64_t::my_value_signaling_NaN(); }
+    static constexpr ::math::sd::float64_t (min)        () noexcept { return ::math::sd::float64_t::my_value_min(); }
+    static constexpr ::math::sd::float64_t (max)        () noexcept { return ::math::sd::float64_t::my_value_max(); }
+    static constexpr ::math::sd::float64_t lowest       () noexcept { return ::math::sd::float64_t::my_value_lowest(); }
+    static constexpr ::math::sd::float64_t epsilon      () noexcept { return ::math::sd::float64_t::my_value_epsilon(); }
+    static constexpr ::math::sd::float64_t round_error  () noexcept { return ::math::sd::float64_t::my_value_round_error(); }
+    static constexpr ::math::sd::float64_t denorm_min   () noexcept { return ::math::sd::float64_t::my_value_denorm_min(); }
+    static constexpr ::math::sd::float64_t infinity     () noexcept { return ::math::sd::float64_t::my_value_infinity(); }
+    static constexpr ::math::sd::float64_t quiet_NaN    () noexcept { return ::math::sd::float64_t::my_value_quiet_NaN(); }
+    static constexpr ::math::sd::float64_t signaling_NaN() noexcept { return ::math::sd::float64_t::my_value_signaling_NaN(); }
   };
 
   }

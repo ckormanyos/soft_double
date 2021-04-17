@@ -34,6 +34,9 @@
     <Filter Include="_doc">
       <UniqueIdentifier>{bcc0050f-a474-43f0-a86b-08829548d745}</UniqueIdentifier>
     </Filter>
+    <Filter Include="examples">
+      <UniqueIdentifier>{d66f3eb2-7cb5-455e-8d2b-f1a0bce4e9c4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test\test.cpp">
@@ -43,6 +46,12 @@
       <Filter>test</Filter>
     </ClCompile>
     <ClCompile Include="test\test_soft_double_with_decwide_t_100k_digit_pi.cpp">
+      <Filter>test</Filter>
+    </ClCompile>
+    <ClCompile Include="examples\example001_roots_sqrt.cpp">
+      <Filter>examples</Filter>
+    </ClCompile>
+    <ClCompile Include="test\test_soft_double_examples.cpp">
       <Filter>test</Filter>
     </ClCompile>
   </ItemGroup>
@@ -82,6 +91,12 @@
     </ClInclude>
     <ClInclude Include="math\wide_decimal\decwide_t_detail_ops.h">
       <Filter>math\wide_decimal</Filter>
+    </ClInclude>
+    <ClInclude Include="math\soft_double\soft_double_examples.h">
+      <Filter>math\soft_double</Filter>
+    </ClInclude>
+    <ClInclude Include="test\test_soft_double_examples.h">
+      <Filter>test</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -14,7 +14,7 @@
 
 #include <math/soft_double/soft_double.h>
 
-using local_softfloat_type = sf::float64_t;
+using local_softfloat_type = ::math::sd::float64_t;
 
 // For an implementation of libm for 64-bit double precision
 // floating point (IEEE-754 format), see http://www.netlib.org/fdlibm
@@ -30,9 +30,9 @@ namespace math
     }
 
     template<>
-    sf::float64_t pi()
+    ::math::sd::float64_t pi()
     {
-      return sf::float64_t::my_value_pi();
+      return ::math::sd::float64_t::my_value_pi();
     }
   }
 }
@@ -74,7 +74,7 @@ namespace
   std::uniform_int_distribution<std::uint32_t> dst_exp     (UINT32_C(0),                 UINT32_C(18));
   std::uniform_int_distribution<std::uint32_t> dst_sign    (UINT32_C(0),                 UINT32_C(1));
 
-  void get_sf_float64_t_and_double(sf::float64_t& x1, double& d1, const bool is_positive = false)
+  void get_sf_float64_t_and_double(::math::sd::float64_t& x1, double& d1, const bool is_positive = false)
   {
     d1 = (double) dst_mantissa(eng64);
 
@@ -149,29 +149,29 @@ namespace
   }
 }
 
-void add____sf_float64_t_and_double(sf::float64_t& x_result, const sf::float64_t& xa, const sf::float64_t& xb,
-                                    double&        d_result, const double&        da, const double&        db)
+void add____sf_float64_t_and_double(::math::sd::float64_t& x_result, const ::math::sd::float64_t& xa, const ::math::sd::float64_t& xb,
+                                    double&                d_result, const double&                da, const double&                db)
 {
   x_result = xa + xb;
   d_result = da + db;
 }
 
-void sub____sf_float64_t_and_double(sf::float64_t& x_result, const sf::float64_t& xa, const sf::float64_t& xb,
-                                    double&        d_result, const double&        da, const double&        db)
+void sub____sf_float64_t_and_double(::math::sd::float64_t& x_result, const ::math::sd::float64_t& xa, const ::math::sd::float64_t& xb,
+                                    double&                d_result, const double&                da, const double&                db)
 {
   x_result = xa - xb;
   d_result = da - db;
 }
 
-void mul____sf_float64_t_and_double(sf::float64_t& x_result, const sf::float64_t& xa, const sf::float64_t& xb,
-                                    double&        d_result, const double&        da, const double&        db)
+void mul____sf_float64_t_and_double(::math::sd::float64_t& x_result, const ::math::sd::float64_t& xa, const ::math::sd::float64_t& xb,
+                                    double&                d_result, const double&                da, const double&                db)
 {
   x_result = xa * xb;
   d_result = da * db;
 }
 
-void div____sf_float64_t_and_double(sf::float64_t& x_result, const sf::float64_t& xa, const sf::float64_t& xb,
-                                    double&        d_result, const double&        da, const double&        db)
+void div____sf_float64_t_and_double(::math::sd::float64_t& x_result, const ::math::sd::float64_t& xa, const ::math::sd::float64_t& xb,
+                                    double&                d_result, const double&                da, const double&                db)
 {
   x_result = xa / xb;
   d_result = da / db;
@@ -179,8 +179,8 @@ void div____sf_float64_t_and_double(sf::float64_t& x_result, const sf::float64_t
 
 volatile int debug = 0U;
 
-void sqrt___sf_float64_t_and_double(sf::float64_t& x_result, const sf::float64_t& xa,
-                                    double&        d_result, const double&        da)
+void sqrt___sf_float64_t_and_double(::math::sd::float64_t& x_result, const ::math::sd::float64_t& xa,
+                                    double&                d_result, const double&                da)
 {
   using std::sqrt;
 
@@ -194,9 +194,9 @@ bool test_ops(const std::uint32_t n, std::uint_fast8_t op_index)
 
   for(std::uint32_t i = 0U; i < n; ++i)
   {
-    sf::float64_t xa;
-    sf::float64_t xb;
-    sf::float64_t xr;
+    ::math::sd::float64_t xa;
+    ::math::sd::float64_t xb;
+    ::math::sd::float64_t xr;
 
     double        da;
     double        db;
@@ -229,7 +229,7 @@ bool test_neq(const std::uint32_t n, std::uint_fast8_t op_index)
 
   for(std::uint32_t i = 0U; i < n; ++i)
   {
-    sf::float64_t xa, xb;
+    ::math::sd::float64_t xa, xb;
     double        da, db;
 
     bool x_result = false;
@@ -259,14 +259,14 @@ bool test_eq_(const std::uint32_t n, std::uint_fast8_t op_index)
 
   for(std::uint32_t i = 0U; i < n; ++i)
   {
-    sf::float64_t x;
+    ::math::sd::float64_t x;
     double        d;
 
     bool x_ok;
 
     if     (op_index == 0U) { get_sf_float64_t_and_double(x, d);                                 x_ok = (*(double*) &x == d); }
-    else if(op_index == 1U) { get_sf_float64_t_and_double(x, d); const sf::float64_t x2 = x / 2; x_ok = (*(double*) &x <= d) && ((d > 0) ? (*(double*) &x2 < d) : (*(double*) &x2 > d)); }
-    else if(op_index == 2U) { get_sf_float64_t_and_double(x, d); const sf::float64_t x2 = x * 2; x_ok = (*(double*) &x <= d) && ((d > 0) ? (*(double*) &x2 > d) : (*(double*) &x2 < d)); }
+    else if(op_index == 1U) { get_sf_float64_t_and_double(x, d); const ::math::sd::float64_t x2 = x / 2; x_ok = (*(double*) &x <= d) && ((d > 0) ? (*(double*) &x2 < d) : (*(double*) &x2 > d)); }
+    else if(op_index == 2U) { get_sf_float64_t_and_double(x, d); const ::math::sd::float64_t x2 = x * 2; x_ok = (*(double*) &x <= d) && ((d > 0) ? (*(double*) &x2 > d) : (*(double*) &x2 < d)); }
     else                    { x_ok = false; d = 0.0; }
 
     result_is_ok &= x_ok;
@@ -293,7 +293,7 @@ bool test_soft_double()
   {
     std::cout << "testing cast___... ";
 
-    const sf::float64_t xp  = math::constants::pi<sf::float64_t>();
+    const ::math::sd::float64_t xp  = math::constants::pi<::math::sd::float64_t>();
     const std::uint64_t u64 = (std::uint64_t) xp;
     const bool result_cast___is_ok = (u64 == 3U);
     std::cout << std::boolalpha << result_cast___is_ok << std::endl;
@@ -303,7 +303,7 @@ bool test_soft_double()
   {
     std::cout << "testing f32____... ";
 
-    sf::float64_t xf = sf::float64_t(0.125F) + sf::float64_t(0.5F);
+    ::math::sd::float64_t xf = ::math::sd::float64_t(0.125F) + ::math::sd::float64_t(0.5F);
     double df = *(double*) &xf;
     const bool result_f32____is_ok = (df == 0.625);
     std::cout << std::boolalpha << result_f32____is_ok << std::endl;
@@ -313,7 +313,7 @@ bool test_soft_double()
   {
     std::cout << "testing neg____... ";
 
-    sf::float64_t  xn(1 / sf::float64_t(3));
+    ::math::sd::float64_t  xn(1 / ::math::sd::float64_t(3));
     xn = -xn;
     double dn = *(double*) &xn;
     bool result_neg____is_ok = fabs(1.0 - (dn / -0.33333333333333333)) < std::numeric_limits<double>::epsilon();
@@ -328,14 +328,14 @@ bool test_soft_double()
   {
     std::cout << "testing ddx____... ";
 
-    sf::float64_t  x(1 / sf::float64_t(2));
-    sf::float64_t dx(1 / sf::float64_t(8388608));
+    ::math::sd::float64_t  x(1 / ::math::sd::float64_t(2));
+    ::math::sd::float64_t dx(1 / ::math::sd::float64_t(8388608));
 
-    sf::float64_t result = derivative(x,
+    ::math::sd::float64_t result = derivative(x,
                                       dx,
-                                      [](const sf::float64_t my_x) -> sf::float64_t
+                                      [](const ::math::sd::float64_t my_x) -> ::math::sd::float64_t
                                       {
-                                        return ((my_x * my_x) / sf::float64_t(3)) + my_x;
+                                        return ((my_x * my_x) / ::math::sd::float64_t(3)) + my_x;
                                       });
 
     double d = *(double*) &result;
