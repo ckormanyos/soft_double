@@ -39,7 +39,7 @@ of certain `constexpr` functions is all that is needed to extend back to C++11 a
 Using `soft_double` is simple. Simply `#include <math/soft_double/soft_double.h>` and
 the `soft_double`type can be used almost like familiar built-in 64-bit `double`.
 The following example, for instance, computes and checks the value of
-<img src="https://render.githubusercontent.com/render/math?math=\sqrt{\pi}">.
+<img src="https://render.githubusercontent.com/render/math?math=\sqrt{\pi}\,\approx\,1.77245385090551602730">.
 
 ```
 #include <cmath>

@@ -11,6 +11,7 @@
   namespace math { namespace sd {
 
   bool example001_roots_sqrt();
+  bool example004_bessel_recur();
 
   } }
 

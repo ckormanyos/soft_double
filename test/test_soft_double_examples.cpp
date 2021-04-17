@@ -16,9 +16,10 @@ bool test_soft_double_examples()
 
   std::cout << "Start test_soft_double_examples()" << std::endl;
 
-  result_examples_is_ok &= math::sd::example001_roots_sqrt(); std::cout << "example001_roots_sqrt   : " << std::boolalpha << result_examples_is_ok << std::endl;
+  result_examples_is_ok &= math::sd::example001_roots_sqrt  (); std::cout << "example001_roots_sqrt     : " << std::boolalpha << result_examples_is_ok << std::endl;
+  result_examples_is_ok &= math::sd::example004_bessel_recur(); std::cout << "example004_bessel_recur   : " << std::boolalpha << result_examples_is_ok << std::endl;
 
-  std::cout << "result_examples_is_ok: " << std::boolalpha << result_examples_is_ok << std::endl;
+  std::cout << "result_examples_is_ok     : " << std::boolalpha << result_examples_is_ok << std::endl;
 
   return result_examples_is_ok;
 }

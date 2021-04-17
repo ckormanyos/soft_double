@@ -73,6 +73,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return ((uint64_t) ((((uint64_t) (sign ? 1ULL : 0ULL))<<63) + (((uint64_t) (exp))<<52) + (uint64_t) (sig)));
   }
 
+  template<typename IntegralTypeExp,
+           typename IntegralTypeSig>
+  constexpr uint32_t packToF32UI(bool sign, IntegralTypeExp exp, IntegralTypeSig sig)
+  {
+    return ((uint32_t) ((((uint32_t) (sign ? 1ULL : 0ULL))<<31) + (((uint32_t) (exp))<<23) + (uint32_t) (sig)));
+  }
+
   /*----------------------------------------------------------------------------
   | Shifts 'a' right by the number of bits given in 'dist', which must be in
   | the range 1 to 63.  If any nonzero bits are shifted off, they are "jammed"
@@ -355,6 +362,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     explicit operator std::int32_t () const { return (std::int32_t)  f64_to__i32(my_value); }
     explicit operator std::uint32_t() const { return (std::uint32_t) f64_to_ui32(my_value); }
+
+    explicit operator float() const
+    {
+      return f64_to_f32(my_value);
+    }
 
     soft_double& operator+=(const soft_double& other) { my_value = f64_add(my_value, other.my_value); return *this; }
     soft_double& operator-=(const soft_double& other) { my_value = f64_sub(my_value, other.my_value); return *this; }
@@ -741,6 +753,41 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       return softfloat_roundToI64(sign, sigExtra.v);
     }
 
+    static float f64_to_f32(const uint64_t a)
+    {
+      const bool          sign = detail::signF64UI(a);
+      const int_fast16_t  exp  = detail::expF64UI (a);
+      const uint64_t      frac = detail::fracF64UI(a);
+
+      const uint32_t frac32 = (uint32_t) detail::softfloat_shortShiftRightJam64( frac, 22 );
+
+      const float f = softfloat_roundPackToF32( sign, exp - 0x381, frac32 | 0x40000000 );
+
+      return f;
+    }
+
+    static float softfloat_roundPackToF32( bool sign, int_fast16_t exp, uint_fast32_t sig )
+    {
+      constexpr uint_fast8_t roundIncrement = UINT8_C(0x40);
+
+      const uint_fast8_t roundBits = sig & 0x7F;
+
+      sig = (sig + roundIncrement)>>7;
+
+      sig &= ~(uint_fast32_t) (! (roundBits ^ 0x40) & 0);
+
+      if(!sig)
+      {
+        exp = 0;
+      }
+
+      const uint_fast32_t u = detail::packToF32UI(sign, exp, sig);
+
+      const float f = *(volatile float*) &u;
+
+      return f;
+    }
+
     static constexpr uint64_t my__i32_to_f64(const int32_t a)
     {
       return
@@ -1107,7 +1154,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     friend bool isnan   (const soft_double x) { return  (x.my_value == my_value_quiet_NaN().my_value); }
     friend bool isinf   (const soft_double x) { return ((x.my_value & my_value_infinity().my_value) == my_value_infinity().my_value); }
 
-    friend inline soft_double fabs (const soft_double x) { return soft_double((((int64_t) x.my_value < 0) ? (uint64_t) (-((int64_t) x.my_value)) : x.my_value), detail::nothing()); }
+    friend inline soft_double fabs (const soft_double x) { return soft_double((uint64_t) (x.my_value & UINT64_C(0x7FFFFFFFFFFFFFFF)), detail::nothing()); }
     friend inline soft_double sqrt (const soft_double x) { return soft_double(f64_sqrt(x.my_value), detail::nothing()); }
 
     friend inline soft_double operator+(const soft_double& a, const soft_double& b) { soft_double result; result.my_value = f64_add(a.my_value, b.my_value); return result; }
