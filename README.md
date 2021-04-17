@@ -62,7 +62,7 @@ int main()
   using std::sqrt;
 
   // Compare with native double sqrt(pi).
-  const double control = static_cast<double>(sqrt(3.1415926535897932384626433832795028841972L));
+  const double control = sqrt(3.1415926535897932384626433832795028841972);
 
   const uint64_t d_sqrt_pi_as_uint64 = *(volatile uint64_t*) &control;
 
