@@ -50,4 +50,12 @@ TBD
 
 ## Testing and CI
 
-TBD
+Testing is a big issue and a growing test suite is in continued progress providing for tested,
+efficient functionality on the PC and workstation. The GitHub code is delivered
+with an affiliated MSVC project that uses easy-to-understand subroutines called
+from `main()` that exercise various test cases. One of the tests uses
+the [wide-decimal](https://github.com/ckormanyos/wide-decimal) project
+in order to verify the functionality of `soft_double` with FFTs in a real-world application.
+
+Continuous integration runs on push using GitHub Actions. Various compilers, operating systems,
+and C++ standards ranging from C++14, 17, 20 are included in CI.
