@@ -188,6 +188,29 @@ void sqrt___sf_float64_t_and_double(::math::sd::float64_t& x_result, const ::mat
   d_result = sqrt(da);
 }
 
+bool test_to_f32(const std::uint32_t n)
+{
+  bool result_is_ok = true;
+
+  for(std::uint32_t i = 0U; i < n; ++i)
+  {
+    ::math::sd::float64_t x;
+    double                d;
+
+    get_sf_float64_t_and_double(x, d);
+
+    const float f_x = (float) x;
+    const float f_d = (float) d;
+
+    const uint32_t u_x = *(volatile uint32_t*) &x;
+    const uint32_t u_d = *(volatile uint32_t*) &d;
+
+    result_is_ok &= (u_x == u_d);
+  }
+
+  return result_is_ok;
+}
+
 bool test_ops(const std::uint32_t n, std::uint_fast8_t op_index)
 {
   bool result_is_ok = true;
@@ -347,17 +370,18 @@ bool test_soft_double()
     result_is_ok &= result_ddx____is_ok;
   }
 
-  std::cout << "testing add____... "; const bool result_add____is_ok = test_ops(10000000U, 0U); std::cout << std::boolalpha << result_add____is_ok << std::endl;
-  std::cout << "testing sub____... "; const bool result_sub____is_ok = test_ops(10000000U, 1U); std::cout << std::boolalpha << result_sub____is_ok << std::endl;
-  std::cout << "testing mul____... "; const bool result_mul____is_ok = test_ops(10000000U, 2U); std::cout << std::boolalpha << result_mul____is_ok << std::endl;
-  std::cout << "testing div____... "; const bool result_div____is_ok = test_ops(10000000U, 3U); std::cout << std::boolalpha << result_div____is_ok << std::endl;
-  std::cout << "testing sqrt___... "; const bool result_sqrt___is_ok = test_ops(25000000U, 4U); std::cout << std::boolalpha << result_sqrt___is_ok << std::endl;
-  std::cout << "testing lt_____... "; const bool result_lt_____is_ok = test_neq(10000000U, 0U); std::cout << std::boolalpha << result_lt_____is_ok << std::endl;
-  std::cout << "testing gt_____... "; const bool result_gt_____is_ok = test_neq(10000000U, 1U); std::cout << std::boolalpha << result_gt_____is_ok << std::endl;
-  std::cout << "testing neq____... "; const bool result_neq____is_ok = test_neq(10000000U, 2U); std::cout << std::boolalpha << result_neq____is_ok << std::endl;
-  std::cout << "testing eq_____... "; const bool result_eq_____is_ok = test_neq(10000000U, 0U); std::cout << std::boolalpha << result_eq_____is_ok << std::endl;
-  std::cout << "testing leq____... "; const bool result_leq____is_ok = test_neq(10000000U, 1U); std::cout << std::boolalpha << result_leq____is_ok << std::endl;
-  std::cout << "testing geq____... "; const bool result_geq____is_ok = test_neq(10000000U, 2U); std::cout << std::boolalpha << result_geq____is_ok << std::endl;
+  std::cout << "testing to_f32_... "; const bool result_to_f32_is_ok = test_to_f32(10000000U);     std::cout << std::boolalpha << result_to_f32_is_ok << std::endl;
+  std::cout << "testing add____... "; const bool result_add____is_ok = test_ops   (10000000U, 0U); std::cout << std::boolalpha << result_add____is_ok << std::endl;
+  std::cout << "testing sub____... "; const bool result_sub____is_ok = test_ops   (10000000U, 1U); std::cout << std::boolalpha << result_sub____is_ok << std::endl;
+  std::cout << "testing mul____... "; const bool result_mul____is_ok = test_ops   (10000000U, 2U); std::cout << std::boolalpha << result_mul____is_ok << std::endl;
+  std::cout << "testing div____... "; const bool result_div____is_ok = test_ops   (10000000U, 3U); std::cout << std::boolalpha << result_div____is_ok << std::endl;
+  std::cout << "testing sqrt___... "; const bool result_sqrt___is_ok = test_ops   (10000000U, 4U); std::cout << std::boolalpha << result_sqrt___is_ok << std::endl;
+  std::cout << "testing lt_____... "; const bool result_lt_____is_ok = test_neq   (10000000U, 0U); std::cout << std::boolalpha << result_lt_____is_ok << std::endl;
+  std::cout << "testing gt_____... "; const bool result_gt_____is_ok = test_neq   (10000000U, 1U); std::cout << std::boolalpha << result_gt_____is_ok << std::endl;
+  std::cout << "testing neq____... "; const bool result_neq____is_ok = test_neq   (10000000U, 2U); std::cout << std::boolalpha << result_neq____is_ok << std::endl;
+  std::cout << "testing eq_____... "; const bool result_eq_____is_ok = test_neq   (10000000U, 0U); std::cout << std::boolalpha << result_eq_____is_ok << std::endl;
+  std::cout << "testing leq____... "; const bool result_leq____is_ok = test_neq   (10000000U, 1U); std::cout << std::boolalpha << result_leq____is_ok << std::endl;
+  std::cout << "testing geq____... "; const bool result_geq____is_ok = test_neq   (10000000U, 2U); std::cout << std::boolalpha << result_geq____is_ok << std::endl;
 
   const std::clock_t stop = std::clock();
 
