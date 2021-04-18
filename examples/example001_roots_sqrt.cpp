@@ -26,9 +26,15 @@ bool math::softfloat::example001_roots_sqrt()
   // Compare with native double sqrt(pi).
   const double control = sqrt(3.1415926535897932384626433832795028841972);
 
-  const uint64_t d_sqrt_pi_as_uint64 = *(volatile uint64_t*) &control;
+  union
+  {
+    double   d;
+    uint64_t u;
+  } uZ;
 
-  const bool result_is_ok = (s.crepresentation() == d_sqrt_pi_as_uint64);
+  uZ.d = control;
+
+  const bool result_is_ok = (s.crepresentation() == uZ.u);
 
   return result_is_ok;
 }

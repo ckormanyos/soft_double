@@ -241,9 +241,15 @@ bool test_ops(const std::uint32_t n, std::uint_fast8_t op_index)
     else if(op_index == 1U) { get_sf_float64_t_and_double(xa, da); get_sf_float64_t_and_double(xb, db); sub____sf_float64_t_and_double(xr, xa, xb, dr, da, db); }
     else                    { get_sf_float64_t_and_double(xa, da); get_sf_float64_t_and_double(xb, db); add____sf_float64_t_and_double(xr, xa, xb, dr, da, db); }
 
-    const uint64_t d_result_as_uint64 = *(volatile uint64_t*) &dr;
+    union
+    {
+      double   d;
+      uint64_t u;
+    } uZ;
 
-    result_is_ok &= (xr.crepresentation() == d_result_as_uint64);
+    uZ.d = dr;
+
+    result_is_ok &= (xr.crepresentation() == uZ.u);
 
     if(result_is_ok == false)
     {

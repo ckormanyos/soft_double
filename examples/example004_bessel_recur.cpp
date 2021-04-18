@@ -229,10 +229,15 @@ bool math::softfloat::example004_bessel_recur()
 
   const float64_t j9 = local::cyl_bessel_j(9, x);
 
-  const double   d = 0.1811741425937681762466579147691209001166;
-  const uint64_t u = *(volatile uint64_t*) & d;
+  union
+  {
+    double   d;
+    uint64_t u;
+  } uZ;
 
-  const float64_t control(u, ::math::softfloat::detail::nothing());
+  uZ.d = 0.1811741425937681762466579147691209001166;
+
+  const float64_t control(uZ.u, ::math::softfloat::detail::nothing());
 
   using std::fabs;
 
