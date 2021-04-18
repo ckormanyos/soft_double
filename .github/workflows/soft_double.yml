@@ -111,3 +111,15 @@ jobs:
           ${{ matrix.compiler }} -finline-functions -finline-limit=64 -march=native -mtune=native -O3 -Wall -Wextra -pedantic -Wno-strict-aliasing -std=${{ matrix.standard }} -DLITTLEENDIAN -I. examples/example001_roots_sqrt.cpp examples/example004_bessel_recur.cpp test/test.cpp test/test_soft_double.cpp test/test_soft_double_examples.cpp test/test_soft_double_with_decwide_t_100k_digit_pi.cpp -o soft_double.exe
           ls -la ./soft_double.exe
           ./soft_double.exe
+  msvc-release-x64:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: ilammy/msvc-dev-cmd@v1
+      - name: msvc-release-x64
+        shell: cmd
+        working-directory: ./
+        run: |
+          MSBuild -m soft_double.sln -p:Configuration=Release -p:Platform=x64 /t:Rebuild
+          dir %cd%\x64\Release\soft_double.exe
+          %cd%\x64\Release\soft_double.exe
