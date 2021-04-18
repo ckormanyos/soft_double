@@ -7,16 +7,17 @@ a 64-bit double-precision floating-point data type.
 
 Some compilers do not support a built-in 64-bit floating-point type,
 such as might be commonly known as `double` or `long` `double`.
-The `avr-gcc` tool chain, for instance, commonly used
-for 8-bit embedded systems like Arduino
-or standalone _bare metal_ AVR does not support 64-bit `double`
+Consider, for instance, the `avr-gcc` tool chain popularly used on
+8-bit embedded systems like Arduino or standalone _bare metal_ AVR.
+This compiler does not support 64-bit `double`
 (prior to versoin 10).
 
 soft_double can be used on such systems to provide a software-emulated,
 portable implementation of 64-bit `double`.
 
 This C++ template header-only library implements a drop-in double-precision
-float type that can be used essentially like the regular built-in 64-bit
+floating-point type `math::softfloat::soft_double`.
+This can be used essentially like the regular built-in 64-bit
 floating-point type `double`.
 
 soft_double implements common algebraic operations,
@@ -49,7 +50,7 @@ The following example, for instance, computes and checks the value of
 int main()
 {
   // Use a convenient alias for float64_t.
-  using float64_t = ::math::sd::soft_double;
+  using float64_t = ::math::softfloat::soft_double;
 
   // Use a cached value for pi.
   const float64_t my_pi = float64_t::my_value_pi();

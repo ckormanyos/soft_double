@@ -1170,9 +1170,28 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   // TBD: Do not derive directly from numeric_limits,
   // as some members such as is_iec559, etc. should be false.
-  template<> class numeric_limits< ::math::softfloat::float64_t> : public std::numeric_limits<double>
+  template<> class numeric_limits< ::math::softfloat::float64_t>
   {
   public:
+    static constexpr bool               is_specialized           = true;
+    static constexpr float_denorm_style has_denorm               = denorm_present;
+    static constexpr bool               has_infinity             = true;
+    static constexpr bool               has_quiet_NaN            = true;
+    static constexpr bool               has_signaling_NaN        = false;
+    static constexpr bool               is_bounded               = true;
+    static constexpr bool               is_iec559                = false;
+    static constexpr bool               is_signed                = true;
+    static constexpr float_round_style  round_style              = round_to_nearest;
+    static constexpr int                radix                    = 2;
+
+    static constexpr int                digits                   = 53;
+    static constexpr int                digits10                 = 15;
+    static constexpr int                max_digits10             = 17;
+    static constexpr int                max_exponent             = 1024;
+    static constexpr int                max_exponent10           = 308;
+    static constexpr int                min_exponent             = -1021;
+    static constexpr int                min_exponent10           = -307;
+
     static constexpr ::math::softfloat::float64_t (min)        () noexcept { return ::math::softfloat::float64_t::my_value_min(); }
     static constexpr ::math::softfloat::float64_t (max)        () noexcept { return ::math::softfloat::float64_t::my_value_max(); }
     static constexpr ::math::softfloat::float64_t lowest       () noexcept { return ::math::softfloat::float64_t::my_value_lowest(); }
