@@ -14,6 +14,9 @@
 
 #include <math/soft_double/soft_double.h>
 
+static_assert(sizeof(double) == 8U, "Error: This test code is designed for 8 byte built-in double");
+
+
 using local_softfloat_type = ::math::softfloat::float64_t;
 
 // For an implementation of libm for 64-bit double precision

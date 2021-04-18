@@ -257,7 +257,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       const int16_t  exp  = detail::expF32UI (uZ.u);
       const uint32_t frac = detail::fracF32UI(uZ.u);
 
-      if((!exp) && (!frac))
+      if((exp == 0) && (frac == 0U))
       {
         my_value = detail::packToF64UI(sign, 0, 0);
       }
