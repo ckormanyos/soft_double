@@ -1071,7 +1071,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     // Global add/sub/mul/div of const decwide_t<MyDigits10, LimbType, AllocatorType, InternalFloatType>& with all built-in types.
     template<typename BuiltinIntegralType>
     friend inline typename std::enable_if<   (std::is_integral   <BuiltinIntegralType>::value == true)
-                            && (std::is_fundamental<BuiltinIntegralType>::value == true), soft_double>::type
+                                          && (std::is_fundamental<BuiltinIntegralType>::value == true), soft_double>::type
     operator+(const soft_double& u, BuiltinIntegralType n)
     {
       return soft_double(u) += soft_double(n);
@@ -1079,7 +1079,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     template<typename BuiltinIntegralType>
     friend inline typename std::enable_if<   (std::is_integral   <BuiltinIntegralType>::value == true)
-                            && (std::is_fundamental<BuiltinIntegralType>::value == true), soft_double>::type
+                                          && (std::is_fundamental<BuiltinIntegralType>::value == true), soft_double>::type
     operator-(const soft_double& u, BuiltinIntegralType n)
     {
       return soft_double(u) -= soft_double(n);
@@ -1087,7 +1087,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     template<typename BuiltinIntegralType>
     friend inline typename std::enable_if<   (std::is_integral   <BuiltinIntegralType>::value == true)
-                            && (std::is_fundamental<BuiltinIntegralType>::value == true), soft_double>::type
+                                          && (std::is_fundamental<BuiltinIntegralType>::value == true), soft_double>::type
     operator*(const soft_double& u, BuiltinIntegralType n)
     {
       return soft_double(u) *= soft_double(n);
@@ -1095,7 +1095,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     template<typename BuiltinIntegralType>
     friend inline typename std::enable_if<   (std::is_integral   <BuiltinIntegralType>::value == true)
-                            && (std::is_fundamental<BuiltinIntegralType>::value == true), soft_double>::type
+                                          && (std::is_fundamental<BuiltinIntegralType>::value == true), soft_double>::type
     operator/(const soft_double& u, BuiltinIntegralType n)
     {
       return soft_double(u) /= soft_double(n);
@@ -1110,43 +1110,42 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   };
 
   using float64_t = soft_double;
-  } } // namespace math::sd
+  } } // namespace math::softfloat
 
   namespace std {
 
-  // TBD: Do not derive directly from numeric_limits,
-  // as some members such as is_iec559, etc. should be false.
-  template<> class numeric_limits< ::math::softfloat::float64_t>
+  // Specialization of numeric_limits for soft_double.
+  template<> class numeric_limits< ::math::softfloat::soft_double>
   {
   public:
-    static constexpr bool               is_specialized           = true;
-    static constexpr float_denorm_style has_denorm               = denorm_present;
-    static constexpr bool               has_infinity             = true;
-    static constexpr bool               has_quiet_NaN            = true;
-    static constexpr bool               has_signaling_NaN        = false;
-    static constexpr bool               is_bounded               = true;
-    static constexpr bool               is_iec559                = false;
-    static constexpr bool               is_signed                = true;
-    static constexpr float_round_style  round_style              = round_to_nearest;
-    static constexpr int                radix                    = 2;
+    static constexpr bool               is_specialized    = true;
+    static constexpr float_denorm_style has_denorm        = denorm_present;
+    static constexpr bool               has_infinity      = true;
+    static constexpr bool               has_quiet_NaN     = true;
+    static constexpr bool               has_signaling_NaN = false;
+    static constexpr bool               is_bounded        = true;
+    static constexpr bool               is_iec559         = false;
+    static constexpr bool               is_signed         = true;
+    static constexpr float_round_style  round_style       = round_to_nearest;
+    static constexpr int                radix             = 2;
 
-    static constexpr int                digits                   = 53;
-    static constexpr int                digits10                 = 15;
-    static constexpr int                max_digits10             = 17;
-    static constexpr int                max_exponent             = 1024;
-    static constexpr int                max_exponent10           = 308;
-    static constexpr int                min_exponent             = -1021;
-    static constexpr int                min_exponent10           = -307;
+    static constexpr int                digits            = 53;
+    static constexpr int                digits10          = 15;
+    static constexpr int                max_digits10      = 17;
+    static constexpr int                max_exponent      = 1024;
+    static constexpr int                max_exponent10    = 308;
+    static constexpr int                min_exponent      = -1021;
+    static constexpr int                min_exponent10    = -307;
 
-    static constexpr ::math::softfloat::float64_t (min)        () noexcept { return ::math::softfloat::float64_t::my_value_min(); }
-    static constexpr ::math::softfloat::float64_t (max)        () noexcept { return ::math::softfloat::float64_t::my_value_max(); }
-    static constexpr ::math::softfloat::float64_t lowest       () noexcept { return ::math::softfloat::float64_t::my_value_lowest(); }
-    static constexpr ::math::softfloat::float64_t epsilon      () noexcept { return ::math::softfloat::float64_t::my_value_epsilon(); }
-    static constexpr ::math::softfloat::float64_t round_error  () noexcept { return ::math::softfloat::float64_t::my_value_round_error(); }
-    static constexpr ::math::softfloat::float64_t denorm_min   () noexcept { return ::math::softfloat::float64_t::my_value_denorm_min(); }
-    static constexpr ::math::softfloat::float64_t infinity     () noexcept { return ::math::softfloat::float64_t::my_value_infinity(); }
-    static constexpr ::math::softfloat::float64_t quiet_NaN    () noexcept { return ::math::softfloat::float64_t::my_value_quiet_NaN(); }
-    static constexpr ::math::softfloat::float64_t signaling_NaN() noexcept { return ::math::softfloat::float64_t::my_value_signaling_NaN(); }
+    static constexpr ::math::softfloat::soft_double (min)        () noexcept { return ::math::softfloat::soft_double::my_value_min(); }
+    static constexpr ::math::softfloat::soft_double (max)        () noexcept { return ::math::softfloat::soft_double::my_value_max(); }
+    static constexpr ::math::softfloat::soft_double lowest       () noexcept { return ::math::softfloat::soft_double::my_value_lowest(); }
+    static constexpr ::math::softfloat::soft_double epsilon      () noexcept { return ::math::softfloat::soft_double::my_value_epsilon(); }
+    static constexpr ::math::softfloat::soft_double round_error  () noexcept { return ::math::softfloat::soft_double::my_value_round_error(); }
+    static constexpr ::math::softfloat::soft_double denorm_min   () noexcept { return ::math::softfloat::soft_double::my_value_denorm_min(); }
+    static constexpr ::math::softfloat::soft_double infinity     () noexcept { return ::math::softfloat::soft_double::my_value_infinity(); }
+    static constexpr ::math::softfloat::soft_double quiet_NaN    () noexcept { return ::math::softfloat::soft_double::my_value_quiet_NaN(); }
+    static constexpr ::math::softfloat::soft_double signaling_NaN() noexcept { return ::math::softfloat::soft_double::my_value_signaling_NaN(); }
   };
 
   }
