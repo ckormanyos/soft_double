@@ -704,18 +704,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static float softfloat_roundPackToF32( bool sign, int_fast16_t exp, uint_fast32_t sig )
     {
-      constexpr uint_fast8_t roundIncrement = UINT8_C(0x40);
-
-      const uint_fast8_t roundBits = sig & 0x7F;
-
-      sig = (sig + roundIncrement)>>7;
+      sig = (uint_fast32_t) (sig + 0x40U) >> 7U;
 
       if(sig == 0U)
       {
         exp = 0;
       }
 
-      const uint_fast32_t u = detail::packToF32UI(sign, exp, sig);
+      const uint32_t u = detail::packToF32UI(sign, exp, sig);
 
       const float f = *(volatile float*) &u;
 
