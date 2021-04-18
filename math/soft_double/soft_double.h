@@ -245,11 +245,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     soft_double(const float f) : my_value()
     {
-      const uint32_t uiA = *((volatile uint32_t*) &f);
+      union
+      {
+        float    f;
+        uint32_t u;
+      } uZ;
 
-      const bool         sign = detail::signF32UI(uiA);
-      const int_fast16_t exp  = detail::expF32UI(uiA);
-      const uint32_t     frac = detail::fracF32UI(uiA);
+      uZ.f = f;
+
+      const bool         sign = detail::signF32UI(uZ.u);
+      const int_fast16_t exp  = detail::expF32UI (uZ.u);
+      const uint32_t     frac = detail::fracF32UI(uZ.u);
 
       if((!exp) && (!frac))
       {
@@ -711,11 +717,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         exp = 0;
       }
 
-      const uint32_t u = detail::packToF32UI(sign, exp, sig);
+      union
+      {
+        float    f;
+        uint32_t u;
+      } uZ;
 
-      const float f = *(volatile float*) &u;
+      uZ.u = detail::packToF32UI(sign, exp, sig);
 
-      return f;
+      return uZ.f;
     }
 
     static constexpr uint64_t my__i32_to_f64(const int32_t a)

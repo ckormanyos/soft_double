@@ -177,8 +177,6 @@ void div____sf_float64_t_and_double(::math::softfloat::float64_t& x_result, cons
   d_result = da / db;
 }
 
-volatile int debug = 0U;
-
 void sqrt___sf_float64_t_and_double(::math::softfloat::float64_t& x_result, const ::math::softfloat::float64_t& xa,
                                     double&                d_result, const double&                da)
 {
@@ -195,17 +193,29 @@ bool test_to_f32(const std::uint32_t n)
   for(std::uint32_t i = 0U; i < n; ++i)
   {
     ::math::softfloat::float64_t x;
-    double                d;
+    double                       d;
 
     get_sf_float64_t_and_double(x, d);
 
     const float f_x = (float) x;
     const float f_d = (float) d;
 
-    const uint32_t u_x = *(volatile uint32_t*) &f_x;
-    const uint32_t u_d = *(volatile uint32_t*) &f_d;
+    union
+    {
+      float    f;
+      uint32_t u;
+    } uZ_x;
 
-    result_is_ok &= (u_x == u_d);
+    union
+    {
+      float    f;
+      uint32_t u;
+    } uZ_d;
+
+    uZ_x.f = f_x;
+    uZ_d.f = f_d;
+
+    result_is_ok &= (uZ_x.u == uZ_d.u);
   }
 
   return result_is_ok;
