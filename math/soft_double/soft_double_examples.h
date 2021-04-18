@@ -8,7 +8,7 @@
 #ifndef SOFT_DOUBLE_EXAMPLES_2021_04_17_H_
   #define SOFT_DOUBLE_EXAMPLES_2021_04_17_H_
 
-  namespace math { namespace sd {
+  namespace math { namespace softfloat {
 
   bool example001_roots_sqrt();
   bool example004_bessel_recur();

@@ -11,9 +11,9 @@
 #include <math/soft_double/soft_double.h>
 #include <math/soft_double/soft_double_examples.h>
 
-bool math::sd::example001_roots_sqrt()
+bool math::softfloat::example001_roots_sqrt()
 {
-  using float64_t = ::math::sd::float64_t;
+  using float64_t = ::math::softfloat::float64_t;
 
   // Use a cached value for pi.
   const float64_t my_pi = float64_t::my_value_pi();
@@ -41,7 +41,7 @@ bool math::sd::example001_roots_sqrt()
 
 int main()
 {
-  const bool result_is_ok = math::sd::example001_roots_sqrt();
+  const bool result_is_ok = math::softfloat::example001_roots_sqrt();
 
   std::cout << "result_is_ok: " << std::boolalpha << result_is_ok << std::endl;
 }

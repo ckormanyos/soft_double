@@ -51,7 +51,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   #include <limits>
   #include <type_traits>
 
-  namespace math { namespace sd {
+  namespace math { namespace softfloat {
 
   namespace detail {
 
@@ -147,23 +147,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   constexpr uint_fast8_t softfloat_countLeadingZeros32(uint32_t a)
   {
     // TBD: Finding MSB to count leading zeros can probably be done more efficiently.
-    uint_fast8_t count = 0;
-
-    if(a < UINT32_C(0x10000))
-    {
-      count = 16U;
-      a   <<= 16U;
-    }
-
-    if(a < UINT32_C(0x1000000))
-    {
-      count += 8U;
-      a    <<= 8U;
-    }
-
-    count += softfloat_countLeadingZeros8((uint_fast8_t) (a >> 24U));
-
-    return count;
+    return (a < UINT32_C(0x10000)) ? 16U + softfloat_countLeadingZeros16((uint16_t) a)
+                                   :       softfloat_countLeadingZeros16((uint16_t) (a >> 16U));
   }
 
   /*----------------------------------------------------------------------------
@@ -172,34 +157,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   *----------------------------------------------------------------------------*/
   constexpr uint_fast8_t softfloat_countLeadingZeros64(uint64_t a)
   {
-    uint_fast8_t count = 0U;
-
-    uint32_t a32   = (uint32_t) (a >> 32);
-
-    if(!a32)
-    {
-      count = 32U;
-      a32 = (uint32_t) a;
-    }
-
-    /*------------------------------------------------------------------------
-    | From here, result is current count + count leading zeros of `a32'.
-    *------------------------------------------------------------------------*/
-    if(a32 < UINT32_C(0x10000))
-    {
-      count += 16U;
-      a32  <<= 16U;
-    }
-
-    if(a32 < UINT32_C(0x1000000))
-    {
-      count += 8U;
-      a32  <<= 8U;
-    }
-
-    count += softfloat_countLeadingZeros8(a32 >> 24U);
-
-    return count;
+    // TBD: Finding MSB to count leading zeros can probably be done more efficiently.
+    return (a < UINT64_C(0x100000000)) ? 32U + softfloat_countLeadingZeros32((uint32_t) a)
+                                       :       softfloat_countLeadingZeros32((uint32_t) (a >> 32U));
   }
 
   /*----------------------------------------------------------------------------
@@ -1210,18 +1170,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   // TBD: Do not derive directly from numeric_limits,
   // as some members such as is_iec559, etc. should be false.
-  template<> class numeric_limits< ::math::sd::float64_t> : public std::numeric_limits<double>
+  template<> class numeric_limits< ::math::softfloat::float64_t> : public std::numeric_limits<double>
   {
   public:
-    static constexpr ::math::sd::float64_t (min)        () noexcept { return ::math::sd::float64_t::my_value_min(); }
-    static constexpr ::math::sd::float64_t (max)        () noexcept { return ::math::sd::float64_t::my_value_max(); }
-    static constexpr ::math::sd::float64_t lowest       () noexcept { return ::math::sd::float64_t::my_value_lowest(); }
-    static constexpr ::math::sd::float64_t epsilon      () noexcept { return ::math::sd::float64_t::my_value_epsilon(); }
-    static constexpr ::math::sd::float64_t round_error  () noexcept { return ::math::sd::float64_t::my_value_round_error(); }
-    static constexpr ::math::sd::float64_t denorm_min   () noexcept { return ::math::sd::float64_t::my_value_denorm_min(); }
-    static constexpr ::math::sd::float64_t infinity     () noexcept { return ::math::sd::float64_t::my_value_infinity(); }
-    static constexpr ::math::sd::float64_t quiet_NaN    () noexcept { return ::math::sd::float64_t::my_value_quiet_NaN(); }
-    static constexpr ::math::sd::float64_t signaling_NaN() noexcept { return ::math::sd::float64_t::my_value_signaling_NaN(); }
+    static constexpr ::math::softfloat::float64_t (min)        () noexcept { return ::math::softfloat::float64_t::my_value_min(); }
+    static constexpr ::math::softfloat::float64_t (max)        () noexcept { return ::math::softfloat::float64_t::my_value_max(); }
+    static constexpr ::math::softfloat::float64_t lowest       () noexcept { return ::math::softfloat::float64_t::my_value_lowest(); }
+    static constexpr ::math::softfloat::float64_t epsilon      () noexcept { return ::math::softfloat::float64_t::my_value_epsilon(); }
+    static constexpr ::math::softfloat::float64_t round_error  () noexcept { return ::math::softfloat::float64_t::my_value_round_error(); }
+    static constexpr ::math::softfloat::float64_t denorm_min   () noexcept { return ::math::softfloat::float64_t::my_value_denorm_min(); }
+    static constexpr ::math::softfloat::float64_t infinity     () noexcept { return ::math::softfloat::float64_t::my_value_infinity(); }
+    static constexpr ::math::softfloat::float64_t quiet_NaN    () noexcept { return ::math::softfloat::float64_t::my_value_quiet_NaN(); }
+    static constexpr ::math::softfloat::float64_t signaling_NaN() noexcept { return ::math::softfloat::float64_t::my_value_signaling_NaN(); }
   };
 
   }

@@ -23,16 +23,14 @@ soft_double implements common algebraic operations,
 `sqrt` and comparison operations,
 and also includes full support for `std::numeric_limits`.
 
-soft_double is written in header-only C++14, and is compatible through C++14, 17, 20.
-Note: backward compatibility with C++11 is in progress, and simple refactoring
-of certain `constexpr` functions is all that is needed to extend back to C++11 as well.
+soft_double is written in header-only C++11, and is compatible through C++11, 14, 17, 20.
 
 ## Implementation goals
 
   - Clean header-only C++ design.
-  - Seamless portability to any modern C++14, 17, 20 compiler (back-compatibility to C++11 is in progress).
+  - Seamless portability to any modern C++11, 14, 17, 20 compiler.
   - Efficiency suitable for _bare-metal_ embedded systems, particularly if 64-bit.
-  - Use trusted algorithms based on [softfloat 3e](  https://github.com/ucb-bar/berkeley-softfloat-3).
+  - Use refactored, trusted algorithms based on those found in [softfloat 3e](  https://github.com/ucb-bar/berkeley-softfloat-3).
 
 ## Quick Start
 
@@ -82,4 +80,4 @@ the [wide-decimal](https://github.com/ckormanyos/wide-decimal) project
 in order to verify the functionality of `soft_double` with FFTs in a real-world application.
 
 Continuous integration runs on push using GitHub Actions. Various compilers, operating systems,
-and C++ standards ranging from C++14, 17, 20 are included in CI.
+and C++ standards ranging from C++11, 14, 17, 20 are included in CI.

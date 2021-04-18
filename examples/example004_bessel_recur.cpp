@@ -215,13 +215,13 @@ namespace local
   }
 }
 
-bool math::sd::example004_bessel_recur()
+bool math::softfloat::example004_bessel_recur()
 {
   // Calculate the double value of a Bessel function.
   // N[BesselJ[9, 123456789/10000000], 40]
   // 0.1811741425937681762466579147691209001166;
 
-  using float64_t = ::math::sd::soft_double;
+  using float64_t = ::math::softfloat::soft_double;
 
   // Downward recursion and simultaneous summation of
   // the normalization factor.
@@ -232,7 +232,7 @@ bool math::sd::example004_bessel_recur()
   const double   d = 0.1811741425937681762466579147691209001166;
   const uint64_t u = *(volatile uint64_t*) & d;
 
-  const float64_t control(u, ::math::sd::detail::nothing());
+  const float64_t control(u, ::math::softfloat::detail::nothing());
 
   using std::fabs;
 
