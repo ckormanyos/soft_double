@@ -111,6 +111,27 @@ jobs:
           ${{ matrix.compiler }} -finline-functions -O3 -Wall -Wextra -pedantic -m64 -std=${{ matrix.standard }} -I. examples/example001_roots_sqrt.cpp examples/example004_bessel_recur.cpp test/test.cpp test/test_soft_double.cpp test/test_soft_double_examples.cpp test/test_soft_double_with_decwide_t_100k_digit_pi.cpp -o soft_double.exe
           ls -la ./soft_double.exe
           ./soft_double.exe
+  apple-gcc-clang-native:
+    runs-on: macos-latest
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [ g++, clang++ ]
+        standard: [ c++11, c++14, c++17, c++2a ]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'
+      - name: apple-gcc-clang-native
+        run: |
+          echo "compile ./soft_double.exe"
+          ${{ matrix.compiler }} -v
+          ${{ matrix.compiler }} -finline-functions -O3 -Wall -Wextra -pedantic -m64 -O3 -std=${{ matrix.standard }} -I. examples/example001_roots_sqrt.cpp examples/example004_bessel_recur.cpp test/test.cpp test/test_soft_double.cpp test/test_soft_double_examples.cpp test/test_soft_double_with_decwide_t_100k_digit_pi.cpp -o soft_double.exe
+          ls -la ./soft_double.exe
+          ./soft_double.exe
   msvc-release-x64:
     runs-on: windows-latest
     steps:
