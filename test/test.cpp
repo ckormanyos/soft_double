@@ -6,7 +6,7 @@
 
 // Build locally for test on MinGW or Strawberry via Git bash.
 // cd C:\Users\User\Documents\Ks\PC_Software\NumericalPrograms\ExtendedNumberTypes\soft_double
-// g++ -finline-functions -finline-limit=32 -fno-exceptions -fno-rtti -march=native -mtune=native -O3 -Wall -Wextra -pedantic -std=c++11 -I. examples/example001_roots_sqrt.cpp examples/example004_bessel_recur.cpp test/test.cpp test/test_soft_double.cpp test/test_soft_double_examples.cpp test/test_soft_double_with_decwide_t_100k_digit_pi.cpp -o soft_double.exe
+// g++ -finline-functions -finline-limit=32 -fno-exceptions -fno-rtti -m64 -O3 -Wall -Wextra -pedantic -std=c++11 -I. examples/example001_roots_sqrt.cpp examples/example004_bessel_recur.cpp test/test.cpp test/test_soft_double.cpp test/test_soft_double_examples.cpp test/test_soft_double_with_decwide_t_100k_digit_pi.cpp -o soft_double.exe
 
 extern bool test_soft_double();
 extern bool test_soft_double_with_decwide_t_100k_digit_pi();
