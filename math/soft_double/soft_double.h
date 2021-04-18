@@ -58,13 +58,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   struct uint128_as_struct  { uint64_t v0, v64; };
   struct uint64_extra       { uint64_t extra, v; };
 
-  constexpr bool         signF32UI(uint32_t a) { return ((bool) ((uint32_t) (a)>>31)); }
-  constexpr int_fast16_t expF32UI (uint32_t a) { return ((int_fast16_t) ((a)>>23) & 0xFF); }
-  constexpr uint32_t     fracF32UI(uint32_t a) { return ((a) & UINT32_C(0x007FFFFF)); }
+  constexpr bool     signF32UI(uint32_t a) { return ((bool) ((uint32_t) (a)>>31)); }
+  constexpr int16_t  expF32UI (uint32_t a) { return ((int16_t) ((a)>>23) & 0xFF); }
+  constexpr uint32_t fracF32UI(uint32_t a) { return ((a) & UINT32_C(0x007FFFFF)); }
 
-  constexpr bool         signF64UI(uint64_t a) { return ((bool) ((uint64_t) (a)>>63)); }
-  constexpr int_fast16_t expF64UI (uint64_t a) { return ((int_fast16_t) ((a)>>52) & 0x7FF); }
-  constexpr uint64_t     fracF64UI(uint64_t a) { return ((a) & UINT64_C(0x000FFFFFFFFFFFFF)); }
+  constexpr bool     signF64UI(uint64_t a) { return ((bool) ((uint64_t) (a)>>63)); }
+  constexpr int16_t  expF64UI (uint64_t a) { return ((int16_t) ((a)>>52) & 0x7FF); }
+  constexpr uint64_t fracF64UI(uint64_t a) { return ((a) & UINT64_C(0x000FFFFFFFFFFFFF)); }
 
   template<typename IntegralTypeExp,
            typename IntegralTypeSig>
@@ -97,7 +97,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   | least-significant bit of the shifted value by setting the least-significant
   | bit to 1.  This shifted-and-jammed value is returned.
   *----------------------------------------------------------------------------*/
-  constexpr uint32_t softfloat_shiftRightJam32(uint32_t a, uint_fast16_t dist)
+  constexpr uint32_t softfloat_shiftRightJam32(uint32_t a, uint16_t dist)
   {
     return (dist < 31) ? a >> dist | ((uint32_t)(a << (-dist & 31)) != 0 ? 1U : 0U) : (a != 0 ? 1U : 0U);
   }
@@ -116,7 +116,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   | into the number of leading 0 bits before the most-significant 1 of that
   | integer.  For integer zero (index 0), the corresponding table element is 8.
   *----------------------------------------------------------------------------*/
-  constexpr uint_least8_t softfloat_countLeadingZeros8_z_table(const uint_fast8_t index)
+  constexpr uint_fast8_t softfloat_countLeadingZeros8_z_table(const uint_fast8_t index)
   {
     return ((index < 0x1U) ? 4U :
            ((index < 0x2U) ? 3U :
@@ -124,7 +124,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
            ((index < 0x8U) ? 1U : 0U))));
   }
 
-  constexpr uint_least8_t softfloat_countLeadingZeros8(const uint_fast8_t index)
+  constexpr uint_fast8_t softfloat_countLeadingZeros8(const uint_fast8_t index)
   {
     return (index < 0x10U) ? 4U + softfloat_countLeadingZeros8_z_table(index &  0xFU)
                            :      softfloat_countLeadingZeros8_z_table(index >>   4U);
@@ -253,9 +253,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       uZ.f = f;
 
-      const bool         sign = detail::signF32UI(uZ.u);
-      const int_fast16_t exp  = detail::expF32UI (uZ.u);
-      const uint32_t     frac = detail::fracF32UI(uZ.u);
+      const bool     sign = detail::signF32UI(uZ.u);
+      const int16_t  exp  = detail::expF32UI (uZ.u);
+      const uint32_t frac = detail::fracF32UI(uZ.u);
 
       if((!exp) && (!frac))
       {
@@ -387,13 +387,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static uint64_t f64_mul(const uint64_t a, const uint64_t b)
     {
-      const bool         signA = detail::signF64UI(a);
-      const int_fast16_t expA  = detail::expF64UI (a);
-            uint64_t     sigA  = detail::fracF64UI(a);
+      const bool     signA = detail::signF64UI(a);
+      const int16_t  expA  = detail::expF64UI (a);
+            uint64_t sigA  = detail::fracF64UI(a);
 
-      const bool         signB = detail::signF64UI(b);
-      const int_fast16_t expB  = detail::expF64UI (b);
-            uint64_t     sigB  = detail::fracF64UI(b);
+      const bool     signB = detail::signF64UI(b);
+      const int16_t  expB  = detail::expF64UI (b);
+            uint64_t sigB  = detail::fracF64UI(b);
 
       const bool signZ = signA ^ signB;
 
@@ -403,7 +403,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       }
       else
       {
-        int_fast16_t expZ = (int_fast16_t) (expA + expB) - 0x3FF;
+        int16_t expZ = (int16_t) (expA + expB) - 0x3FF;
 
         sigA = (sigA | UINT64_C(0x0010000000000000)) << 10U;
         sigB = (sigB | UINT64_C(0x0010000000000000)) << 11U;
@@ -449,13 +449,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static uint64_t f64_div(const uint64_t a, const uint64_t b)
     {
-      const bool         signA = detail::signF64UI(a);
-            int_fast16_t expA  = detail::expF64UI (a);
-            uint64_t     sigA  = detail::fracF64UI(a);
+      const bool     signA = detail::signF64UI(a);
+            int16_t  expA  = detail::expF64UI (a);
+            uint64_t sigA  = detail::fracF64UI(a);
 
-      const bool         signB = detail::signF64UI(b);
-            int_fast16_t expB  = detail::expF64UI (b);
-            uint64_t     sigB  = detail::fracF64UI(b);
+      const bool     signB = detail::signF64UI(b);
+            int16_t  expB  = detail::expF64UI (b);
+            uint64_t sigB  = detail::fracF64UI(b);
 
       const bool signZ = signA ^ signB;
 
@@ -465,7 +465,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       }
       else
       {
-        int_fast16_t expZ = (expA - expB) + 0x3FE;
+        int16_t expZ = (expA - expB) + 0x3FE;
 
         sigA |= UINT64_C(0x0010000000000000);
         sigB |= UINT64_C(0x0010000000000000);
@@ -483,8 +483,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
         sigB <<= 11U;
 
-        const uint32_t recip32    = detail::softfloat_approxRecip32_1(sigB >> 32U) - 2U;
-        const uint32_t sig32Z     = ((uint32_t) (sigA >> 32U) * (uint64_t) recip32) >> 32U;
+        const uint32_t recip32 = detail::softfloat_approxRecip32_1(sigB >> 32U) - 2U;
+        const uint32_t sig32Z  = ((uint32_t) (sigA >> 32U) * (uint64_t) recip32) >> 32U;
 
         uint32_t doubleTerm = sig32Z << 1U;
 
@@ -524,9 +524,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static uint64_t f64_sqrt(const uint64_t a)
     {
-      bool         signA = detail::signF64UI(a);
-      int_fast16_t expA  = detail::expF64UI (a);
-      uint64_t     sigA  = detail::fracF64UI(a);
+      bool     signA = detail::signF64UI(a);
+      int16_t  expA  = detail::expF64UI (a);
+      uint64_t sigA  = detail::fracF64UI(a);
 
       if(((!expA) && (!sigA)) || signA)
       {
@@ -539,7 +539,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         | `sig32A', which makes `sig32Z' also a lower bound on the square root of
         | `sigA'.)
         *------------------------------------------------------------------------*/
-        int_fast16_t expZ = ((expA - 0x3FF) >> 1) + 0x3FE;
+        int16_t expZ = ((expA - 0x3FF) >> 1) + 0x3FE;
+
         expA &= 1;
         sigA |= UINT64_C(0x0010000000000000);
 
@@ -589,16 +590,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static uint32_t f64_to_ui32(const uint64_t a)
     {
-      bool          sign = detail::signF64UI(a);
-      int_fast16_t  exp  = detail::expF64UI (a);
-      uint64_t      sig  = detail::fracF64UI(a);
+      const bool     sign = detail::signF64UI(a);
+      const int16_t  exp  = detail::expF64UI (a);
+            uint64_t sig  = detail::fracF64UI(a);
 
       if(exp)
       {
         sig |= UINT64_C(0x0010000000000000);
       }
 
-      int_fast16_t shiftDist = 0x427 - exp;
+      const int16_t shiftDist = 0x427 - exp;
 
       if(0 < shiftDist)
       {
@@ -610,16 +611,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static int32_t f64_to__i32(const uint64_t a)
     {
-      bool          sign = detail::signF64UI(a);
-      int_fast16_t  exp  = detail::expF64UI (a);
-      uint64_t      sig  = detail::fracF64UI(a);
+      const bool     sign = detail::signF64UI(a);
+      const int16_t  exp  = detail::expF64UI (a);
+            uint64_t sig  = detail::fracF64UI(a);
 
       if(exp)
       {
         sig |= UINT64_C(0x0010000000000000);
       }
 
-      int_fast16_t shiftDist = 0x427 - exp;
+      int16_t shiftDist = 0x427 - exp;
 
       if(0 < shiftDist)
       {
@@ -631,16 +632,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static uint64_t f64_to_ui64(const uint64_t a)
     {
-      const bool          sign = detail::signF64UI(a);
-      const int_fast16_t  exp  = detail::expF64UI (a);
-            uint64_t      sig  = detail::fracF64UI(a);
+      const bool     sign = detail::signF64UI(a);
+      const int16_t  exp  = detail::expF64UI (a);
+            uint64_t sig  = detail::fracF64UI(a);
 
       if(exp)
       {
         sig |= UINT64_C(0x0010000000000000);
       }
 
-      int_fast16_t shiftDist = 0x433 - exp;
+      int16_t shiftDist = 0x433 - exp;
 
       struct detail::uint64_extra sigExtra;
 
@@ -664,16 +665,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static int64_t f64_to__i64(const uint64_t a)
     {
-      const bool          sign = detail::signF64UI(a);
-      const int_fast16_t  exp  = detail::expF64UI (a);
-            uint64_t      sig  = detail::fracF64UI(a);
+      const bool     sign = detail::signF64UI(a);
+      const int16_t  exp  = detail::expF64UI (a);
+            uint64_t sig  = detail::fracF64UI(a);
 
       if(exp)
       {
         sig |= UINT64_C(0x0010000000000000);
       }
 
-      int_fast16_t shiftDist = 0x433 - exp;
+      int16_t shiftDist = 0x433 - exp;
 
       struct detail::uint64_extra sigExtra;
 
@@ -697,9 +698,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static float f64_to_f32(const uint64_t a)
     {
-      const bool          sign = detail::signF64UI(a);
-      const int_fast16_t  exp  = detail::expF64UI (a);
-      const uint64_t      frac = detail::fracF64UI(a);
+      const bool     sign = detail::signF64UI(a);
+      const int16_t  exp  = detail::expF64UI (a);
+      const uint64_t frac = detail::fracF64UI(a);
 
       const uint32_t frac32 = (uint32_t) detail::softfloat_shortShiftRightJam64( frac, 22 );
 
@@ -708,9 +709,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       return f;
     }
 
-    static float softfloat_roundPackToF32( bool sign, int_fast16_t exp, uint_fast32_t sig )
+    static float softfloat_roundPackToF32( bool sign, int16_t exp, uint32_t sig )
     {
-      sig = (uint_fast32_t) (sig + 0x40U) >> 7U;
+      sig = (uint32_t) (sig + 0x40U) >> 7U;
 
       if(sig == 0U)
       {
@@ -762,7 +763,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     {
       uint32_t sig32;
 
-      uint_fast16_t roundIncrement = (sign ? 0xFFFU : 0U);
+      uint16_t roundIncrement = (sign ? 0xFFFU : 0U);
 
       sig += roundIncrement;
 
@@ -787,7 +788,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static uint32_t softfloat_roundToUI32(bool sign, uint64_t sig)
     {
-      uint_fast16_t roundIncrement = 0U;
+      uint16_t roundIncrement = 0U;
 
       if(sign)
       {
@@ -819,14 +820,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static uint64_t softfloat_addMagsF64(uint64_t uiA, uint64_t uiB, bool signZ)
     {
-      const int_fast16_t expA = detail::expF64UI (uiA);
-            uint64_t     sigA = detail::fracF64UI(uiA);
-      const int_fast16_t expB = detail::expF64UI (uiB);
-            uint64_t     sigB = detail::fracF64UI(uiB);
+      const int16_t  expA = detail::expF64UI (uiA);
+            uint64_t sigA = detail::fracF64UI(uiA);
+      const int16_t  expB = detail::expF64UI (uiB);
+            uint64_t sigB = detail::fracF64UI(uiB);
 
-      const int_fast16_t expDiff = expA - expB;
+      const int16_t expDiff = expA - expB;
 
-      int_fast16_t  expZ;
+      int16_t  expZ;
       uint64_t sigZ;
 
       if(!expDiff)
@@ -908,7 +909,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         UINT16_C(0x4A3E), UINT16_C(0x68FE), UINT16_C(0x432B), UINT16_C(0x5EFD)
       }};
 
-      int_fast16_t index  = (int_fast16_t) (((uint32_t) (a >> 27U) & 0xEU) + oddExpA);
+      int16_t index       = (int16_t) (((uint32_t) (a >> 27U) & 0xEU) + oddExpA);
       uint16_t     eps    = (uint16_t) (a >> 12);
       uint16_t     r0     =     softfloat_approxRecipSqrt_1k0s[index]
                             - ((softfloat_approxRecipSqrt_1k1s[index] * (uint32_t) eps) >> 20U);
@@ -935,7 +936,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       return r;
     }
 
-    static uint64_t softfloat_normRoundPackToF64(bool sign, int_fast16_t exp, uint64_t sig)
+    static uint64_t softfloat_normRoundPackToF64(bool sign, int16_t exp, uint64_t sig)
     {
       const int_fast8_t shiftDist = (int_fast8_t) (detail::softfloat_countLeadingZeros64(sig) - 1U);
 
@@ -953,11 +954,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       }
     }
 
-    static uint64_t softfloat_roundPackToF64(bool sign, int_fast16_t exp, uint64_t sig)
+    static uint64_t softfloat_roundPackToF64(bool sign, int16_t exp, uint64_t sig)
     {
-      uint_fast16_t roundIncrement = 0x200U;
+      uint16_t roundIncrement = 0x200U;
 
-      uint_fast16_t roundBits = sig & 0x3FFU;
+      uint16_t roundBits = sig & 0x3FFU;
 
       if(0x7FDU <= (uint16_t) exp)
       {
@@ -985,15 +986,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static uint64_t softfloat_subMagsF64(uint64_t uiA, uint64_t uiB, bool signZ)
     {
-      uint64_t     uiZ;
-      int_fast16_t expZ;
+      uint64_t uiZ;
+      int16_t  expZ;
 
-      int_fast16_t expA = detail::expF64UI(uiA);
-      uint64_t     sigA = detail::fracF64UI(uiA);
-      int_fast16_t expB = detail::expF64UI(uiB);
-      uint64_t     sigB = detail::fracF64UI(uiB);
+      int16_t  expA = detail::expF64UI(uiA);
+      uint64_t sigA = detail::fracF64UI(uiA);
+      int16_t  expB = detail::expF64UI(uiB);
+      uint64_t sigB = detail::fracF64UI(uiB);
 
-      const int_fast16_t expDiff = expA - expB;
+      const int16_t expDiff = expA - expB;
 
       if(!expDiff)
       {
@@ -1060,7 +1061,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           sigZ = sigA - sigB;
         }
 
-        return softfloat_normRoundPackToF64(signZ, (int_fast16_t) (expZ - 1), sigZ);
+        return softfloat_normRoundPackToF64(signZ, (int16_t) (expZ - 1), sigZ);
       }
 
       return uiZ;
