@@ -25,6 +25,27 @@ jobs:
           ${{ matrix.compiler }} -finline-functions -finline-limit=64 -march=native -mtune=native -O3 -Wall -Wextra -pedantic -Wno-strict-aliasing -std=${{ matrix.standard }} -DLITTLEENDIAN -I. examples/example001_roots_sqrt.cpp examples/example004_bessel_recur.cpp test/test.cpp test/test_soft_double.cpp test/test_soft_double_examples.cpp test/test_soft_double_with_decwide_t_100k_digit_pi.cpp -o soft_double.exe
           ls -la ./soft_double.exe
           ./soft_double.exe
+  gcc-clang-native-asan:
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [ g++, clang++ ]
+        standard: [ c++11, c++14, c++17, c++2a ]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'
+      - name: gcc-clang-native-asan
+        run: |
+          echo "compile ./soft_double.exe"
+          ${{ matrix.compiler }} -v
+          ${{ matrix.compiler }} -finline-functions -finline-limit=64 -fsanitize=address -fsanitize=leak -march=native -mtune=native -O3 -Wall -Wextra -pedantic -Wno-strict-aliasing -std=${{ matrix.standard }} -DLITTLEENDIAN -I. examples/example001_roots_sqrt.cpp examples/example004_bessel_recur.cpp test/test.cpp test/test_soft_double.cpp test/test_soft_double_examples.cpp test/test_soft_double_with_decwide_t_100k_digit_pi.cpp -o soft_double.exe
+          ls -la ./soft_double.exe
+          ./soft_double.exe
   gcc-clang-10:
     runs-on: ubuntu-20.04
     defaults:

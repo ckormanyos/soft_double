@@ -88,7 +88,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   *----------------------------------------------------------------------------*/
   constexpr uint64_t softfloat_shortShiftRightJam64(uint64_t a, uint_fast8_t dist)
   {
-    return a >> dist | ((a & (((uint64_t) 1 << dist) - 1)) != 0);
+    return a >> dist | ((a & (((uint64_t) 1 << dist) - 1)) != 0 ? 1U : 0U);
   }
 
   /*----------------------------------------------------------------------------
@@ -96,27 +96,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   | be zero.  If any nonzero bits are shifted off, they are "jammed" into the
   | least-significant bit of the shifted value by setting the least-significant
   | bit to 1.  This shifted-and-jammed value is returned.
-  |   The value of 'dist' can be arbitrarily large.  In particular, if 'dist' is
-  | greater than 32, the result will be either 0 or 1, depending on whether 'a'
-  | is zero or nonzero.
   *----------------------------------------------------------------------------*/
   constexpr uint32_t softfloat_shiftRightJam32(uint32_t a, uint_fast16_t dist)
   {
-    return (dist < 31) ? a >> dist | ((uint32_t)(a << (-dist & 31)) != 0) : (a != 0);
+    return (dist < 31) ? a >> dist | ((uint32_t)(a << (-dist & 31)) != 0 ? 1U : 0U) : (a != 0 ? 1U : 0U);
   }
 
   /*----------------------------------------------------------------------------
   | Shifts 'a' right by the number of bits given in 'dist', which must not
-  | be zero.  If any nonzero bits are shifted off, they are "jammed" into the
-  | least-significant bit of the shifted value by setting the least-significant
-  | bit to 1.  This shifted-and-jammed value is returned.
-  |   The value of 'dist' can be arbitrarily large.  In particular, if 'dist' is
-  | greater than 64, the result will be either 0 or 1, depending on whether 'a'
-  | is zero or nonzero.
+  | be zero.
   *----------------------------------------------------------------------------*/
   constexpr uint64_t softfloat_shiftRightJam64(uint64_t a, uint32_t dist)
   {
-    return (dist < 63) ? a >> dist | ((uint64_t)(a << (-dist & 63)) != 0) : (a != 0);
+    return (dist < 63) ? a >> dist | ((uint64_t)(a << (-dist & 63)) != 0 ? 1U : 0U) : (a != 0 ? 1U : 0U);
   }
 
   /*----------------------------------------------------------------------------
@@ -165,13 +157,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   /*----------------------------------------------------------------------------
   | Returns an approximation to the reciprocal of the number represented by 'a',
   | where 'a' is interpreted as an unsigned fixed-point number with one integer
-  | bit and 31 fraction bits.  The 'a' input must be "normalized", meaning that
-  | its most-significant bit (bit 31) must be 1.  Thus, if A is the value of
-  | the fixed-point interpretation of 'a', then 1 <= A < 2.  The returned value
-  | is interpreted as a pure unsigned fraction, having no integer bits and 32
-  | fraction bits.  The approximation returned is never greater than the true
-  | reciprocal 1/A, and it differs from the true reciprocal by at most 2.006 ulp
-  | (units in the last place).
+  | bit and 31 fraction bits.
   *----------------------------------------------------------------------------*/
   constexpr uint32_t softfloat_approxRecip32_1(uint32_t a)
   {
@@ -182,24 +168,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   | Shifts the 128 bits formed by concatenating 'a' and 'extra' right by 64
   | _plus_ the number of bits given in 'dist', which must not be zero.  This
   | shifted value is at most 64 nonzero bits and is returned in the 'v' field
-  | of the 'struct uint64_extra' result.  The 64-bit 'extra' field of the result
-  | contains a value formed as follows from the bits that were shifted off:  The
-  | _last_ bit shifted off is the most-significant bit of the 'extra' field, and
-  | the other 63 bits of the 'extra' field are all zero if and only if _all_but_
-  | _the_last_ bits shifted off were all zero.
-  |   (This function makes more sense if 'a' and 'extra' are considered to form
-  | an unsigned fixed-point number with binary point between 'a' and 'extra'.
-  | This fixed-point value is shifted right by the number of bits given in
-  | 'dist', and the integer part of this shifted value is returned in the 'v'
-  | field of the result.  The fractional part of the shifted value is modified
-  | as described above and returned in the 'extra' field of the result.)
+  | of the 'struct uint64_extra' result.
   *----------------------------------------------------------------------------*/
   constexpr struct uint64_extra softfloat_shiftRightJam64Extra(uint64_t a, uint64_t extra, uint32_t dist)
   {
     return
     {
-      (dist < 64) ? (a << (-dist & 63)) | (extra != 0 ? 1 : 0) : ((dist == 64) ? a : (a != 0 ? 1 : 0))  | (extra != 0 ? 1 : 0),
-      (dist < 64) ?  a >> dist                                 : 0
+      (dist < 64) ? (a << (-dist & 63)) | (extra != 0U ? 1U : 0U) : ((dist == 64) ? a : (a != 0U ? 1U : 0U))  | (extra != 0U ? 1U : 0U),
+      (dist < 64) ?  a >> dist                                    : 0U
     };
   }
 
@@ -734,9 +710,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       sig = (sig + roundIncrement)>>7;
 
-      sig &= ~(uint_fast32_t) (! (roundBits ^ 0x40) & 0);
-
-      if(!sig)
+      if(sig == 0U)
       {
         exp = 0;
       }
@@ -782,21 +756,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     {
       uint32_t sig32;
 
-      uint_fast16_t roundIncrement = (sign ? 0xFFF : 0);
+      uint_fast16_t roundIncrement = (sign ? 0xFFFU : 0U);
 
       sig += roundIncrement;
 
-      sig32 = (uint32_t) (sig >> 12);
+      sig32 = (uint32_t) (sig >> 12U);
 
-      union
-      {
-        uint32_t ui;
-         int32_t  i;
-      } uZ;
+      const uint32_t ui = (uint32_t) (sign ? -sig32 : sig32);
 
-      uZ.ui = sign ? -sig32 : sig32;
-
-      return uZ.i;
+      return (int32_t) ui;
     }
 
     static int64_t softfloat_roundToI64(bool sign, uint64_t sig)
@@ -806,26 +774,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         ++sig;
       }
 
-      union
-      {
-        uint64_t ui;
-        int64_t i;
-      } uZ;
+      const uint64_t ui = (uint64_t) (sign ? -sig : sig);
 
-      uZ.ui = sign ? -sig : sig;
-
-      return uZ.i;
+      return (int64_t) ui;
     }
 
     static uint32_t softfloat_roundToUI32(bool sign, uint64_t sig)
     {
-      uint_fast16_t roundIncrement = 0;
+      uint_fast16_t roundIncrement = 0U;
 
       if(sign)
       {
         if(!sig)
         {
-          return 0;
+          return 0U;
         }
       }
 
@@ -840,9 +802,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     {
       if(sign)
       {
-        if(!(sig))
+        if(sig == 0U)
         {
-          return 0;
+          return 0U;
         }
       }
 
@@ -920,19 +882,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     | Returns an approximation to the reciprocal of the square root of the number
     | represented by 'a', where 'a' is interpreted as an unsigned fixed-point
     | number either with one integer bit and 31 fraction bits or with two integer
-    | bits and 30 fraction bits.  The format of 'a' is determined by 'oddExpA',
-    | which must be either 0 or 1.  If 'oddExpA' is 1, 'a' is interpreted as
-    | having one integer bit, and if 'oddExpA' is 0, 'a' is interpreted as having
-    | two integer bits.  The 'a' input must be "normalized", meaning that its
-    | most-significant bit (bit 31) must be 1.  Thus, if A is the value of the
-    | fixed-point interpretation of 'a', it follows that 1 <= A < 2 when 'oddExpA'
-    | is 1, and 2 <= A < 4 when 'oddExpA' is 0.
-    |   The returned value is interpreted as a pure unsigned fraction, having
-    | no integer bits and 32 fraction bits.  The approximation returned is never
-    | greater than the true reciprocal 1/sqrt(A), and it differs from the true
-    | reciprocal by at most 2.06 ulp (units in the last place).  The approximation
-    | returned is also always within the range 0.5 to 1; thus, the most-
-    | significant bit of the result is always set.
+    | bits and 30 fraction bits.
     *----------------------------------------------------------------------------*/
     static uint32_t softfloat_approxRecipSqrt32_1(uint32_t oddExpA, uint32_t a)
     {
@@ -1003,7 +953,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       uint_fast16_t roundBits = sig & 0x3FFU;
 
-      if(0x7FD <= (uint16_t) exp)
+      if(0x7FDU <= (uint16_t) exp)
       {
         if(exp < 0)
         {
