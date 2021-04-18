@@ -63,7 +63,7 @@ real_value_type derivative(const real_value_type& x,
   return ((fifteen_m1 - six_m2) + m3) / ten_dx;
 }
 
-namespace
+namespace local
 {
   const auto s = std::random_device().operator()();
 
@@ -73,6 +73,19 @@ namespace
   std::uniform_int_distribution<std::uint64_t> dst_mantissa(UINT64_C(10000000000000000), UINT64_C(99999999999999999));
   std::uniform_int_distribution<std::uint32_t> dst_exp     (UINT32_C(0),                 UINT32_C(18));
   std::uniform_int_distribution<std::uint32_t> dst_sign    (UINT32_C(0),                 UINT32_C(1));
+
+  double to_double(::math::softfloat::float64_t x)
+  {
+    union
+    {
+      double   d;
+      uint64_t u;
+    } uZ;
+
+    uZ.u = x.crepresentation();
+
+    return uZ.d;
+  }
 
   void get_sf_float64_t_and_double(::math::softfloat::float64_t& x1, double& d1, const bool is_positive = false)
   {
@@ -195,7 +208,7 @@ bool test_to_f32(const std::uint32_t n)
     ::math::softfloat::float64_t x;
     double                       d;
 
-    get_sf_float64_t_and_double(x, d);
+    local::get_sf_float64_t_and_double(x, d);
 
     const float f_x = (float) x;
     const float f_d = (float) d;
@@ -235,11 +248,11 @@ bool test_ops(const std::uint32_t n, std::uint_fast8_t op_index)
     double        db;
     double        dr;
 
-    if     (op_index == 4U) { get_sf_float64_t_and_double(xa, da, true);                                sqrt___sf_float64_t_and_double(xr, xa,     dr, da); }
-    else if(op_index == 3U) { get_sf_float64_t_and_double(xa, da); get_sf_float64_t_and_double(xb, db); div____sf_float64_t_and_double(xr, xa, xb, dr, da, db); }
-    else if(op_index == 2U) { get_sf_float64_t_and_double(xa, da); get_sf_float64_t_and_double(xb, db); mul____sf_float64_t_and_double(xr, xa, xb, dr, da, db); }
-    else if(op_index == 1U) { get_sf_float64_t_and_double(xa, da); get_sf_float64_t_and_double(xb, db); sub____sf_float64_t_and_double(xr, xa, xb, dr, da, db); }
-    else                    { get_sf_float64_t_and_double(xa, da); get_sf_float64_t_and_double(xb, db); add____sf_float64_t_and_double(xr, xa, xb, dr, da, db); }
+    if     (op_index == 4U) { local::get_sf_float64_t_and_double(xa, da, true);                                       sqrt___sf_float64_t_and_double(xr, xa,     dr, da); }
+    else if(op_index == 3U) { local::get_sf_float64_t_and_double(xa, da); local::get_sf_float64_t_and_double(xb, db); div____sf_float64_t_and_double(xr, xa, xb, dr, da, db); }
+    else if(op_index == 2U) { local::get_sf_float64_t_and_double(xa, da); local::get_sf_float64_t_and_double(xb, db); mul____sf_float64_t_and_double(xr, xa, xb, dr, da, db); }
+    else if(op_index == 1U) { local::get_sf_float64_t_and_double(xa, da); local::get_sf_float64_t_and_double(xb, db); sub____sf_float64_t_and_double(xr, xa, xb, dr, da, db); }
+    else                    { local::get_sf_float64_t_and_double(xa, da); local::get_sf_float64_t_and_double(xb, db); add____sf_float64_t_and_double(xr, xa, xb, dr, da, db); }
 
     union
     {
@@ -274,9 +287,9 @@ bool test_neq(const std::uint32_t n, std::uint_fast8_t op_index)
     bool x_result = false;
     bool d_result = true;
 
-    if     (op_index == 0U) { get_sf_float64_t_and_double(xa, da); get_sf_float64_t_and_double(xb, db); x_result = (xa <  xb); d_result = (da <  db); }
-    else if(op_index == 1U) { get_sf_float64_t_and_double(xa, da); get_sf_float64_t_and_double(xb, db); x_result = (xa >  xb); d_result = (da >  db); }
-    else if(op_index == 2U) { get_sf_float64_t_and_double(xa, da); get_sf_float64_t_and_double(xb, db); x_result = (xa != xb); d_result = (da != db); }
+    if     (op_index == 0U) { local::get_sf_float64_t_and_double(xa, da); local::get_sf_float64_t_and_double(xb, db); x_result = (xa <  xb); d_result = (da <  db); }
+    else if(op_index == 1U) { local::get_sf_float64_t_and_double(xa, da); local::get_sf_float64_t_and_double(xb, db); x_result = (xa >  xb); d_result = (da >  db); }
+    else if(op_index == 2U) { local::get_sf_float64_t_and_double(xa, da); local::get_sf_float64_t_and_double(xb, db); x_result = (xa != xb); d_result = (da != db); }
 
     result_is_ok &= (x_result == d_result);
 
@@ -299,13 +312,13 @@ bool test_eq_(const std::uint32_t n, std::uint_fast8_t op_index)
   for(std::uint32_t i = 0U; i < n; ++i)
   {
     ::math::softfloat::float64_t x;
-    double        d;
+    double                       d;
 
     bool x_ok;
 
-    if     (op_index == 0U) { get_sf_float64_t_and_double(x, d);                                 x_ok = (*(double*) &x == d); }
-    else if(op_index == 1U) { get_sf_float64_t_and_double(x, d); const ::math::softfloat::float64_t x2 = x / 2; x_ok = (*(double*) &x <= d) && ((d > 0) ? (*(double*) &x2 < d) : (*(double*) &x2 > d)); }
-    else if(op_index == 2U) { get_sf_float64_t_and_double(x, d); const ::math::softfloat::float64_t x2 = x * 2; x_ok = (*(double*) &x <= d) && ((d > 0) ? (*(double*) &x2 > d) : (*(double*) &x2 < d)); }
+    if     (op_index == 0U) { local::get_sf_float64_t_and_double(x, d);                                                x_ok = (local::to_double(x) == d); }
+    else if(op_index == 1U) { local::get_sf_float64_t_and_double(x, d); const ::math::softfloat::float64_t x2 = x / 2; x_ok = (local::to_double(x) <= d) && ((d > 0) ? (local::to_double(x2) < d) : (local::to_double(x2) > d)); }
+    else if(op_index == 2U) { local::get_sf_float64_t_and_double(x, d); const ::math::softfloat::float64_t x2 = x * 2; x_ok = (local::to_double(x) <= d) && ((d > 0) ? (local::to_double(x2) > d) : (local::to_double(x2) < d)); }
     else                    { x_ok = false; d = 0.0; }
 
     result_is_ok &= x_ok;
@@ -343,7 +356,7 @@ bool test_soft_double()
     std::cout << "testing f32____... ";
 
     ::math::softfloat::float64_t xf = ::math::softfloat::float64_t(0.125F) + ::math::softfloat::float64_t(0.5F);
-    double df = *(double*) &xf;
+    double df = local::to_double(xf);
     const bool result_f32____is_ok = (df == 0.625);
     std::cout << std::boolalpha << result_f32____is_ok << std::endl;
     result_is_ok &= result_f32____is_ok;
@@ -354,11 +367,11 @@ bool test_soft_double()
 
     ::math::softfloat::float64_t  xn(1 / ::math::softfloat::float64_t(3));
     xn = -xn;
-    double dn = *(double*) &xn;
+    double dn = local::to_double(xn);
     bool result_neg____is_ok = fabs(1.0 - (dn / -0.33333333333333333)) < std::numeric_limits<double>::epsilon();
 
     xn = -xn;
-    dn = *(double*) &xn;
+    dn = local::to_double(xn);
     result_neg____is_ok &= fabs(1.0 - (dn / 0.33333333333333333)) < std::numeric_limits<double>::epsilon();
     std::cout << std::boolalpha << result_neg____is_ok << std::endl;
     result_is_ok &= result_neg____is_ok;
@@ -377,7 +390,7 @@ bool test_soft_double()
                                         return ((my_x * my_x) / ::math::softfloat::float64_t(3)) + my_x;
                                       });
 
-    double d = *(double*) &result;
+    double d = local::to_double(result);
 
     using std::fabs;
 
