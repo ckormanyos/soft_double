@@ -15,9 +15,10 @@ This compiler does not support 64-bit `double`
 soft_double can be used on such systems to provide a software-emulated,
 portable implementation of 64-bit `double`.
 
-This C++ template header-only library implements a drop-in double-precision
-floating-point type `math::softfloat::soft_double`.
-This can be used essentially like the regular built-in 64-bit
+soft_double is a C++ header-only library.
+It implements a drop-in double-precision
+floating-point type called `math::softfloat::soft_double`.
+This type can be used essentially like the regular built-in 64-bit
 floating-point type `double`.
 
 soft_double implements common algebraic operations,
@@ -30,8 +31,8 @@ soft_double is written in header-only C++11, and is compatible through C++11, 14
 
   - Clean header-only C++ design.
   - Seamless portability to any modern C++11, 14, 17, 20 compiler.
-  - Efficiency suitable for _bare-metal_ embedded systems, particularly if 64-bit.
-  - Use refactored, trusted algorithms based on those found in [softfloat 3e](  https://github.com/ucb-bar/berkeley-softfloat-3).
+  - Efficiency suitable for _bare-metal_ embedded systems, particularly if 64-bit native `double` or similar is unavailable.
+  - Use refactored versoins of trusted algorithms based on those found in [softfloat 3e](https://github.com/ucb-bar/berkeley-softfloat-3).
 
 ## Quick Start
 
@@ -63,9 +64,15 @@ int main()
   // Compare with native double sqrt(pi).
   const double control = sqrt(3.1415926535897932384626433832795028841972);
 
-  const uint64_t d_sqrt_pi_as_uint64 = *(volatile uint64_t*) &control;
+  union
+  {
+    double   d;
+    uint64_t u;
+  } uZ;
 
-  const bool result_is_ok = (s.crepresentation() == d_sqrt_pi_as_uint64);
+  uZ.d = control;
+
+  const bool result_is_ok = (s.crepresentation() == uZ.u);
 
   std::cout << "result_is_ok: " << std::boolalpha << result_is_ok << std::endl;
 }
