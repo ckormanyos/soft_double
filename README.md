@@ -2,37 +2,35 @@ soft_double\
 [![Build Status](https://github.com/ckormanyos/soft_double/actions/workflows/soft_double.yml/badge.svg)](https://github.com/ckormanyos/soft_double/actions)
 ==================
 
+soft_double is a C++ header-only library.
 soft_double provides a C++ software implementation of
-a 64-bit double-precision floating-point data type.
+a 64-bit double-precision floating-point data type
+called `math::softfloat::soft_double`.
+This type can be used essentially like the regular
+built-in 64-bit floating-point type `double`.
 
 Some compilers do not support a built-in 64-bit floating-point type,
 such as might be commonly known as `double` or `long` `double`.
 Consider, for instance, the `avr-gcc` tool chain popularly used on
 8-bit embedded systems like Arduino or standalone _bare metal_ AVR.
-This compiler does not support 64-bit `double`
-(prior to versoin 10).
-
+Prior to version 10, this compiler does not support 64-bit `double`.
 soft_double can be used on such systems to provide a software-emulated,
 portable implementation of 64-bit `double`.
 
-soft_double is a C++ header-only library.
-It implements a drop-in double-precision
-floating-point type called `math::softfloat::soft_double`.
-This type can be used essentially like the regular built-in 64-bit
-floating-point type `double`.
-
 soft_double implements common algebraic operations,
-`sqrt` and comparison operations,
+comparison operations, simple functions like `sqrt`,
 and also includes full support for `std::numeric_limits`.
 
-soft_double is written in header-only C++11, and is compatible through C++11, 14, 17, 20.
+soft_double is written in header-only C++11.
+It is compatible through C++11, 14, 17, 20.
 
 ## Implementation goals
 
   - Clean header-only C++ design.
   - Seamless portability to any modern C++11, 14, 17, 20 compiler.
-  - Efficiency suitable for _bare-metal_ embedded systems, particularly if 64-bit native `double` or similar is unavailable.
-  - Use refactored versoins of trusted algorithms based on those found in [softfloat 3e](https://github.com/ucb-bar/berkeley-softfloat-3).
+  - Efficiency suitable for _bare-metal_ embedded systems.
+  - Particularly useful if 64-bit native `double` or a similar built-in type is unavailable.
+  - Use refactored versions of trusted algorithms based on those found in [softfloat 3e](https://github.com/ucb-bar/berkeley-softfloat-3).
 
 ## Quick Start
 

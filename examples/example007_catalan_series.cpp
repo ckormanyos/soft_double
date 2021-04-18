@@ -117,7 +117,7 @@ bool math::softfloat::example007_catalan_series()
 
 int main()
 {
-  const bool result_is_ok = math::wide_decimal::example007_catalan_series();
+  const bool result_is_ok = math::softfloat::example007_catalan_series();
 
   std::cout << "result_is_ok: " << std::boolalpha << result_is_ok << std::endl;
 }
