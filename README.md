@@ -33,9 +33,28 @@ It is compatible through C++11, 14, 17, 20.
 
 ## Quick Start
 
-Using `soft_double` is straightforward. Simply `#include <math/soft_double/soft_double.h>` and
+Using soft_double is straightforward. Simply `#include <math/soft_double/soft_double.h>` and
 the `soft_double` type can be used almost like familiar built-in 64-bit `double`.
-The following example, for instance, computes and checks the value of
+For instance,
+
+```
+#include <math/soft_double/soft_double.h>
+
+// Use a convenient alias for float64_t.
+using float64_t = ::math::softfloat::soft_double;
+
+// Use the type like built-in `double`.
+const float64_t one_third = float64_t(1) / 3U;
+```
+
+An interesting detail in this code sample is the construction
+of `one_third` from the composite line 1 divided by 3.
+This is done in this way since, although `soft_double` emulates
+64-bit `double`, it has no constructor from 64-bit `double` because
+this is the actual type that is being emulated.
+
+The following more detailed example provides an in-depth examination
+into effectively using soft_double. This code computes and checks the value of
 <img src="https://render.githubusercontent.com/render/math?math=\sqrt{\pi}\,\approx\,1.77245385090551602730">.
 
 ```
