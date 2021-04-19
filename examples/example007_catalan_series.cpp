@@ -76,9 +76,6 @@ namespace local
       }
     }
 
-    using ::pi;
-    using ::log_two_plus_sqrt_three;
-
     const floating_point_type result =
       ((pi<floating_point_type>() * log_two_plus_sqrt_three<floating_point_type>()) + (sum * 3U)) / 8U;
 

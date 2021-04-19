@@ -161,7 +161,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   *----------------------------------------------------------------------------*/
   constexpr uint32_t softfloat_approxRecip32_1(uint32_t a)
   {
-    return (uint32_t) (UINT64_C( 0x7FFFFFFFFFFFFFFF ) / a);
+    return (uint32_t) (UINT64_C(0x7FFFFFFFFFFFFFFF) / a);
   }
 
   /*----------------------------------------------------------------------------
@@ -702,14 +702,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       const int16_t  exp  = detail::expF64UI (a);
       const uint64_t frac = detail::fracF64UI(a);
 
-      const uint32_t frac32 = (uint32_t) detail::softfloat_shortShiftRightJam64( frac, 22 );
+      const uint32_t frac32 = (uint32_t) detail::softfloat_shortShiftRightJam64(frac, 22);
 
       const float f = softfloat_roundPackToF32( sign, exp - 0x381, frac32 | 0x40000000 );
 
       return f;
     }
 
-    static float softfloat_roundPackToF32( bool sign, int16_t exp, uint32_t sig )
+    static float softfloat_roundPackToF32(bool sign, int16_t exp, uint32_t sig)
     {
       sig = (uint32_t) (sig + 0x40U) >> 7U;
 
@@ -942,7 +942,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       exp -= shiftDist;
 
-      if((10 <= shiftDist) && ((uint32_t) exp < 0x7FD))
+      if((10 <= shiftDist) && ((uint32_t) exp < 0x7FDU))
       {
         const uint64_t uZ = detail::packToF64UI(sign, sig ? exp : 0, sig << (shiftDist - 10));
 

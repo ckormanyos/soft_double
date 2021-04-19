@@ -10,9 +10,10 @@
 
   namespace math { namespace softfloat {
 
-  bool example001_roots_sqrt    ();
-  bool example004_bessel_recur  ();
-  bool example007_catalan_series();
+  bool example001_roots_sqrt             ();
+  bool example004_bessel_recur           ();
+  bool example007_catalan_series         ();
+  bool example011_trig_trapezoid_integral();
 
   } }
 

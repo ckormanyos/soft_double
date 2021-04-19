@@ -22,6 +22,7 @@
     <ClCompile Include="examples\example001_roots_sqrt.cpp" />
     <ClCompile Include="examples\example004_bessel_recur.cpp" />
     <ClCompile Include="examples\example007_catalan_series.cpp" />
+    <ClCompile Include="examples\example011_trig_trapezoid_integral.cpp" />
     <ClCompile Include="test\test.cpp" />
     <ClCompile Include="test\test_soft_double_examples.cpp" />
     <ClCompile Include="test\test_soft_double.cpp" />

@@ -60,6 +60,9 @@
     <ClCompile Include="examples\example007_catalan_series.cpp">
       <Filter>examples</Filter>
     </ClCompile>
+    <ClCompile Include="examples\example011_trig_trapezoid_integral.cpp">
+      <Filter>examples</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="math\wide_decimal\decwide_t.h">
