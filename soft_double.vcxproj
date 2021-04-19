@@ -23,6 +23,7 @@
     <ClCompile Include="examples\example004_bessel_recur.cpp" />
     <ClCompile Include="examples\example007_catalan_series.cpp" />
     <ClCompile Include="examples\example011_trig_trapezoid_integral.cpp" />
+    <ClCompile Include="examples\example010_hypergeometric_2f1.cpp" />
     <ClCompile Include="test\test.cpp" />
     <ClCompile Include="test\test_soft_double_examples.cpp" />
     <ClCompile Include="test\test_soft_double.cpp" />

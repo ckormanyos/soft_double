@@ -13,6 +13,7 @@
   bool example001_roots_sqrt             ();
   bool example004_bessel_recur           ();
   bool example007_catalan_series         ();
+  bool example010_hypergeometric_2f1     ();
   bool example011_trig_trapezoid_integral();
 
   } }

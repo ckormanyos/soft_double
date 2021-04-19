@@ -111,15 +111,20 @@ by using a system having a real built-in 64-bit `double`.
 
 If built-in 64-bit `double` is available on a given system,
 it is possible to use a convenient C-style `union`
-to initialize an instance of `soft_double` with
-one of its special class constructors. Thus we can
-make mixed use of built-in 64-bit `double` and `soft_double`
-when needed for special prototyping or verification purposes.
+to initialize an instance of `soft_double` together with
+its special class constructor from `uint64_t` and the
+`math::softfloat::detail::nothing` structure, as shown below.
+In this way we can make mixed use of both built-in 64-bit `double`
+as well as `soft_double` within the same project when 64-bit `double`
+is available.
 
+As mentioned above, this can be convenient
+for special prototyping or verification purposes.
 The code sample below, for instance, initializes
 an instance of `soft_double` to the approximate
 64-bit floating-point representation of
 <img src="https://render.githubusercontent.com/render/math?math=0.16636938378681407351267852431513159437103">.
+An intermediate C-style `union` called `uZ` is employed for this.
 
 ```
 #include <math/soft_double/soft_double.h>
@@ -150,6 +155,7 @@ how to use soft_double.
   - ![`example001_roots_sqrt.cpp`](./examples/example001_roots_sqrt.cpp) computes a square root.
   - ![`example004_bessel_recur.cpp`](./examples/example004_bessel_recur.cpp) implements cylindrical Bessel functions of integral order via downward recursion with a Neumann sum.
   - ![`example007_catalan_series.cpp`](./examples/example007_catalan_series.cpp) computes <img src="https://render.githubusercontent.com/render/math?math=\approx\,15"> decimal digits of Catalan's constant using an accelerated series.
+  - ![`example010_hypergeometric_2f1.cpp`](./examples/example010_hypergeometric_2f1.cpp) calculates an <img src="https://render.githubusercontent.com/render/math?math=\approx\,15"> decimal digit hypergeometric function value using a classic iterative rational approximation scheme.
   - ![`example011_trig_trapezoid_integral.cpp`](./examples/example011_trig_trapezoid_integral.cpp) uses trapezoid integration with an integral representation involving locally-written trigonometric sine and cosine functions to compute several cylindrical Bessel function values.
 
 ## Testing and CI

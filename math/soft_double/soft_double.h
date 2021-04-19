@@ -315,13 +315,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     soft_double& operator*=(const soft_double& other) { my_value = f64_mul(my_value, other.my_value); return *this; }
     soft_double& operator/=(const soft_double& other) { my_value = f64_div(my_value, other.my_value); return *this; }
 
+    // Operators pre-increment and pre-decrement.
+    soft_double& operator++() { return *this += my_value_one(); }
+    soft_double& operator--() { return *this -= my_value_one(); }
+
+    // Operators post-increment and post-decrement.
+    soft_double operator++(int) { const soft_double w(*this); static_cast<void>(++(*this)); return w; }
+    soft_double operator--(int) { const soft_double w(*this); static_cast<void>(--(*this)); return w; }
+
     const soft_double& operator+() const { return *this; }
           soft_double  operator-() const { return soft_double(my_value ^ (uint64_t) (1ULL << 63U), detail::nothing()); }
 
     static constexpr representation_type get_value(soft_double x) { return x.my_value; }
 
     static constexpr soft_double my_value_zero() { return soft_double(UINT64_C(0),                   detail::nothing()); }
-    static constexpr soft_double my_value_one () { return soft_double(UINT64_C(1),                   detail::nothing()); }
+    static constexpr soft_double my_value_one () { return soft_double(UINT64_C(0x3FF0000000000000),  detail::nothing()); }
     static constexpr soft_double my_value_pi  () { return soft_double(UINT64_C(4614256656552045848), detail::nothing()); }
 
     static constexpr soft_double my_value_min()           { return soft_double(UINT64_C(4503599627370496),    detail::nothing()); }
