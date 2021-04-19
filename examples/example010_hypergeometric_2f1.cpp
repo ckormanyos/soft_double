@@ -11,8 +11,8 @@
 #include <cstdint>
 #include <numeric>
 
-#include <math/soft_double/soft_double.h>
-#include <math/soft_double/soft_double_examples.h>
+#include <math/softfloat/soft_double.h>
+#include <math/softfloat/soft_double_examples.h>
 
 namespace local
 {
@@ -193,7 +193,7 @@ bool math::softfloat::example010_hypergeometric_2f1()
 
 int main()
 {
-  const bool result_is_ok = math::wide_decimal::example010_hypergeometric_2f1();
+  const bool result_is_ok = math::softfloat::example010_hypergeometric_2f1();
 
   std::cout << "result_is_ok: " << std::boolalpha << result_is_ok << std::endl;
 }

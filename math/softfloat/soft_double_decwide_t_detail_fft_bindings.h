@@ -10,7 +10,7 @@
 
   #include <cstdint>
 
-  #include <math/soft_double/soft_double.h>
+  #include <math/softfloat/soft_double.h>
 
   namespace math { namespace wide_decimal { namespace detail { namespace fft {
 

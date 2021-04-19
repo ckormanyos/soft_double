@@ -9,8 +9,8 @@
 #include <cmath>
 #include <cstdint>
 
-#include <math/soft_double/soft_double.h>
-#include <math/soft_double/soft_double_examples.h>
+#include <math/softfloat/soft_double.h>
+#include <math/softfloat/soft_double_examples.h>
 
 namespace
 {
