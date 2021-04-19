@@ -76,6 +76,18 @@ int main()
 }
 ```
 
+## Examples
+
+Various interesting and algorithmically challenging
+[examples](./examples) have been implemented.
+It is hoped that the examples provide inspiration and guidance on
+how to use soft_double.
+
+  - ![`example001_roots_sqrt.cpp`](./examples/example001_roots_sqrt.cpp) computes a square root.
+  - ![`example004_bessel_recur.cpp`](./examples/example004_bessel_recur.cpp) implements cylindrical Bessel functions of integral order via downward recursion with a Neumann sum.
+  - ![`example007_catalan_series.cpp`](./examples/example007_catalan_series.cpp) computes <img src="https://render.githubusercontent.com/render/math?math=1,001"> decimal digits of Catalan's constant using an accelerated series.
+  - ![`example011_trig_trapezoid_integral.cpp`](./examples/example011_trig_trapezoid_integral.cpp) uses trapezoid integration with an integral representation involving locally-written trigonometric sine and cosine functions to compute several cylindrical Bessel function values.
+
 ## Testing and CI
 
 Testing is a big issue and a growing test suite is in continued progress providing for tested,
