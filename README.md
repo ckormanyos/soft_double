@@ -8,8 +8,9 @@ This data type is called `math::softfloat::soft_double`
 and it can be used essentially like a regular
 built-in 64-bit floating-point type (such as built-in `double`).
 
-Some compilers do not support a built-in 64-bit floating-point type,
-which might be commonly known as `double` or `long` `double`.
+Some C/C++ environments do not support a built-in 64-bit floating-point type,
+which might be commonly known as `double` or `long` `double`,
+depending on the target system/compiler combination.
 Consider, for instance, the `avr-gcc` tool chain popularly used on
 8-bit embedded systems like Arduino or standalone _bare metal_ AVR.
 Prior to version 10, this compiler does not support 64-bit `double`.
@@ -27,13 +28,13 @@ It is compatible through C++11, 14, 17, 20.
 
   - Clean header-only C++ design.
   - Seamless portability to any modern C++11, 14, 17, 20 compiler.
-  - Efficiency suitable for _bare-metal_ embedded systems.
+  - Achieve efficiency suitable for _bare-metal_ embedded systems.
   - Particularly useful if 64-bit native `double` or a similar built-in type is unavailable.
   - Use refactored versions of trusted algorithms based on those found in [softfloat 3e](https://github.com/ucb-bar/berkeley-softfloat-3).
 
 ## Quick Start
 
-Using soft_double is straightforward. Simply `#include <math/soft_double/soft_double.h>` and
+Using soft_double is straightforward. Simply `#include <math/softfloat/soft_double.h>` and
 the `soft_double` type can be used almost like familiar built-in 64-bit `double`.
 For instance,
 
@@ -56,11 +57,10 @@ situation arises, for example, when the compiler
 does not support 64-bit built-in `double` or `long` `double`
 and these are limited to 32-bits.
 
-As we move forward with more detailed examples,
-some verification of numerical correctness does,
-in fact, use 64-bit built-in `double`. This
-assumes that this data type is supported on the
-target system/compiler combination.
+Detailed examples, testing and verification of numerical correctness
+in the soft_double project do, in fact, use 64-bit built-in `double`.
+Thexamples and verifications mandate that an 64-bit built-in `double`
+data type is actually supported on the target system/compiler combination.
 
 The following more detailed example provides an in-depth examination
 into effectively using soft_double. This code computes and checks the value of
@@ -169,3 +169,6 @@ in order to verify the functionality of `soft_double` with FFTs in a real-world 
 
 Continuous integration runs on push using GitHub Actions. Various compilers, operating systems,
 and C++ standards ranging from C++11, 14, 17, 20 are included in CI.
+
+### Build Status\
+[![Build Status](https://github.com/ckormanyos/soft_double/actions/workflows/soft_double.yml/badge.svg)](https://github.com/ckormanyos/soft_double/actions)
