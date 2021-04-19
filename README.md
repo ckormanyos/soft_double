@@ -103,16 +103,22 @@ int main()
 }
 ```
 
-If built-in 64-bit `double` is available on the system,
+When working with soft_double, we might end up doing some
+library verification or might want to prototype
+our own project-specific software algorithms intended
+to use the `soft_double` type. These activities can be aided
+by using a system having a real built-in 64-bit `double`.
+
+If built-in 64-bit `double` is available on a given system,
 it is possible to use a convenient C-style `union`
 to initialize an instance of `soft_double` with
-one of its special class constructors. This
-can be done for library verification or prototyping
-new software algorithms intended to use `soft_double`.
+one of its special class constructors. Thus we can
+make mixed use of `built-in 64-bit `double` and `soft_double`
+when needed for special prototyping or verification purposes.
 
 The code sample below, for instance, initializes
 an instance of `soft_double` to the approximate
-64-bit floating-point represtnation of
+64-bit floating-point representation of
 <img src="https://render.githubusercontent.com/render/math?math=0.16636938378681407351267852431513159437103">.
 
 ```
