@@ -8,7 +8,7 @@
 #include <iomanip>
 #include <iostream>
 
-#include <math/soft_double/soft_double_examples.h>
+#include <math/softfloat/soft_double_examples.h>
 
 bool test_soft_double_examples()
 {

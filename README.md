@@ -38,7 +38,7 @@ the `soft_double` type can be used almost like familiar built-in 64-bit `double`
 For instance,
 
 ```
-#include <math/soft_double/soft_double.h>
+#include <math/softfloat/soft_double.h>
 
 // Use a convenient alias for float64_t.
 using float64_t = ::math::softfloat::soft_double;
@@ -71,7 +71,7 @@ into effectively using soft_double. This code computes and checks the value of
 #include <iomanip>
 #include <iostream>
 
-#include <math/soft_double/soft_double.h>
+#include <math/softfloat/soft_double.h>
 
 int main()
 {
@@ -127,7 +127,7 @@ an instance of `soft_double` to the approximate
 An intermediate C-style `union` called `uZ` is employed for this.
 
 ```
-#include <math/soft_double/soft_double.h>
+#include <math/softfloat/soft_double.h>
 
 // Use a convenient alias for float64_t.
 using float64_t = ::math::softfloat::soft_double;

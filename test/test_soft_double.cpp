@@ -12,7 +12,7 @@
 #include <iostream>
 #include <random>
 
-#include <math/soft_double/soft_double.h>
+#include <math/softfloat/soft_double.h>
 
 static_assert(sizeof(double) == 8U, "Error: This test code is designed for 8 byte built-in double");
 
