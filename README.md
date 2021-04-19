@@ -9,7 +9,7 @@ and it can be used essentially like a regular
 built-in 64-bit floating-point type (such as built-in `double`).
 
 Some compilers do not support a built-in 64-bit floating-point type,
-such as might be commonly known as `double` or `long` `double`.
+which might be commonly known as `double` or `long` `double`.
 Consider, for instance, the `avr-gcc` tool chain popularly used on
 8-bit embedded systems like Arduino or standalone _bare metal_ AVR.
 Prior to version 10, this compiler does not support 64-bit `double`.
@@ -33,8 +33,8 @@ It is compatible through C++11, 14, 17, 20.
 
 ## Quick Start
 
-Using `soft_double` is simple. Simply `#include <math/soft_double/soft_double.h>` and
-the `soft_double`type can be used almost like familiar built-in 64-bit `double`.
+Using `soft_double` is straightforward. Simply `#include <math/soft_double/soft_double.h>` and
+the `soft_double` type can be used almost like familiar built-in 64-bit `double`.
 The following example, for instance, computes and checks the value of
 <img src="https://render.githubusercontent.com/render/math?math=\sqrt{\pi}\,\approx\,1.77245385090551602730">.
 
@@ -84,7 +84,7 @@ how to use soft_double.
 
   - ![`example001_roots_sqrt.cpp`](./examples/example001_roots_sqrt.cpp) computes a square root.
   - ![`example004_bessel_recur.cpp`](./examples/example004_bessel_recur.cpp) implements cylindrical Bessel functions of integral order via downward recursion with a Neumann sum.
-  - ![`example007_catalan_series.cpp`](./examples/example007_catalan_series.cpp) computes <img src="https://render.githubusercontent.com/render/math?math=1,001"> decimal digits of Catalan's constant using an accelerated series.
+  - ![`example007_catalan_series.cpp`](./examples/example007_catalan_series.cpp) computes <img src="https://render.githubusercontent.com/render/math?math=\approx\,15"> decimal digits of Catalan's constant using an accelerated series.
   - ![`example011_trig_trapezoid_integral.cpp`](./examples/example011_trig_trapezoid_integral.cpp) uses trapezoid integration with an integral representation involving locally-written trigonometric sine and cosine functions to compute several cylindrical Bessel function values.
 
 ## Testing and CI
