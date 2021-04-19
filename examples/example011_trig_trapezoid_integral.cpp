@@ -297,8 +297,6 @@ namespace local
   float_type cyl_bessel_j(const std::uint_fast8_t n,
                           const float_type& x)
   {
-    const float_type epsilon = std::numeric_limits<float_type>::epsilon();
-
     using std::cos;
     using std::sin;
     using std::sqrt;
@@ -306,7 +304,9 @@ namespace local
     using local::cos;
     using local::sin;
 
-    const float_type tol = sqrt(epsilon);
+    constexpr float_type eps = std::numeric_limits<float_type>::epsilon();
+
+    const float_type tol = sqrt(eps);
 
     const float_type integration_result = integral(float_type(0),
                                                    pi<float_type>(),
@@ -328,14 +328,24 @@ bool math::softfloat::example011_trig_trapezoid_integral()
   const float64_t j3 = local::cyl_bessel_j(3U, float64_t(456U) / 100U);
   const float64_t j4 = local::cyl_bessel_j(4U, float64_t(789U) / 100U);
 
-  // N[BesselJ[2, 123/100], 60]
-  const float64_t control2 = float64_t(UINT64_C(0x3FC54B978B35C3D7), math::softfloat::detail::nothing());
+  union
+  {
+    double   d;
+    uint64_t u;
+  }
+  uZ;
 
-  // N[BesselJ[3, 456/100], 60]
-  const float64_t control3 = float64_t(UINT64_C(0x3FDAE7A3EDE1F738), math::softfloat::detail::nothing());
+  // N[BesselJ[2, 123/100], 41]
+  uZ.d = 0.16636938378681407351267852431513159437103;
+  const float64_t control2 = float64_t(uZ.u, math::softfloat::detail::nothing());
 
-  // N[BesselJ[4, 789/100], 60]
-  const float64_t control4 = float64_t(UINT64_C(0xBFB419069B8DC738), math::softfloat::detail::nothing());
+  // N[BesselJ[3, 456/100], 41]
+  uZ.d = 0.42038820486765216162613462343078475742748;
+  const float64_t control3 = float64_t(uZ.u, math::softfloat::detail::nothing());
+
+  // N[BesselJ[4, 789/100], 41]
+  uZ.d = -0.078506863572127438410485520328806569617327;
+  const float64_t control4 = float64_t(uZ.u, math::softfloat::detail::nothing());
 
   using std::fabs;
 

@@ -51,7 +51,16 @@ An interesting detail in this code sample is the construction
 of `one_third` from the composite line 1 divided by 3.
 This is done in this way since, although `soft_double` emulates
 64-bit `double`, it has no constructor from 64-bit `double` because
-this is the actual type that is being emulated.
+this is the actual type that is being emulated. This
+situation arises, for example, when the compiler
+does not support 64-bit built-in `double` or `long` `double`
+and these are limited to 32-bits.
+
+As we move forward with more detailed examples,
+some verification of numerical correctness does,
+in fact, use 64-bit built-in `double`. This
+assumes that this data type is supported on the
+target system/compiler combination.
 
 The following more detailed example provides an in-depth examination
 into effectively using soft_double. This code computes and checks the value of
@@ -92,6 +101,37 @@ int main()
 
   std::cout << "result_is_ok: " << std::boolalpha << result_is_ok << std::endl;
 }
+```
+
+If built-in 64-bit `double` is available on the system,
+it is possible to use a convenient C-style `union`
+to initialize an instance of `soft_double` with
+one of its special class constructors. This
+can be done for library verification or prototyping
+new software algorithms intended to use `soft_double`.
+
+The code sample below, for instance, initializes
+an instance of `soft_double` to the approximate
+64-bit floating-point represtnation of
+<img src="https://render.githubusercontent.com/render/math?math=0.16636938378681407351267852431513159437103">.
+
+```
+#include <math/soft_double/soft_double.h>
+
+// Use a convenient alias for float64_t.
+using float64_t = ::math::softfloat::soft_double;
+
+// Convenient C-style union used for two-step initialization from double.
+union
+{
+  double   d;
+  uint64_t u;
+}
+uZ;
+
+uZ.d = 0.16636938378681407351267852431513159437103;
+
+const float64_t x(uZ.u, math::softfloat::detail::nothing());
 ```
 
 ## Examples
