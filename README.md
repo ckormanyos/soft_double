@@ -113,7 +113,7 @@ If built-in 64-bit `double` is available on a given system,
 it is possible to use a convenient C-style `union`
 to initialize an instance of `soft_double` with
 one of its special class constructors. Thus we can
-make mixed use of `built-in 64-bit `double` and `soft_double`
+make mixed use of built-in 64-bit `double` and `soft_double`
 when needed for special prototyping or verification purposes.
 
 The code sample below, for instance, initializes
