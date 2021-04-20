@@ -253,25 +253,25 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   inline soft_double operator*(float f, const soft_double& u);
   inline soft_double operator/(float f, const soft_double& u);
 
-  inline soft_double operator+(const soft_double&, double) = delete;
-  inline soft_double operator-(const soft_double&, double) = delete;
-  inline soft_double operator*(const soft_double&, double) = delete;
-  inline soft_double operator/(const soft_double&, double) = delete;
+  inline soft_double operator+(const soft_double&, double);
+  inline soft_double operator-(const soft_double&, double);
+  inline soft_double operator*(const soft_double&, double);
+  inline soft_double operator/(const soft_double&, double);
 
-  inline soft_double operator+(double, const soft_double&) = delete;
-  inline soft_double operator-(double, const soft_double&) = delete;
-  inline soft_double operator*(double, const soft_double&) = delete;
-  inline soft_double operator/(double, const soft_double&) = delete;
+  inline soft_double operator+(double, const soft_double&);
+  inline soft_double operator-(double, const soft_double&);
+  inline soft_double operator*(double, const soft_double&);
+  inline soft_double operator/(double, const soft_double&);
 
-  inline soft_double operator+(const soft_double& u, long double) = delete;
-  inline soft_double operator-(const soft_double& u, long double) = delete;
-  inline soft_double operator*(const soft_double& u, long double) = delete;
-  inline soft_double operator/(const soft_double& u, long double) = delete;
+  inline soft_double operator+(const soft_double& u, long double);
+  inline soft_double operator-(const soft_double& u, long double);
+  inline soft_double operator*(const soft_double& u, long double);
+  inline soft_double operator/(const soft_double& u, long double);
 
-  inline soft_double operator+(long double, const soft_double&) = delete;
-  inline soft_double operator-(long double, const soft_double&) = delete;
-  inline soft_double operator*(long double, const soft_double&) = delete;
-  inline soft_double operator/(long double, const soft_double&) = delete;
+  inline soft_double operator+(long double, const soft_double&);
+  inline soft_double operator-(long double, const soft_double&);
+  inline soft_double operator*(long double, const soft_double&);
+  inline soft_double operator/(long double, const soft_double&);
 
   template<typename SignedIntegralType>
   inline typename std::enable_if<   (std::is_integral   <SignedIntegralType>::value == true)
@@ -1240,6 +1240,26 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     friend inline soft_double operator-(float f, const soft_double& u) { return soft_double(f) -= u; }
     friend inline soft_double operator*(float f, const soft_double& u) { return soft_double(f) *= u; }
     friend inline soft_double operator/(float f, const soft_double& u) { return soft_double(f) /= u; }
+
+    friend inline soft_double operator+(const soft_double&, double) = delete;
+    friend inline soft_double operator-(const soft_double&, double) = delete;
+    friend inline soft_double operator*(const soft_double&, double) = delete;
+    friend inline soft_double operator/(const soft_double&, double) = delete;
+
+    friend inline soft_double operator+(double, const soft_double&) = delete;
+    friend inline soft_double operator-(double, const soft_double&) = delete;
+    friend inline soft_double operator*(double, const soft_double&) = delete;
+    friend inline soft_double operator/(double, const soft_double&) = delete;
+
+    friend inline soft_double operator+(const soft_double& u, long double) = delete;
+    friend inline soft_double operator-(const soft_double& u, long double) = delete;
+    friend inline soft_double operator*(const soft_double& u, long double) = delete;
+    friend inline soft_double operator/(const soft_double& u, long double) = delete;
+
+    friend inline soft_double operator+(long double, const soft_double&) = delete;
+    friend inline soft_double operator-(long double, const soft_double&) = delete;
+    friend inline soft_double operator*(long double, const soft_double&) = delete;
+    friend inline soft_double operator/(long double, const soft_double&) = delete;
 
     template<typename UnsignedIntegralType>
     friend inline typename std::enable_if<   (std::is_integral   <UnsignedIntegralType>::value == true)
