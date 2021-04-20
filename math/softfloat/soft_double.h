@@ -53,6 +53,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   namespace math { namespace softfloat {
 
+  // Forward declaration the math::softfloat::soft_double class.
+  class soft_double;
+
+  } }
+
+  namespace std {
+
+  // Forward declaration of the specialization of numeric_limits for soft_double.
+  template<>
+  class numeric_limits<math::softfloat::soft_double>;
+
+  }
+
+  namespace math { namespace softfloat {
+
   namespace detail {
 
   struct uint128_as_struct  { uint64_t v0, v64; };
@@ -70,14 +85,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
            typename IntegralTypeSig>
   constexpr uint64_t packToF64UI(bool sign, IntegralTypeExp exp, IntegralTypeSig sig)
   {
-    return ((uint64_t) ((((uint64_t) (sign ? 1ULL : 0ULL))<<63) + (((uint64_t) (exp))<<52) + (uint64_t) (sig)));
+    return ((uint64_t) ((uint64_t) (((uint64_t) (sign ? 1ULL : 0ULL))<<63) + (uint64_t) (((uint64_t) exp)<<52) + (uint64_t) sig));
   }
 
   template<typename IntegralTypeExp,
            typename IntegralTypeSig>
   constexpr uint32_t packToF32UI(bool sign, IntegralTypeExp exp, IntegralTypeSig sig)
   {
-    return ((uint32_t) ((((uint32_t) (sign ? 1ULL : 0ULL))<<31) + (((uint32_t) (exp))<<23) + (uint32_t) (sig)));
+    return ((uint32_t) ((uint32_t) (((uint32_t) (sign ? 1ULL : 0ULL))<<31) + (uint32_t) (((uint32_t) exp)<<23) + (uint32_t) sig));
   }
 
   /*----------------------------------------------------------------------------
@@ -208,25 +223,115 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   inline soft_double operator*(const soft_double& a, const soft_double& b);
   inline soft_double operator/(const soft_double& a, const soft_double& b);
 
-  template<typename BuiltinIntegralType>
-  typename std::enable_if<   (std::is_integral   <BuiltinIntegralType>::value == true)
-                          && (std::is_fundamental<BuiltinIntegralType>::value == true), soft_double>::type
-  operator+(const soft_double& u, BuiltinIntegralType n);
+  template<typename UnsignedIntegralType>
+  inline typename std::enable_if<   (std::is_integral<UnsignedIntegralType>::value == true)
+                                 && (std::is_unsigned<UnsignedIntegralType>::value == true), soft_double>::type
+  operator+(const soft_double& u, UnsignedIntegralType n);
 
-  template<typename BuiltinIntegralType>
-  typename std::enable_if<   (std::is_integral   <BuiltinIntegralType>::value == true)
-                          && (std::is_fundamental<BuiltinIntegralType>::value == true), soft_double>::type
-  operator-(const soft_double& u, BuiltinIntegralType n);
+  template<typename UnsignedIntegralType>
+  inline typename std::enable_if<   (std::is_integral<UnsignedIntegralType>::value == true)
+                                 && (std::is_unsigned<UnsignedIntegralType>::value == true), soft_double>::type
+  operator-(const soft_double& u, UnsignedIntegralType n);
 
-  template<typename BuiltinIntegralType>
-  typename std::enable_if<   (std::is_integral   <BuiltinIntegralType>::value == true)
-                          && (std::is_fundamental<BuiltinIntegralType>::value == true), soft_double>::type
-  operator*(const soft_double& u, BuiltinIntegralType n);
+  template<typename UnsignedIntegralType>
+  inline typename std::enable_if<   (std::is_integral<UnsignedIntegralType>::value == true)
+                                 && (std::is_unsigned<UnsignedIntegralType>::value == true), soft_double>::type
+  operator*(const soft_double& u, UnsignedIntegralType n);
 
-  template<typename BuiltinIntegralType>
-  typename std::enable_if<   (std::is_integral   <BuiltinIntegralType>::value == true)
-                          && (std::is_fundamental<BuiltinIntegralType>::value == true), soft_double>::type
-  operator/(const soft_double& u, BuiltinIntegralType n);
+  template<typename UnsignedIntegralType>
+  inline typename std::enable_if<   (std::is_integral<UnsignedIntegralType>::value == true)
+                                 && (std::is_unsigned<UnsignedIntegralType>::value == true), soft_double>::type
+  operator/(const soft_double& u, UnsignedIntegralType n);
+
+  inline soft_double operator+(const soft_double& u, float f);
+  inline soft_double operator-(const soft_double& u, float f);
+  inline soft_double operator*(const soft_double& u, float f);
+  inline soft_double operator/(const soft_double& u, float f);
+
+  inline soft_double operator+(float f, const soft_double& u);
+  inline soft_double operator-(float f, const soft_double& u);
+  inline soft_double operator*(float f, const soft_double& u);
+  inline soft_double operator/(float f, const soft_double& u);
+
+  inline soft_double operator+(const soft_double&, double) = delete;
+  inline soft_double operator-(const soft_double&, double) = delete;
+  inline soft_double operator*(const soft_double&, double) = delete;
+  inline soft_double operator/(const soft_double&, double) = delete;
+
+  inline soft_double operator+(double, const soft_double&) = delete;
+  inline soft_double operator-(double, const soft_double&) = delete;
+  inline soft_double operator*(double, const soft_double&) = delete;
+  inline soft_double operator/(double, const soft_double&) = delete;
+
+  inline soft_double operator+(const soft_double& u, long double) = delete;
+  inline soft_double operator-(const soft_double& u, long double) = delete;
+  inline soft_double operator*(const soft_double& u, long double) = delete;
+  inline soft_double operator/(const soft_double& u, long double) = delete;
+
+  inline soft_double operator+(long double, const soft_double&) = delete;
+  inline soft_double operator-(long double, const soft_double&) = delete;
+  inline soft_double operator*(long double, const soft_double&) = delete;
+  inline soft_double operator/(long double, const soft_double&) = delete;
+
+  template<typename SignedIntegralType>
+  inline typename std::enable_if<   (std::is_integral   <SignedIntegralType>::value == true)
+                                 && (std::is_unsigned   <SignedIntegralType>::value == false), soft_double>::type
+  operator+(const soft_double& u, SignedIntegralType n);
+
+  template<typename SignedIntegralType>
+  inline typename std::enable_if<   (std::is_integral   <SignedIntegralType>::value == true)
+                                 && (std::is_unsigned   <SignedIntegralType>::value == false), soft_double>::type
+  operator-(const soft_double& u, SignedIntegralType n);
+
+  template<typename SignedIntegralType>
+  inline typename std::enable_if<   (std::is_integral   <SignedIntegralType>::value == true)
+                                 && (std::is_unsigned   <SignedIntegralType>::value == false), soft_double>::type
+  operator*(const soft_double& u, SignedIntegralType n);
+
+  template<typename SignedIntegralType>
+  inline typename std::enable_if<   (std::is_integral   <SignedIntegralType>::value == true)
+                                 && (std::is_unsigned   <SignedIntegralType>::value == false), soft_double>::type
+  operator/(const soft_double& u, SignedIntegralType n);
+
+  template<typename UnsignedIntegralType>
+  inline typename std::enable_if<   (std::is_integral   <UnsignedIntegralType>::value == true)
+                                 && (std::is_unsigned   <UnsignedIntegralType>::value == true), soft_double>::type
+  operator+(UnsignedIntegralType n, const soft_double& u);
+
+  template<typename UnsignedIntegralType>
+  inline typename std::enable_if<   (std::is_integral   <UnsignedIntegralType>::value == true)
+                                 && (std::is_unsigned   <UnsignedIntegralType>::value == true), soft_double>::type
+  operator-(UnsignedIntegralType n, const soft_double& u);
+
+  template<typename UnsignedIntegralType>
+  inline typename std::enable_if<   (std::is_integral   <UnsignedIntegralType>::value == true)
+                                 && (std::is_unsigned   <UnsignedIntegralType>::value == true), soft_double>::type
+  operator*(UnsignedIntegralType n, const soft_double& u);
+
+  template<typename UnsignedIntegralType>
+  inline typename std::enable_if<   (std::is_integral   <UnsignedIntegralType>::value == true)
+                                 && (std::is_unsigned   <UnsignedIntegralType>::value == true), soft_double>::type
+  operator/(UnsignedIntegralType n, const soft_double& u);
+
+  template<typename SignedIntegralType>
+  inline typename std::enable_if<   (std::is_integral   <SignedIntegralType>::value == true)
+                                 && (std::is_unsigned   <SignedIntegralType>::value == false), soft_double>::type
+  operator+(SignedIntegralType n, const soft_double& u);
+
+  template<typename SignedIntegralType>
+  inline typename std::enable_if<   (std::is_integral   <SignedIntegralType>::value == true)
+                                 && (std::is_unsigned   <SignedIntegralType>::value == false), soft_double>::type
+  operator-(SignedIntegralType n, const soft_double& u);
+
+  template<typename SignedIntegralType>
+  inline typename std::enable_if<   (std::is_integral   <SignedIntegralType>::value == true)
+                                 && (std::is_unsigned   <SignedIntegralType>::value == false), soft_double>::type
+  operator*(SignedIntegralType n, const soft_double& u);
+
+  template<typename SignedIntegralType>
+  inline typename std::enable_if<   (std::is_integral   <SignedIntegralType>::value == true)
+                                 && (std::is_unsigned   <SignedIntegralType>::value == false), soft_double>::type
+  operator/(SignedIntegralType n, const soft_double& u);
 
   inline constexpr bool operator< (const soft_double& a, const soft_double& b);
   inline constexpr bool operator<=(const soft_double& a, const soft_double& b);
@@ -243,39 +348,39 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   class soft_double final
   {
+    static_assert(sizeof(float) == 4U,
+                  "Error: This template is designed for 4 byte built-in float");
   public:
     using representation_type = uint64_t;
 
     soft_double() { }
 
-    constexpr soft_double(const std::int8_t  n) : my_value(my__i32_to_f64((std::int32_t) n)) { }
-    constexpr soft_double(const std::int16_t n) : my_value(my__i32_to_f64((std::int32_t) n)) { }
-    constexpr soft_double(const std::int32_t n) : my_value(my__i32_to_f64(               n)) { }
-    constexpr soft_double(const std::int64_t n) : my_value(my__i64_to_f64(               n)) { }
+    template<typename SignedIntegralType,
+             typename std::enable_if<(   (std::is_integral<SignedIntegralType>::value == true)
+                                      && (std::is_signed  <SignedIntegralType>::value == true)
+                                      && (std::numeric_limits<SignedIntegralType>::digits <= std::numeric_limits<std::int32_t>::digits))>::type const* = nullptr>
+    constexpr soft_double(const SignedIntegralType n) : my_value(my__i32_to_f64((std::int32_t) n)) { }
 
-    constexpr soft_double(const std::uint8_t  u) : my_value(my_ui32_to_f64((std::uint32_t) u)) { }
-    constexpr soft_double(const std::uint16_t u) : my_value(my_ui32_to_f64((std::uint32_t) u)) { }
-    constexpr soft_double(const std::uint32_t u) : my_value(my_ui32_to_f64(                u)) { }
-    constexpr soft_double(const std::uint64_t u) : my_value(my_ui64_to_f64(                u)) { }
+    constexpr soft_double(const std::int64_t n) : my_value(my__i64_to_f64((std::int64_t) n)) { }
 
-    static_assert(sizeof(float) == 4U,
-                  "Error: This template is designed for 4 byte built-in float");
+    template<typename UnsignedIntegralType,
+             typename std::enable_if<(   (std::is_integral<UnsignedIntegralType>::value == true)
+                                      && (std::is_unsigned<UnsignedIntegralType>::value == true)
+                                      && (std::numeric_limits<UnsignedIntegralType>::digits <= std::numeric_limits<std::uint32_t>::digits))>::type const* = nullptr>
+    constexpr soft_double(const UnsignedIntegralType u) : my_value(my_ui32_to_f64((std::uint32_t) u)) { }
 
-    soft_double(const float f) : my_value()
-    {
-      const bool     sign = detail::signF32UI(detail::uz_type<float>(f).my_u);
-      const int16_t  exp  = detail::expF32UI (detail::uz_type<float>(f).my_u);
-      const uint32_t frac = detail::fracF32UI(detail::uz_type<float>(f).my_u);
+    constexpr soft_double(const std::uint64_t u) : my_value(my_ui64_to_f64((std::uint64_t) u)) { }
 
-      if((exp == 0) && (frac == 0U))
-      {
-        my_value = detail::packToF64UI(sign, 0, 0);
-      }
-      else
-      {
-        my_value = detail::packToF64UI(sign, exp + 0x380, (uint64_t) frac << 29);
-      }
-    }
+    constexpr soft_double(const float f)
+      : my_value
+        (
+          ((detail::expF32UI (detail::uz_type<float>(f).my_u) == 0) && (detail::fracF32UI(detail::uz_type<float>(f).my_u) == 0U))
+            ? detail::packToF64UI(detail::signF32UI(detail::uz_type<float>(f).my_u), 0, 0)
+            : detail::packToF64UI(detail::signF32UI(detail::uz_type<float>(f).my_u), detail::expF32UI (detail::uz_type<float>(f).my_u) + 0x380, (uint64_t) detail::fracF32UI(detail::uz_type<float>(f).my_u) << 29)
+        ) { }
+
+    constexpr soft_double(const double) = delete;
+    constexpr soft_double(const long double) = delete;
 
     constexpr soft_double(const soft_double& other) noexcept
       : my_value(other.my_value) { }
@@ -335,8 +440,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     const soft_double& operator+() const { return *this; }
           soft_double  operator-() const { return soft_double(my_value ^ (uint64_t) (1ULL << 63U), detail::nothing()); }
-
-    static constexpr representation_type get_value(soft_double x) { return x.my_value; }
 
     static constexpr soft_double my_value_zero() { return soft_double(UINT64_C(0),                   detail::nothing()); }
     static constexpr soft_double my_value_one () { return soft_double(UINT64_C(0x3FF0000000000000),  detail::nothing()); }
@@ -925,8 +1028,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       int16_t index       = (int16_t) (((uint32_t) (a >> 27U) & 0xEU) + oddExpA);
       uint16_t     eps    = (uint16_t) (a >> 12);
-      uint16_t     r0     =     softfloat_approxRecipSqrt_1k0s[index]
-                            - ((softfloat_approxRecipSqrt_1k1s[index] * (uint32_t) eps) >> 20U);
+      uint16_t     r0     =                           softfloat_approxRecipSqrt_1k0s[(unsigned) index]
+                            - (uint16_t) ((uint32_t) (softfloat_approxRecipSqrt_1k1s[(unsigned) index] * (uint32_t) eps) >> 20U);
       uint32_t     ESqrR0 = (uint32_t) r0 * r0;
 
       if(!oddExpA)
@@ -1094,36 +1197,142 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     friend inline soft_double operator/(const soft_double& a, const soft_double& b) { return soft_double(f64_div(a.my_value, b.my_value), detail::nothing()); }
 
     // Global add/sub/mul/div of const decwide_t<MyDigits10, LimbType, AllocatorType, InternalFloatType>& with all built-in types.
-    template<typename BuiltinIntegralType>
-    friend inline typename std::enable_if<   (std::is_integral   <BuiltinIntegralType>::value == true)
-                                          && (std::is_fundamental<BuiltinIntegralType>::value == true), soft_double>::type
-    operator+(const soft_double& u, BuiltinIntegralType n)
+    template<typename UnsignedIntegralType>
+    friend inline typename std::enable_if<   (std::is_integral   <UnsignedIntegralType>::value == true)
+                                          && (std::is_unsigned   <UnsignedIntegralType>::value == true), soft_double>::type
+    operator+(const soft_double& u, UnsignedIntegralType n)
     {
       return soft_double(u) += soft_double(n);
     }
 
-    template<typename BuiltinIntegralType>
-    friend inline typename std::enable_if<   (std::is_integral   <BuiltinIntegralType>::value == true)
-                                          && (std::is_fundamental<BuiltinIntegralType>::value == true), soft_double>::type
-    operator-(const soft_double& u, BuiltinIntegralType n)
+    template<typename UnsignedIntegralType>
+    friend inline typename std::enable_if<   (std::is_integral   <UnsignedIntegralType>::value == true)
+                                          && (std::is_unsigned   <UnsignedIntegralType>::value == true), soft_double>::type
+    operator-(const soft_double& u, UnsignedIntegralType n)
     {
       return soft_double(u) -= soft_double(n);
     }
 
-    template<typename BuiltinIntegralType>
-    friend inline typename std::enable_if<   (std::is_integral   <BuiltinIntegralType>::value == true)
-                                          && (std::is_fundamental<BuiltinIntegralType>::value == true), soft_double>::type
-    operator*(const soft_double& u, BuiltinIntegralType n)
+    template<typename UnsignedIntegralType>
+    friend inline typename std::enable_if<   (std::is_integral   <UnsignedIntegralType>::value == true)
+                                          && (std::is_unsigned   <UnsignedIntegralType>::value == true), soft_double>::type
+    operator*(const soft_double& u, UnsignedIntegralType n)
     {
       return soft_double(u) *= soft_double(n);
     }
 
-    template<typename BuiltinIntegralType>
-    friend inline typename std::enable_if<   (std::is_integral   <BuiltinIntegralType>::value == true)
-                                          && (std::is_fundamental<BuiltinIntegralType>::value == true), soft_double>::type
-    operator/(const soft_double& u, BuiltinIntegralType n)
+    template<typename UnsignedIntegralType>
+    friend inline typename std::enable_if<   (std::is_integral   <UnsignedIntegralType>::value == true)
+                                          && (std::is_unsigned   <UnsignedIntegralType>::value == true), soft_double>::type
+    operator/(const soft_double& u, UnsignedIntegralType n)
     {
       return soft_double(u) /= soft_double(n);
+    }
+
+    friend inline soft_double operator+(const soft_double& u, float f) { return soft_double(u) += soft_double(f); }
+    friend inline soft_double operator-(const soft_double& u, float f) { return soft_double(u) -= soft_double(f); }
+    friend inline soft_double operator*(const soft_double& u, float f) { return soft_double(u) *= soft_double(f); }
+    friend inline soft_double operator/(const soft_double& u, float f) { return soft_double(u) /= soft_double(f); }
+
+    friend inline soft_double operator+(float f, const soft_double& u) { return soft_double(f) += u; }
+    friend inline soft_double operator-(float f, const soft_double& u) { return soft_double(f) -= u; }
+    friend inline soft_double operator*(float f, const soft_double& u) { return soft_double(f) *= u; }
+    friend inline soft_double operator/(float f, const soft_double& u) { return soft_double(f) /= u; }
+
+    template<typename UnsignedIntegralType>
+    friend inline typename std::enable_if<   (std::is_integral   <UnsignedIntegralType>::value == true)
+                                          && (std::is_unsigned   <UnsignedIntegralType>::value == true), soft_double>::type
+    operator+(UnsignedIntegralType n, const soft_double& u)
+    {
+      return soft_double(n) += u;
+    }
+
+    template<typename UnsignedIntegralType>
+    friend inline typename std::enable_if<   (std::is_integral   <UnsignedIntegralType>::value == true)
+                                          && (std::is_unsigned   <UnsignedIntegralType>::value == true), soft_double>::type
+    operator-(UnsignedIntegralType n, const soft_double& u)
+    {
+      return soft_double(n) -= u;
+    }
+
+    template<typename UnsignedIntegralType>
+    friend inline typename std::enable_if<   (std::is_integral   <UnsignedIntegralType>::value == true)
+                                          && (std::is_unsigned   <UnsignedIntegralType>::value == true), soft_double>::type
+    operator*(UnsignedIntegralType n, const soft_double& u)
+    {
+      return soft_double(n) *= u;
+    }
+
+    template<typename UnsignedIntegralType>
+    friend inline typename std::enable_if<   (std::is_integral   <UnsignedIntegralType>::value == true)
+                                          && (std::is_unsigned   <UnsignedIntegralType>::value == true), soft_double>::type
+    operator/(UnsignedIntegralType n, const soft_double& u)
+    {
+      return soft_double(n) /= u;
+    }
+
+    template<typename SignedIntegralType>
+    friend inline typename std::enable_if<   (std::is_integral   <SignedIntegralType>::value == true)
+                                          && (std::is_unsigned   <SignedIntegralType>::value == false), soft_double>::type
+    operator+(const soft_double& u, SignedIntegralType n)
+    {
+      return soft_double(u) += soft_double(n);
+    }
+
+    template<typename SignedIntegralType>
+    friend inline typename std::enable_if<   (std::is_integral   <SignedIntegralType>::value == true)
+                                          && (std::is_unsigned   <SignedIntegralType>::value == false), soft_double>::type
+    operator-(const soft_double& u, SignedIntegralType n)
+    {
+      return soft_double(u) -= soft_double(n);
+    }
+
+    template<typename SignedIntegralType>
+    friend inline typename std::enable_if<   (std::is_integral   <SignedIntegralType>::value == true)
+                                          && (std::is_unsigned   <SignedIntegralType>::value == false), soft_double>::type
+    operator*(const soft_double& u, SignedIntegralType n)
+    {
+      return soft_double(u) *= soft_double(n);
+    }
+
+    template<typename SignedIntegralType>
+    friend inline typename std::enable_if<   (std::is_integral   <SignedIntegralType>::value == true)
+                                          && (std::is_unsigned   <SignedIntegralType>::value == false), soft_double>::type
+    operator/(const soft_double& u, SignedIntegralType n)
+    {
+      return soft_double(u) /= soft_double(n);
+    }
+
+    template<typename SignedIntegralType>
+    friend inline typename std::enable_if<   (std::is_integral   <SignedIntegralType>::value == true)
+                                          && (std::is_unsigned   <SignedIntegralType>::value == false), soft_double>::type
+    operator+(SignedIntegralType n, const soft_double& u)
+    {
+      return soft_double(n) += u;
+    }
+
+    template<typename SignedIntegralType>
+    friend inline typename std::enable_if<   (std::is_integral   <SignedIntegralType>::value == true)
+                                          && (std::is_unsigned   <SignedIntegralType>::value == false), soft_double>::type
+    operator-(SignedIntegralType n, const soft_double& u)
+    {
+      return soft_double(n) -= u;
+    }
+
+    template<typename SignedIntegralType>
+    friend inline typename std::enable_if<   (std::is_integral   <SignedIntegralType>::value == true)
+                                          && (std::is_unsigned   <SignedIntegralType>::value == false), soft_double>::type
+    operator*(SignedIntegralType n, const soft_double& u)
+    {
+      return soft_double(n) *= u;
+    }
+
+    template<typename SignedIntegralType>
+    friend inline typename std::enable_if<   (std::is_integral   <SignedIntegralType>::value == true)
+                                          && (std::is_unsigned   <SignedIntegralType>::value == false), soft_double>::type
+    operator/(SignedIntegralType n, const soft_double& u)
+    {
+      return soft_double(n) /= u;
     }
 
     friend inline constexpr bool operator< (const soft_double& a, const soft_double& b) { return my_lt(a, b); }
@@ -1140,7 +1349,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   namespace std {
 
   // Specialization of numeric_limits for soft_double.
-  template<> class numeric_limits< ::math::softfloat::soft_double>
+  template<>
+  class numeric_limits<math::softfloat::soft_double>
   {
   public:
     static constexpr bool               is_specialized    = true;
@@ -1162,15 +1372,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     static constexpr int                min_exponent      = -1021;
     static constexpr int                min_exponent10    = -307;
 
-    static constexpr ::math::softfloat::soft_double (min)        () noexcept { return ::math::softfloat::soft_double::my_value_min(); }
-    static constexpr ::math::softfloat::soft_double (max)        () noexcept { return ::math::softfloat::soft_double::my_value_max(); }
-    static constexpr ::math::softfloat::soft_double lowest       () noexcept { return ::math::softfloat::soft_double::my_value_lowest(); }
-    static constexpr ::math::softfloat::soft_double epsilon      () noexcept { return ::math::softfloat::soft_double::my_value_epsilon(); }
-    static constexpr ::math::softfloat::soft_double round_error  () noexcept { return ::math::softfloat::soft_double::my_value_round_error(); }
-    static constexpr ::math::softfloat::soft_double denorm_min   () noexcept { return ::math::softfloat::soft_double::my_value_denorm_min(); }
-    static constexpr ::math::softfloat::soft_double infinity     () noexcept { return ::math::softfloat::soft_double::my_value_infinity(); }
-    static constexpr ::math::softfloat::soft_double quiet_NaN    () noexcept { return ::math::softfloat::soft_double::my_value_quiet_NaN(); }
-    static constexpr ::math::softfloat::soft_double signaling_NaN() noexcept { return ::math::softfloat::soft_double::my_value_signaling_NaN(); }
+    static constexpr math::softfloat::soft_double (min)        () noexcept { return math::softfloat::soft_double::my_value_min(); }
+    static constexpr math::softfloat::soft_double (max)        () noexcept { return math::softfloat::soft_double::my_value_max(); }
+    static constexpr math::softfloat::soft_double lowest       () noexcept { return math::softfloat::soft_double::my_value_lowest(); }
+    static constexpr math::softfloat::soft_double epsilon      () noexcept { return math::softfloat::soft_double::my_value_epsilon(); }
+    static constexpr math::softfloat::soft_double round_error  () noexcept { return math::softfloat::soft_double::my_value_round_error(); }
+    static constexpr math::softfloat::soft_double denorm_min   () noexcept { return math::softfloat::soft_double::my_value_denorm_min(); }
+    static constexpr math::softfloat::soft_double infinity     () noexcept { return math::softfloat::soft_double::my_value_infinity(); }
+    static constexpr math::softfloat::soft_double quiet_NaN    () noexcept { return math::softfloat::soft_double::my_value_quiet_NaN(); }
+    static constexpr math::softfloat::soft_double signaling_NaN() noexcept { return math::softfloat::soft_double::my_value_signaling_NaN(); }
   };
 
   }

@@ -13,7 +13,7 @@
 
 bool math::softfloat::example001_roots_sqrt()
 {
-  using float64_t = ::math::softfloat::float64_t;
+  using float64_t = math::softfloat::float64_t;
 
   // Use a cached value for pi.
   const float64_t my_pi = float64_t::my_value_pi();
@@ -26,6 +26,9 @@ bool math::softfloat::example001_roots_sqrt()
   // Compare with native double sqrt(pi).
   const bool result_is_ok =
     (s.crepresentation() == math::softfloat::detail::uz_type<double>(sqrt(3.1415926535897932384626433832795028841972)).my_u);
+
+  const uint64_t u = math::softfloat::detail::uz_type<double>(std::numeric_limits<double>::lowest()).my_u;
+  const  int64_t n = (int64_t) math::softfloat::detail::uz_type<double>(std::numeric_limits<double>::lowest()).my_u;
 
   return result_is_ok;
 }

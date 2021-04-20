@@ -221,7 +221,7 @@ bool math::softfloat::example004_bessel_recur()
   // N[BesselJ[9, 123456789/10000000], 40]
   // 0.1811741425937681762466579147691209001166;
 
-  using float64_t = ::math::softfloat::soft_double;
+  using float64_t = math::softfloat::soft_double;
 
   // Downward recursion and simultaneous summation of
   // the normalization factor.
