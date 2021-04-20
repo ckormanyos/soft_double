@@ -33,7 +33,7 @@ namespace local
     // Here, in fact, the calculation is scaled down to 15 decimal digits.
     // In other works of mine, the samp algorithm has been scaled up
     // to 1,001 decimal digits of precision --- proof of the remarkable
-    // generic-ness of Luke's ground-breaking algorithms of long gone
+    // generic-ness of Luke's ground-breaking algorithms from a past
     // time epoch.
 
     // Retain some stylistic elements and comments from Luke's

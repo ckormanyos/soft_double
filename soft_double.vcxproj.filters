@@ -66,6 +66,9 @@
     <ClCompile Include="examples\example010_hypergeometric_2f1.cpp">
       <Filter>examples</Filter>
     </ClCompile>
+    <ClCompile Include="examples\example005_polylog_series.cpp">
+      <Filter>examples</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="math\wide_decimal\decwide_t.h">
