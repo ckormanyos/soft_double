@@ -210,12 +210,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                           && (std::is_fundamental<BuiltinIntegralType>::value == true), soft_double>::type
   operator/(const soft_double& u, BuiltinIntegralType n);
 
-  inline bool operator< (const soft_double& a, const soft_double& b);
-  inline bool operator<=(const soft_double& a, const soft_double& b);
-  inline bool operator==(const soft_double& a, const soft_double& b);
-  inline bool operator!=(const soft_double& a, const soft_double& b);
-  inline bool operator>=(const soft_double& a, const soft_double& b);
-  inline bool operator> (const soft_double& a, const soft_double& b);
+  inline constexpr bool operator< (const soft_double& a, const soft_double& b);
+  inline constexpr bool operator<=(const soft_double& a, const soft_double& b);
+  inline constexpr bool operator==(const soft_double& a, const soft_double& b);
+  inline constexpr bool operator!=(const soft_double& a, const soft_double& b);
+  inline constexpr bool operator>=(const soft_double& a, const soft_double& b);
+  inline constexpr bool operator> (const soft_double& a, const soft_double& b);
 
   inline bool        isnan   (const soft_double x);
   inline bool        isinf   (const soft_double x);
@@ -345,22 +345,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   private:
     representation_type my_value;
 
-    bool my_le(const soft_double& b) const
+    static constexpr bool my_le(const soft_double& a, const soft_double& b)
     {
-      const bool signA = detail::signF64UI(  my_value);
-      const bool signB = detail::signF64UI(b.my_value);
-
-      return (signA != signB) ? (signA || !((my_value | b.my_value) & UINT64_C(0x7FFFFFFFFFFFFFFF)))
-                              : (my_value == b.my_value) || (signA ^ (my_value < b.my_value));
+      return (detail::signF64UI(a.my_value) != detail::signF64UI(b.my_value))
+               ? (detail::signF64UI(a.my_value) || !((a.my_value | b.my_value) & UINT64_C(0x7FFFFFFFFFFFFFFF)))
+               : (a.my_value == b.my_value) || (detail::signF64UI(a.my_value) ^ (a.my_value < b.my_value));
     }
 
-    bool my_lt(const soft_double& b) const
+    static constexpr bool my_lt(const soft_double& a, const soft_double& b)
     {
-      const bool signA = detail::signF64UI(  my_value);
-      const bool signB = detail::signF64UI(b.my_value);
-
-      return (signA != signB) ? signA && ((my_value | b.my_value) & UINT64_C(0x7FFFFFFFFFFFFFFF))
-                              : (my_value != b.my_value) && (signA ^ (my_value < b.my_value));
+      return (detail::signF64UI(a.my_value) != detail::signF64UI(b.my_value))
+               ? detail::signF64UI(a.my_value) && ((a.my_value | b.my_value) & UINT64_C(0x7FFFFFFFFFFFFFFF))
+               : (a.my_value != b.my_value) && (detail::signF64UI(a.my_value) ^ (a.my_value < b.my_value));
     }
 
     static uint64_t f64_add(const uint64_t a, const uint64_t b)
@@ -1082,10 +1078,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     friend inline soft_double fabs (const soft_double x) { return soft_double((uint64_t) (x.my_value & UINT64_C(0x7FFFFFFFFFFFFFFF)), detail::nothing()); }
     friend inline soft_double sqrt (const soft_double x) { return soft_double(f64_sqrt(x.my_value), detail::nothing()); }
 
-    friend inline soft_double operator+(const soft_double& a, const soft_double& b) { soft_double result; result.my_value = f64_add(a.my_value, b.my_value); return result; }
-    friend inline soft_double operator-(const soft_double& a, const soft_double& b) { soft_double result; result.my_value = f64_sub(a.my_value, b.my_value); return result; }
-    friend inline soft_double operator*(const soft_double& a, const soft_double& b) { soft_double result; result.my_value = f64_mul(a.my_value, b.my_value); return result; }
-    friend inline soft_double operator/(const soft_double& a, const soft_double& b) { soft_double result; result.my_value = f64_div(a.my_value, b.my_value); return result; }
+    friend inline soft_double operator+(const soft_double& a, const soft_double& b) { return soft_double(f64_add(a.my_value, b.my_value), detail::nothing()); }
+    friend inline soft_double operator-(const soft_double& a, const soft_double& b) { return soft_double(f64_sub(a.my_value, b.my_value), detail::nothing()); }
+    friend inline soft_double operator*(const soft_double& a, const soft_double& b) { return soft_double(f64_mul(a.my_value, b.my_value), detail::nothing()); }
+    friend inline soft_double operator/(const soft_double& a, const soft_double& b) { return soft_double(f64_div(a.my_value, b.my_value), detail::nothing()); }
 
     // Global add/sub/mul/div of const decwide_t<MyDigits10, LimbType, AllocatorType, InternalFloatType>& with all built-in types.
     template<typename BuiltinIntegralType>
@@ -1120,12 +1116,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       return soft_double(u) /= soft_double(n);
     }
 
-    friend inline bool operator< (const soft_double& a, const soft_double& b) { return a.my_lt(b); }
-    friend inline bool operator<=(const soft_double& a, const soft_double& b) { return a.my_le(b); }
-    friend inline bool operator==(const soft_double& a, const soft_double& b) { return  (a.my_value == b.my_value); }
-    friend inline bool operator!=(const soft_double& a, const soft_double& b) { return ((a == b) == false); }
-    friend inline bool operator>=(const soft_double& a, const soft_double& b) { return ((a <  b) == false); }
-    friend inline bool operator> (const soft_double& a, const soft_double& b) { return ((a <= b) == false); }
+    friend inline constexpr bool operator< (const soft_double& a, const soft_double& b) { return my_lt(a, b); }
+    friend inline constexpr bool operator<=(const soft_double& a, const soft_double& b) { return my_le(a, b); }
+    friend inline constexpr bool operator==(const soft_double& a, const soft_double& b) { return  (a.my_value == b.my_value); }
+    friend inline constexpr bool operator!=(const soft_double& a, const soft_double& b) { return ((a == b) == false); }
+    friend inline constexpr bool operator>=(const soft_double& a, const soft_double& b) { return ((a <  b) == false); }
+    friend inline constexpr bool operator> (const soft_double& a, const soft_double& b) { return ((a <= b) == false); }
   };
 
   using float64_t = soft_double;
