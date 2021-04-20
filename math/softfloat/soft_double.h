@@ -414,6 +414,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     const representation_type&  representation() const { return my_value; }
     const representation_type& crepresentation() const { return my_value; }
 
+    static constexpr representation_type get_rep(soft_double a) { return a.my_value; }
+
     explicit operator std::int64_t () const { return (std::int64_t)  f64_to__i64(my_value); }
     explicit operator std::uint64_t() const { return (std::uint64_t) f64_to_ui64(my_value); }
 

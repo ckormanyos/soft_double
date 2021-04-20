@@ -45,8 +45,8 @@
   template<>
   inline constexpr math::softfloat::float64_t template_fast_div_by_two<math::softfloat::float64_t>(math::softfloat::float64_t a)
   {
-    return math::softfloat::float64_t(  (uint64_t) (a.crepresentation() & ~(uint64_t) (0x7FFULL << 52U))
-                                      | (uint64_t) (((uint64_t) ((int_fast16_t) ((int_fast16_t) ((uint_fast16_t) (a.crepresentation() >> 52U) & 0x7FFU) - 1))) << 52U),
+    return math::softfloat::float64_t(  (uint64_t) (math::softfloat::float64_t::get_rep(a) & ~(uint64_t) (0x7FFULL << 52U))
+                                      | (uint64_t) (((uint64_t) ((int_fast16_t) ((int_fast16_t) ((uint_fast16_t) (math::softfloat::float64_t::get_rep(a) >> 52U) & 0x7FFU) - 1))) << 52U),
                                       math::softfloat::detail::nothing());
   }
 
