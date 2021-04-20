@@ -87,17 +87,8 @@ int main()
   using std::sqrt;
 
   // Compare with native double sqrt(pi).
-  const double control = sqrt(3.1415926535897932384626433832795028841972);
-
-  union
-  {
-    double   d;
-    uint64_t u;
-  } uZ;
-
-  uZ.d = control;
-
-  const bool result_is_ok = (s.crepresentation() == uZ.u);
+  const bool result_is_ok =
+    (s.crepresentation() == math::softfloat::detail::uz_type<double>(sqrt(3.1415926535897932384626433832795028841972)).my_u);
 
   std::cout << "result_is_ok: " << std::boolalpha << result_is_ok << std::endl;
 }
@@ -110,7 +101,7 @@ to use the `soft_double` type. These activities can be aided
 by using a system having a real built-in 64-bit `double`.
 
 If built-in 64-bit `double` is available on a given system,
-it is possible to use a convenient C-style `union`
+it is possible to use a convenient C++-style template `union`
 to initialize an instance of `soft_double` together with
 its special class constructor from `uint64_t` and the
 `math::softfloat::detail::nothing` structure, as shown below.
@@ -130,19 +121,13 @@ An intermediate C-style `union` called `uZ` is employed for this.
 #include <math/softfloat/soft_double.h>
 
 // Use a convenient alias for float64_t.
-using float64_t = ::math::softfloat::soft_double;
+using float64_t = math::softfloat::soft_double;
 
-// Convenient C-style union used for two-step initialization from double.
-union
-{
-  double   d;
-  uint64_t u;
-}
-uZ;
+// When testing, use an instance of the convenient C++-style
+// union uz_type<> for initialization of soft_double from double.
 
-uZ.d = 0.16636938378681407351267852431513159437103;
-
-const float64_t x(uZ.u, math::softfloat::detail::nothing());
+const float64_t x(math::softfloat::detail::uz_type<double>(0.16636938378681407351267852431513159437103).my_u,
+                  math::softfloat::detail::nothing());
 ```
 
 ## Examples

@@ -87,15 +87,8 @@ bool math::softfloat::example007_catalan_series()
 {
   const float64_t c = local::catalan<float64_t>();
 
-  union
-  {
-    double   d;
-    uint64_t u;
-  } uZ;
-
-  uZ.d = 0.9159655941772190150546035149323841107741;
-
-  const float64_t control(uZ.u, ::math::softfloat::detail::nothing());
+  const float64_t control(math::softfloat::detail::uz_type<double>(0.9159655941772190150546035149323841107741).my_u,
+                          math::softfloat::detail::nothing());
 
   using std::fabs;
 

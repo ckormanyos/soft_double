@@ -328,24 +328,17 @@ bool math::softfloat::example011_trig_trapezoid_integral()
   const float64_t j3 = local::cyl_bessel_j(3U, float64_t(456U) / 100U);
   const float64_t j4 = local::cyl_bessel_j(4U, float64_t(789U) / 100U);
 
-  union
-  {
-    double   d;
-    uint64_t u;
-  }
-  uZ;
-
   // N[BesselJ[2, 123/100], 41]
-  uZ.d = 0.16636938378681407351267852431513159437103;
-  const float64_t control2 = float64_t(uZ.u, math::softfloat::detail::nothing());
+  const float64_t control2 = float64_t(math::softfloat::detail::uz_type<double>(0.16636938378681407351267852431513159437103).my_u,
+                                       math::softfloat::detail::nothing());
 
   // N[BesselJ[3, 456/100], 41]
-  uZ.d = 0.42038820486765216162613462343078475742748;
-  const float64_t control3 = float64_t(uZ.u, math::softfloat::detail::nothing());
+  const float64_t control3 = float64_t(math::softfloat::detail::uz_type<double>(0.42038820486765216162613462343078475742748).my_u,
+                                       math::softfloat::detail::nothing());
 
   // N[BesselJ[4, 789/100], 41]
-  uZ.d = -0.078506863572127438410485520328806569617327;
-  const float64_t control4 = float64_t(uZ.u, math::softfloat::detail::nothing());
+  const float64_t control4 = float64_t(math::softfloat::detail::uz_type<double>(-0.078506863572127438410485520328806569617327).my_u,
+                                       math::softfloat::detail::nothing());
 
   using std::fabs;
 

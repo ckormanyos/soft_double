@@ -167,17 +167,9 @@ bool math::softfloat::example010_hypergeometric_2f1()
 
   const float64_t h2f1 = local::hypergeometric_2f1(a, b, c, z);
 
-  union
-  {
-    double   d;
-    uint64_t u;
-  }
-  uZ;
-
   // N[Hypergeometric2F1[2/3, 4/3, 5/7, -3/4], 41]
-  uZ.d = 0.50100473608761064038202987077811306637010;
-
-  const float64_t control(uZ.u, math::softfloat::detail::nothing());
+  const float64_t control(math::softfloat::detail::uz_type<double>(0.50100473608761064038202987077811306637010).my_u,
+                          math::softfloat::detail::nothing());
 
   using std::fabs;
 

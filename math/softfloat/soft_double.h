@@ -179,6 +179,24 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     };
   }
 
+  template<typename BuiltinFloatType,
+           typename ExactUnsignedIntegralType = typename std::conditional<std::is_same<BuiltinFloatType, float>::value, uint32_t, uint64_t>::type>
+  union uz_type
+  {
+    static_assert((   std::is_same<BuiltinFloatType, float>::value
+                   || std::is_same<BuiltinFloatType, double>::value),
+                  "Error: This template is intended for either built-in float or double, but not for any other type(s)");
+
+    using float_type    = BuiltinFloatType;
+    using unsigned_type = ExactUnsignedIntegralType;
+
+    const float_type    my_f;
+    const unsigned_type my_u;
+
+    constexpr uz_type(float_type    f) : my_f(f) { }
+    constexpr uz_type(unsigned_type u) : my_u(u) { }
+  };
+
   struct nothing { };
 
   }
@@ -245,17 +263,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     soft_double(const float f) : my_value()
     {
-      union
-      {
-        float    f;
-        uint32_t u;
-      } uZ;
-
-      uZ.f = f;
-
-      const bool     sign = detail::signF32UI(uZ.u);
-      const int16_t  exp  = detail::expF32UI (uZ.u);
-      const uint32_t frac = detail::fracF32UI(uZ.u);
+      const bool     sign = detail::signF32UI(detail::uz_type<float>(f).my_u);
+      const int16_t  exp  = detail::expF32UI (detail::uz_type<float>(f).my_u);
+      const uint32_t frac = detail::fracF32UI(detail::uz_type<float>(f).my_u);
 
       if((exp == 0) && (frac == 0U))
       {

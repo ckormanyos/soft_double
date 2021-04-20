@@ -24,17 +24,8 @@ bool math::softfloat::example001_roots_sqrt()
   using std::sqrt;
 
   // Compare with native double sqrt(pi).
-  const double control = sqrt(3.1415926535897932384626433832795028841972);
-
-  union
-  {
-    double   d;
-    uint64_t u;
-  } uZ;
-
-  uZ.d = control;
-
-  const bool result_is_ok = (s.crepresentation() == uZ.u);
+  const bool result_is_ok =
+    (s.crepresentation() == math::softfloat::detail::uz_type<double>(sqrt(3.1415926535897932384626433832795028841972)).my_u);
 
   return result_is_ok;
 }
