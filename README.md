@@ -87,8 +87,10 @@ int main()
   using std::sqrt;
 
   // Compare with native double sqrt(pi).
-  const bool result_is_ok =
-    (s.crepresentation() == math::softfloat::detail::uz_type<double>(sqrt(3.1415926535897932384626433832795028841972)).my_u);
+  const typename float64_t::representation_type control_rep =
+    math::softfloat::detail::uz_type<double>(sqrt(3.1415926535897932384626433832795028841972)).my_u;
+
+  const bool result_is_ok = (s.crepresentation() == control_rep);
 
   std::cout << "result_is_ok: " << std::boolalpha << result_is_ok << std::endl;
 }
@@ -126,8 +128,12 @@ using float64_t = math::softfloat::soft_double;
 // When testing, use an instance of the convenient C++-style
 // union uz_type<> for initialization of soft_double from double.
 
-const float64_t x(math::softfloat::detail::uz_type<double>(0.16636938378681407351267852431513159437103).my_u,
-                  math::softfloat::detail::nothing());
+const typename float64_t::representation_type rep =
+    math::softfloat::detail::uz_type<double>(0.16636938378681407351267852431513159437103).my_u;
+
+// The soft_double instance x now represents the 64-bit floating-point
+// representation of 0.16636938378681407351267852431513159437103.
+const float64_t x(rep, math::softfloat::detail::nothing());
 ```
 
 ## Examples
