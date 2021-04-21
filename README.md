@@ -93,34 +93,30 @@ int main()
 }
 ```
 
-Detailed examples, testing and verification of numerical correctness
-in the soft_double project do, in fact, use 64-bit built-in `double`.
-The examples and test codes used in this project to verify the
-`soft_double` type mandate that a 64-bit built-in `double` data type
-is actually supported on the target system/compiler combination.
-
-In addition, when working with soft_double, we might end up doing some
+When working with soft_double, we might end up doing some
 library verification or might want to prototype
 our own project-specific software algorithms intended
-to use the `soft_double` type. These activities can be aided
-by using a system having a real built-in 64-bit `double`.
+to use the `soft_double` type.
 
-If built-in 64-bit `double` is available on a given system,
-it is possible to use a convenient C++-style template `union`
-to initialize an instance of `soft_double` together with
-its special class constructor from `uint64_t` and the
-`math::softfloat::detail::nothing` structure, as shown below.
-In this way we can make mixed use of both built-in 64-bit `double`
+In fact, the examples, testing and verification of numerical correctness
+in the soft_double project actually use 64-bit built-in `double`,
+and this assumes that data type is available on the target
+system/compiler combination.
+
+For verification purposes, it is possible to use a convenient
+C++-style template `union` called `uz_type<>` to initialize an instance of `soft_double`.
+Initialization with the `uz_type<>` union can be combined with
+the special `soft_double` two-parameter class constructor from `uint64_t`
+and the `math::softfloat::detail::nothing` structure, as shown below.
+In this way it is possible to make mixed use of both built-in 64-bit `double`
 as well as `soft_double` within the same project when 64-bit `double`
 is available.
 
-As mentioned above, this can be convenient
-for special prototyping or verification purposes.
 The code sample below, for instance, initializes
-an instance of `soft_double` to the approximate
+an instance of `soft_double` with the approximate
 64-bit floating-point representation of
 <img src="https://render.githubusercontent.com/render/math?math=0.16636938378681407351267852431513159437103">.
-An intermediate C++-style template `union` called `uz_type<>` is employed for this.
+The of the `uz_type<>` template `union` is employed.
 
 ```
 #include <math/softfloat/soft_double.h>
