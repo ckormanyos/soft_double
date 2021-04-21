@@ -93,20 +93,16 @@ int main()
 }
 ```
 
-When working with soft_double, doing some
-library verification, prototyping project-specific software algorithms
+When working with soft_double, performing library verification,
+or prototyping project-specific software algorithms
 (intended) to use the `soft_double` type, a built-in 64-bit `double`
-is often helpful and possibly avbailable.
+can be helpful if avbailable.
+The examples, testing and verification of numerical correctness
+in the soft_double project do, in fact, actually use 64-bit built-in `double`.
 
-In fact, the examples, testing and verification of numerical correctness
-in the soft_double project actually use 64-bit built-in `double`,
-and this assumes that data type is available on the target
-system/compiler combination.
-
-For verification purposes, it is possible to use a convenient
-C++-style template `union` called `uz_type<>` to initialize an instance of `soft_double`.
-Initialization with the `uz_type<>` union can be combined with
-the special `soft_double` two-parameter class constructor from `uint64_t`
+A C++-style template `union` called `uz_type<>` can be used to
+initialize `soft_double`, particularly when combined with
+the special two-parameter class constructor from `uint64_t`
 and the `math::softfloat::detail::nothing` structure, as shown below.
 In this way it is possible to make mixed use of both built-in 64-bit `double`
 as well as `soft_double` within the same project when 64-bit `double`
@@ -135,12 +131,19 @@ const typename float64_t::representation_type rep =
 const float64_t x(rep, math::softfloat::detail::nothing());
 ```
 
-## Bare Metal
+## Bare Metal Microcontroller
 
-soft_double really can be used _on the metal_ to emulate a 64-bit floating point type.
-For an example running on an 8-bit microcontroller system (lacking built-in 64-bit `double`),
-see the [app_benchmark_soft_double_h2f1.cpp](https://github.com/ckormanyos/real-time-cpp/blob/master/ref_app/src/app/benchmark/app_benchmark_soft_double_h2f1.cpp)
+soft_double can readily be used _on the metal_ to emulate a 64-bit floating point type.
+This can be provide the ability to do 64-bit floating-point calculations on
+target system/compiler combinations lacking a built-in 64-bit floating-point type.
+
+An example tested on various microcontrollers system
+can be found in the file
+[app_benchmark_soft_double_h2f1.cpp](https://github.com/ckormanyos/real-time-cpp/blob/master/ref_app/src/app/benchmark/app_benchmark_soft_double_h2f1.cpp)
 in the [real-time-cpp](https://github.com/ckormanyos/real-time-cpp) repository.
+This benchmark has also been tested on the 8-bit MICROCHIP ATmega328P controller
+with `avr-gcc` versions 5 and 7 (both lacking built-in 64-bit `double`).
+
 
 ## Examples
 
