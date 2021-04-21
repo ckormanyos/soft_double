@@ -18,26 +18,27 @@
 #define WIDE_DECIMAL_DISABLE_CONSTRUCT_FROM_STRING
 #define WIDE_DECIMAL_DISABLE_CACHED_CONSTANTS
 
-#include <math/softfloat/soft_double_decwide_t_detail_fft_bindings.h>
-
 #include <math/constants/constants_pi_control_for_decwide_t.h>
+#include <math/softfloat/soft_double_decwide_t_detail_fft_bindings.h>
+#include <math/softfloat/soft_double_examples.h>
 #include <math/wide_decimal/decwide_t.h>
 
-void test_soft_double_with_decwide_t_100k_digit_pi_digits10_callback(const std::uint32_t d10)
+namespace
 {
-  char p_str[16U] = { 0 };
-  char* p_end = util::baselexical_cast(d10, p_str);
+  void example002b_pi_100k_digits10_callback(const std::uint32_t d10)
+  {
+    char p_str[16U] = { 0 };
+    char* p_end = util::baselexical_cast(d10, p_str);
 
-  static_cast<void>(p_end);
+    static_cast<void>(p_end);
 
-  std::cout << p_str << std::endl;
+    std::cout << p_str << std::endl;
+  }
 }
 
-bool test_soft_double_with_decwide_t_100k_digit_pi();
-
-bool test_soft_double_with_decwide_t_100k_digit_pi()
+bool math::softfloat::example002b_pi_100k()
 {
-  std::cout << "Start test_soft_double_with_decwide_t_100k_digit_pi()" << std::endl;
+  std::cout << "Start example002b_pi_100k()" << std::endl;
 
   using local_limb_type = std::uint32_t;
 
@@ -62,12 +63,12 @@ bool test_soft_double_with_decwide_t_100k_digit_pi()
   const local_wide_decimal_type my_pi =
     math::wide_decimal::pi<wide_decimal_digits10, local_limb_type, std::allocator<void>, local_float_type_fft, std::int32_t, local_float_type>
     (
-      test_soft_double_with_decwide_t_100k_digit_pi_digits10_callback
+      example002b_pi_100k_digits10_callback
     );
 
   const std::clock_t stop = std::clock();
 
-  std::cout << "Time test_soft_double_with_decwide_t_100k_digit_pi(): "
+  std::cout << "Time example002b_pi_100k(): "
             << (float) (stop - start) / (float) CLOCKS_PER_SEC
             << std::endl;
 
@@ -90,3 +91,18 @@ bool test_soft_double_with_decwide_t_100k_digit_pi()
 
   return result_pi_is_ok;
 }
+
+// Enable this if you would like to activate this main() as a standalone example.
+#if 0
+
+#include <iomanip>
+#include <iostream>
+
+int main()
+{
+  const bool result_is_ok = math::softfloat::example002b_pi_100k();
+
+  std::cout << "result_is_ok: " << std::boolalpha << result_is_ok << std::endl;
+}
+
+#endif

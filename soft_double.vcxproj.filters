@@ -45,9 +45,6 @@
     <ClCompile Include="test\test_soft_double.cpp">
       <Filter>test</Filter>
     </ClCompile>
-    <ClCompile Include="test\test_soft_double_with_decwide_t_100k_digit_pi.cpp">
-      <Filter>test</Filter>
-    </ClCompile>
     <ClCompile Include="examples\example001_roots_sqrt.cpp">
       <Filter>examples</Filter>
     </ClCompile>
@@ -67,6 +64,9 @@
       <Filter>examples</Filter>
     </ClCompile>
     <ClCompile Include="examples\example005_polylog_series.cpp">
+      <Filter>examples</Filter>
+    </ClCompile>
+    <ClCompile Include="examples\example002b_pi_100k.cpp">
       <Filter>examples</Filter>
     </ClCompile>
   </ItemGroup>

@@ -25,10 +25,10 @@
     <ClCompile Include="examples\example011_trig_trapezoid_integral.cpp" />
     <ClCompile Include="examples\example010_hypergeometric_2f1.cpp" />
     <ClCompile Include="examples\example005_polylog_series.cpp" />
+    <ClCompile Include="examples\example002b_pi_100k.cpp" />
     <ClCompile Include="test\test.cpp" />
     <ClCompile Include="test\test_soft_double_examples.cpp" />
     <ClCompile Include="test\test_soft_double.cpp" />
-    <ClCompile Include="test\test_soft_double_with_decwide_t_100k_digit_pi.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="math\constants\constants_pi_control_for_decwide_t.h" />

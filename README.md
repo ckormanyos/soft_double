@@ -147,6 +147,7 @@ It is hoped that the examples provide inspiration and guidance on
 how to use soft_double.
 
   - ![`example001_roots_sqrt.cpp`](./examples/example001_roots_sqrt.cpp) computes a square root.
+  - ![`example002b_pi_100k.cpp`](./examples/example002b_pi_100k.cpp) uses soft_double together with the [wide-decimal](https://github.com/ckormanyos/wide-decimal) project which stresses demanding use of real-world double-precision FFTs to compute <img src="https://render.githubusercontent.com/render/math?math=100,001"> decimal digits of <img src="https://render.githubusercontent.com/render/math?math=\pi"> using an iterative AGM method.
   - ![`example004_bessel_recur.cpp`](./examples/example004_bessel_recur.cpp) implements cylindrical Bessel functions of integral order via downward recursion with a Neumann sum.
   - ![`example005_polylog_series.cpp`](./examples/example005_polylog_series.cpp) performs a small-argument polylogarithm series calculation.
   - ![`example007_catalan_series.cpp`](./examples/example007_catalan_series.cpp) computes <img src="https://render.githubusercontent.com/render/math?math=\approx\,15"> decimal digits of Catalan's constant using an accelerated series.
@@ -158,9 +159,7 @@ how to use soft_double.
 Testing is a big issue and a growing test suite is in continued progress providing for tested,
 efficient functionality on the PC and workstation. The GitHub code is delivered
 with an affiliated MSVC project that uses easy-to-understand subroutines called
-from `main()` that exercise various test cases. One of the tests uses
-the [wide-decimal](https://github.com/ckormanyos/wide-decimal) project
-in order to verify the functionality of `soft_double` with FFTs in a real-world application.
+from `main()` that exercise various test cases.
 
 Continuous integration runs on push using GitHub Actions. Various compilers, operating systems,
 and C++ standards ranging from C++11, 14, 17, 20 are included in CI.

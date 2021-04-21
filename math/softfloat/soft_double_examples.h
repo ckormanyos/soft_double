@@ -11,6 +11,7 @@
   namespace math { namespace softfloat {
 
   bool example001_roots_sqrt             ();
+  bool example002b_pi_100k               ();
   bool example004_bessel_recur           ();
   bool example005_polylog_series         ();
   bool example007_catalan_series         ();
