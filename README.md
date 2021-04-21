@@ -117,7 +117,7 @@ The code sample below, for instance, initializes
 an instance of `soft_double` to the approximate
 64-bit floating-point representation of
 <img src="https://render.githubusercontent.com/render/math?math=0.16636938378681407351267852431513159437103">.
-An intermediate C-style `union` called `uZ` is employed for this.
+An intermediate C++-style template `union` called `uz_type<>` is employed for this.
 
 ```
 #include <math/softfloat/soft_double.h>
