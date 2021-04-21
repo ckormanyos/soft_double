@@ -93,10 +93,10 @@ int main()
 }
 ```
 
-When working with soft_double, we might end up doing some
-library verification or might want to prototype
-our own project-specific software algorithms intended
-to use the `soft_double` type.
+When working with soft_double, doing some
+library verification, prototyping project-specific software algorithms
+(intended) to use the `soft_double` type, a built-in 64-bit `double`
+is often helpful and possibly avbailable.
 
 In fact, the examples, testing and verification of numerical correctness
 in the soft_double project actually use 64-bit built-in `double`,
@@ -134,6 +134,11 @@ const typename float64_t::representation_type rep =
 // representation of 0.16636938378681407351267852431513159437103.
 const float64_t x(rep, math::softfloat::detail::nothing());
 ```
+
+soft_double really can be used _on the metal_ to emulate a 64-bit floating point type.
+For an example running on an 8-bit microcontroller system (lacking built-in 64-bit `double`),
+see the [app_benchmark_soft_double_h2f1.cpp](https://github.com/ckormanyos/real-time-cpp/blob/master/ref_app/src/app/benchmark/app_benchmark_soft_double_h2f1.cpp)
+in the [real-time-cpp](https://github.com/ckormanyos/real-time-cpp) repository.
 
 ## Examples
 
