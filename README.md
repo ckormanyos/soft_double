@@ -135,6 +135,8 @@ const typename float64_t::representation_type rep =
 const float64_t x(rep, math::softfloat::detail::nothing());
 ```
 
+## Bare Metal
+
 soft_double really can be used _on the metal_ to emulate a 64-bit floating point type.
 For an example running on an 8-bit microcontroller system (lacking built-in 64-bit `double`),
 see the [app_benchmark_soft_double_h2f1.cpp](https://github.com/ckormanyos/real-time-cpp/blob/master/ref_app/src/app/benchmark/app_benchmark_soft_double_h2f1.cpp)
