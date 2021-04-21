@@ -24,14 +24,6 @@ and also includes full support for `std::numeric_limits`.
 soft_double is written in header-only C++11.
 It is compatible through C++11, 14, 17, 20.
 
-## Implementation goals
-
-  - Clean header-only C++ design.
-  - Seamless portability to any modern C++11, 14, 17, 20 compiler.
-  - Achieve efficiency suitable for _bare-metal_ embedded systems.
-  - Particularly useful if 64-bit native `double` or a similar built-in type is unavailable.
-  - Use refactored versions of trusted algorithms based on those found in [softfloat 3e](https://github.com/ucb-bar/berkeley-softfloat-3).
-
 ## Quick Start
 
 Using soft_double is straightforward. Simply `#include <math/softfloat/soft_double.h>` and
@@ -57,10 +49,15 @@ situation arises, for example, when the compiler
 does not support 64-bit built-in `double` or `long` `double`
 and these are limited to 32-bits.
 
-Detailed examples, testing and verification of numerical correctness
-in the soft_double project do, in fact, use 64-bit built-in `double`.
-Thexamples and verifications mandate that an 64-bit built-in `double`
-data type is actually supported on the target system/compiler combination.
+## Implementation goals
+
+  - Clean header-only C++ design.
+  - Seamless portability to any modern C++11, 14, 17, 20 compiler.
+  - Achieve efficiency suitable for _bare-metal_ embedded systems.
+  - Particularly useful if 64-bit native `double` or a similar built-in type is unavailable.
+  - Use refactored versions of trusted algorithms based on those found in [softfloat 3e](https://github.com/ucb-bar/berkeley-softfloat-3).
+
+## Details
 
 The following more detailed example provides an in-depth examination
 into effectively using soft_double. This code computes and checks the value of
@@ -96,7 +93,13 @@ int main()
 }
 ```
 
-When working with soft_double, we might end up doing some
+Detailed examples, testing and verification of numerical correctness
+in the soft_double project do, in fact, use 64-bit built-in `double`.
+The examples and test codes used in this project to verify the
+`soft_double` type mandate that a 64-bit built-in `double` data type
+is actually supported on the target system/compiler combination.
+
+In addition, when working with soft_double, we might end up doing some
 library verification or might want to prototype
 our own project-specific software algorithms intended
 to use the `soft_double` type. These activities can be aided
