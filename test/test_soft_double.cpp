@@ -14,8 +14,8 @@
 
 #include <math/softfloat/soft_double.h>
 
-static_assert(sizeof(double) == 8U, "Error: This test code is designed for 8 byte built-in double");
-
+static_assert(sizeof(double) == 8U,
+              "Error: These tests require 8 byte built-in double for verification");
 
 using local_softfloat_type = math::softfloat::float64_t;
 

@@ -11,6 +11,9 @@
 #include <math/softfloat/soft_double.h>
 #include <math/softfloat/soft_double_examples.h>
 
+static_assert(sizeof(double) == 8U,
+              "Error: This example requires 8 byte built-in double for verification");
+
 namespace local
 {
   template<typename FloatingPointType,
