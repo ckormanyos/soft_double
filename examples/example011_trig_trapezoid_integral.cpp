@@ -332,22 +332,13 @@ bool math::softfloat::example011_trig_trapezoid_integral()
   const float64_t j4 = local::cyl_bessel_j(4U, float64_t(789U) / 100U);
 
   // N[BesselJ[2, 123/100], 41]
-  const typename float64_t::representation_type control_rep2 =
-    math::softfloat::detail::uz_type<double>(0.16636938378681407351267852431513159437103).my_u;
-
-  const float64_t control2 = float64_t(control_rep2, math::softfloat::detail::nothing());
+  const float64_t control2(0.16636938378681407351267852431513159437103);
 
   // N[BesselJ[3, 456/100], 41]
-  const typename float64_t::representation_type control_rep3 =
-    math::softfloat::detail::uz_type<double>(0.42038820486765216162613462343078475742748).my_u;
-
-  const float64_t control3 = float64_t(control_rep3, math::softfloat::detail::nothing());
+  const float64_t control3(0.42038820486765216162613462343078475742748);
 
   // N[BesselJ[4, 789/100], 41]
-  const typename float64_t::representation_type control_rep4 =
-    math::softfloat::detail::uz_type<double>(-0.078506863572127438410485520328806569617327).my_u;
-
-  const float64_t control4 = float64_t(control_rep4, math::softfloat::detail::nothing());
+  const float64_t control4(-0.078506863572127438410485520328806569617327);
 
   using std::fabs;
 

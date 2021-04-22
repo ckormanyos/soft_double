@@ -232,10 +232,7 @@ bool math::softfloat::example004_bessel_recur()
 
   const float64_t j9 = local::cyl_bessel_j(9, x);
 
-  const typename float64_t::representation_type control_rep =
-    math::softfloat::detail::uz_type<double>(0.1811741425937681762466579147691209001166).my_u;
-
-  const float64_t control(control_rep, math::softfloat::detail::nothing());
+  const float64_t control(0.1811741425937681762466579147691209001166);
 
   using std::fabs;
 

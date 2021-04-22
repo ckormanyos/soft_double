@@ -92,10 +92,7 @@ bool math::softfloat::example005_polylog_series()
   const float64_t poly = local::polylog(7U, float64_t(17U) / 71U);
 
   // N[PolyLog[7, 17/71], 41]
-  const typename float64_t::representation_type control_rep =
-    math::softfloat::detail::uz_type<double>(0.23989099751201076665599565769828454152031).my_u;
-
-  const float64_t control(control_rep, math::softfloat::detail::nothing());
+  const float64_t control(0.23989099751201076665599565769828454152031);
 
   // Check the closeness of the result.
   const float64_t closeness = fabs(1 - fabs(poly / control));

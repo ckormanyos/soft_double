@@ -196,7 +196,7 @@ bool test_to_f32(const std::uint32_t n)
   for(std::uint32_t i = 0U; i < n; ++i)
   {
     math::softfloat::float64_t x;
-    double                       d;
+    double                     d;
 
     local::get_sf_float64_t_and_double(x, d);
 
@@ -223,8 +223,50 @@ bool test_frexp(const std::uint32_t n)
 
     using std::frexp;
 
-    const math::softfloat::float64_t fr_d = frexp(x, &nx);
-    const double                     fr_x = frexp(d, &nd);
+    const math::softfloat::float64_t fr_d = frexp(x, &nd);
+    const double                     fr_x = frexp(d, &nx);
+
+    result_is_ok &=
+      (   (math::softfloat::detail::uz_type<double>(fr_x).my_u == fr_d.crepresentation())
+       && (nx == nd));
+  }
+
+  return result_is_ok;
+}
+
+bool test_ldexp(const std::uint32_t n)
+{
+  const auto s = std::random_device().operator()();
+
+  std::mt19937 eng32(s);
+
+  std::uniform_int_distribution<std::uint32_t> dst_exp_unsigned(UINT32_C(0), UINT32_C(2001));
+
+  bool result_is_ok = true;
+
+  for(std::uint32_t i = 0U; i < n; ++i)
+  {
+    math::softfloat::float64_t x; int nx;
+    double                     d; int nd;
+
+    local::get_sf_float64_t_and_double(x, d);
+
+    using std::frexp;
+
+    const math::softfloat::float64_t fr_d = frexp(x, &nd);
+    const double                     fr_x = frexp(d, &nx);
+
+    const std::mt19937::result_type r_exp = dst_exp_unsigned(eng32);
+
+    nx = (int) r_exp - 1001;
+    nd = nx;
+
+    using std::ldexp;
+
+    const math::softfloat::float64_t ld_d = ldexp(fr_d, nd);
+    const double                     ld_x = ldexp(fr_x, nx);
+
+    const bool b = (ld_d.crepresentation() == math::softfloat::detail::uz_type<double>(ld_x).my_u);
 
     result_is_ok &=
       (   (math::softfloat::detail::uz_type<double>(fr_x).my_u == fr_d.crepresentation())
@@ -393,6 +435,7 @@ bool test_soft_double()
 
   std::cout << "testing to_f32_... "; const bool result_to_f32_is_ok = test_to_f32(10000000U);     std::cout << std::boolalpha << result_to_f32_is_ok << std::endl;
   std::cout << "testing frexp__... "; const bool result_frexp__is_ok = test_frexp (10000000U);     std::cout << std::boolalpha << result_frexp__is_ok << std::endl;
+  std::cout << "testing ldexp__... "; const bool result_ldexp__is_ok = test_ldexp (10000000U);     std::cout << std::boolalpha << result_ldexp__is_ok << std::endl;
   std::cout << "testing add____... "; const bool result_add____is_ok = test_ops   (10000000U, 0U); std::cout << std::boolalpha << result_add____is_ok << std::endl;
   std::cout << "testing sub____... "; const bool result_sub____is_ok = test_ops   (10000000U, 1U); std::cout << std::boolalpha << result_sub____is_ok << std::endl;
   std::cout << "testing mul____... "; const bool result_mul____is_ok = test_ops   (10000000U, 2U); std::cout << std::boolalpha << result_mul____is_ok << std::endl;
@@ -413,6 +456,7 @@ bool test_soft_double()
 
   const bool result_algebra_is_ok = (   result_to_f32_is_ok
                                      && result_frexp__is_ok
+                                     && result_ldexp__is_ok
                                      && result_add____is_ok
                                      && result_sub____is_ok
                                      && result_mul____is_ok

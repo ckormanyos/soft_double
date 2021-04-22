@@ -91,10 +91,7 @@ bool math::softfloat::example007_catalan_series()
   const float64_t c = local::catalan<float64_t>();
 
   // N[Catalan, 41]
-  const typename float64_t::representation_type control_rep =
-    math::softfloat::detail::uz_type<double>(0.9159655941772190150546035149323841107741).my_u;
-
-  const float64_t control(control_rep, math::softfloat::detail::nothing());
+  const float64_t control(0.9159655941772190150546035149323841107741);
 
   using std::fabs;
 

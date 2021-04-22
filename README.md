@@ -37,37 +37,17 @@ For instance,
 using float64_t = ::math::softfloat::soft_double;
 
 // Use the type like built-in `double`.
-const float64_t one_third = float64_t(1) / 3U;
+const float64_t one_third = float64_t(1U) / 3U;
 ```
 
 An interesting detail in this code sample is the construction
-of `one_third` from the composite line 1 divided by 3.
+of `one_third` from the composite initialization `float64_t(1U) / 3U`.
 This is done in this way since, although `soft_double` emulates
 64-bit `double`, it has no constructor from 64-bit `double` because
 this is the actual type that is being emulated. This
 situation arises, for example, when the compiler
 does not support 64-bit built-in `double` or `long` `double`
 and these are limited to 32-bits.
-
-Construction of `soft_double` from native built-in 32-bit `float`
-is supported. Be aware, however, that these initializations
-are limited to the exact built-in precision of 32-bit
-`float` which is <img src="https://render.githubusercontent.com/render/math?math=6\,\ldots\,9">
-decimal digits. The code below initializes the `soft_double`
-variable `quarter` to <img src="https://render.githubusercontent.com/render/math?math=0.25">,
-which also happens to be exact in the representation of `float` via being
-<img src="https://render.githubusercontent.com/render/math?math=1/\,2^{n}">,
-where <img src="https://render.githubusercontent.com/render/math?math=n\,=\,2">.
-
-```
-#include <math/softfloat/soft_double.h>
-
-// Use a convenient alias for float64_t.
-using float64_t = math::softfloat::soft_double;
-
-// Use the type like built-in `double`.
-const float64_t quarter(0.25F);
-```
 
 ## Implementation goals
 
@@ -104,10 +84,8 @@ int main()
   using std::sqrt;
 
   // Compare with native double sqrt(pi).
-  const typename float64_t::representation_type control_rep =
-    math::softfloat::detail::uz_type<double>(sqrt(3.1415926535897932384626433832795028841972)).my_u;
-
-  const bool result_is_ok = (s.crepresentation() == control_rep);
+  const bool result_is_ok =
+    (s.crepresentation() == float64_t(sqrt(3.1415926535897932384626433832795028841972)).crepresentation());
 
   std::cout << "result_is_ok: " << std::boolalpha << result_is_ok << std::endl;
 }
@@ -116,40 +94,9 @@ int main()
 When working with soft_double, performing library verification,
 or prototyping project-specific software algorithms
 (intended) to use the `soft_double` type, a built-in 64-bit `double`
-can be helpful if avbailable.
+can be helpful if available.
 The examples, testing and verification of numerical correctness
 in the soft_double project do, in fact, actually use 64-bit built-in `double`.
-
-A C++-style template `union` called `uz_type<>` can be used to
-initialize `soft_double`, particularly when combined with
-the special two-parameter class constructor from `uint64_t`
-and the `math::softfloat::detail::nothing` structure, as shown below.
-In this way it is possible to make mixed use of both built-in 64-bit `double`
-as well as `soft_double` within the same project when 64-bit `double`
-is available.
-
-The code sample below, for instance, initializes
-an instance of `soft_double` with the approximate
-64-bit floating-point representation of
-<img src="https://render.githubusercontent.com/render/math?math=0.16636938378681407351267852431513159437103">.
-The of the `uz_type<>` template `union` is employed.
-
-```
-#include <math/softfloat/soft_double.h>
-
-// Use a convenient alias for float64_t.
-using float64_t = math::softfloat::soft_double;
-
-// When testing, use an instance of the convenient C++-style
-// union uz_type<> for initialization of soft_double from double.
-
-const typename float64_t::representation_type rep =
-    math::softfloat::detail::uz_type<double>(0.16636938378681407351267852431513159437103).my_u;
-
-// The soft_double instance x now represents the 64-bit floating-point
-// representation of 0.16636938378681407351267852431513159437103.
-const float64_t x(rep, math::softfloat::detail::nothing());
-```
 
 ## Bare Metal Microcontroller
 
@@ -163,7 +110,6 @@ can be found in the file
 in the [real-time-cpp](https://github.com/ckormanyos/real-time-cpp) repository.
 This benchmark has also been tested on the 8-bit MICROCHIP ATmega328P controller
 with `avr-gcc` versions 5 and 7 (both lacking built-in 64-bit `double`).
-
 
 ## Examples
 
