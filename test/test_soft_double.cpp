@@ -210,6 +210,30 @@ bool test_to_f32(const std::uint32_t n)
   return result_is_ok;
 }
 
+bool test_frexp(const std::uint32_t n)
+{
+  bool result_is_ok = true;
+
+  for(std::uint32_t i = 0U; i < n; ++i)
+  {
+    math::softfloat::float64_t x; int nx;
+    double                     d; int nd;
+
+    local::get_sf_float64_t_and_double(x, d);
+
+    using std::frexp;
+
+    const math::softfloat::float64_t fr_d = frexp(x, &nx);
+    const double                     fr_x = frexp(d, &nd);
+
+    result_is_ok &=
+      (   (math::softfloat::detail::uz_type<double>(fr_x).my_u == fr_d.crepresentation())
+       && (nx == nd));
+  }
+
+  return result_is_ok;
+}
+
 bool test_ops(const std::uint32_t n, std::uint_fast8_t op_index)
 {
   bool result_is_ok = true;
@@ -368,6 +392,7 @@ bool test_soft_double()
   }
 
   std::cout << "testing to_f32_... "; const bool result_to_f32_is_ok = test_to_f32(10000000U);     std::cout << std::boolalpha << result_to_f32_is_ok << std::endl;
+  std::cout << "testing frexp__... "; const bool result_frexp__is_ok = test_frexp (10000000U);     std::cout << std::boolalpha << result_frexp__is_ok << std::endl;
   std::cout << "testing add____... "; const bool result_add____is_ok = test_ops   (10000000U, 0U); std::cout << std::boolalpha << result_add____is_ok << std::endl;
   std::cout << "testing sub____... "; const bool result_sub____is_ok = test_ops   (10000000U, 1U); std::cout << std::boolalpha << result_sub____is_ok << std::endl;
   std::cout << "testing mul____... "; const bool result_mul____is_ok = test_ops   (10000000U, 2U); std::cout << std::boolalpha << result_mul____is_ok << std::endl;
@@ -386,7 +411,9 @@ bool test_soft_double()
             << float(stop - start) / float(CLOCKS_PER_SEC)
             << std::endl;
 
-  const bool result_algebra_is_ok = (   result_add____is_ok
+  const bool result_algebra_is_ok = (   result_to_f32_is_ok
+                                     && result_frexp__is_ok
+                                     && result_add____is_ok
                                      && result_sub____is_ok
                                      && result_mul____is_ok
                                      && result_div____is_ok
