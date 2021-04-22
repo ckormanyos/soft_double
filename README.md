@@ -49,6 +49,26 @@ situation arises, for example, when the compiler
 does not support 64-bit built-in `double` or `long` `double`
 and these are limited to 32-bits.
 
+Construction of `soft_double` from native built-in 32-bit `float`
+is supported. Be aware, however, that these initializations
+are limited to the exact built-in precision of 32-bit
+`float` which is <img src="https://render.githubusercontent.com/render/math?math=6\,\ldots\,9">
+decimal digits. The code below initializes the `soft_double`
+variable `quarter` to <img src="https://render.githubusercontent.com/render/math?math=0.25">,
+which also happens to be exact in the representation of `float` via being
+<img src="https://render.githubusercontent.com/render/math?math=1/\,2^{n}">,
+where <img src="https://render.githubusercontent.com/render/math?math=n\,=\,2">.
+
+```
+#include <math/softfloat/soft_double.h>
+
+// Use a convenient alias for float64_t.
+using float64_t = math::softfloat::soft_double;
+
+// Use the type like built-in `double`.
+const float64_t quarter(0.25F);
+```
+
 ## Implementation goals
 
   - Clean header-only C++ design.
