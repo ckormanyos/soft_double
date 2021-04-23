@@ -111,6 +111,13 @@ in the [real-time-cpp](https://github.com/ckormanyos/real-time-cpp) repository.
 This benchmark has also been tested on the 8-bit MICROCHIP ATmega328P controller
 with `avr-gcc` versions 5 and 7 (both lacking built-in 64-bit `double`).
 
+When working with even the most tiny microcontroller systems,
+I/O streaming can optionally be disabled with the compiler switch:
+
+```
+#define SOFT_DOUBLE_DISABLE_IOSTREAM
+```
+
 ## Examples
 
 Various interesting and algorithmically challenging
