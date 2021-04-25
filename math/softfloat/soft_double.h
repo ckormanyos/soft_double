@@ -383,6 +383,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   inline soft_double fabs    (const soft_double x);
   inline soft_double frexp   (const soft_double x, int* expptr);
   inline soft_double ldexp   (const soft_double x, int expval);
+  inline soft_double floor   (const soft_double x);
+  inline soft_double ceil    (const soft_double x);
   inline soft_double sqrt    (const soft_double x);
   inline soft_double exp     (const soft_double x);
   inline soft_double log     (const soft_double x);
@@ -407,15 +409,29 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     soft_double() { }
 
-    template<typename SignedIntegralType,
-             typename std::enable_if<(   (std::is_integral<SignedIntegralType>::value == true)
-                                      && (std::is_signed  <SignedIntegralType>::value == true))>::type const* = nullptr>
-    constexpr soft_double(SignedIntegralType n) : my_value(my__i64_to_f64((std::int64_t) n)) { }
+    template<typename UnsignedIntegralType,
+             typename std::enable_if<(   (std::is_integral<UnsignedIntegralType>::value == true)
+                                      && (std::is_unsigned<UnsignedIntegralType>::value == true)
+                                      && (sizeof(UnsignedIntegralType) <= sizeof(uint32_t)))>::type const* = nullptr>
+    constexpr soft_double(UnsignedIntegralType u) : my_value(my_ui32_to_f64((std::uint32_t) u)) { }
 
     template<typename UnsignedIntegralType,
              typename std::enable_if<(   (std::is_integral<UnsignedIntegralType>::value == true)
-                                      && (std::is_unsigned<UnsignedIntegralType>::value == true))>::type const* = nullptr>
+                                      && (std::is_unsigned<UnsignedIntegralType>::value == true)
+                                      && !(sizeof(UnsignedIntegralType) <= sizeof(uint32_t)))>::type const* = nullptr>
     constexpr soft_double(UnsignedIntegralType u) : my_value(my_ui64_to_f64((std::uint64_t) u)) { }
+
+    template<typename SignedIntegralType,
+             typename std::enable_if<(   (std::is_integral<SignedIntegralType>::value == true)
+                                      && (std::is_signed  <SignedIntegralType>::value == true)
+                                      && (sizeof(SignedIntegralType) <= sizeof(int32_t)))>::type const* = nullptr>
+    constexpr soft_double(SignedIntegralType n) : my_value(my__i32_to_f64((std::int32_t) n)) { }
+
+    template<typename SignedIntegralType,
+             typename std::enable_if<(   (std::is_integral<SignedIntegralType>::value == true)
+                                      && (std::is_signed  <SignedIntegralType>::value == true)
+                                      && !(sizeof(SignedIntegralType) <= sizeof(int32_t)))>::type const* = nullptr>
+    constexpr soft_double(SignedIntegralType n) : my_value(my__i64_to_f64((std::int64_t) n)) { }
 
     constexpr soft_double(float f)
       : my_value
@@ -428,7 +444,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     constexpr soft_double(double d)
       : my_value(detail::uz_type<double>(d).my_u) { }
 
-    constexpr soft_double(const long double) = delete;
+    constexpr soft_double(const long double ld)
+      : my_value(detail::uz_type<double>((double) ld).my_u) { }
 
     constexpr soft_double(const soft_double& other) noexcept
       : my_value(other.my_value) { }
@@ -490,6 +507,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     "Error: This cast requires 8 byte built-in double");
 
       return detail::uz_type<double>(my_value).my_f;
+    }
+
+    operator long double() const
+    {
+      static_assert(sizeof(long double) >= 8U,
+                    "Error: This cast requires at least 8 byte built-in long double");
+
+      return (long double) detail::uz_type<double>(my_value).my_f;
     }
 
     soft_double& operator+=(const soft_double& other) { my_value = f64_add(my_value, other.my_value); return *this; }
@@ -1266,6 +1291,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       return soft_double((uint64_t) ((uint64_t) (x.my_value & (uint64_t) ~(UINT64_C(0x7FF) << 52U)) | (uint64_t) expA << 52U), detail::nothing());
     }
 
+    friend inline soft_double floor(const soft_double x)
+    {
+      return (x < 0) ? soft_double((int64_t) (x - soft_double::my_value_one()))
+                     : soft_double((int64_t)  x);
+    }
+
+    friend inline soft_double ceil(const soft_double x)
+    {
+      return (x < 0) ? soft_double((int64_t)  x)
+                     : soft_double((int64_t) (x + soft_double::my_value_one()));
+    }
+
     friend inline soft_double exp(const soft_double x)
     {
       // PadeApproximant[Exp[x] - 1, {x, 0, {6, 6}}]
@@ -1596,6 +1633,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     static constexpr bool               has_signaling_NaN = false;
     static constexpr bool               is_bounded        = true;
     static constexpr bool               is_iec559         = false;
+    static constexpr bool               is_integer        = false;
     static constexpr bool               is_signed         = true;
     static constexpr float_round_style  round_style       = round_to_nearest;
     static constexpr int                radix             = 2;
