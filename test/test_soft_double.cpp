@@ -6,6 +6,7 @@
 ///////////////////////////////////////////////////////////////////
 
 #include <array>
+#include <cmath>
 #include <cstdint>
 #include <ctime>
 #include <limits>
@@ -266,12 +267,126 @@ bool test_ldexp(const std::uint32_t n)
     const math::softfloat::float64_t ld_d = ldexp(fr_d, nd);
     const double                     ld_x = ldexp(fr_x, nx);
 
-    const bool b = (ld_d.crepresentation() == math::softfloat::detail::uz_type<double>(ld_x).my_u);
-
     result_is_ok &=
-      (   (math::softfloat::detail::uz_type<double>(fr_x).my_u == fr_d.crepresentation())
+      (   (math::softfloat::detail::uz_type<double>(ld_x).my_u == ld_d.crepresentation())
        && (nx == nd));
   }
+
+  return result_is_ok;
+}
+
+bool test_exp()
+{
+  bool result_is_ok = true;
+
+  const math::softfloat::float64_t x201(201);
+
+  for(int i = 1; i < 400; ++i)
+  {
+    const math::softfloat::float64_t x = x201 / math::softfloat::float64_t(i);
+    const double                     d = (double) x;
+
+    using std::exp;
+
+    const math::softfloat::float64_t e_x = exp(x);
+    const double                     e_d = exp(d);
+
+    const double closeness = std::fabs(1.0 - std::fabs((double) e_x / e_d));
+
+    result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 50.0);
+  }
+
+  for(int i = 1; i < 400; ++i)
+  {
+    const math::softfloat::float64_t x = -x201 / math::softfloat::float64_t(i);
+    const double                     d = (double) x;
+
+    using std::exp;
+
+    const math::softfloat::float64_t e_x = exp(x);
+    const double                     e_d = exp(d);
+
+    using std::fabs;
+
+    const double closeness = std::fabs(1.0 - std::fabs((double) e_x / e_d));
+
+    result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 50.0);
+  }
+
+  return result_is_ok;
+}
+
+bool test_log()
+{
+  bool result_is_ok = true;
+
+  for(std::uint32_t i = 1U; i < 100U; ++i)
+  {
+    const double d = (double) i / (double) 100.0L;
+
+    math::softfloat::float64_t x =
+      math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u, math::softfloat::detail::nothing());
+
+    using std::log;
+
+    const math::softfloat::float64_t l_d = log(x);
+    const double                     l_x = log(d);
+
+    using std::fabs;
+
+    const double closeness = fabs(1.0 - fabs((double) l_d / l_x));
+
+    result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 50.0);
+  }
+
+  for(std::uint32_t i = 1001U; i < 2000U; ++i)
+  {
+    const double d = (double) i / 1000.0;
+
+    math::softfloat::float64_t x =
+      math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u, math::softfloat::detail::nothing());
+
+    using std::log;
+
+    const math::softfloat::float64_t l_d = log(x);
+    const double                     l_x = log(d);
+
+    using std::fabs;
+
+    const double closeness = fabs(1.0 - fabs((double) l_d / l_x));
+
+    result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 50.0);
+  }
+
+  using std::fabs;
+  using std::log;
+
+  double                     d;
+  math::softfloat::float64_t x;
+  math::softfloat::float64_t l_d;
+  double                     l_x;
+  double                     closeness;
+
+  d             = 1.1E1;
+  x             = math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u, math::softfloat::detail::nothing());
+  l_d           = log(x);
+  l_x           = log(d);
+  closeness     = fabs(1.0 - fabs((double) l_d / l_x));
+  result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 50.0);
+
+  d             = 1.1E10;
+  x             = math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u, math::softfloat::detail::nothing());
+  l_d           = log(x);
+  l_x           = log(d);
+  closeness     = fabs(1.0 - fabs((double) l_d / l_x));
+  result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 50.0);
+
+  d             = 1.1E100;
+  x             = math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u, math::softfloat::detail::nothing());
+  l_d           = log(x);
+  l_x           = log(d);
+  closeness     = fabs(1.0 - fabs((double) l_d / l_x));
+  result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 50.0);
 
   return result_is_ok;
 }
@@ -316,7 +431,7 @@ bool test_neq(const std::uint32_t n, std::uint_fast8_t op_index)
   for(std::uint32_t i = 0U; i < n; ++i)
   {
     math::softfloat::float64_t xa, xb;
-    double        da, db;
+    double                     da, db;
 
     bool x_result = false;
     bool d_result = true;
@@ -436,6 +551,8 @@ bool test_soft_double()
   std::cout << "testing to_f32_... "; const bool result_to_f32_is_ok = test_to_f32(10000000U);     std::cout << std::boolalpha << result_to_f32_is_ok << std::endl;
   std::cout << "testing frexp__... "; const bool result_frexp__is_ok = test_frexp (10000000U);     std::cout << std::boolalpha << result_frexp__is_ok << std::endl;
   std::cout << "testing ldexp__... "; const bool result_ldexp__is_ok = test_ldexp (10000000U);     std::cout << std::boolalpha << result_ldexp__is_ok << std::endl;
+  std::cout << "testing exp____... "; const bool result_exp____is_ok = test_exp   ();              std::cout << std::boolalpha << result_exp____is_ok << std::endl;
+  std::cout << "testing log____... "; const bool result_log____is_ok = test_log   ();              std::cout << std::boolalpha << result_log____is_ok << std::endl;
   std::cout << "testing add____... "; const bool result_add____is_ok = test_ops   (10000000U, 0U); std::cout << std::boolalpha << result_add____is_ok << std::endl;
   std::cout << "testing sub____... "; const bool result_sub____is_ok = test_ops   (10000000U, 1U); std::cout << std::boolalpha << result_sub____is_ok << std::endl;
   std::cout << "testing mul____... "; const bool result_mul____is_ok = test_ops   (10000000U, 2U); std::cout << std::boolalpha << result_mul____is_ok << std::endl;
@@ -457,6 +574,8 @@ bool test_soft_double()
   const bool result_algebra_is_ok = (   result_to_f32_is_ok
                                      && result_frexp__is_ok
                                      && result_ldexp__is_ok
+                                     && result_exp____is_ok
+                                     && result_log____is_ok
                                      && result_add____is_ok
                                      && result_sub____is_ok
                                      && result_mul____is_ok
@@ -473,5 +592,5 @@ bool test_soft_double()
 
   std::cout << "result_double_is_ok: " << std::boolalpha << result_double_is_ok << std::endl;
 
-  return result_is_ok;
+  return result_double_is_ok;
 }
