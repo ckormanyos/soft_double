@@ -265,35 +265,35 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   template<typename SignedIntegralType> typename std::enable_if<(std::is_integral<SignedIntegralType>::value == true) && (std::is_signed<SignedIntegralType>::value == true), soft_double>::type operator*(SignedIntegralType n, const soft_double& u);
   template<typename SignedIntegralType> typename std::enable_if<(std::is_integral<SignedIntegralType>::value == true) && (std::is_signed<SignedIntegralType>::value == true), soft_double>::type operator/(SignedIntegralType n, const soft_double& u);
 
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), soft_double>::type operator+(const soft_double& u, BuiltInFloatType f);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), soft_double>::type operator-(const soft_double& u, BuiltInFloatType f);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), soft_double>::type operator*(const soft_double& u, BuiltInFloatType f);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), soft_double>::type operator/(const soft_double& u, BuiltInFloatType f);
+  inline soft_double operator+(const soft_double& u, float f);
+  inline soft_double operator-(const soft_double& u, float f);
+  inline soft_double operator*(const soft_double& u, float f);
+  inline soft_double operator/(const soft_double& u, float f);
 
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), soft_double>::type operator+(BuiltInFloatType f, const soft_double& u);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), soft_double>::type operator-(BuiltInFloatType f, const soft_double& u);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), soft_double>::type operator*(BuiltInFloatType f, const soft_double& u);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), soft_double>::type operator/(BuiltInFloatType f, const soft_double& u);
+  inline soft_double operator+(float f, const soft_double& u);
+  inline soft_double operator-(float f, const soft_double& u);
+  inline soft_double operator*(float f, const soft_double& u);
+  inline soft_double operator/(float f, const soft_double& u);
 
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), soft_double>::type operator+(const soft_double& u, BuiltInFloatType f);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), soft_double>::type operator-(const soft_double& u, BuiltInFloatType f);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), soft_double>::type operator*(const soft_double& u, BuiltInFloatType f);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), soft_double>::type operator/(const soft_double& u, BuiltInFloatType f);
+  inline soft_double operator+(const soft_double& u, double f);
+  inline soft_double operator-(const soft_double& u, double f);
+  inline soft_double operator*(const soft_double& u, double f);
+  inline soft_double operator/(const soft_double& u, double f);
 
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), soft_double>::type operator+(BuiltInFloatType f, const soft_double& u);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), soft_double>::type operator-(BuiltInFloatType f, const soft_double& u);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), soft_double>::type operator*(BuiltInFloatType f, const soft_double& u);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), soft_double>::type operator/(BuiltInFloatType f, const soft_double& u);
+  inline soft_double operator+(double f, const soft_double& u);
+  inline soft_double operator-(double f, const soft_double& u);
+  inline soft_double operator*(double f, const soft_double& u);
+  inline soft_double operator/(double f, const soft_double& u);
 
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), soft_double>::type operator+(const soft_double& u, BuiltInFloatType f);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), soft_double>::type operator-(const soft_double& u, BuiltInFloatType f);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), soft_double>::type operator*(const soft_double& u, BuiltInFloatType f);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), soft_double>::type operator/(const soft_double& u, BuiltInFloatType f);
+  inline soft_double operator+(const soft_double& u, long double f);
+  inline soft_double operator-(const soft_double& u, long double f);
+  inline soft_double operator*(const soft_double& u, long double f);
+  inline soft_double operator/(const soft_double& u, long double f);
 
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), soft_double>::type operator+(BuiltInFloatType f, const soft_double& u);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), soft_double>::type operator-(BuiltInFloatType f, const soft_double& u);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), soft_double>::type operator*(BuiltInFloatType f, const soft_double& u);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), soft_double>::type operator/(BuiltInFloatType f, const soft_double& u);
+  inline soft_double operator+(long double f, const soft_double& u);
+  inline soft_double operator-(long double f, const soft_double& u);
+  inline soft_double operator*(long double f, const soft_double& u);
+  inline soft_double operator/(long double f, const soft_double& u);
 
   inline constexpr bool operator< (const soft_double& a, const soft_double& b);
   inline constexpr bool operator<=(const soft_double& a, const soft_double& b);
@@ -330,47 +330,47 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   template<typename SignedIntegralType> typename std::enable_if<(std::is_integral<SignedIntegralType>::value == true) && (std::is_signed<SignedIntegralType>::value == true), bool>::type operator>=(const SignedIntegralType n, const soft_double& a);
   template<typename SignedIntegralType> typename std::enable_if<(std::is_integral<SignedIntegralType>::value == true) && (std::is_signed<SignedIntegralType>::value == true), bool>::type operator> (const SignedIntegralType n, const soft_double& a);
 
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), bool>::type operator< (const soft_double& a, const BuiltInFloatType f);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), bool>::type operator<=(const soft_double& a, const BuiltInFloatType f);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), bool>::type operator==(const soft_double& a, const BuiltInFloatType f);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), bool>::type operator!=(const soft_double& a, const BuiltInFloatType f);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), bool>::type operator>=(const soft_double& a, const BuiltInFloatType f);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), bool>::type operator> (const soft_double& a, const BuiltInFloatType f);
+  inline bool operator< (const soft_double& a, const float f);
+  inline bool operator<=(const soft_double& a, const float f);
+  inline bool operator==(const soft_double& a, const float f);
+  inline bool operator!=(const soft_double& a, const float f);
+  inline bool operator>=(const soft_double& a, const float f);
+  inline bool operator> (const soft_double& a, const float f);
 
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), bool>::type operator< (const BuiltInFloatType f, const soft_double& a);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), bool>::type operator<=(const BuiltInFloatType f, const soft_double& a);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), bool>::type operator==(const BuiltInFloatType f, const soft_double& a);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), bool>::type operator!=(const BuiltInFloatType f, const soft_double& a);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), bool>::type operator>=(const BuiltInFloatType f, const soft_double& a);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), bool>::type operator> (const BuiltInFloatType f, const soft_double& a);
+  inline bool operator< (const float f, const soft_double& a);
+  inline bool operator<=(const float f, const soft_double& a);
+  inline bool operator==(const float f, const soft_double& a);
+  inline bool operator!=(const float f, const soft_double& a);
+  inline bool operator>=(const float f, const soft_double& a);
+  inline bool operator> (const float f, const soft_double& a);
 
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), bool>::type operator< (const soft_double& a, const BuiltInFloatType f);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), bool>::type operator<=(const soft_double& a, const BuiltInFloatType f);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), bool>::type operator==(const soft_double& a, const BuiltInFloatType f);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), bool>::type operator!=(const soft_double& a, const BuiltInFloatType f);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), bool>::type operator>=(const soft_double& a, const BuiltInFloatType f);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), bool>::type operator> (const soft_double& a, const BuiltInFloatType f);
+  inline bool operator< (const soft_double& a, const double f);
+  inline bool operator<=(const soft_double& a, const double f);
+  inline bool operator==(const soft_double& a, const double f);
+  inline bool operator!=(const soft_double& a, const double f);
+  inline bool operator>=(const soft_double& a, const double f);
+  inline bool operator> (const soft_double& a, const double f);
 
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), bool>::type operator< (const BuiltInFloatType f, const soft_double& a);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), bool>::type operator<=(const BuiltInFloatType f, const soft_double& a);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), bool>::type operator==(const BuiltInFloatType f, const soft_double& a);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), bool>::type operator!=(const BuiltInFloatType f, const soft_double& a);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), bool>::type operator>=(const BuiltInFloatType f, const soft_double& a);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), bool>::type operator> (const BuiltInFloatType f, const soft_double& a);
+  inline bool operator< (const double f, const soft_double& a);
+  inline bool operator<=(const double f, const soft_double& a);
+  inline bool operator==(const double f, const soft_double& a);
+  inline bool operator!=(const double f, const soft_double& a);
+  inline bool operator>=(const double f, const soft_double& a);
+  inline bool operator> (const double f, const soft_double& a);
 
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), bool>::type operator< (const soft_double& a, const BuiltInFloatType f);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), bool>::type operator<=(const soft_double& a, const BuiltInFloatType f);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), bool>::type operator==(const soft_double& a, const BuiltInFloatType f);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), bool>::type operator!=(const soft_double& a, const BuiltInFloatType f);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), bool>::type operator>=(const soft_double& a, const BuiltInFloatType f);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), bool>::type operator> (const soft_double& a, const BuiltInFloatType f);
+  inline bool operator< (const soft_double& a, const long double f);
+  inline bool operator<=(const soft_double& a, const long double f);
+  inline bool operator==(const soft_double& a, const long double f);
+  inline bool operator!=(const soft_double& a, const long double f);
+  inline bool operator>=(const soft_double& a, const long double f);
+  inline bool operator> (const soft_double& a, const long double f);
 
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), bool>::type operator< (const BuiltInFloatType f, const soft_double& a);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), bool>::type operator<=(const BuiltInFloatType f, const soft_double& a);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), bool>::type operator==(const BuiltInFloatType f, const soft_double& a);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), bool>::type operator!=(const BuiltInFloatType f, const soft_double& a);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), bool>::type operator>=(const BuiltInFloatType f, const soft_double& a);
-  template<typename BuiltInFloatType> typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), bool>::type operator> (const BuiltInFloatType f, const soft_double& a);
+  inline bool operator< (const long double f, const soft_double& a);
+  inline bool operator<=(const long double f, const soft_double& a);
+  inline bool operator==(const long double f, const soft_double& a);
+  inline bool operator!=(const long double f, const soft_double& a);
+  inline bool operator>=(const long double f, const soft_double& a);
+  inline bool operator> (const long double f, const soft_double& a);
 
   #if !defined(SOFT_DOUBLE_DISABLE_IOSTREAM)
   template<typename char_type, typename traits_type> std::basic_ostream<char_type, traits_type>& operator<<(std::basic_ostream<char_type, traits_type>& os, const soft_double& f);
@@ -409,23 +409,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     template<typename SignedIntegralType,
              typename std::enable_if<(   (std::is_integral<SignedIntegralType>::value == true)
-                                      && (std::is_signed  <SignedIntegralType>::value == true)
-                                      && (std::numeric_limits<SignedIntegralType>::digits <= std::numeric_limits<std::int32_t>::digits))>::type const* = nullptr>
-    constexpr soft_double(SignedIntegralType n) : my_value(my__i32_to_f64((std::int32_t) n)) { }
-
-    constexpr soft_double(std::int64_t n) : my_value(my__i64_to_f64((std::int64_t) n)) { }
+                                      && (std::is_signed  <SignedIntegralType>::value == true))>::type const* = nullptr>
+    constexpr soft_double(SignedIntegralType n) : my_value(my__i64_to_f64((std::int64_t) n)) { }
 
     template<typename UnsignedIntegralType,
              typename std::enable_if<(   (std::is_integral<UnsignedIntegralType>::value == true)
-                                      && (std::is_unsigned<UnsignedIntegralType>::value == true)
-                                      && (std::numeric_limits<UnsignedIntegralType>::digits <= std::numeric_limits<std::uint32_t>::digits))>::type const* = nullptr>
-    constexpr soft_double(UnsignedIntegralType u) : my_value(my_ui32_to_f64((std::uint32_t) u)) { }
+                                      && (std::is_unsigned<UnsignedIntegralType>::value == true))>::type const* = nullptr>
+    constexpr soft_double(UnsignedIntegralType u) : my_value(my_ui64_to_f64((std::uint64_t) u)) { }
 
-    constexpr soft_double(std::uint64_t u) : my_value(my_ui64_to_f64((std::uint64_t) u)) { }
-
-    template<typename BuiltInFloatType,
-             typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true)>::type const* = nullptr>
-    constexpr soft_double(BuiltInFloatType f)
+    constexpr soft_double(float f)
       : my_value
         (
           ((detail::expF32UI (detail::uz_type<float>(f).my_u) == 0) && (detail::fracF32UI(detail::uz_type<float>(f).my_u) == 0U))
@@ -433,15 +425,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             : detail::packToF64UI(detail::signF32UI(detail::uz_type<float>(f).my_u), detail::expF32UI(detail::uz_type<float>(f).my_u) + 0x380, (uint64_t) detail::fracF32UI(detail::uz_type<float>(f).my_u) << 29)
         ) { }
 
-    template<typename BuiltInFloatType,
-             typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true)>::type const* = nullptr>
-    constexpr soft_double(BuiltInFloatType d)
+    constexpr soft_double(double d)
       : my_value(detail::uz_type<double>(d).my_u) { }
-
-    template<typename BuiltInFloatType,
-             typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true)>::type const* = nullptr>
-    constexpr soft_double(BuiltInFloatType d)
-      : my_value(detail::uz_type<double>((double) d).my_u) { }
 
     constexpr soft_double(const long double) = delete;
 
@@ -479,21 +464,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static constexpr representation_type get_rep(soft_double a) { return a.my_value; }
 
-    template<typename SignedIntegralType,
-             typename std::enable_if<(   (std::is_integral<SignedIntegralType>::value == true)
-                                      && (std::is_signed  <SignedIntegralType>::value == true)
-                                      && (std::numeric_limits<SignedIntegralType>::digits <= std::numeric_limits<std::int32_t>::digits))>::type const* = nullptr>
-    operator SignedIntegralType() const { return (SignedIntegralType) f64_to__i32(my_value); }
+    operator signed char     () const { return (char)  f64_to__i32(my_value); }
+    operator signed short    () const { return (short) f64_to__i32(my_value); }
+    operator signed int      () const { return (int)   f64_to__i64(my_value); }
+    operator signed long     () const { return (long)  f64_to__i64(my_value); }
+    operator signed long long() const { return (long)  f64_to__i64(my_value); }
 
-    operator std::int64_t () const { return (std::int64_t) f64_to__i64(my_value); }
-
-    template<typename UnsignedIntegralType,
-             typename std::enable_if<(   (std::is_integral<UnsignedIntegralType>::value == true)
-                                      && (std::is_unsigned<UnsignedIntegralType>::value == true)
-                                      && (std::numeric_limits<UnsignedIntegralType>::digits <= std::numeric_limits<std::uint32_t>::digits))>::type const* = nullptr>
-    operator UnsignedIntegralType() const { return (UnsignedIntegralType) f64_to_ui32(my_value); }
-
-    operator std::uint64_t() const { return (std::uint64_t) f64_to_ui64(my_value); }
+    operator unsigned char     () const { return (unsigned char)      f64_to_ui32(my_value); }
+    operator unsigned short    () const { return (unsigned short)     f64_to_ui32(my_value); }
+    operator unsigned int      () const { return (unsigned int)       f64_to_ui64(my_value); }
+    operator unsigned long     () const { return (unsigned long)      f64_to_ui64(my_value); }
+    operator unsigned long long() const { return (unsigned long long) f64_to_ui64(my_value); }
 
     operator float() const
     {
@@ -503,7 +484,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       return f64_to_f32(my_value);
     }
 
-    #if !defined(__GNUC__) && !defined(__AVR__)
     operator double() const
     {
       static_assert(sizeof(double) == 8U,
@@ -511,7 +491,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       return detail::uz_type<double>(my_value).my_f;
     }
-    #endif
 
     soft_double& operator+=(const soft_double& other) { my_value = f64_add(my_value, other.my_value); return *this; }
     soft_double& operator-=(const soft_double& other) { my_value = f64_sub(my_value, other.my_value); return *this; }
@@ -1492,35 +1471,35 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     template<typename SignedIntegralType> friend typename std::enable_if<(std::is_integral<SignedIntegralType>::value == true) && (std::is_signed<SignedIntegralType>::value == true), soft_double>::type operator*(SignedIntegralType n, const soft_double& u) { return soft_double(n) *= u; }
     template<typename SignedIntegralType> friend typename std::enable_if<(std::is_integral<SignedIntegralType>::value == true) && (std::is_signed<SignedIntegralType>::value == true), soft_double>::type operator/(SignedIntegralType n, const soft_double& u) { return soft_double(n) /= u; }
 
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), soft_double>::type operator+(const soft_double& u, BuiltInFloatType f) { return soft_double(u) += soft_double(f); }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), soft_double>::type operator-(const soft_double& u, BuiltInFloatType f) { return soft_double(u) -= soft_double(f); }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), soft_double>::type operator*(const soft_double& u, BuiltInFloatType f) { return soft_double(u) *= soft_double(f); }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), soft_double>::type operator/(const soft_double& u, BuiltInFloatType f) { return soft_double(u) /= soft_double(f); }
+    friend inline soft_double operator+(const soft_double& u, float f) { return soft_double(u) += soft_double(f); }
+    friend inline soft_double operator-(const soft_double& u, float f) { return soft_double(u) -= soft_double(f); }
+    friend inline soft_double operator*(const soft_double& u, float f) { return soft_double(u) *= soft_double(f); }
+    friend inline soft_double operator/(const soft_double& u, float f) { return soft_double(u) /= soft_double(f); }
 
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), soft_double>::type operator+(BuiltInFloatType f, const soft_double& u) { return soft_double(f) += u; }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), soft_double>::type operator-(BuiltInFloatType f, const soft_double& u) { return soft_double(f) -= u; }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), soft_double>::type operator*(BuiltInFloatType f, const soft_double& u) { return soft_double(f) *= u; }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), soft_double>::type operator/(BuiltInFloatType f, const soft_double& u) { return soft_double(f) /= u; }
+    friend inline soft_double operator+(float f, const soft_double& u) { return soft_double(f) += u; }
+    friend inline soft_double operator-(float f, const soft_double& u) { return soft_double(f) -= u; }
+    friend inline soft_double operator*(float f, const soft_double& u) { return soft_double(f) *= u; }
+    friend inline soft_double operator/(float f, const soft_double& u) { return soft_double(f) /= u; }
 
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), soft_double>::type operator+(const soft_double& u, BuiltInFloatType f) { return soft_double(u) += soft_double(f); }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), soft_double>::type operator-(const soft_double& u, BuiltInFloatType f) { return soft_double(u) -= soft_double(f); }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), soft_double>::type operator*(const soft_double& u, BuiltInFloatType f) { return soft_double(u) *= soft_double(f); }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), soft_double>::type operator/(const soft_double& u, BuiltInFloatType f) { return soft_double(u) /= soft_double(f); }
+    friend inline soft_double operator+(const soft_double& u, double f) { return soft_double(u) += soft_double(f); }
+    friend inline soft_double operator-(const soft_double& u, double f) { return soft_double(u) -= soft_double(f); }
+    friend inline soft_double operator*(const soft_double& u, double f) { return soft_double(u) *= soft_double(f); }
+    friend inline soft_double operator/(const soft_double& u, double f) { return soft_double(u) /= soft_double(f); }
 
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), soft_double>::type operator+(BuiltInFloatType f, const soft_double& u) { return soft_double(f) += u; }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), soft_double>::type operator-(BuiltInFloatType f, const soft_double& u) { return soft_double(f) -= u; }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), soft_double>::type operator*(BuiltInFloatType f, const soft_double& u) { return soft_double(f) *= u; }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), soft_double>::type operator/(BuiltInFloatType f, const soft_double& u) { return soft_double(f) /= u; }
+    friend inline soft_double operator+(double f, const soft_double& u) { return soft_double(f) += u; }
+    friend inline soft_double operator-(double f, const soft_double& u) { return soft_double(f) -= u; }
+    friend inline soft_double operator*(double f, const soft_double& u) { return soft_double(f) *= u; }
+    friend inline soft_double operator/(double f, const soft_double& u) { return soft_double(f) /= u; }
 
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), soft_double>::type operator+(const soft_double& u, BuiltInFloatType f) = delete;
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), soft_double>::type operator-(const soft_double& u, BuiltInFloatType f) = delete;
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), soft_double>::type operator*(const soft_double& u, BuiltInFloatType f) = delete;
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), soft_double>::type operator/(const soft_double& u, BuiltInFloatType f) = delete;
+    friend inline soft_double operator+(const soft_double& u, long double f) = delete;
+    friend inline soft_double operator-(const soft_double& u, long double f) = delete;
+    friend inline soft_double operator*(const soft_double& u, long double f) = delete;
+    friend inline soft_double operator/(const soft_double& u, long double f) = delete;
 
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), soft_double>::type operator+(BuiltInFloatType f, const soft_double& u) = delete;
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), soft_double>::type operator-(BuiltInFloatType f, const soft_double& u) = delete;
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), soft_double>::type operator*(BuiltInFloatType f, const soft_double& u) = delete;
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), soft_double>::type operator/(BuiltInFloatType f, const soft_double& u) = delete;
+    friend inline soft_double operator+(long double f, const soft_double& u) = delete;
+    friend inline soft_double operator-(long double f, const soft_double& u) = delete;
+    friend inline soft_double operator*(long double f, const soft_double& u) = delete;
+    friend inline soft_double operator/(long double f, const soft_double& u) = delete;
 
     friend inline constexpr bool operator< (const soft_double& a, const soft_double& b) { return my_lt(a, b); }
     friend inline constexpr bool operator<=(const soft_double& a, const soft_double& b) { return my_le(a, b); }
@@ -1557,47 +1536,47 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     template<typename SignedIntegralType> friend typename std::enable_if<(std::is_integral<SignedIntegralType>::value == true) && (std::is_signed<SignedIntegralType>::value == true), bool>::type operator>=(const SignedIntegralType n, const soft_double& a) { return ((soft_double(n) <  a) == false); }
     template<typename SignedIntegralType> friend typename std::enable_if<(std::is_integral<SignedIntegralType>::value == true) && (std::is_signed<SignedIntegralType>::value == true), bool>::type operator> (const SignedIntegralType n, const soft_double& a) { return ((soft_double(n) <= a) == false); }
 
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), bool>::type operator< (const soft_double& a, const BuiltInFloatType f) { return soft_double::my_lt(a, soft_double(f)); }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), bool>::type operator<=(const soft_double& a, const BuiltInFloatType f) { return soft_double::my_le(a, soft_double(f)); }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), bool>::type operator==(const soft_double& a, const BuiltInFloatType f) { return  (a.my_value == soft_double(f).my_value); }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), bool>::type operator!=(const soft_double& a, const BuiltInFloatType f) { return ((a == soft_double(f)) == false); }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), bool>::type operator>=(const soft_double& a, const BuiltInFloatType f) { return ((a <  soft_double(f)) == false); }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), bool>::type operator> (const soft_double& a, const BuiltInFloatType f) { return ((a <= soft_double(f)) == false); }
+    friend inline bool operator< (const soft_double& a, const float f) { return soft_double::my_lt(a, soft_double(f)); }
+    friend inline bool operator<=(const soft_double& a, const float f) { return soft_double::my_le(a, soft_double(f)); }
+    friend inline bool operator==(const soft_double& a, const float f) { return  (a.my_value == soft_double(f).my_value); }
+    friend inline bool operator!=(const soft_double& a, const float f) { return ((a == soft_double(f)) == false); }
+    friend inline bool operator>=(const soft_double& a, const float f) { return ((a <  soft_double(f)) == false); }
+    friend inline bool operator> (const soft_double& a, const float f) { return ((a <= soft_double(f)) == false); }
 
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), bool>::type operator< (const BuiltInFloatType f, const soft_double& a) { return soft_double::my_lt(soft_double(f), a); }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), bool>::type operator<=(const BuiltInFloatType f, const soft_double& a) { return soft_double::my_le(soft_double(f), a); }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), bool>::type operator==(const BuiltInFloatType f, const soft_double& a) { return  (soft_double(f).my_value == a.my_value); }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), bool>::type operator!=(const BuiltInFloatType f, const soft_double& a) { return ((soft_double(f) == a) == false); }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), bool>::type operator>=(const BuiltInFloatType f, const soft_double& a) { return ((soft_double(f) <  a) == false); }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, float>::value == true), bool>::type operator> (const BuiltInFloatType f, const soft_double& a) { return ((soft_double(f) <= a) == false); }
+    friend inline bool operator< (const float f, const soft_double& a) { return soft_double::my_lt(soft_double(f), a); }
+    friend inline bool operator<=(const float f, const soft_double& a) { return soft_double::my_le(soft_double(f), a); }
+    friend inline bool operator==(const float f, const soft_double& a) { return  (soft_double(f).my_value == a.my_value); }
+    friend inline bool operator!=(const float f, const soft_double& a) { return ((soft_double(f) == a) == false); }
+    friend inline bool operator>=(const float f, const soft_double& a) { return ((soft_double(f) <  a) == false); }
+    friend inline bool operator> (const float f, const soft_double& a) { return ((soft_double(f) <= a) == false); }
 
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), bool>::type operator< (const soft_double& a, const BuiltInFloatType f) { return soft_double::my_lt(a, soft_double(f)); }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), bool>::type operator<=(const soft_double& a, const BuiltInFloatType f) { return soft_double::my_le(a, soft_double(f)); }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), bool>::type operator==(const soft_double& a, const BuiltInFloatType f) { return  (a.my_value == soft_double(f).my_value); }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), bool>::type operator!=(const soft_double& a, const BuiltInFloatType f) { return ((a == soft_double(f)) == false); }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), bool>::type operator>=(const soft_double& a, const BuiltInFloatType f) { return ((a <  soft_double(f)) == false); }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), bool>::type operator> (const soft_double& a, const BuiltInFloatType f) { return ((a <= soft_double(f)) == false); }
+    friend inline bool operator< (const soft_double& a, const double f) { return soft_double::my_lt(a, soft_double(f)); }
+    friend inline bool operator<=(const soft_double& a, const double f) { return soft_double::my_le(a, soft_double(f)); }
+    friend inline bool operator==(const soft_double& a, const double f) { return  (a.my_value == soft_double(f).my_value); }
+    friend inline bool operator!=(const soft_double& a, const double f) { return ((a == soft_double(f)) == false); }
+    friend inline bool operator>=(const soft_double& a, const double f) { return ((a <  soft_double(f)) == false); }
+    friend inline bool operator> (const soft_double& a, const double f) { return ((a <= soft_double(f)) == false); }
 
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), bool>::type operator< (const BuiltInFloatType f, const soft_double& a) { return soft_double::my_lt(soft_double(f), a); }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), bool>::type operator<=(const BuiltInFloatType f, const soft_double& a) { return soft_double::my_le(soft_double(f), a); }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), bool>::type operator==(const BuiltInFloatType f, const soft_double& a) { return  (soft_double(f).my_value == a.my_value); }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), bool>::type operator!=(const BuiltInFloatType f, const soft_double& a) { return ((soft_double(f) == a) == false); }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), bool>::type operator>=(const BuiltInFloatType f, const soft_double& a) { return ((soft_double(f) <  a) == false); }
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, double>::value == true), bool>::type operator> (const BuiltInFloatType f, const soft_double& a) { return ((soft_double(f) <= a) == false); }
+    friend inline bool operator< (const double f, const soft_double& a) { return soft_double::my_lt(soft_double(f), a); }
+    friend inline bool operator<=(const double f, const soft_double& a) { return soft_double::my_le(soft_double(f), a); }
+    friend inline bool operator==(const double f, const soft_double& a) { return  (soft_double(f).my_value == a.my_value); }
+    friend inline bool operator!=(const double f, const soft_double& a) { return ((soft_double(f) == a) == false); }
+    friend inline bool operator>=(const double f, const soft_double& a) { return ((soft_double(f) <  a) == false); }
+    friend inline bool operator> (const double f, const soft_double& a) { return ((soft_double(f) <= a) == false); }
 
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), bool>::type operator< (const soft_double& a, const BuiltInFloatType f) = delete;
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), bool>::type operator<=(const soft_double& a, const BuiltInFloatType f) = delete;
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), bool>::type operator==(const soft_double& a, const BuiltInFloatType f) = delete;
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), bool>::type operator!=(const soft_double& a, const BuiltInFloatType f) = delete;
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), bool>::type operator>=(const soft_double& a, const BuiltInFloatType f) = delete;
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), bool>::type operator> (const soft_double& a, const BuiltInFloatType f) = delete;
+    friend inline bool operator< (const soft_double& a, const long double f) = delete;
+    friend inline bool operator<=(const soft_double& a, const long double f) = delete;
+    friend inline bool operator==(const soft_double& a, const long double f) = delete;
+    friend inline bool operator!=(const soft_double& a, const long double f) = delete;
+    friend inline bool operator>=(const soft_double& a, const long double f) = delete;
+    friend inline bool operator> (const soft_double& a, const long double f) = delete;
 
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), bool>::type operator< (const BuiltInFloatType f, const soft_double& a) = delete;
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), bool>::type operator<=(const BuiltInFloatType f, const soft_double& a) = delete;
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), bool>::type operator==(const BuiltInFloatType f, const soft_double& a) = delete;
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), bool>::type operator!=(const BuiltInFloatType f, const soft_double& a) = delete;
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), bool>::type operator>=(const BuiltInFloatType f, const soft_double& a) = delete;
-    template<typename BuiltInFloatType> friend typename std::enable_if<(std::is_same<BuiltInFloatType, long double>::value == true), bool>::type operator> (const BuiltInFloatType f, const soft_double& a) = delete;
+    friend inline bool operator< (const long double f, const soft_double& a) = delete;
+    friend inline bool operator<=(const long double f, const soft_double& a) = delete;
+    friend inline bool operator==(const long double f, const soft_double& a) = delete;
+    friend inline bool operator!=(const long double f, const soft_double& a) = delete;
+    friend inline bool operator>=(const long double f, const soft_double& a) = delete;
+    friend inline bool operator> (const long double f, const soft_double& a) = delete;
   };
 
   using float64_t = soft_double;

@@ -638,7 +638,7 @@
         InternalFloatType d = ((!b_neg) ? mantissa : -mantissa);
         exponent_type     e = exponent;
 
-        constexpr InternalFloatType f10(10U);
+        const InternalFloatType f10(10.0F);
 
         while(d > f10)                     { d /= f10; ++e; }
         while(d < InternalFloatType(1.0F)) { d *= f10; --e; }

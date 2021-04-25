@@ -322,7 +322,7 @@ bool test_log()
 
   for(std::uint32_t i = 1U; i < 100U; ++i)
   {
-    const double d = (double) i / (double) 100.0L;
+    const double d = (double) i / (double) 100.0;
 
     math::softfloat::float64_t x =
       math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u, math::softfloat::detail::nothing());
