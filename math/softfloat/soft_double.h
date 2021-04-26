@@ -811,6 +811,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static uint32_t f64_to_ui32(const uint64_t a)
     {
+      const bool     sign = detail::signF64UI(a);
       const int16_t  expA = detail::expF64UI (a);
             uint64_t sig  = detail::fracF64UI(a);
 
@@ -826,11 +827,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         sig = detail::softfloat_shiftRightJam64(sig, (uint32_t) shiftDist);
       }
 
-      return softfloat_roundToUI32(detail::signF64UI(a), sig);
+      return softfloat_roundToUI32(sign, sig);
     }
 
     static int32_t f64_to__i32(const uint64_t a)
     {
+      const bool     sign = detail::signF64UI(a);
       const int16_t  expA = detail::expF64UI (a);
             uint64_t sig  = detail::fracF64UI(a);
 
@@ -839,18 +841,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         sig |= UINT64_C(0x0010000000000000);
       }
 
-      const int16_t shiftDist = 0x427 - expA;
+      int16_t shiftDist = 0x427 - expA;
 
       if(0 < shiftDist)
       {
         sig = detail::softfloat_shiftRightJam64(sig, (uint32_t) shiftDist);
       }
 
-      return softfloat_roundToI32(detail::signF64UI(a), sig);
+      return softfloat_roundToI32(sign, sig);
     }
 
     static uint64_t f64_to_ui64(const uint64_t a)
     {
+      const bool     sign = detail::signF64UI(a);
       const int16_t  expA = detail::expF64UI (a);
             uint64_t sig  = detail::fracF64UI(a);
 
@@ -878,11 +881,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         sigExtra = detail::softfloat_shiftRightJam64Extra(sig, 0U, (uint32_t) shiftDist);
       }
 
-      return softfloat_roundToUI64(detail::signF64UI(a), sigExtra.v);
+      return softfloat_roundToUI64(sign, sigExtra.v);
     }
 
     static int64_t f64_to__i64(const uint64_t a)
     {
+      const bool     sign = detail::signF64UI(a);
       const int16_t  expA = detail::expF64UI (a);
             uint64_t sig  = detail::fracF64UI(a);
 
@@ -891,7 +895,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         sig |= UINT64_C(0x0010000000000000);
       }
 
-      int16_t shiftDist = 0x433 - expA;
+      int16_t shiftDist = (int16_t) (INT16_C(0x433) - expA);
 
       struct detail::uint64_extra sigExtra;
 
@@ -910,14 +914,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         sigExtra = detail::softfloat_shiftRightJam64Extra(sig, 0U, (uint32_t) shiftDist);
       }
 
-      return softfloat_roundToI64(detail::signF64UI(a), sigExtra.v);
+      return softfloat_roundToI64(sign, sigExtra.v);
     }
 
-    static constexpr float f64_to_f32(const uint64_t a)
+    static float f64_to_f32(const uint64_t a)
     {
-      return softfloat_roundPackToF32(detail::signF64UI(a),
-                                      (int16_t) (detail::expF64UI(a) - INT16_C(0x381)),
-                                      (uint32_t) detail::softfloat_shortShiftRightJam64(detail::fracF64UI(a), 22) | UINT32_C(0x40000000));
+      const bool     sign = detail::signF64UI(a);
+      const int16_t  expA = detail::expF64UI (a);
+      const uint64_t frac = detail::fracF64UI(a);
+
+      const uint32_t frac32 = (uint32_t) detail::softfloat_shortShiftRightJam64(frac, 22);
+
+      const float f = softfloat_roundPackToF32(sign, (int16_t) (expA - INT16_C(0x381)), frac32 | UINT32_C(0x40000000));
+
+      return f;
     }
 
     static constexpr float softfloat_roundPackToF32(bool sign, const int16_t expA, const uint32_t sig)

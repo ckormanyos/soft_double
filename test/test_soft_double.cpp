@@ -190,8 +190,12 @@ bool test_to_f32(const std::uint32_t n)
 
     if(result_is_ok == false)
     {
-      std::cout << "d  : " << std::setprecision(std::numeric_limits<double>::max_digits10) << d << std::endl;
-      std::cout << "u_d: " << u_d << std::endl;
+      std::cout << "d                  : " << std::setprecision(std::numeric_limits<double>::max_digits10) << d << std::endl;
+      std::cout << "x                  : " << std::setprecision(std::numeric_limits<double>::max_digits10) << x << std::endl;
+      std::cout << "x.crepresentation(): " << x.crepresentation() << std::endl;
+      std::cout << "x.crepresentation(): " << x.crepresentation() << std::endl;
+      std::cout << "u_x                : " << u_x << std::endl;
+      std::cout << "u_d                : " << u_d << std::endl;
       break;
     }
   }
@@ -536,7 +540,7 @@ bool test_soft_double()
     result_is_ok &= result_ddx____is_ok;
   }
 
-  std::cout << "testing to_f32_... "; const bool result_to_f32_is_ok = test_to_f32(10000000U);     std::cout << std::boolalpha << result_to_f32_is_ok << std::endl;
+  std::cout << "testing to_f32_... "; const bool result_to_f32_is_ok = test_to_f32(100000000U);    std::cout << std::boolalpha << result_to_f32_is_ok << std::endl;
   std::cout << "testing frexp__... "; const bool result_frexp__is_ok = test_frexp (10000000U);     std::cout << std::boolalpha << result_frexp__is_ok << std::endl;
   std::cout << "testing ldexp__... "; const bool result_ldexp__is_ok = test_ldexp (10000000U);     std::cout << std::boolalpha << result_ldexp__is_ok << std::endl;
   std::cout << "testing exp____... "; const bool result_exp____is_ok = test_exp   ();              std::cout << std::boolalpha << result_exp____is_ok << std::endl;
