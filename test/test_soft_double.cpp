@@ -193,7 +193,6 @@ bool test_to_f32(const std::uint32_t n)
       std::cout << "d                  : " << std::setprecision(std::numeric_limits<double>::max_digits10) << d << std::endl;
       std::cout << "x                  : " << std::setprecision(std::numeric_limits<double>::max_digits10) << x << std::endl;
       std::cout << "x.crepresentation(): " << x.crepresentation() << std::endl;
-      std::cout << "x.crepresentation(): " << x.crepresentation() << std::endl;
       std::cout << "u_x                : " << u_x << std::endl;
       std::cout << "u_d                : " << u_d << std::endl;
       break;

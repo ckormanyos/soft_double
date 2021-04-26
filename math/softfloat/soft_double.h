@@ -930,11 +930,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       return f;
     }
 
-    static constexpr float softfloat_roundPackToF32(bool sign, const int16_t expA, const uint32_t sig)
+    static float softfloat_roundPackToF32(bool sign, int16_t expA, uint32_t sig)
     {
-      return ((uint32_t) ((uint32_t) (sig + 0x40U) >> 7U) == 0U)
-               ? detail::uz_type<float>(detail::packToF32UI(sign, 0, 0)).my_f
-               : detail::uz_type<float>(detail::packToF32UI(sign, expA, (uint32_t) ((uint32_t) (sig + 0x40U) >> 7U))).my_f;
+      constexpr uint_fast8_t roundIncrement = UINT8_C(0x40);
+
+      const uint_fast8_t roundBits = sig & 0x7F;
+
+      sig = (sig + roundIncrement)>>7;
+
+      sig &= ~(uint_fast32_t) (((roundBits ^ 0x40) == 0U ? 1U : 0U) & 1U);
+
+      if(!sig)
+      {
+        expA = 0;
+      }
+
+      return detail::uz_type<float>(detail::packToF32UI(sign, expA, sig)).my_f;
     }
 
     static constexpr uint64_t my__i32_to_f64(const int32_t a)
