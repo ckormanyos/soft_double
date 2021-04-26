@@ -74,9 +74,9 @@ namespace local
   std::mt19937    eng32(s);
   std::mt19937_64 eng64(s);
 
-  std::uniform_int_distribution<std::uint64_t> dst_mantissa(UINT64_C(10000000000000000), UINT64_C(99999999999999999));
-  std::uniform_int_distribution<std::uint32_t> dst_exp     (UINT32_C(0),                 UINT32_C(18));
-  std::uniform_int_distribution<std::uint32_t> dst_sign    (UINT32_C(0),                 UINT32_C(1));
+  std::uniform_int_distribution<std::uint64_t> dst_mantissa(UINT64_C(100000000000000), UINT64_C(999999999999999));
+  std::uniform_int_distribution<std::uint32_t> dst_exp     (UINT32_C(0),               UINT32_C(18));
+  std::uniform_int_distribution<std::uint32_t> dst_sign    (UINT32_C(0),               UINT32_C(1));
 
   void get_sf_float64_t_and_double(math::softfloat::float64_t& x1, double& d1, const bool is_positive = false)
   {

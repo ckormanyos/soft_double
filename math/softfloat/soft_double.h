@@ -107,14 +107,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
            typename IntegralTypeSig>
   constexpr uint64_t packToF64UI(bool sign, IntegralTypeExp expA, IntegralTypeSig sig)
   {
-    return ((uint64_t) ((uint64_t) (((uint64_t) (sign ? 1ULL : 0ULL))<<63) + (uint64_t) (((uint64_t) expA)<<52) + (uint64_t) sig));
+    return ((uint64_t) ((uint64_t) (((uint64_t) (sign ? 1U : 0U))<<63) + (uint64_t) (((uint64_t) expA)<<52) + (uint64_t) sig));
   }
 
   template<typename IntegralTypeExp,
            typename IntegralTypeSig>
   constexpr uint32_t packToF32UI(bool sign, IntegralTypeExp expA, IntegralTypeSig sig)
   {
-    return ((uint32_t) ((uint32_t) (((uint32_t) (sign ? 1ULL : 0ULL))<<31) + (uint32_t) (((uint32_t) expA)<<23) + (uint32_t) sig));
+    return ((uint32_t) ((uint32_t) (((uint32_t) (sign ? 1U : 0U))<<31) + (uint32_t) (((uint32_t) expA)<<23) + (uint32_t) sig));
   }
 
   /*----------------------------------------------------------------------------
@@ -125,7 +125,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   *----------------------------------------------------------------------------*/
   constexpr uint64_t softfloat_shortShiftRightJam64(uint64_t a, uint_fast8_t dist)
   {
-    return a >> dist | ((a & (((uint64_t) 1 << dist) - 1)) != 0 ? 1U : 0U);
+    return a >> dist | ((a & ((UINT64_C(1) << dist) - 1)) != 0 ? 1U : 0U);
   }
 
   /*----------------------------------------------------------------------------
@@ -136,7 +136,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   *----------------------------------------------------------------------------*/
   constexpr uint32_t softfloat_shiftRightJam32(uint32_t a, uint16_t dist)
   {
-    return (dist < 31) ? a >> dist | ((uint32_t)(a << (negate(dist) & 31)) != 0 ? 1U : 0U) : (a != 0 ? 1U : 0U);
+    return (dist < 31) ? a >> dist | ((uint32_t)(a << (negate(dist) & 31)) != 0U ? 1U : 0U) : (a != 0U ? 1U : 0U);
   }
 
   /*----------------------------------------------------------------------------
@@ -916,8 +916,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     static constexpr float f64_to_f32(const uint64_t a)
     {
       return softfloat_roundPackToF32(detail::signF64UI(a),
-                                      (int16_t) detail::expF64UI(a) - 0x381,
-                                      (uint32_t) detail::softfloat_shortShiftRightJam64(detail::fracF64UI(a), 22) | 0x40000000 );
+                                      (int16_t) (detail::expF64UI(a) - INT16_C(0x381)),
+                                      (uint32_t) detail::softfloat_shortShiftRightJam64(detail::fracF64UI(a), 22) | UINT32_C(0x40000000));
     }
 
     static constexpr float softfloat_roundPackToF32(bool sign, const int16_t expA, const uint32_t sig)
