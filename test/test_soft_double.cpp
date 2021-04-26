@@ -280,7 +280,7 @@ bool test_exp()
 
     const double closeness = std::fabs(1.0 - std::fabs((double) e_x / e_d));
 
-    result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 50.0);
+    result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 40.0);
   }
 
   for(int i = 1; i < 400; ++i)
@@ -297,7 +297,7 @@ bool test_exp()
 
     const double closeness = std::fabs(1.0 - std::fabs((double) e_x / e_d));
 
-    result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 50.0);
+    result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 40.0);
   }
 
   return result_is_ok;
@@ -312,7 +312,8 @@ bool test_log()
     const double d = (double) i / (double) 100.0;
 
     math::softfloat::float64_t x =
-      math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u, math::softfloat::detail::nothing());
+      math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u,
+                                 math::softfloat::detail::nothing());
 
     using std::log;
 
@@ -323,7 +324,7 @@ bool test_log()
 
     const double closeness = fabs(1.0 - fabs((double) l_d / l_x));
 
-    result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 50.0);
+    result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 40.0);
   }
 
   for(std::uint32_t i = 1001U; i < 2000U; ++i)
@@ -331,7 +332,8 @@ bool test_log()
     const double d = (double) i / 1000.0;
 
     math::softfloat::float64_t x =
-      math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u, math::softfloat::detail::nothing());
+      math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u,
+                                 math::softfloat::detail::nothing());
 
     using std::log;
 
@@ -342,7 +344,7 @@ bool test_log()
 
     const double closeness = fabs(1.0 - fabs((double) l_d / l_x));
 
-    result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 50.0);
+    result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 40.0);
   }
 
   using std::fabs;
@@ -355,25 +357,28 @@ bool test_log()
   double                     closeness;
 
   d             = 1.1E1;
-  x             = math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u, math::softfloat::detail::nothing());
+  x             = math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u,
+                                             math::softfloat::detail::nothing());
   l_d           = log(x);
   l_x           = log(d);
   closeness     = fabs(1.0 - fabs((double) l_d / l_x));
-  result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 50.0);
+  result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 40.0);
 
   d             = 1.1E10;
-  x             = math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u, math::softfloat::detail::nothing());
+  x             = math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u,
+                                             math::softfloat::detail::nothing());
   l_d           = log(x);
   l_x           = log(d);
   closeness     = fabs(1.0 - fabs((double) l_d / l_x));
-  result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 50.0);
+  result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 40.0);
 
   d             = 1.1E100;
-  x             = math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u, math::softfloat::detail::nothing());
+  x             = math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u,
+                                             math::softfloat::detail::nothing());
   l_d           = log(x);
   l_x           = log(d);
   closeness     = fabs(1.0 - fabs((double) l_d / l_x));
-  result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 50.0);
+  result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 40.0);
 
   return result_is_ok;
 }
@@ -384,18 +389,28 @@ bool test_floor(const std::uint32_t n)
 
   constexpr std::array<double, 8U> powers_of_ten =
   {{
-        1.0,     10.0,     100.0,     1000.0,
-    10000.0, 100000.0, 1000000.0, 10000000.0
+           1.0,
+          10.0,
+         100.0,
+        1000.0,
+       10000.0,
+      100000.0,
+     1000000.0,
+    10000000.0
   }};
 
   for(std::uint32_t i = 0U; i < n; ++i)
   {
-    // Select a random mantissa scaled within approximately 0.1 ... 0.9007199...
-    const double dp = (double) ((double) local::dst_mantissa(local::eng64) * 1.0E-16) * powers_of_ten[i % powers_of_ten.size()];
+    double d;
 
-    const bool d_is_neg = (local::dst_sign(local::eng32) != 0U);
+    {
+      // Select a random mantissa scaled within approximately 0.1 ... 0.9007199...
+      const double dp = (double) ((double) local::dst_mantissa(local::eng64) * 1.0E-16) * powers_of_ten[i % powers_of_ten.size()];
 
-    const double d = d_is_neg ? -dp : dp;
+      const bool d_is_neg = (local::dst_sign(local::eng32) != 0U);
+
+      d = d_is_neg ? -dp : dp;
+    }
 
     const math::softfloat::float64_t x = math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u,
                                                                     math::softfloat::detail::nothing());
@@ -417,18 +432,28 @@ bool test_ceil(const std::uint32_t n)
 
   constexpr std::array<double, 8U> powers_of_ten =
   {{
-        1.0,     10.0,     100.0,     1000.0,
-    10000.0, 100000.0, 1000000.0, 10000000.0
+           1.0,
+          10.0,
+         100.0,
+        1000.0,
+       10000.0,
+      100000.0,
+     1000000.0,
+    10000000.0
   }};
 
   for(std::uint32_t i = 0U; i < n; ++i)
   {
-    // Select a random mantissa scaled within approximately 0.1 ... 0.9007199...
-    const double dp = (double) ((double) local::dst_mantissa(local::eng64) * 1.0E-16) * powers_of_ten[i % powers_of_ten.size()];
+    double d;
 
-    const bool d_is_neg = (local::dst_sign(local::eng32) != 0U);
+    {
+      // Select a random mantissa scaled within approximately 0.1 ... 0.9007199...
+      const double dp = (double) ((double) local::dst_mantissa(local::eng64) * 1.0E-16) * powers_of_ten[i % powers_of_ten.size()];
 
-    const double d = d_is_neg ? -dp : dp;
+      const bool d_is_neg = (local::dst_sign(local::eng32) != 0U);
+
+      d = d_is_neg ? -dp : dp;
+    }
 
     const math::softfloat::float64_t x = math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u,
                                                                     math::softfloat::detail::nothing());
