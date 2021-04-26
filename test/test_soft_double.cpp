@@ -187,6 +187,13 @@ bool test_to_f32(const std::uint32_t n)
     const uint32_t u_d = math::softfloat::detail::uz_type<float>(f_d).my_u;
 
     result_is_ok &= (u_x == u_d);
+
+    if(result_is_ok == false)
+    {
+      std::cout << "d  : " << std::setprecision(std::numeric_limits<double>::max_digits10) << d << std::endl;
+      std::cout << "u_d: " << u_d << std::endl;
+      break;
+    }
   }
 
   return result_is_ok;
