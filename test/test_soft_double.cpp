@@ -74,82 +74,61 @@ namespace local
   std::mt19937    eng32(s);
   std::mt19937_64 eng64(s);
 
-  std::uniform_int_distribution<std::uint64_t> dst_mantissa(UINT64_C(100000000000000), UINT64_C(999999999999999));
-  std::uniform_int_distribution<std::uint32_t> dst_exp     (UINT32_C(0),               UINT32_C(18));
-  std::uniform_int_distribution<std::uint32_t> dst_sign    (UINT32_C(0),               UINT32_C(1));
+  // Mantissa range from 10^15 ... 2^53-1
+  std::uniform_int_distribution<std::uint64_t> dst_mantissa(UINT64_C(1000000000000000), UINT64_C(9007199254740991));
+  std::uniform_int_distribution<std::uint32_t> dst_exp     (UINT32_C(0),                UINT32_C(36));
+  std::uniform_int_distribution<std::uint32_t> dst_sign    (UINT32_C(0),                UINT32_C(1));
 
   void get_sf_float64_t_and_double(math::softfloat::float64_t& x1, double& d1, const bool is_positive = false)
   {
-    d1 = (double) dst_mantissa(eng64);
-
-    const std::mt19937::result_type r_exp = dst_exp(eng32);
-
-    const std::mt19937::result_type sign_of_exp = dst_sign(eng32);
-
-    if(sign_of_exp != 0)
+    for(;;)
     {
-      switch(r_exp)
-      {
-        default:
-        case  0: break;
-        case  1: d1 = (1.0 / d1) * 1.0E-01; break;
-        case  2: d1 = (1.0 / d1) * 1.0E-02; break;
-        case  3: d1 = (1.0 / d1) * 1.0E-03; break;
-        case  4: d1 = (1.0 / d1) * 1.0E-04; break;
-        case  5: d1 = (1.0 / d1) * 1.0E-05; break;
-        case  6: d1 = (1.0 / d1) * 1.0E-06; break;
-        case  7: d1 = (1.0 / d1) * 1.0E-07; break;
-        case  8: d1 = (1.0 / d1) * 1.0E-08; break;
-        case  9: d1 = (1.0 / d1) * 1.0E-09; break;
-        case 10: d1 = (1.0 / d1) * 1.0E-10; break;
-        case 11: d1 = (1.0 / d1) * 1.0E-11; break;
-        case 12: d1 = (1.0 / d1) * 1.0E-12; break;
-        case 13: d1 = (1.0 / d1) * 1.0E-13; break;
-        case 14: d1 = (1.0 / d1) * 1.0E-14; break;
-        case 15: d1 = (1.0 / d1) * 1.0E-15; break;
-        case 16: d1 = (1.0 / d1) * 1.0E-16; break;
-        case 17: d1 = (1.0 / d1) * 1.0E-17; break;
-        case 18: d1 = (1.0 / d1) * 1.0E-18; break;
-      }
-    }
-    else
-    {
-      switch(r_exp)
-      {
-        default:
-        case  0: break;
-        case  1: d1 = d1 * 1.0E+01; break;
-        case  2: d1 = d1 * 1.0E+02; break;
-        case  3: d1 = d1 * 1.0E+03; break;
-        case  4: d1 = d1 * 1.0E+04; break;
-        case  5: d1 = d1 * 1.0E+05; break;
-        case  6: d1 = d1 * 1.0E+06; break;
-        case  7: d1 = d1 * 1.0E+07; break;
-        case  8: d1 = d1 * 1.0E+08; break;
-        case  9: d1 = d1 * 1.0E+09; break;
-        case 10: d1 = d1 * 1.0E+10; break;
-        case 11: d1 = d1 * 1.0E+11; break;
-        case 12: d1 = d1 * 1.0E+12; break;
-        case 13: d1 = d1 * 1.0E+13; break;
-        case 14: d1 = d1 * 1.0E+14; break;
-        case 15: d1 = d1 * 1.0E+15; break;
-        case 16: d1 = d1 * 1.0E+16; break;
-        case 17: d1 = d1 * 1.0E+17; break;
-        case 18: d1 = d1 * 1.0E+18; break;
-      }
-    }
+      // Select a random mantissa scaled within approximately 1.0 ... 9.007199...
+      d1 = (double) dst_mantissa(eng64) * 1.0E-15;
 
-    if(is_positive == false)
-    {
-      const std::mt19937::result_type sign_of_double = dst_sign(eng32);
+      const std::mt19937::result_type r_exp = dst_exp(eng32);
 
-      if(sign_of_double != 0U)
+      const std::mt19937::result_type sign_of_exp = dst_sign(eng32);
+
+      const double d_scale =
+        sign_of_exp ? r_exp ==  0 ? 1.0E-00 : r_exp ==  1 ? 1.0E-01 : r_exp ==  2 ? 1.0E-02 : r_exp ==  3 ? 1.0E-03 :
+                      r_exp ==  4 ? 1.0E-04 : r_exp ==  5 ? 1.0E-05 : r_exp ==  6 ? 1.0E-06 : r_exp ==  7 ? 1.0E-07 :
+                      r_exp ==  8 ? 1.0E-08 : r_exp ==  9 ? 1.0E-09 : r_exp == 10 ? 1.0E-10 : r_exp == 11 ? 1.0E-11 :
+                      r_exp == 12 ? 1.0E-12 : r_exp == 13 ? 1.0E-13 : r_exp == 14 ? 1.0E-14 : r_exp == 15 ? 1.0E-15 :
+                      r_exp == 16 ? 1.0E-16 : r_exp == 17 ? 1.0E-17 : r_exp == 18 ? 1.0E-18 : r_exp == 19 ? 1.0E-19 :
+                      r_exp == 20 ? 1.0E-20 : r_exp == 21 ? 1.0E-21 : r_exp == 22 ? 1.0E-22 : r_exp == 23 ? 1.0E-23 :
+                      r_exp == 24 ? 1.0E-24 : r_exp == 25 ? 1.0E-25 : r_exp == 26 ? 1.0E-26 : r_exp == 27 ? 1.0E-27 :
+                      r_exp == 28 ? 1.0E-28 : r_exp == 29 ? 1.0E-29 : r_exp == 30 ? 1.0E-30 : r_exp == 31 ? 1.0E-31 :
+                      r_exp == 32 ? 1.0E-32 : r_exp == 33 ? 1.0E-33 : r_exp == 34 ? 1.0E-34 : r_exp == 35 ? 1.0E-35 : 1.0E-36
+                    : r_exp ==  0 ? 1.0E+00 : r_exp ==  1 ? 1.0E+01 : r_exp ==  2 ? 1.0E+02 : r_exp ==  3 ? 1.0E+03 :
+                      r_exp ==  4 ? 1.0E+04 : r_exp ==  5 ? 1.0E+05 : r_exp ==  6 ? 1.0E+06 : r_exp ==  7 ? 1.0E+07 :
+                      r_exp ==  8 ? 1.0E+08 : r_exp ==  9 ? 1.0E+09 : r_exp == 10 ? 1.0E+10 : r_exp == 11 ? 1.0E+11 :
+                      r_exp == 12 ? 1.0E+12 : r_exp == 13 ? 1.0E+13 : r_exp == 14 ? 1.0E+14 : r_exp == 15 ? 1.0E+15 :
+                      r_exp == 16 ? 1.0E+16 : r_exp == 17 ? 1.0E+17 : r_exp == 18 ? 1.0E+18 : r_exp == 19 ? 1.0E+19 :
+                      r_exp == 20 ? 1.0E+20 : r_exp == 21 ? 1.0E+21 : r_exp == 22 ? 1.0E+22 : r_exp == 23 ? 1.0E+23 :
+                      r_exp == 24 ? 1.0E+24 : r_exp == 25 ? 1.0E+25 : r_exp == 26 ? 1.0E+26 : r_exp == 27 ? 1.0E+27 :
+                      r_exp == 28 ? 1.0E+28 : r_exp == 29 ? 1.0E+29 : r_exp == 30 ? 1.0E+30 : r_exp == 31 ? 1.0E+31 :
+                      r_exp == 32 ? 1.0E+32 : r_exp == 33 ? 1.0E+33 : r_exp == 34 ? 1.0E+34 : r_exp == 35 ? 1.0E+35 : 1.0E+36;
+
+      d1 *= d_scale;
+
+      if((is_positive == false) && (dst_sign(eng32) != 0U))
       {
         d1 = -d1;
       }
-    }
 
-    *(double*) &x1 = d1;
+      const bool d_is_ok = (    std::isfinite(d1)
+                            && (d1 > (double) (std::numeric_limits<float>::lowest)())
+                            && (d1 < (double) (std::numeric_limits<float>::max)()));
+
+      if(d_is_ok)
+      {
+        x1 = math::softfloat::soft_double(math::softfloat::detail::uz_type<double>(d1).my_u,
+                                          math::softfloat::detail::nothing());
+
+        break;
+      }
+    }
   }
 }
 
