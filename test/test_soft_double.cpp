@@ -18,8 +18,6 @@
 static_assert(sizeof(double) == 8U,
               "Error: These tests require 8 byte built-in double for verification");
 
-using local_softfloat_type = math::softfloat::float64_t;
-
 // For an implementation of libm for 64-bit double precision
 // floating point (IEEE-754 format), see http://www.netlib.org/fdlibm
 
@@ -474,14 +472,14 @@ bool test_eq_(const std::uint32_t n, std::uint_fast8_t op_index)
 
 bool test_soft_double()
 {
-  std::cout << "Start test_soft_double()" << std::endl;
+  local::eng32.seed(std::clock());
+  local::eng64.seed(~(uint64_t) std::clock());
 
   bool result_is_ok = true;
 
-  const std::clock_t start = std::clock();
+  std::cout << "Start test_soft_double()" << std::endl;
 
-  local::eng32.seed(start);
-  local::eng64.seed(~(uint64_t) start);
+  const std::clock_t start = std::clock();
 
   {
     std::cout << "testing cast___... ";
@@ -541,21 +539,29 @@ bool test_soft_double()
   }
 
   std::cout << "testing to_f32_... "; const bool result_to_f32_is_ok = test_to_f32(100000000U);    std::cout << std::boolalpha << result_to_f32_is_ok << std::endl;
-  std::cout << "testing frexp__... "; const bool result_frexp__is_ok = test_frexp (10000000U);     std::cout << std::boolalpha << result_frexp__is_ok << std::endl;
-  std::cout << "testing ldexp__... "; const bool result_ldexp__is_ok = test_ldexp (10000000U);     std::cout << std::boolalpha << result_ldexp__is_ok << std::endl;
+  local::eng32.seed(std::clock());
+  local::eng64.seed(~(uint64_t) std::clock());
+  std::cout << "testing frexp__... "; const bool result_frexp__is_ok = test_frexp (20000000U);     std::cout << std::boolalpha << result_frexp__is_ok << std::endl;
+  std::cout << "testing ldexp__... "; const bool result_ldexp__is_ok = test_ldexp (20000000U);     std::cout << std::boolalpha << result_ldexp__is_ok << std::endl;
   std::cout << "testing exp____... "; const bool result_exp____is_ok = test_exp   ();              std::cout << std::boolalpha << result_exp____is_ok << std::endl;
   std::cout << "testing log____... "; const bool result_log____is_ok = test_log   ();              std::cout << std::boolalpha << result_log____is_ok << std::endl;
-  std::cout << "testing add____... "; const bool result_add____is_ok = test_ops   (10000000U, 0U); std::cout << std::boolalpha << result_add____is_ok << std::endl;
-  std::cout << "testing sub____... "; const bool result_sub____is_ok = test_ops   (10000000U, 1U); std::cout << std::boolalpha << result_sub____is_ok << std::endl;
-  std::cout << "testing mul____... "; const bool result_mul____is_ok = test_ops   (10000000U, 2U); std::cout << std::boolalpha << result_mul____is_ok << std::endl;
-  std::cout << "testing div____... "; const bool result_div____is_ok = test_ops   (10000000U, 3U); std::cout << std::boolalpha << result_div____is_ok << std::endl;
-  std::cout << "testing sqrt___... "; const bool result_sqrt___is_ok = test_ops   (10000000U, 4U); std::cout << std::boolalpha << result_sqrt___is_ok << std::endl;
-  std::cout << "testing lt_____... "; const bool result_lt_____is_ok = test_neq   (10000000U, 0U); std::cout << std::boolalpha << result_lt_____is_ok << std::endl;
-  std::cout << "testing gt_____... "; const bool result_gt_____is_ok = test_neq   (10000000U, 1U); std::cout << std::boolalpha << result_gt_____is_ok << std::endl;
-  std::cout << "testing neq____... "; const bool result_neq____is_ok = test_neq   (10000000U, 2U); std::cout << std::boolalpha << result_neq____is_ok << std::endl;
-  std::cout << "testing eq_____... "; const bool result_eq_____is_ok = test_neq   (10000000U, 0U); std::cout << std::boolalpha << result_eq_____is_ok << std::endl;
-  std::cout << "testing leq____... "; const bool result_leq____is_ok = test_neq   (10000000U, 1U); std::cout << std::boolalpha << result_leq____is_ok << std::endl;
-  std::cout << "testing geq____... "; const bool result_geq____is_ok = test_neq   (10000000U, 2U); std::cout << std::boolalpha << result_geq____is_ok << std::endl;
+  local::eng32.seed(std::clock());
+  local::eng64.seed(~(uint64_t) std::clock());
+  std::cout << "testing add____... "; const bool result_add____is_ok = test_ops   (20000000U, 0U); std::cout << std::boolalpha << result_add____is_ok << std::endl;
+  std::cout << "testing sub____... "; const bool result_sub____is_ok = test_ops   (20000000U, 1U); std::cout << std::boolalpha << result_sub____is_ok << std::endl;
+  std::cout << "testing mul____... "; const bool result_mul____is_ok = test_ops   (20000000U, 2U); std::cout << std::boolalpha << result_mul____is_ok << std::endl;
+  std::cout << "testing div____... "; const bool result_div____is_ok = test_ops   (20000000U, 3U); std::cout << std::boolalpha << result_div____is_ok << std::endl;
+  std::cout << "testing sqrt___... "; const bool result_sqrt___is_ok = test_ops   (20000000U, 4U); std::cout << std::boolalpha << result_sqrt___is_ok << std::endl;
+  local::eng32.seed(std::clock());
+  local::eng64.seed(~(uint64_t) std::clock());
+  std::cout << "testing lt_____... "; const bool result_lt_____is_ok = test_neq   (20000000U, 0U); std::cout << std::boolalpha << result_lt_____is_ok << std::endl;
+  std::cout << "testing gt_____... "; const bool result_gt_____is_ok = test_neq   (20000000U, 1U); std::cout << std::boolalpha << result_gt_____is_ok << std::endl;
+  std::cout << "testing neq____... "; const bool result_neq____is_ok = test_neq   (20000000U, 2U); std::cout << std::boolalpha << result_neq____is_ok << std::endl;
+  local::eng32.seed(std::clock());
+  local::eng64.seed(~(uint64_t) std::clock());
+  std::cout << "testing eq_____... "; const bool result_eq_____is_ok = test_neq   (20000000U, 0U); std::cout << std::boolalpha << result_eq_____is_ok << std::endl;
+  std::cout << "testing leq____... "; const bool result_leq____is_ok = test_neq   (20000000U, 1U); std::cout << std::boolalpha << result_leq____is_ok << std::endl;
+  std::cout << "testing geq____... "; const bool result_geq____is_ok = test_neq   (20000000U, 2U); std::cout << std::boolalpha << result_geq____is_ok << std::endl;
 
   const std::clock_t stop = std::clock();
 
