@@ -216,15 +216,30 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     };
   }
 
-  template<typename BuiltinFloatType,
-           typename ExactUnsignedIntegralType = typename std::conditional<std::is_same<BuiltinFloatType, float>::value, uint32_t, uint64_t>::type>
+  template<const int BitCount,
+           typename EnableType = void>
+  struct uint_type_helper
+  {
+    static_assert(((BitCount >= 8) && (BitCount <= 64)),
+                  "Error: uint_type_helper is not intended to be used for this BitCount");
+
+    using exact_unsigned_type = std::uintmax_t;
+  };
+
+  template<const int BitCount> struct uint_type_helper<BitCount, typename std::enable_if<                    (BitCount <=  8)>::type> { using exact_unsigned_type = std::uint8_t;  };
+  template<const int BitCount> struct uint_type_helper<BitCount, typename std::enable_if<(BitCount >=  9) && (BitCount <= 16)>::type> { using exact_unsigned_type = std::uint16_t; };
+  template<const int BitCount> struct uint_type_helper<BitCount, typename std::enable_if<(BitCount >= 17) && (BitCount <= 32)>::type> { using exact_unsigned_type = std::uint32_t; };
+  template<const int BitCount> struct uint_type_helper<BitCount, typename std::enable_if<(BitCount >= 33) && (BitCount <= 64)>::type> { using exact_unsigned_type = std::uint64_t; };
+
+  template<typename BuiltInFloatType,
+           typename ExactUnsignedIntegralType = typename uint_type_helper<std::numeric_limits<BuiltInFloatType>::digits>::exact_unsigned_type>
   union uz_type
   {
-    static_assert((   std::is_same<BuiltinFloatType, float>::value
-                   || std::is_same<BuiltinFloatType, double>::value),
+    static_assert((   std::is_same<BuiltInFloatType, float>::value
+                   || std::is_same<BuiltInFloatType, double>::value),
                   "Error: This template is intended for either built-in float or double, but not for any other type(s)");
 
-    using float_type    = BuiltinFloatType;
+    using float_type    = BuiltInFloatType;
     using unsigned_type = ExactUnsignedIntegralType;
 
     const float_type    my_f;
@@ -481,15 +496,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static constexpr representation_type get_rep(soft_double a) { return a.my_value; }
 
-    operator signed char     () const { return (char)  f64_to__i32(my_value); }
-    operator signed short    () const { return (short) f64_to__i32(my_value); }
-    operator signed int      () const { return (int)   f64_to__i64(my_value); }
-    operator signed long     () const { return (long)  f64_to__i64(my_value); }
-    operator signed long long() const { return (long)  f64_to__i64(my_value); }
+    operator   signed char     () const { return   (signed char)      f64_to__i32(my_value); }
+    operator   signed short    () const { return   (signed short)     f64_to__i32(my_value); }
+    operator   signed int      () const { return   (signed int)       f64_to__i32(my_value); }
+    operator   signed long     () const { return   (signed long)      f64_to__i64(my_value); }
+    operator   signed long long() const { return   (signed long long) f64_to__i64(my_value); }
 
     operator unsigned char     () const { return (unsigned char)      f64_to_ui32(my_value); }
     operator unsigned short    () const { return (unsigned short)     f64_to_ui32(my_value); }
-    operator unsigned int      () const { return (unsigned int)       f64_to_ui64(my_value); }
+    operator unsigned int      () const { return (unsigned int)       f64_to_ui32(my_value); }
     operator unsigned long     () const { return (unsigned long)      f64_to_ui64(my_value); }
     operator unsigned long long() const { return (unsigned long long) f64_to_ui64(my_value); }
 
@@ -503,18 +518,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     operator double() const
     {
-      static_assert(sizeof(double) == 8U,
-                    "Error: This cast requires 8 byte built-in double");
-
       return detail::uz_type<double>(my_value).my_f;
     }
 
     operator long double() const
     {
-      static_assert(sizeof(long double) >= 8U,
-                    "Error: This cast requires at least 8 byte built-in long double");
-
-      return (long double) detail::uz_type<double>(my_value).my_f;
+      return (long double) ((double) *this);
     }
 
     soft_double& operator+=(const soft_double& other) { my_value = f64_add(my_value, other.my_value); return *this; }
@@ -1528,15 +1537,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     friend inline soft_double operator*(double f, const soft_double& u) { return soft_double(f) *= u; }
     friend inline soft_double operator/(double f, const soft_double& u) { return soft_double(f) /= u; }
 
-    friend inline soft_double operator+(const soft_double& u, long double f) = delete;
-    friend inline soft_double operator-(const soft_double& u, long double f) = delete;
-    friend inline soft_double operator*(const soft_double& u, long double f) = delete;
-    friend inline soft_double operator/(const soft_double& u, long double f) = delete;
+    friend inline soft_double operator+(const soft_double& u, long double f)  { return soft_double(u) += soft_double((double) f); }
+    friend inline soft_double operator-(const soft_double& u, long double f)  { return soft_double(u) -= soft_double((double) f); }
+    friend inline soft_double operator*(const soft_double& u, long double f)  { return soft_double(u) *= soft_double((double) f); }
+    friend inline soft_double operator/(const soft_double& u, long double f)  { return soft_double(u) /= soft_double((double) f); }
 
-    friend inline soft_double operator+(long double f, const soft_double& u) = delete;
-    friend inline soft_double operator-(long double f, const soft_double& u) = delete;
-    friend inline soft_double operator*(long double f, const soft_double& u) = delete;
-    friend inline soft_double operator/(long double f, const soft_double& u) = delete;
+    friend inline soft_double operator+(long double f, const soft_double& u) { return soft_double((double) f) += u; }
+    friend inline soft_double operator-(long double f, const soft_double& u) { return soft_double((double) f) -= u; }
+    friend inline soft_double operator*(long double f, const soft_double& u) { return soft_double((double) f) *= u; }
+    friend inline soft_double operator/(long double f, const soft_double& u) { return soft_double((double) f) /= u; }
 
     friend inline constexpr bool operator< (const soft_double& a, const soft_double& b) { return my_lt(a, b); }
     friend inline constexpr bool operator<=(const soft_double& a, const soft_double& b) { return my_le(a, b); }
@@ -1601,19 +1610,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     friend inline bool operator>=(const double f, const soft_double& a) { return ((soft_double(f) <  a) == false); }
     friend inline bool operator> (const double f, const soft_double& a) { return ((soft_double(f) <= a) == false); }
 
-    friend inline bool operator< (const soft_double& a, const long double f) = delete;
-    friend inline bool operator<=(const soft_double& a, const long double f) = delete;
-    friend inline bool operator==(const soft_double& a, const long double f) = delete;
-    friend inline bool operator!=(const soft_double& a, const long double f) = delete;
-    friend inline bool operator>=(const soft_double& a, const long double f) = delete;
-    friend inline bool operator> (const soft_double& a, const long double f) = delete;
+    friend inline bool operator< (const soft_double& a, const long double f) { return soft_double::my_lt(a, soft_double((double) f)); }
+    friend inline bool operator<=(const soft_double& a, const long double f) { return soft_double::my_le(a, soft_double((double) f)); }
+    friend inline bool operator==(const soft_double& a, const long double f) { return  (a.my_value == soft_double((double) f).my_value); }
+    friend inline bool operator!=(const soft_double& a, const long double f) { return ((a == soft_double((double) f)) == false); }
+    friend inline bool operator>=(const soft_double& a, const long double f) { return ((a <  soft_double((double) f)) == false); }
+    friend inline bool operator> (const soft_double& a, const long double f) { return ((a <= soft_double((double) f)) == false); }
 
-    friend inline bool operator< (const long double f, const soft_double& a) = delete;
-    friend inline bool operator<=(const long double f, const soft_double& a) = delete;
-    friend inline bool operator==(const long double f, const soft_double& a) = delete;
-    friend inline bool operator!=(const long double f, const soft_double& a) = delete;
-    friend inline bool operator>=(const long double f, const soft_double& a) = delete;
-    friend inline bool operator> (const long double f, const soft_double& a) = delete;
+    friend inline bool operator< (const long double f, const soft_double& a) { return soft_double::my_lt(soft_double((double) f), a); }
+    friend inline bool operator<=(const long double f, const soft_double& a) { return soft_double::my_le(soft_double((double) f), a); }
+    friend inline bool operator==(const long double f, const soft_double& a) { return  (soft_double((double) f).my_value == a.my_value); }
+    friend inline bool operator!=(const long double f, const soft_double& a) { return ((soft_double((double) f) == a) == false); }
+    friend inline bool operator>=(const long double f, const soft_double& a) { return ((soft_double((double) f) <  a) == false); }
+    friend inline bool operator> (const long double f, const soft_double& a) { return ((soft_double((double) f) <= a) == false); }
   };
 
   using float64_t = soft_double;

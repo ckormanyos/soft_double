@@ -204,8 +204,10 @@ bool test_to_f32(const std::uint32_t n)
     const float f_x = (float) x;
     const float f_d = (float) d;
 
-    result_is_ok &=
-      (math::softfloat::detail::uz_type<float>(f_x).my_u == math::softfloat::detail::uz_type<float>(f_d).my_u);
+    const uint32_t u_x = math::softfloat::detail::uz_type<float>(f_x).my_u;
+    const uint32_t u_d = math::softfloat::detail::uz_type<float>(f_d).my_u;
+
+    result_is_ok &= (u_x == u_d);
   }
 
   return result_is_ok;
