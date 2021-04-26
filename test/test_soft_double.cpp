@@ -69,10 +69,8 @@ real_value_type derivative(const real_value_type& x,
 
 namespace local
 {
-  const auto s = std::random_device().operator()();
-
-  std::mt19937    eng32(s);
-  std::mt19937_64 eng64(s);
+  std::default_random_engine eng32;
+  std::mt19937_64            eng64;
 
   // Mantissa range from 10^15 ... 2^53-1
   std::uniform_int_distribution<std::uint64_t> dst_mantissa(UINT64_C(1000000000000000), UINT64_C(9007199254740991));
@@ -88,27 +86,27 @@ namespace local
 
       const std::mt19937::result_type r_exp = dst_exp(eng32);
 
-      const std::mt19937::result_type sign_of_exp = dst_sign(eng32);
+      const std::mt19937::result_type exp_is_neg = (dst_sign(eng32) != 0U);
 
       const double d_scale =
-        sign_of_exp ? r_exp ==  0 ? 1.0E-00 : r_exp ==  1 ? 1.0E-01 : r_exp ==  2 ? 1.0E-02 : r_exp ==  3 ? 1.0E-03 :
-                      r_exp ==  4 ? 1.0E-04 : r_exp ==  5 ? 1.0E-05 : r_exp ==  6 ? 1.0E-06 : r_exp ==  7 ? 1.0E-07 :
-                      r_exp ==  8 ? 1.0E-08 : r_exp ==  9 ? 1.0E-09 : r_exp == 10 ? 1.0E-10 : r_exp == 11 ? 1.0E-11 :
-                      r_exp == 12 ? 1.0E-12 : r_exp == 13 ? 1.0E-13 : r_exp == 14 ? 1.0E-14 : r_exp == 15 ? 1.0E-15 :
-                      r_exp == 16 ? 1.0E-16 : r_exp == 17 ? 1.0E-17 : r_exp == 18 ? 1.0E-18 : r_exp == 19 ? 1.0E-19 :
-                      r_exp == 20 ? 1.0E-20 : r_exp == 21 ? 1.0E-21 : r_exp == 22 ? 1.0E-22 : r_exp == 23 ? 1.0E-23 :
-                      r_exp == 24 ? 1.0E-24 : r_exp == 25 ? 1.0E-25 : r_exp == 26 ? 1.0E-26 : r_exp == 27 ? 1.0E-27 :
-                      r_exp == 28 ? 1.0E-28 : r_exp == 29 ? 1.0E-29 : r_exp == 30 ? 1.0E-30 : r_exp == 31 ? 1.0E-31 :
-                      r_exp == 32 ? 1.0E-32 : r_exp == 33 ? 1.0E-33 : r_exp == 34 ? 1.0E-34 : r_exp == 35 ? 1.0E-35 : 1.0E-36
-                    : r_exp ==  0 ? 1.0E+00 : r_exp ==  1 ? 1.0E+01 : r_exp ==  2 ? 1.0E+02 : r_exp ==  3 ? 1.0E+03 :
-                      r_exp ==  4 ? 1.0E+04 : r_exp ==  5 ? 1.0E+05 : r_exp ==  6 ? 1.0E+06 : r_exp ==  7 ? 1.0E+07 :
-                      r_exp ==  8 ? 1.0E+08 : r_exp ==  9 ? 1.0E+09 : r_exp == 10 ? 1.0E+10 : r_exp == 11 ? 1.0E+11 :
-                      r_exp == 12 ? 1.0E+12 : r_exp == 13 ? 1.0E+13 : r_exp == 14 ? 1.0E+14 : r_exp == 15 ? 1.0E+15 :
-                      r_exp == 16 ? 1.0E+16 : r_exp == 17 ? 1.0E+17 : r_exp == 18 ? 1.0E+18 : r_exp == 19 ? 1.0E+19 :
-                      r_exp == 20 ? 1.0E+20 : r_exp == 21 ? 1.0E+21 : r_exp == 22 ? 1.0E+22 : r_exp == 23 ? 1.0E+23 :
-                      r_exp == 24 ? 1.0E+24 : r_exp == 25 ? 1.0E+25 : r_exp == 26 ? 1.0E+26 : r_exp == 27 ? 1.0E+27 :
-                      r_exp == 28 ? 1.0E+28 : r_exp == 29 ? 1.0E+29 : r_exp == 30 ? 1.0E+30 : r_exp == 31 ? 1.0E+31 :
-                      r_exp == 32 ? 1.0E+32 : r_exp == 33 ? 1.0E+33 : r_exp == 34 ? 1.0E+34 : r_exp == 35 ? 1.0E+35 : 1.0E+36;
+        exp_is_neg ? r_exp ==  0 ? 1.0E-00 : r_exp ==  1 ? 1.0E-01 : r_exp ==  2 ? 1.0E-02 : r_exp ==  3 ? 1.0E-03 :
+                     r_exp ==  4 ? 1.0E-04 : r_exp ==  5 ? 1.0E-05 : r_exp ==  6 ? 1.0E-06 : r_exp ==  7 ? 1.0E-07 :
+                     r_exp ==  8 ? 1.0E-08 : r_exp ==  9 ? 1.0E-09 : r_exp == 10 ? 1.0E-10 : r_exp == 11 ? 1.0E-11 :
+                     r_exp == 12 ? 1.0E-12 : r_exp == 13 ? 1.0E-13 : r_exp == 14 ? 1.0E-14 : r_exp == 15 ? 1.0E-15 :
+                     r_exp == 16 ? 1.0E-16 : r_exp == 17 ? 1.0E-17 : r_exp == 18 ? 1.0E-18 : r_exp == 19 ? 1.0E-19 :
+                     r_exp == 20 ? 1.0E-20 : r_exp == 21 ? 1.0E-21 : r_exp == 22 ? 1.0E-22 : r_exp == 23 ? 1.0E-23 :
+                     r_exp == 24 ? 1.0E-24 : r_exp == 25 ? 1.0E-25 : r_exp == 26 ? 1.0E-26 : r_exp == 27 ? 1.0E-27 :
+                     r_exp == 28 ? 1.0E-28 : r_exp == 29 ? 1.0E-29 : r_exp == 30 ? 1.0E-30 : r_exp == 31 ? 1.0E-31 :
+                     r_exp == 32 ? 1.0E-32 : r_exp == 33 ? 1.0E-33 : r_exp == 34 ? 1.0E-34 : r_exp == 35 ? 1.0E-35 : 1.0E-36
+                   : r_exp ==  0 ? 1.0E+00 : r_exp ==  1 ? 1.0E+01 : r_exp ==  2 ? 1.0E+02 : r_exp ==  3 ? 1.0E+03 :
+                     r_exp ==  4 ? 1.0E+04 : r_exp ==  5 ? 1.0E+05 : r_exp ==  6 ? 1.0E+06 : r_exp ==  7 ? 1.0E+07 :
+                     r_exp ==  8 ? 1.0E+08 : r_exp ==  9 ? 1.0E+09 : r_exp == 10 ? 1.0E+10 : r_exp == 11 ? 1.0E+11 :
+                     r_exp == 12 ? 1.0E+12 : r_exp == 13 ? 1.0E+13 : r_exp == 14 ? 1.0E+14 : r_exp == 15 ? 1.0E+15 :
+                     r_exp == 16 ? 1.0E+16 : r_exp == 17 ? 1.0E+17 : r_exp == 18 ? 1.0E+18 : r_exp == 19 ? 1.0E+19 :
+                     r_exp == 20 ? 1.0E+20 : r_exp == 21 ? 1.0E+21 : r_exp == 22 ? 1.0E+22 : r_exp == 23 ? 1.0E+23 :
+                     r_exp == 24 ? 1.0E+24 : r_exp == 25 ? 1.0E+25 : r_exp == 26 ? 1.0E+26 : r_exp == 27 ? 1.0E+27 :
+                     r_exp == 28 ? 1.0E+28 : r_exp == 29 ? 1.0E+29 : r_exp == 30 ? 1.0E+30 : r_exp == 31 ? 1.0E+31 :
+                     r_exp == 32 ? 1.0E+32 : r_exp == 33 ? 1.0E+33 : r_exp == 34 ? 1.0E+34 : r_exp == 35 ? 1.0E+35 : 1.0E+36;
 
       d1 *= d_scale;
 
@@ -478,9 +476,12 @@ bool test_soft_double()
 {
   std::cout << "Start test_soft_double()" << std::endl;
 
+  bool result_is_ok = true;
+
   const std::clock_t start = std::clock();
 
-  bool result_is_ok = true;
+  local::eng32.seed(start);
+  local::eng64.seed(~(uint64_t) start);
 
   {
     std::cout << "testing cast___... ";
