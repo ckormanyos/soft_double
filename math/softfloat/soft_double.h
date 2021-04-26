@@ -983,31 +983,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                        : softfloat_normRoundPackToF64(0, 0x43C, a);
     }
 
-    static int32_t softfloat_roundToI32(bool sign, uint64_t sig)
+    static constexpr int32_t softfloat_roundToI32(bool sign, uint64_t sig)
     {
-      uint32_t sig32;
-
-      uint16_t roundIncrement = (sign ? 0xFFFU : 0U);
-
-      sig += roundIncrement;
-
-      sig32 = (uint32_t) (sig >> 12U);
-
-      const uint32_t ui = (uint32_t) (sign ? detail::negate(sig32) : sig32);
-
-      return (int32_t) ui;
+      return (int32_t) ((uint32_t) (sign ? detail::negate((uint32_t) (sig >> 12U)) : (uint32_t) (sig >> 12U)));
     }
 
-    static int64_t softfloat_roundToI64(bool sign, uint64_t sig)
+    static constexpr int64_t softfloat_roundToI64(bool sign, uint64_t sig)
     {
-      if(sign)
-      {
-        ++sig;
-      }
-
-      const uint64_t ui = (uint64_t) (sign ? detail::negate(sig) : sig);
-
-      return (int64_t) ui;
+      return (int64_t) ((uint64_t) (sign ? detail::negate(sig) : sig));
     }
 
     static constexpr uint32_t softfloat_roundToUI32(bool sign, uint64_t sig)

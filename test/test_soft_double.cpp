@@ -378,6 +378,72 @@ bool test_log()
   return result_is_ok;
 }
 
+bool test_floor(const std::uint32_t n)
+{
+  bool result_is_ok = true;
+
+  constexpr std::array<double, 8U> powers_of_ten =
+  {{
+        1.0,     10.0,     100.0,     1000.0,
+    10000.0, 100000.0, 1000000.0, 10000000.0
+  }};
+
+  for(std::uint32_t i = 0U; i < n; ++i)
+  {
+    // Select a random mantissa scaled within approximately 0.1 ... 0.9007199...
+    const double dp = (double) ((double) local::dst_mantissa(local::eng64) * 1.0E-16) * powers_of_ten[i % powers_of_ten.size()];
+
+    const bool d_is_neg = (local::dst_sign(local::eng32) != 0U);
+
+    const double d = d_is_neg ? -dp : dp;
+
+    const math::softfloat::float64_t x = math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u,
+                                                                    math::softfloat::detail::nothing());
+
+    using std::floor;
+
+    const math::softfloat::float64_t f_x = floor(x);
+    const double                     f_d = floor(d);
+
+    result_is_ok &= ((std::int32_t) ((double) f_x) == (std::int32_t) f_d);
+  }
+
+  return result_is_ok;
+}
+
+bool test_ceil(const std::uint32_t n)
+{
+  bool result_is_ok = true;
+
+  constexpr std::array<double, 8U> powers_of_ten =
+  {{
+        1.0,     10.0,     100.0,     1000.0,
+    10000.0, 100000.0, 1000000.0, 10000000.0
+  }};
+
+  for(std::uint32_t i = 0U; i < n; ++i)
+  {
+    // Select a random mantissa scaled within approximately 0.1 ... 0.9007199...
+    const double dp = (double) ((double) local::dst_mantissa(local::eng64) * 1.0E-16) * powers_of_ten[i % powers_of_ten.size()];
+
+    const bool d_is_neg = (local::dst_sign(local::eng32) != 0U);
+
+    const double d = d_is_neg ? -dp : dp;
+
+    const math::softfloat::float64_t x = math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u,
+                                                                    math::softfloat::detail::nothing());
+
+    using std::ceil;
+
+    const math::softfloat::float64_t f_x = ceil(x);
+    const double                     f_d = ceil(d);
+
+    result_is_ok &= ((std::int32_t) ((double) f_x) == (std::int32_t) f_d);
+  }
+
+  return result_is_ok;
+}
+
 bool test_ops(const std::uint32_t n, std::uint_fast8_t op_index)
 {
   bool result_is_ok = true;
@@ -547,6 +613,10 @@ bool test_soft_double()
   std::cout << "testing log____... "; const bool result_log____is_ok = test_log   ();              std::cout << std::boolalpha << result_log____is_ok << std::endl;
   local::eng32.seed(std::clock());
   local::eng64.seed(~(uint64_t) std::clock());
+  std::cout << "testing floor__... "; const bool result_floor__is_ok = test_floor (20000000U);     std::cout << std::boolalpha << result_floor__is_ok << std::endl;
+  std::cout << "testing ceil___... "; const bool result_ceil___is_ok = test_ceil  (20000000U);     std::cout << std::boolalpha << result_ceil___is_ok << std::endl;
+  local::eng32.seed(std::clock());
+  local::eng64.seed(~(uint64_t) std::clock());
   std::cout << "testing add____... "; const bool result_add____is_ok = test_ops   (20000000U, 0U); std::cout << std::boolalpha << result_add____is_ok << std::endl;
   std::cout << "testing sub____... "; const bool result_sub____is_ok = test_ops   (20000000U, 1U); std::cout << std::boolalpha << result_sub____is_ok << std::endl;
   std::cout << "testing mul____... "; const bool result_mul____is_ok = test_ops   (20000000U, 2U); std::cout << std::boolalpha << result_mul____is_ok << std::endl;
@@ -574,6 +644,8 @@ bool test_soft_double()
                                      && result_ldexp__is_ok
                                      && result_exp____is_ok
                                      && result_log____is_ok
+                                     && result_floor__is_ok
+                                     && result_ceil___is_ok
                                      && result_add____is_ok
                                      && result_sub____is_ok
                                      && result_mul____is_ok
