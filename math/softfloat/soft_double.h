@@ -518,7 +518,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     operator double() const
     {
+      #if defined(__AVR__)
+      // TBD: Is this the best way to deal with double/float ambiguity for GCC-ARV?
+      return (double) ((float) *this);
+      #else
       return detail::uz_type<double>(my_value).my_f;
+      #endif
     }
 
     operator long double() const
