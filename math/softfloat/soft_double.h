@@ -374,6 +374,12 @@
   inline soft_double exp     (const soft_double x);
   inline soft_double log     (const soft_double x);
   inline soft_double pow     (const soft_double x, const soft_double a);
+  inline soft_double sin     (const soft_double x);
+  inline soft_double cos     (const soft_double x);
+  inline soft_double tan     (const soft_double x);
+  inline soft_double sinh    (const soft_double x);
+  inline soft_double cosh    (const soft_double x);
+  inline soft_double tanh    (const soft_double x);
 
   template<typename UnsignedIntegralType,
            typename std::enable_if<(   (std::is_integral<UnsignedIntegralType>::value == true)
@@ -517,11 +523,13 @@
     const soft_double& operator+() const { return *this; }
           soft_double  operator-() const { return soft_double(my_value ^ (uint64_t) (1ULL << 63U), detail::nothing()); }
 
-    static constexpr soft_double my_value_zero() { return soft_double(UINT64_C(0),                   detail::nothing()); }
-    static constexpr soft_double my_value_one () { return soft_double(UINT64_C(0x3FF0000000000000),  detail::nothing()); }
-    static constexpr soft_double my_value_two () { return soft_double(UINT64_C(0x4000000000000000),  detail::nothing()); }
-    static constexpr soft_double my_value_half() { return soft_double(UINT64_C(0x3FE0000000000000),  detail::nothing()); }
-    static constexpr soft_double my_value_pi  () { return soft_double(UINT64_C(4614256656552045848), detail::nothing()); }
+    static constexpr soft_double my_value_zero   () { return soft_double(UINT64_C(0),                   detail::nothing()); }
+    static constexpr soft_double my_value_one    () { return soft_double(UINT64_C(0x3FF0000000000000),  detail::nothing()); }
+    static constexpr soft_double my_value_two    () { return soft_double(UINT64_C(0x4000000000000000),  detail::nothing()); }
+    static constexpr soft_double my_value_half   () { return soft_double(UINT64_C(0x3FE0000000000000),  detail::nothing()); }
+    static constexpr soft_double my_value_pi     () { return soft_double(UINT64_C(4614256656552045848), detail::nothing()); }
+    static constexpr soft_double my_value_pi_half() { return soft_double(UINT64_C(0x3FF921FB54442D18),  detail::nothing()); }
+
     static constexpr soft_double my_value_ln2 () { return soft_double(UINT64_C(4604418534313441775), detail::nothing()); }
 
     static constexpr soft_double my_value_min()           { return soft_double(UINT64_C(4503599627370496),    detail::nothing()); }
@@ -1490,6 +1498,10 @@
       return result;
     }
 
+    friend inline soft_double sin(const soft_double x);
+    friend inline soft_double cos(const soft_double x);
+    friend inline soft_double tan(const soft_double x);
+
     friend inline soft_double operator+(const soft_double& a, const soft_double& b) { return soft_double(f64_add(a.my_value, b.my_value), detail::nothing()); }
     friend inline soft_double operator-(const soft_double& a, const soft_double& b) { return soft_double(f64_sub(a.my_value, b.my_value), detail::nothing()); }
     friend inline soft_double operator*(const soft_double& a, const soft_double& b) { return soft_double(f64_mul(a.my_value, b.my_value), detail::nothing()); }
@@ -1623,7 +1635,235 @@
     friend inline bool operator> (const long double f, const soft_double& a) { return ((soft_double((double) f) <= a) == false); }
   };
 
+  namespace detail {
+
+  inline soft_double sin_pade(soft_double x)
+  {
+    // PadeApproximant[Sin[x], {x, 0, {5,6}}]
+    // FullSimplify[%]
+
+    //   (42 x (  4363920 -  567120 x^2 +  12671 x^4))
+    // /       (183284640 + 6728400 z^2 + 126210 z^4 + 1331 z^6)
+
+    static const soft_double coef_sin_top_0(INT32_C(+4363920));
+    static const soft_double coef_sin_top_1(INT32_C(-567120));
+    static const soft_double coef_sin_top_2(INT32_C(+12671));
+
+    static const soft_double coef_sin_bot_0(UINT32_C(+183284640));
+    static const soft_double coef_sin_bot_1(UINT32_C(+6728400));
+    static const soft_double coef_sin_bot_2(UINT32_C(+126210));
+    static const soft_double coef_sin_bot_3(UINT32_C(+1331));
+
+
+    const soft_double x2(x * x);
+
+    const soft_double top = (((     + coef_sin_top_2)
+                               * x2 + coef_sin_top_1)
+                               * x2 + coef_sin_top_0);
+
+    const soft_double bot = ((((     + coef_sin_bot_3)
+                                * x2 + coef_sin_bot_2)
+                                * x2 + coef_sin_bot_1)
+                                * x2 + coef_sin_bot_0);
+
+    return ((x * top) * 42U) / bot;
+  }
+
+  inline soft_double cos_pade(soft_double x)
+  {
+    // PadeApproximant[Cos[x] - 1, {x, 0, {6,6}}]
+    // FullSimplify[%]
+
+    // -(378 x^2
+    //    (   51920 -    2800 x^2 +    39 x^4))
+    //  / (39251520 + 1154160 x^2 + 16632 x^4 + 127 x^6)
+
+    static const soft_double coef_cos_top_0(INT32_C(51920));
+    static const soft_double coef_cos_top_1(INT32_C(-2800));
+    static const soft_double coef_cos_top_2(INT32_C(39));
+
+    static const soft_double coef_cos_bot_0(UINT32_C(39251520));
+    static const soft_double coef_cos_bot_1(UINT32_C(1154160));
+    static const soft_double coef_cos_bot_2(UINT32_C(16632));
+    static const soft_double coef_cos_bot_3(UINT32_C(127));
+
+    const soft_double x2(x * x);
+
+    const soft_double top =  (((     + coef_cos_top_2)
+                                * x2 + coef_cos_top_1)
+                                * x2 + coef_cos_top_0);
+
+    const soft_double bot = ((((     + coef_cos_bot_3)
+                                * x2 + coef_cos_bot_2)
+                                * x2 + coef_cos_bot_1)
+                                * x2 + coef_cos_bot_0);
+
+    return 1U - (((x2 * 378) * top) / bot);
+  }
+
+  }
+
+  inline soft_double sin(soft_double x)
+  {
+    soft_double s;
+
+    if(x < 0)
+    {
+      s = -sin(-x);
+    }
+    else if(x > 0)
+    {
+      // Perform argument reduction and subsequent scaling of the result.
+
+      // Given x = k * (pi/2) + r, compute n = (k % 4).
+
+      // | n |  sin(x) |  cos(x) |  sin(x)/cos(x) |
+      // |----------------------------------------|
+      // | 0 |  sin(r) |  cos(r) |  sin(r)/cos(r) |
+      // | 1 |  cos(r) | -sin(r) | -cos(r)/sin(r) |
+      // | 2 | -sin(r) | -cos(r) |  sin(r)/cos(r) |
+      // | 3 | -cos(r) |  sin(r) | -cos(r)/sin(r) |
+
+      const std::uint32_t      k = (std::uint32_t) (x / soft_double::my_value_pi_half());
+      const std::uint_fast32_t n = (std::uint_fast32_t) (k % 4U);
+
+      soft_double r = x - (soft_double::my_value_pi_half() * k);
+
+      const bool is_neg =  (n > 1U);
+      const bool is_cos = ((n == 1U) || (n == 3U));
+
+      if(r > soft_double(UINT64_C(0x3FE0C152382D7366), detail::nothing()))
+      {
+        r /= 9U;
+
+        s = (is_cos ? detail::cos_pade(r) : detail::sin_pade(r));
+
+        s = (s * 3U) - (((s * s) * s) * 4U);
+        s = (s * 3U) - (((s * s) * s) * 4U);
+      }
+      else if(r > soft_double(UINT64_C(0x3FC657184AE74487), detail::nothing()))
+      {
+        r /= 3U;
+
+        s = (is_cos ? detail::cos_pade(r) : detail::sin_pade(r));
+
+        s = (s * 3U) - (((s * s) * s) * 4U);
+      }
+      else
+      {
+        s = (is_cos ? detail::cos_pade(r) : detail::sin_pade(r));
+      }
+
+      s = fabs(s);
+
+      if(is_neg)
+      {
+        s = -s;
+      }
+    }
+    else
+    {
+      s = 0;
+    }
+
+    return s;
+  }
+
+  inline soft_double cos(soft_double x)
+  {
+    soft_double c;
+
+    if(x < 0)
+    {
+      c = cos(-x);
+    }
+    else if(x > 0)
+    {
+      // Perform argument reduction and subsequent scaling of the result.
+
+      // Given x = k * (pi/2) + r, compute n = (k % 4).
+
+      // | n |  sin(x) |  cos(x) |  sin(x)/cos(x) |
+      // |----------------------------------------|
+      // | 0 |  sin(r) |  cos(r) |  sin(r)/cos(r) |
+      // | 1 |  cos(r) | -sin(r) | -cos(r)/sin(r) |
+      // | 2 | -sin(r) | -cos(r) |  sin(r)/cos(r) |
+      // | 3 | -cos(r) |  sin(r) | -cos(r)/sin(r) |
+
+      const std::uint32_t      k = (std::uint32_t) (x / soft_double::my_value_pi_half());
+      const std::uint_fast32_t n = (std::uint_fast32_t) (k % 4U);
+
+      soft_double r = x - (soft_double::my_value_pi_half() * k);
+
+      const bool is_neg = ((n == 1U) || (n == 2U));
+      const bool is_sin = ((n == 1U) || (n == 3U));
+
+      if(r > soft_double(UINT64_C(0x3FE0C152382D7366), detail::nothing()))
+      {
+        r /= 9U;
+
+        c = (is_sin ? detail::sin_pade(r) : detail::cos_pade(r));
+
+        c = (((c * c) * c) * 4U) - (c * 3U);
+        c = (((c * c) * c) * 4U) - (c * 3U);
+      }
+      else if(r > soft_double(UINT64_C(0x3FC657184AE74487), detail::nothing()))
+      {
+        r /= 3U;
+
+        c = (is_sin ? detail::sin_pade(r) : detail::cos_pade(r));
+
+        c = (((c * c) * c) * 4U) - (c * 3U);
+      }
+      else
+      {
+        c = (is_sin ? detail::sin_pade(r) : detail::cos_pade(r));
+      }
+
+      c = fabs(c);
+
+      if(is_neg)
+      {
+        c = -c;
+      }
+    }
+    else
+    {
+      c = soft_double(1U);
+    }
+
+    return c;
+  }
+
+  inline soft_double tan(const soft_double x)
+  {
+    return sin(x) / cos(x);
+  }
+
+  inline soft_double sinh(soft_double x)
+  {
+    const soft_double ep = exp(x);
+
+    return (ep - (1 / ep)) / 2;
+  }
+
+  inline soft_double cosh(soft_double x)
+  {
+    const soft_double ep = exp(x);
+
+    return (ep + (1 / ep)) / 2;
+  }
+
+  inline soft_double tanh(soft_double x)
+  {
+    const soft_double ep = exp(x);
+    const soft_double em = 1 / ep;
+
+    return (ep - em) / (ep + em);
+  }
+
   using float64_t = soft_double;
+
   } } // namespace math::softfloat
 
   namespace std {
