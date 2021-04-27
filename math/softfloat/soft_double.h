@@ -1310,14 +1310,46 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     friend inline soft_double floor(const soft_double x)
     {
-      return (x < 0) ? soft_double((int64_t) (x - soft_double::my_value_one()))
-                     : soft_double((int64_t)  x);
+      soft_double result;
+
+      if(x < 0)
+      {
+        const int64_t     xn = (int64_t) x;
+        const soft_double fn = soft_double(xn);
+
+        const bool is_pure_integer = (fn.my_value == x.my_value);
+
+        result =
+          (is_pure_integer ? fn : soft_double((int64_t) (x - soft_double::my_value_one())));
+      }
+      else
+      {
+        result = soft_double((int64_t)  x);
+      }
+
+      return result;
     }
 
     friend inline soft_double ceil(const soft_double x)
     {
-      return (x < 0) ? soft_double((int64_t)  x)
-                     : soft_double((int64_t) (x + soft_double::my_value_one()));
+      soft_double result;
+
+      if(x < 0)
+      {
+        result = soft_double((int64_t)  x);
+      }
+      else
+      {
+        const int64_t     xn = (int64_t) x;
+        const soft_double fn = soft_double(xn);
+
+        const bool is_pure_integer = (fn.my_value == x.my_value);
+
+        result =
+          (is_pure_integer ? fn : soft_double((int64_t) (x + soft_double::my_value_one())));
+      }
+
+      return result;
     }
 
     friend inline soft_double exp(const soft_double x)

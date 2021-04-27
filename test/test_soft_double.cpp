@@ -402,8 +402,9 @@ bool test_floor(const std::uint32_t n)
       d = d_is_neg ? -dp : dp;
     }
 
-    const math::softfloat::float64_t x = math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u,
-                                                                    math::softfloat::detail::nothing());
+    const math::softfloat::float64_t x =
+      math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u,
+                                 math::softfloat::detail::nothing());
 
     using std::floor;
 
@@ -411,17 +412,6 @@ bool test_floor(const std::uint32_t n)
     const double                     f_d = floor(d);
 
     result_is_ok &= ((std::int32_t) f_x == (std::int32_t) f_d);
-
-    if(result_is_ok == false)
-    {
-      std::cout << "d                                                 : " << std::setprecision(std::numeric_limits<double>::max_digits10) << d << std::endl;
-      std::cout << "x                                                 : " << std::setprecision(std::numeric_limits<double>::max_digits10) << x << std::endl;
-      std::cout << "math::softfloat::detail::uz_type<double>(f_d).my_u: " << math::softfloat::detail::uz_type<double>(f_d).my_u << std::endl;
-      std::cout << "f_x.crepresentation()                             : " << f_x.crepresentation() << std::endl;
-      std::cout << "f_d                                               : " << f_d << std::endl;
-      std::cout << "f_x                                               : " << f_x << std::endl;
-      break;
-    }
   }
 
   return result_is_ok;
@@ -456,8 +446,9 @@ bool test_ceil(const std::uint32_t n)
       d = d_is_neg ? -dp : dp;
     }
 
-    const math::softfloat::float64_t x = math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u,
-                                                                    math::softfloat::detail::nothing());
+    const math::softfloat::float64_t x =
+      math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u,
+                                 math::softfloat::detail::nothing());
 
     using std::ceil;
 
@@ -465,17 +456,6 @@ bool test_ceil(const std::uint32_t n)
     const double                     f_d = ceil(d);
 
     result_is_ok &= ((std::int32_t) f_x == (std::int32_t) f_d);
-
-    if(result_is_ok == false)
-    {
-      std::cout << "d                                                 : " << std::setprecision(std::numeric_limits<double>::max_digits10) << d << std::endl;
-      std::cout << "x                                                 : " << std::setprecision(std::numeric_limits<double>::max_digits10) << x << std::endl;
-      std::cout << "math::softfloat::detail::uz_type<double>(f_d).my_u: " << math::softfloat::detail::uz_type<double>(f_d).my_u << std::endl;
-      std::cout << "f_x.crepresentation()                             : " << f_x.crepresentation() << std::endl;
-      std::cout << "f_d                                               : " << f_d << std::endl;
-      std::cout << "f_x                                               : " << f_x << std::endl;
-      break;
-    }
   }
 
   return result_is_ok;
@@ -650,8 +630,10 @@ bool test_soft_double()
   std::cout << "testing log____... "; const bool result_log____is_ok = test_log   ( );              std::cout << std::boolalpha << result_log____is_ok << std::endl;
   local::eng32.seed(std::clock());
   local::eng64.seed(~(uint64_t) std::clock());
-  std::cout << "testing floor__... "; const bool result_floor__is_ok = test_floor (100000000U);     std::cout << std::boolalpha << result_floor__is_ok << std::endl;
-  std::cout << "testing ceil___... "; const bool result_ceil___is_ok = test_ceil  (100000000U);     std::cout << std::boolalpha << result_ceil___is_ok << std::endl;
+  std::cout << "testing floor__... "; const bool result_floor__is_ok = test_floor (200000000U);     std::cout << std::boolalpha << result_floor__is_ok << std::endl;
+  local::eng32.seed(std::clock());
+  local::eng64.seed(~(uint64_t) std::clock());
+  std::cout << "testing ceil___... "; const bool result_ceil___is_ok = test_ceil  (200000000U);     std::cout << std::boolalpha << result_ceil___is_ok << std::endl;
   local::eng32.seed(std::clock());
   local::eng64.seed(~(uint64_t) std::clock());
   std::cout << "testing add____... "; const bool result_add____is_ok = test_ops   ( 20000000U, 0U); std::cout << std::boolalpha << result_add____is_ok << std::endl;
