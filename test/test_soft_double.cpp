@@ -183,16 +183,6 @@ bool test_to_f32(const std::uint32_t n)
     const uint32_t u_d = math::softfloat::detail::uz_type<float>(f_d).my_u;
 
     result_is_ok &= (u_x == u_d);
-
-    if(result_is_ok == false)
-    {
-      std::cout << "d                  : " << std::setprecision(std::numeric_limits<double>::max_digits10) << d << std::endl;
-      std::cout << "x                  : " << std::setprecision(std::numeric_limits<double>::max_digits10) << x << std::endl;
-      std::cout << "x.crepresentation(): " << x.crepresentation() << std::endl;
-      std::cout << "u_x                : " << u_x << std::endl;
-      std::cout << "u_d                : " << u_d << std::endl;
-      break;
-    }
   }
 
   return result_is_ok;
@@ -420,7 +410,18 @@ bool test_floor(const std::uint32_t n)
     const math::softfloat::float64_t f_x = floor(x);
     const double                     f_d = floor(d);
 
-    result_is_ok &= ((std::int32_t) ((double) f_x) == (std::int32_t) f_d);
+    result_is_ok &= ((std::int32_t) f_x == (std::int32_t) f_d);
+
+    if(result_is_ok == false)
+    {
+      std::cout << "d                                                 : " << std::setprecision(std::numeric_limits<double>::max_digits10) << d << std::endl;
+      std::cout << "x                                                 : " << std::setprecision(std::numeric_limits<double>::max_digits10) << x << std::endl;
+      std::cout << "math::softfloat::detail::uz_type<double>(f_d).my_u: " << math::softfloat::detail::uz_type<double>(f_d).my_u << std::endl;
+      std::cout << "f_x.crepresentation()                             : " << f_x.crepresentation() << std::endl;
+      std::cout << "f_d                                               : " << f_d << std::endl;
+      std::cout << "f_x                                               : " << f_x << std::endl;
+      break;
+    }
   }
 
   return result_is_ok;
@@ -463,7 +464,18 @@ bool test_ceil(const std::uint32_t n)
     const math::softfloat::float64_t f_x = ceil(x);
     const double                     f_d = ceil(d);
 
-    result_is_ok &= ((std::int32_t) ((double) f_x) == (std::int32_t) f_d);
+    result_is_ok &= ((std::int32_t) f_x == (std::int32_t) f_d);
+
+    if(result_is_ok == false)
+    {
+      std::cout << "d                                                 : " << std::setprecision(std::numeric_limits<double>::max_digits10) << d << std::endl;
+      std::cout << "x                                                 : " << std::setprecision(std::numeric_limits<double>::max_digits10) << x << std::endl;
+      std::cout << "math::softfloat::detail::uz_type<double>(f_d).my_u: " << math::softfloat::detail::uz_type<double>(f_d).my_u << std::endl;
+      std::cout << "f_x.crepresentation()                             : " << f_x.crepresentation() << std::endl;
+      std::cout << "f_d                                               : " << f_d << std::endl;
+      std::cout << "f_x                                               : " << f_x << std::endl;
+      break;
+    }
   }
 
   return result_is_ok;
