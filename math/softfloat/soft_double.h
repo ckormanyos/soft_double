@@ -995,8 +995,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static constexpr uint32_t softfloat_roundToUI32(bool sign, uint64_t sig)
     {
-      return ((sign) && (sig == 0U)) ? 0U
-                                     : (uint32_t) (sig >> 12);
+      return ((sign) && (sig == 0U)) ? 0U : (uint32_t) (sig >> 12);
     }
 
     static constexpr uint64_t softfloat_roundToUI64(bool sign, uint64_t sig)

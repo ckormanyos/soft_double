@@ -18,11 +18,12 @@ soft_double can be used on such systems to provide a software-emulated,
 portable implementation of 64-bit `double`.
 
 soft_double implements common algebraic operations,
-comparison operations, simple functions like `sqrt`,
+comparison operations, simple functions such as
+`fabs`, `frexp`, `sqrt`, `log`, `exp` and more,
 and also includes full support for `std::numeric_limits`.
 
 soft_double is written in header-only C++11.
-It is compatible through C++11, 14, 17, 20.
+It is compatible for C++11, 14, 17, 20.
 
 ## Quick Start
 
