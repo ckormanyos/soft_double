@@ -1642,8 +1642,8 @@
     // PadeApproximant[Sin[x], {x, 0, {7,7}}]
     // FullSimplify[%]
 
-    //   (11511339840 x - 1640635920 x^3 + 52785432 x^5 - 479249 x^7)
-    // / (7 (1644477120 + 39702960 x^2 + 453960 x^4 + 2623 x^6))
+    //    x (11511339840 - 1640635920 x^2 + 52785432 x^4 - 479249 x^6)
+    // / (7 ( 1644477120  +  39702960 x^2 +   453960 x^4 +   2623 x^6))
 
     static const soft_double coef_sin_top_0(INT64_C(+11511339840));
     static const soft_double coef_sin_top_1(INT32_C(-1640635920));
@@ -1677,7 +1677,7 @@
     // FullSimplify[%]
 
     //   (x^2 (-5491886400 + 346666320 x^2 - 7038360 x^4 + 45469 x^6))
-    // / (24 (457657200 + 9249240 x^2 + 86030 x^4 + 389 x^6))
+    // / (24  (  457657200 +   9249240 x^2 +   86030 x^4 +   389 x^6))
 
     static const soft_double coef_cos_top_0(INT64_C(-5491886400));
     static const soft_double coef_cos_top_1(INT32_C(+346666320));
@@ -1741,7 +1741,7 @@
         // PadeApproximant[Hypergeometric0F1[1/2, -(dx^2)/4], {dx, 0, {6, 6}}]
         // FullSimplify[%]
         //   (39251520 - 18471600 dx^2 + 1075032 dx^4 - 14615 dx^6)
-        // / (39251520 + 1154160 dx^2 + 16632 dx^4 + 127 dx^6)
+        // / (39251520 +  1154160 dx^2 +   16632 dx^4 +   127 dx^6)
 
         static const soft_double coef_top_0(INT32_C(+39251520));
         static const soft_double coef_top_1(INT32_C(-18471600));
@@ -1847,32 +1847,12 @@
       {
         // PadeApproximant[Hypergeometric0F1[3/2, -(dx^2)/4], {dx, 0, {6, 6}}]
         // FullSimplify[%]
-        //   (11511339840 - 1640635920 dx^2 + 52785432 dx^4 - 479249 dx^6)
-        // / (7 (1644477120 + 39702960 dx^2 + 453960 dx^4 + 2623 dx^6))
+        //      (11511339840 - 1640635920 dx^2 + 52785432 dx^4 - 479249 dx^6)
+        // / (7 ( 1644477120 +   39702960 dx^2 +   453960 dx^4 +   2623 dx^6))
 
-        static const soft_double coef_top_0(INT64_C(+11511339840));
-        static const soft_double coef_top_1(INT32_C(-1640635920));
-        static const soft_double coef_top_2(INT32_C(+52785432));
-        static const soft_double coef_top_3(INT32_C(-479249));
+        // This is the same approximation as the one found in detail::sin_pade().
 
-        static const soft_double coef_bot_0(UINT32_C(1644477120));
-        static const soft_double coef_bot_1(UINT32_C(39702960));
-        static const soft_double coef_bot_2(UINT32_C(453960));
-        static const soft_double coef_bot_3(UINT32_C(2623));
-
-        const soft_double x2(delta_pi_half * delta_pi_half);
-
-        const soft_double top = ((((     + coef_top_3)
-                                    * x2 + coef_top_2)
-                                    * x2 + coef_top_1)
-                                    * x2 + coef_top_0);
-
-        const soft_double bot = ((((     + coef_bot_3)
-                                    * x2 + coef_bot_2)
-                                    * x2 + coef_bot_1)
-                                    * x2 + coef_bot_0);
-
-        c = (top * delta_pi_half) / (bot * 7);
+        c = detail::sin_pade(delta_pi_half);
       }
       else
       {

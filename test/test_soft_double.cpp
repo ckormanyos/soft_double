@@ -377,7 +377,7 @@ bool test_sin()
 {
   bool result_is_ok = true;
 
-  for(int i = 0; i < 2000; ++i)
+  for(int i = 0; i < 2001; ++i)
   {
     const math::softfloat::float64_t x = math::softfloat::float64_t(i) / 1000;
     const double                     d = (double) x;
@@ -395,7 +395,7 @@ bool test_sin()
     {
       const double closeness = std::fabs(1.0 - std::fabs((double) s_x / s_d));
 
-      result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 60.0);
+      result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 50.0);
     }
   }
 

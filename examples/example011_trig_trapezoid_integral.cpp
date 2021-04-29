@@ -90,21 +90,26 @@ namespace local
   float_type cyl_bessel_j(const std::uint_fast8_t n,
                           const float_type& x)
   {
-    using std::cos;
-    using std::sin;
     using std::sqrt;
 
     constexpr float_type eps = std::numeric_limits<float_type>::epsilon();
 
     const float_type tol = sqrt(eps);
 
-    const float_type integration_result = integral(float_type(0),
-                                                   pi<float_type>(),
-                                                   tol,
-                                                   [&x, &n](const float_type& t) -> float_type
-                                                   {
-                                                     return cos(x * sin(t) - (t * n));
-                                                   });
+    const float_type integration_result =
+      integral
+      (
+        float_type(0),
+        pi<float_type>(),
+        tol,
+        [&x, &n](const float_type& t) -> float_type
+        {
+          using std::cos;
+          using std::sin;
+
+          return cos(x * sin(t) - (t * n));
+        }
+      );
 
     const float_type jn = integration_result / pi<float_type>();
 
@@ -133,7 +138,7 @@ bool math::softfloat::example011_trig_trapezoid_integral()
   const float64_t closeness3 = fabs(1 - fabs(j3 / control3));
   const float64_t closeness4 = fabs(1 - fabs(j4 / control4));
 
-  const float64_t tol = std::numeric_limits<float64_t>::epsilon() * 60U;
+  const float64_t tol = std::numeric_limits<float64_t>::epsilon() * 50U;
 
   const bool result_is_ok = (   (closeness2 < tol)
                              && (closeness3 < tol)
