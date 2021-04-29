@@ -373,6 +373,57 @@ bool test_log()
   return result_is_ok;
 }
 
+bool test_sin()
+{
+  bool result_is_ok = true;
+
+  for(int i = 0; i < 2000; ++i)
+  {
+    const math::softfloat::float64_t x = math::softfloat::float64_t(i) / 1000;
+    const double                     d = (double) x;
+
+    using std::sin;
+
+    const math::softfloat::float64_t s_x = sin(x);
+    const double                     s_d = sin(d);
+
+    if(i == 0)
+    {
+      result_is_ok &= s_x.crepresentation() == 0U;
+    }
+    else
+    {
+      const double closeness = std::fabs(1.0 - std::fabs((double) s_x / s_d));
+
+      result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 60.0);
+    }
+  }
+
+  return result_is_ok;
+}
+
+bool test_cos()
+{
+  bool result_is_ok = true;
+
+  for(int i = 0; i < 1501; ++i)
+  {
+    const math::softfloat::float64_t x = math::softfloat::float64_t(i) / 1000;
+    const double                     d = (double) x;
+
+    using std::cos;
+
+    const math::softfloat::float64_t c_x = cos(x);
+    const double                     c_d = cos(d);
+
+    const double closeness = std::fabs(1.0 - std::fabs((double) c_x / c_d));
+
+    result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 60.0);
+  }
+
+  return result_is_ok;
+}
+
 bool test_floor(const std::uint32_t n)
 {
   bool result_is_ok = true;
@@ -628,6 +679,8 @@ bool test_soft_double()
   std::cout << "testing ldexp__... "; const bool result_ldexp__is_ok = test_ldexp ( 20000000U);     std::cout << std::boolalpha << result_ldexp__is_ok << std::endl;
   std::cout << "testing exp____... "; const bool result_exp____is_ok = test_exp   ( );              std::cout << std::boolalpha << result_exp____is_ok << std::endl;
   std::cout << "testing log____... "; const bool result_log____is_ok = test_log   ( );              std::cout << std::boolalpha << result_log____is_ok << std::endl;
+  std::cout << "testing sin____... "; const bool result_sin____is_ok = test_sin   ( );              std::cout << std::boolalpha << result_sin____is_ok << std::endl;
+  std::cout << "testing cos____... "; const bool result_cos____is_ok = test_cos   ( );              std::cout << std::boolalpha << result_cos____is_ok << std::endl;
   local::eng32.seed(std::clock());
   local::eng64.seed(~(uint64_t) std::clock());
   std::cout << "testing floor__... "; const bool result_floor__is_ok = test_floor (200000000U);     std::cout << std::boolalpha << result_floor__is_ok << std::endl;
@@ -663,6 +716,8 @@ bool test_soft_double()
                                      && result_ldexp__is_ok
                                      && result_exp____is_ok
                                      && result_log____is_ok
+                                     && result_sin____is_ok
+                                     && result_cos____is_ok
                                      && result_floor__is_ok
                                      && result_ceil___is_ok
                                      && result_add____is_ok

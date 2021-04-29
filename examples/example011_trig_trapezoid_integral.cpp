@@ -133,7 +133,7 @@ bool math::softfloat::example011_trig_trapezoid_integral()
   const float64_t closeness3 = fabs(1 - fabs(j3 / control3));
   const float64_t closeness4 = fabs(1 - fabs(j4 / control4));
 
-  const float64_t tol = std::numeric_limits<float64_t>::epsilon() * 200U;
+  const float64_t tol = std::numeric_limits<float64_t>::epsilon() * 60U;
 
   const bool result_is_ok = (   (closeness2 < tol)
                              && (closeness3 < tol)

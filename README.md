@@ -19,11 +19,13 @@ portable implementation of 64-bit `double`.
 
 soft_double implements common algebraic operations,
 comparison operations, simple functions such as
-`fabs`, `frexp`, `sqrt`, `log`, `exp` and more,
-and also includes full support for `std::numeric_limits`.
+`fabs`, `frexp`, `sqrt`, some power functions such as
+`log`, `exp`, a few trigonometric functions including
+`sin`, cos`, and more. There is also full support/specialization
+of `std::numeric_limits<soft_double>` for the `soft_double` type.
 
-soft_double is written in header-only C++11 and
-is compatible for C++11, 14, 17, 20.
+The soft_double implementation is written in header-only C++11
+and is compatible for C++11, 14, 17, 20.
 
 ## Quick Start
 
@@ -42,13 +44,15 @@ const float64_t one_third = float64_t(1U) / 3U;
 ```
 
 An interesting detail in this code sample is the construction
-of `one_third` from the composite initialization `float64_t(1U) / 3U`.
-This is done in this way since, although `soft_double` emulates
-64-bit `double`, it has no constructor from 64-bit `double` because
-this is the actual type that is being emulated. This
-situation arises, for example, when the compiler
+of `one_third` from the composite initialization
+provided by `float64_t(1U) / 3U`.
+This is needed, for example, when the compiler
 does not support 64-bit built-in `double` or `long` `double`
-and these are limited to 32-bits.
+and these are limited to 32-bits (because
+the 64-bit floating-point type is the actual type
+that is being emulated). This situation arises,
+as mentioned above, on certain popular versions of
+the `avr-gcc` and other tool chains.
 
 ## Implementation goals
 

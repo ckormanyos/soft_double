@@ -1639,57 +1639,60 @@
 
   inline soft_double sin_pade(soft_double x)
   {
-    // PadeApproximant[Sin[x], {x, 0, {5,6}}]
+    // PadeApproximant[Sin[x], {x, 0, {7,7}}]
     // FullSimplify[%]
 
-    //   (42 x (  4363920 -  567120 x^2 +  12671 x^4))
-    // /       (183284640 + 6728400 z^2 + 126210 z^4 + 1331 z^6)
+    //   (11511339840 x - 1640635920 x^3 + 52785432 x^5 - 479249 x^7)
+    // / (7 (1644477120 + 39702960 x^2 + 453960 x^4 + 2623 x^6))
 
-    static const soft_double coef_sin_top_0(INT32_C(+4363920));
-    static const soft_double coef_sin_top_1(INT32_C(-567120));
-    static const soft_double coef_sin_top_2(INT32_C(+12671));
+    static const soft_double coef_sin_top_0(INT64_C(+11511339840));
+    static const soft_double coef_sin_top_1(INT32_C(-1640635920));
+    static const soft_double coef_sin_top_2(INT32_C(+52785432));
+    static const soft_double coef_sin_top_3(INT32_C(-479249));
 
-    static const soft_double coef_sin_bot_0(UINT32_C(+183284640));
-    static const soft_double coef_sin_bot_1(UINT32_C(+6728400));
-    static const soft_double coef_sin_bot_2(UINT32_C(+126210));
-    static const soft_double coef_sin_bot_3(UINT32_C(+1331));
+    static const soft_double coef_sin_bot_0(UINT32_C(+1644477120));
+    static const soft_double coef_sin_bot_1(UINT32_C(+39702960));
+    static const soft_double coef_sin_bot_2(UINT32_C(+453960));
+    static const soft_double coef_sin_bot_3(UINT32_C(+2623));
 
 
     const soft_double x2(x * x);
 
-    const soft_double top = (((     + coef_sin_top_2)
-                               * x2 + coef_sin_top_1)
-                               * x2 + coef_sin_top_0);
+    const soft_double top = ((((     + coef_sin_top_3)
+                                * x2 + coef_sin_top_2)
+                                * x2 + coef_sin_top_1)
+                                * x2 + coef_sin_top_0);
 
     const soft_double bot = ((((     + coef_sin_bot_3)
                                 * x2 + coef_sin_bot_2)
                                 * x2 + coef_sin_bot_1)
                                 * x2 + coef_sin_bot_0);
 
-    return ((x * top) * 42U) / bot;
+    return (x * top) / (bot * 7);
   }
 
   inline soft_double cos_pade(soft_double x)
   {
-    // PadeApproximant[Cos[x] - 1, {x, 0, {6,6}}]
+    // PadeApproximant[Cos[x] - 1, {x, 0, {8,6}}]
     // FullSimplify[%]
 
-    // -(378 x^2
-    //    (   51920 -    2800 x^2 +    39 x^4))
-    //  / (39251520 + 1154160 x^2 + 16632 x^4 + 127 x^6)
+    //   (x^2 (-5491886400 + 346666320 x^2 - 7038360 x^4 + 45469 x^6))
+    // / (24 (457657200 + 9249240 x^2 + 86030 x^4 + 389 x^6))
 
-    static const soft_double coef_cos_top_0(INT32_C(51920));
-    static const soft_double coef_cos_top_1(INT32_C(-2800));
-    static const soft_double coef_cos_top_2(INT32_C(39));
+    static const soft_double coef_cos_top_0(INT64_C(-5491886400));
+    static const soft_double coef_cos_top_1(INT32_C(+346666320));
+    static const soft_double coef_cos_top_2(INT32_C(-7038360));
+    static const soft_double coef_cos_top_3(INT32_C(+45469));
 
-    static const soft_double coef_cos_bot_0(UINT32_C(39251520));
-    static const soft_double coef_cos_bot_1(UINT32_C(1154160));
-    static const soft_double coef_cos_bot_2(UINT32_C(16632));
-    static const soft_double coef_cos_bot_3(UINT32_C(127));
+    static const soft_double coef_cos_bot_0(UINT32_C(457657200));
+    static const soft_double coef_cos_bot_1(UINT32_C(9249240));
+    static const soft_double coef_cos_bot_2(UINT32_C(86030));
+    static const soft_double coef_cos_bot_3(UINT32_C(389));
 
     const soft_double x2(x * x);
 
-    const soft_double top =  (((     + coef_cos_top_2)
+    const soft_double top = ((((     + coef_cos_top_3)
+                                * x2 + coef_cos_top_2)
                                 * x2 + coef_cos_top_1)
                                 * x2 + coef_cos_top_0);
 
@@ -1698,7 +1701,7 @@
                                 * x2 + coef_cos_bot_1)
                                 * x2 + coef_cos_bot_0);
 
-    return 1U - (((x2 * 378) * top) / bot);
+    return 1U + ((x2 * top) / (bot * 24));
   }
 
   }
@@ -1713,50 +1716,91 @@
     }
     else if(x > 0)
     {
-      // Perform argument reduction and subsequent scaling of the result.
+      // Remove even multiples of pi.
 
-      // Given x = k * (pi/2) + r, compute n = (k % 4).
+      bool b_negate_sin = false;
 
-      // | n |  sin(x) |  cos(x) |  sin(x)/cos(x) |
-      // |----------------------------------------|
-      // | 0 |  sin(r) |  cos(r) |  sin(r)/cos(r) |
-      // | 1 |  cos(r) | -sin(r) | -cos(r)/sin(r) |
-      // | 2 | -sin(r) | -cos(r) |  sin(r)/cos(r) |
-      // | 3 | -cos(r) |  sin(r) | -cos(r)/sin(r) |
+      const std::uint32_t n_pi = (std::uint32_t) (x / soft_double::my_value_pi());
 
-      const std::uint32_t      k = (std::uint32_t) (x / soft_double::my_value_pi_half());
-      const std::uint_fast32_t n = (std::uint_fast32_t) (k % 4U);
-
-      soft_double r = x - (soft_double::my_value_pi_half() * k);
-
-      const bool is_neg =  (n > 1U);
-      const bool is_cos = ((n == 1U) || (n == 3U));
-
-      if(r > soft_double(UINT64_C(0x3FE0C152382D7366), detail::nothing()))
+      if(n_pi != 0U)
       {
-        r /= 9U;
+        x -= (soft_double::my_value_pi() * n_pi);
 
-        s = (is_cos ? detail::cos_pade(r) : detail::sin_pade(r));
-
-        s = (s * 3U) - (((s * s) * s) * 4U);
-        s = (s * 3U) - (((s * s) * s) * 4U);
+        if((n_pi % 2U) != 0)
+        {
+          b_negate_sin = (!b_negate_sin);
+        }
       }
-      else if(r > soft_double(UINT64_C(0x3FC657184AE74487), detail::nothing()))
+
+      // Check if the reduced argument is very close to pi/2.
+      const soft_double delta_pi_half  = soft_double::my_value_pi_half() - x;
+      const bool        b_near_pi_half = (fabs(delta_pi_half) < soft_double(UINT64_C(0x3FE0C152382D7366), detail::nothing()));
+
+      if(b_near_pi_half)
       {
-        r /= 3U;
+        // PadeApproximant[Hypergeometric0F1[1/2, -(dx^2)/4], {dx, 0, {6, 6}}]
+        // FullSimplify[%]
+        //   (39251520 - 18471600 dx^2 + 1075032 dx^4 - 14615 dx^6)
+        // / (39251520 + 1154160 dx^2 + 16632 dx^4 + 127 dx^6)
 
-        s = (is_cos ? detail::cos_pade(r) : detail::sin_pade(r));
+        static const soft_double coef_top_0(INT32_C(+39251520));
+        static const soft_double coef_top_1(INT32_C(-18471600));
+        static const soft_double coef_top_2(INT32_C(+1075032));
+        static const soft_double coef_top_3(INT32_C(-14615));
 
-        s = (s * 3U) - (((s * s) * s) * 4U);
+        static const soft_double coef_bot_0(UINT32_C(39251520));
+        static const soft_double coef_bot_1(UINT32_C(1154160));
+        static const soft_double coef_bot_2(UINT32_C(16632));
+        static const soft_double coef_bot_3(UINT32_C(127));
+
+        const soft_double x2(delta_pi_half * delta_pi_half);
+
+        const soft_double top = ((((     + coef_top_3)
+                                    * x2 + coef_top_2)
+                                    * x2 + coef_top_1)
+                                    * x2 + coef_top_0);
+
+        const soft_double bot = ((((     + coef_bot_3)
+                                    * x2 + coef_bot_2)
+                                    * x2 + coef_bot_1)
+                                    * x2 + coef_bot_0);
+
+        s = top / bot;
       }
       else
       {
-        s = (is_cos ? detail::cos_pade(r) : detail::sin_pade(r));
+        // Reduce the argument to 0 <= x <= pi/2.
+        if(x > soft_double::my_value_pi_half())
+        {
+          x = soft_double::my_value_pi() - x;
+        }
+
+        if(x > soft_double(UINT64_C(0x3FE0C152382D7366), detail::nothing()))
+        {
+          // x is larger than pi/6, scale by 9.
+          x /= 9U;
+
+          s = detail::sin_pade(x);
+
+          s = (s * 3U) - (((s * s) * s) * 4U);
+          s = (s * 3U) - (((s * s) * s) * 4U);
+        }
+        else if(x > soft_double(UINT64_C(0x3FC657184AE74487), detail::nothing()))
+        {
+          // x is larger than pi/18, scale by 3.
+          x /= 3U;
+
+          s = detail::sin_pade(x);
+
+          s = (s * 3U) - (((s * s) * s) * 4U);
+        }
+        else
+        {
+          s = detail::sin_pade(x);
+        }
       }
 
-      s = fabs(s);
-
-      if(is_neg)
+      if(b_negate_sin)
       {
         s = -s;
       }
@@ -1779,57 +1823,100 @@
     }
     else if(x > 0)
     {
-      // Perform argument reduction and subsequent scaling of the result.
+      // Remove even multiples of pi.
 
-      // Given x = k * (pi/2) + r, compute n = (k % 4).
+      bool b_negate_cos = false;
 
-      // | n |  sin(x) |  cos(x) |  sin(x)/cos(x) |
-      // |----------------------------------------|
-      // | 0 |  sin(r) |  cos(r) |  sin(r)/cos(r) |
-      // | 1 |  cos(r) | -sin(r) | -cos(r)/sin(r) |
-      // | 2 | -sin(r) | -cos(r) |  sin(r)/cos(r) |
-      // | 3 | -cos(r) |  sin(r) | -cos(r)/sin(r) |
+      const std::uint32_t n_pi = (std::uint32_t) (x / soft_double::my_value_pi());
 
-      const std::uint32_t      k = (std::uint32_t) (x / soft_double::my_value_pi_half());
-      const std::uint_fast32_t n = (std::uint_fast32_t) (k % 4U);
-
-      soft_double r = x - (soft_double::my_value_pi_half() * k);
-
-      const bool is_neg = ((n == 1U) || (n == 2U));
-      const bool is_sin = ((n == 1U) || (n == 3U));
-
-      if(r > soft_double(UINT64_C(0x3FE0C152382D7366), detail::nothing()))
+      if(n_pi != 0U)
       {
-        r /= 9U;
+        x -= (soft_double::my_value_pi() * n_pi);
 
-        c = (is_sin ? detail::sin_pade(r) : detail::cos_pade(r));
-
-        c = (((c * c) * c) * 4U) - (c * 3U);
-        c = (((c * c) * c) * 4U) - (c * 3U);
+        if((n_pi % 2U) != 0)
+        {
+          b_negate_cos = (!b_negate_cos);
+        }
       }
-      else if(r > soft_double(UINT64_C(0x3FC657184AE74487), detail::nothing()))
+
+      // Check if the reduced argument is very close to pi/2.
+      const soft_double delta_pi_half  = soft_double::my_value_pi_half() - x;
+      const bool        b_near_pi_half = (fabs(delta_pi_half) < soft_double(UINT64_C(0x3FE0C152382D7366), detail::nothing()));
+
+      if(b_near_pi_half)
       {
-        r /= 3U;
+        // PadeApproximant[Hypergeometric0F1[3/2, -(dx^2)/4], {dx, 0, {6, 6}}]
+        // FullSimplify[%]
+        //   (11511339840 - 1640635920 dx^2 + 52785432 dx^4 - 479249 dx^6)
+        // / (7 (1644477120 + 39702960 dx^2 + 453960 dx^4 + 2623 dx^6))
 
-        c = (is_sin ? detail::sin_pade(r) : detail::cos_pade(r));
+        static const soft_double coef_top_0(INT64_C(+11511339840));
+        static const soft_double coef_top_1(INT32_C(-1640635920));
+        static const soft_double coef_top_2(INT32_C(+52785432));
+        static const soft_double coef_top_3(INT32_C(-479249));
 
-        c = (((c * c) * c) * 4U) - (c * 3U);
+        static const soft_double coef_bot_0(UINT32_C(1644477120));
+        static const soft_double coef_bot_1(UINT32_C(39702960));
+        static const soft_double coef_bot_2(UINT32_C(453960));
+        static const soft_double coef_bot_3(UINT32_C(2623));
+
+        const soft_double x2(delta_pi_half * delta_pi_half);
+
+        const soft_double top = ((((     + coef_top_3)
+                                    * x2 + coef_top_2)
+                                    * x2 + coef_top_1)
+                                    * x2 + coef_top_0);
+
+        const soft_double bot = ((((     + coef_bot_3)
+                                    * x2 + coef_bot_2)
+                                    * x2 + coef_bot_1)
+                                    * x2 + coef_bot_0);
+
+        c = (top * delta_pi_half) / (bot * 7);
       }
       else
       {
-        c = (is_sin ? detail::sin_pade(r) : detail::cos_pade(r));
+        // Reduce the argument to 0 <= x <= pi/2.
+        if(x > soft_double::my_value_pi_half())
+        {
+          x = soft_double::my_value_pi() - x;
+
+          b_negate_cos = (!b_negate_cos);
+        }
+
+        if(x > soft_double(UINT64_C(0x3FE0C152382D7366), detail::nothing()))
+        {
+          // x is larger than pi/6, scale by 9.
+          x /= 9U;
+
+          c = detail::cos_pade(x);
+
+          c = (((c * c) * c) * 4U) - (c * 3U);
+          c = (((c * c) * c) * 4U) - (c * 3U);
+        }
+        else if(x > soft_double(UINT64_C(0x3FC657184AE74487), detail::nothing()))
+        {
+          // x is larger than pi/18, scale by 3.
+          x /= 3U;
+
+          c = detail::cos_pade(x);
+
+          c = (((c * c) * c) * 4U) - (c * 3U);
+        }
+        else
+        {
+          c = detail::cos_pade(x);
+        }
       }
 
-      c = fabs(c);
-
-      if(is_neg)
+      if(b_negate_cos)
       {
         c = -c;
       }
     }
     else
     {
-      c = soft_double(1U);
+      c = soft_double::my_value_one();
     }
 
     return c;
@@ -1875,13 +1962,18 @@
   public:
     static constexpr bool               is_specialized    = true;
     static constexpr float_denorm_style has_denorm        = denorm_present;
+    static constexpr bool               has_denorm_loss   = false;
     static constexpr bool               has_infinity      = true;
     static constexpr bool               has_quiet_NaN     = true;
     static constexpr bool               has_signaling_NaN = false;
     static constexpr bool               is_bounded        = true;
     static constexpr bool               is_iec559         = false;
     static constexpr bool               is_integer        = false;
+    static constexpr bool               is_exact          = false;
     static constexpr bool               is_signed         = true;
+    static constexpr bool               is_modulo         = false;
+    static constexpr bool               traps             = false;
+    static constexpr bool               tinyness_before   = false;
     static constexpr float_round_style  round_style       = round_to_nearest;
     static constexpr int                radix             = 2;
 
