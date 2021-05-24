@@ -65,9 +65,9 @@
     return (SignedIntegralType) -n;
   }
 
-  constexpr bool     signF32UI(uint32_t a) { return ((bool) ((uint32_t) (a)>>31)); }
-  constexpr int16_t  expF32UI (uint32_t a) { return ((int16_t) ((a)>>23) & 0xFF); }
-  constexpr uint32_t fracF32UI(uint32_t a) { return ((a) & UINT32_C(0x007FFFFF)); }
+  inline constexpr bool          signF32UI(uint32_t a) { return ((bool) ((uint32_t) (a)>>31)); }
+  inline constexpr std::int16_t  expF32UI (uint32_t a) { return ((int16_t) ((a)>>23) & 0xFF); }
+  inline constexpr std::uint32_t fracF32UI(uint32_t a) { return ((a) & UINT32_C(0x007FFFFF)); }
 
   inline constexpr bool          signF64UI(std::uint64_t a) { return ((unsigned) ((std::uint64_t) a >> 63U) != 0U); }
   inline constexpr std::int16_t  expF64UI (std::uint64_t a) { return (std::int16_t) (a >> 52U) & INT16_C(0x7FF); }

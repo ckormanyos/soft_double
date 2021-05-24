@@ -1,6 +1,9 @@
 name: soft_double
 on:
   push:
+    branches:
+      - '**'
+  pull_request:
   schedule:
     - cron: '30 23 * * *' # run at 11:30 PM UTC
 jobs:
