@@ -62,7 +62,7 @@
                                     && (std::is_signed  <SignedIntegralType>::value == true), SignedIntegralType>::type
   negate(SignedIntegralType n)
   {
-    return (SignedIntegralType) -n;
+    return (SignedIntegralType) detail::negate((unsigned long long) n);
   }
 
   inline constexpr bool          signF32UI(std::uint32_t a) { return ((bool) ((std::uint32_t) (a)>>31)); }

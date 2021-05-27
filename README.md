@@ -21,7 +21,7 @@ soft_double implements common algebraic operations,
 comparison operations, simple functions such as
 `fabs`, `frexp`, `sqrt`, some power functions such as
 `log`, `exp`, a few trigonometric functions including
-`sin`, cos`, and more. There is also full support/specialization
+`sin`, `cos`, and more. There is also full support/specialization
 of `std::numeric_limits<soft_double>` for the `soft_double` type.
 
 The soft_double implementation is written in header-only C++11
@@ -138,15 +138,30 @@ how to use soft_double.
   - ![`example010_hypergeometric_2f1.cpp`](./examples/example010_hypergeometric_2f1.cpp) calculates an <img src="https://render.githubusercontent.com/render/math?math=\approx\,15"> decimal digit hypergeometric function value using a classic iterative rational approximation scheme.
   - ![`example011_trig_trapezoid_integral.cpp`](./examples/example011_trig_trapezoid_integral.cpp) uses trapezoid integration with an integral representation involving locally-written trigonometric sine and cosine functions to compute several cylindrical Bessel function values.
 
-## Testing and CI
+## Building, testing and CI
+
+### Build Status
+[![Build Status](https://github.com/ckormanyos/soft_double/actions/workflows/soft_double.yml/badge.svg)](https://github.com/ckormanyos/soft_double/actions)
+
+The recent status of building and executing the tests and examples
+in Continuous Integration (CI) is always shown in the Build Status banner.
+
+Simply using the [`soft_double.h` header](./math/soft_float/soft_double.h)
+can be accomplished by identifying the header within
+its directory, including the header path and header in the normal C++ way.
+
+Building and running the tests and examples can be accomplished
+using the Microsoft VisualStudio solution workspace provided
+in `wide_integer.sln` located in the project's root directory.
+It is also possible, if desired, to build and execute
+the tests and examples using various different OS/compiler
+combinations.
 
 Testing is a big issue and a growing test suite is in continued progress providing for tested,
 efficient functionality on the PC and workstation. The GitHub code is delivered
 with an affiliated MSVC project that uses easy-to-understand subroutines called
 from `main()` that exercise various test cases.
 
-Continuous integration runs on push using GitHub Actions. Various compilers, operating systems,
-and C++ standards ranging from C++11, 14, 17, 20 are included in CI.
-
-### Build Status
-[![Build Status](https://github.com/ckormanyos/soft_double/actions/workflows/soft_double.yml/badge.svg)](https://github.com/ckormanyos/soft_double/actions)
+CI runs on push and pull request using GitHub Actions.
+Various compilers, operating systems, and C++ standards
+ranging from C++11, 14, 17, 20 are included in CI.
