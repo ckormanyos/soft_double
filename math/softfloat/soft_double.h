@@ -1359,14 +1359,7 @@
       result *= result;
       result *= result;
 
-      if(n != 0)
-      {
-        const soft_double p2 = ldexp(soft_double::my_value_one(), n);
-
-        result *= p2;
-      }
-
-      return result;
+      return ((n != 0) ? ldexp(result, n) : result);
     }
 
     friend inline soft_double log(const soft_double x)
