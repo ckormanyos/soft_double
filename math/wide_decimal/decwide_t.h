@@ -325,7 +325,8 @@
                    || (std::is_same<std::int16_t, exponent_type>::value == true)
                    || (std::is_same<std::int32_t, exponent_type>::value == true)
                    || (std::is_same<std::int64_t, exponent_type>::value == true)),
-                   "Error: exponent_type (determined via the template parameter ExponentType) must be one of int8_t, int16_t, int32_t or int64_t.");
+                   "Error: exponent_type (determined via the template parameter ExponentType) "
+                   "must be one of int8_t, int16_t, int32_t or int64_t.");
 
     static constexpr std::int32_t  decwide_t_digits10       = detail::decwide_t_helper<MyDigits10, LimbType>::digits10;
     static constexpr std::int32_t  decwide_t_digits         = detail::decwide_t_helper<MyDigits10, LimbType>::digits;
@@ -350,14 +351,14 @@
 
     // Rebind the decwide_t allocator to the granularity of the LimbType.
     using allocator_type =
-      typename std::allocator_traits<typename std::conditional<std::is_same<AllocatorType, void>::value,
-                                                               std::allocator<void>,
-                                                               AllocatorType>::type>::template rebind_alloc<limb_type>;
+      typename std::allocator_traits<typename std::conditional<(std::is_same<AllocatorType, void>::value == true),
+                                                                std::allocator<void>,
+                                                                AllocatorType>::type>::template rebind_alloc<limb_type>;
 
     // Define the array type, which is the internal
     // representation of the data field of a decwide_t.
     using representation_type =
-      typename std::conditional<std::is_same<AllocatorType, void>::value,
+      typename std::conditional<(std::is_same<AllocatorType, void>::value == true),
                                 detail::fixed_static_array <limb_type, static_cast<std::uint_fast32_t>(decwide_t_elem_number)>,
                                 detail::fixed_dynamic_array<limb_type, static_cast<std::uint_fast32_t>(decwide_t_elem_number), allocator_type>>::type;
 
@@ -365,7 +366,8 @@
     static_assert((   (std::is_same<std::uint8_t,  limb_type>::value == true)
                    || (std::is_same<std::uint16_t, limb_type>::value == true)
                    || (std::is_same<std::uint32_t, limb_type>::value == true)),
-                   "Error: limb_type (determined via the template parameter LimbType) must be one of uint8_t, uint16_t or uint32_t.");
+                   "Error: limb_type (determined via the template parameter LimbType) "
+                   "must be one of uint8_t, uint16_t or uint32_t.");
 
     using double_limb_type =
       typename std::conditional<(std::is_same<limb_type, std::uint32_t>::value == true),
@@ -527,8 +529,8 @@
                                             my_prec_elem(decwide_t_elem_number)
     {
       const unsigned long long u =
-        ((!my_neg) ? static_cast<unsigned long long>(n)
-                   : static_cast<unsigned long long>(1U) + static_cast<unsigned long long>(-(n + 1)));
+        ((my_neg == false) ?                static_cast<unsigned long long>(n)
+                           : detail::negate(static_cast<unsigned long long>(n)));
 
       from_unsigned_long_long(u);
     }
@@ -716,12 +718,12 @@
       const exponent_type max_delta_exp =
         static_cast<exponent_type>(prec_elems_for_add_sub * decwide_t_elem_digits10);
 
-      using local_unsigned_wrap_type = detail::unsigned_wrap<unsigned_exponent_type, exponent_type>;
+      using local_unsigned_exponent_wrap_type = detail::unsigned_wrap<unsigned_exponent_type, exponent_type>;
 
-      local_unsigned_wrap_type u_exp(  my_exp);
-      local_unsigned_wrap_type v_exp(v.my_exp);
+      local_unsigned_exponent_wrap_type u_exp(  my_exp);
+      local_unsigned_exponent_wrap_type v_exp(v.my_exp);
 
-      const local_unsigned_wrap_type ofs_exp = (u_exp - v_exp);
+      const local_unsigned_exponent_wrap_type ofs_exp = (u_exp - v_exp);
 
       // Check if the operation is out of range, requiring special handling.
       if(   v.iszero()
@@ -742,7 +744,7 @@
       typename representation_type::const_pointer p_v    = v.my_data.data();
       bool                                        b_copy = false;
       const std::int32_t                          ofs    = ((ofs_exp.get_is_neg() == false) ? +static_cast<std::int32_t>(ofs_exp.get_value_unsigned() / (unsigned_exponent_type) decwide_t_elem_digits10)
-                                                                                   : -static_cast<std::int32_t>(ofs_exp.get_value_unsigned() / (unsigned_exponent_type) decwide_t_elem_digits10));
+                                                                                            : -static_cast<std::int32_t>(ofs_exp.get_value_unsigned() / (unsigned_exponent_type) decwide_t_elem_digits10));
 
       #if !defined(WIDE_DECIMAL_DISABLE_DYNAMIC_MEMORY_ALLOCATION)
       representation_type my_n_data_for_add_sub;
@@ -959,8 +961,10 @@
         }
         else
         {
-          my_exp = static_cast<exponent_type>((result_exp.get_is_neg() == false) ? static_cast<exponent_type>(result_exp.get_value_unsigned())
-                                                                                 : static_cast<exponent_type>(unsigned_exponent_type(unsigned_exponent_type(~result_exp.get_value_unsigned()) + 1U)));
+          my_exp =
+            static_cast<exponent_type>((result_exp.get_is_neg() == false)
+              ?                static_cast<exponent_type>(result_exp.get_value_unsigned())
+              : detail::negate(static_cast<exponent_type>(result_exp.get_value_unsigned())));
 
           const std::int32_t prec_elems_for_multiply = (std::min)(my_prec_elem, v.my_prec_elem);
 
@@ -1138,7 +1142,7 @@
       if(n < static_cast<signed long long>(0))
       {
         negate();
-        add_unsigned_long_long(static_cast<unsigned long long>(-n));
+        add_unsigned_long_long(detail::negate(static_cast<unsigned long long>(n)));
         negate();
       }
       else
@@ -1158,7 +1162,7 @@
     {
       const bool b_neg = (n < static_cast<signed long long>(0));
 
-      mul_unsigned_long_long((!b_neg) ? static_cast<unsigned long long>(n) : static_cast<unsigned long long>(-n));
+      mul_unsigned_long_long((!b_neg) ? static_cast<unsigned long long>(n) : detail::negate(static_cast<unsigned long long>(n)));
 
       if(b_neg)
       {
@@ -1172,7 +1176,7 @@
     {
       const bool b_neg = (n < static_cast<signed long long>(0));
 
-      div_unsigned_long_long((!b_neg) ? static_cast<unsigned long long>(n) : static_cast<unsigned long long>(-n));
+      div_unsigned_long_long((!b_neg) ? static_cast<unsigned long long>(n) : detail::negate(static_cast<unsigned long long>(n)));
 
       if(b_neg)
       {
@@ -3825,7 +3829,7 @@
       const floating_point_type tol = std::numeric_limits<floating_point_type>::epsilon();
 
       // Series expansion of hypergeometric_0f0(; ; x).
-      for(std::uint32_t n = 2U; n < UINT32_C(10000000); ++n)
+      for(std::uint32_t n = 2U; n < UINT32_C(100000); ++n)
       {
         x_pow_n_div_n_fact *= xh;
         x_pow_n_div_n_fact /= n;
@@ -3843,9 +3847,12 @@
       using std::ldexp;
       using std::pow;
 
-      const floating_point_type exp_series = pow(h0f0, p2) * ldexp(floating_point_type(1U), (int) nf);
+      exp_result = ((nf == 0U) ? pow(h0f0, p2) : ldexp(pow(h0f0, p2), (int) nf));
 
-      exp_result = ((b_neg == false) ? exp_series : 1 / exp_series);
+      if(b_neg)
+      {
+        (void) exp_result.calculate_inv();
+      }
     }
 
     return exp_result;
@@ -3872,14 +3879,20 @@
 
       floating_point_type y(b);
 
-      for(std::uint64_t p_local = (std::uint64_t) p; p_local != 0U; p_local >>= 1U)
+      std::uint64_t p_local = static_cast<std::uint64_t>(p);
+
+      // Use the so-called ladder method for the power calculation.
+      for(;;)
       {
-        if((p_local & 1U) != 0U)
+        if(std::uint_fast8_t(p_local & 1U) != 0U)
         {
           result *= y;
         }
 
-        y *= y;
+        p_local >>= 1U;
+
+        if  (p_local == 0U) { break; }
+        else                { y *= y; }
       }
     }
 
