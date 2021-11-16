@@ -486,47 +486,23 @@
 
     operator float() const noexcept
     {
+      static_assert(sizeof(float) == 4U,
+                    "Error: This cast requires 4 byte built-in float");
+
       return f64_to_f32(my_value);
     }
 
-    template<typename UnknownBuiltInFloatType>
-    operator typename std::enable_if<(   (std::is_floating_point<UnknownBuiltInFloatType>::value == true)
-                                      && (std::is_same<UnknownBuiltInFloatType, double>::value == true)
-                                      && (sizeof(UnknownBuiltInFloatType) == 4)), UnknownBuiltInFloatType>::type() const noexcept
+    operator double() const noexcept
     {
-      return f64_to_f32(my_value);
+      static_assert(sizeof(double) == 8U,
+                    "Error: This cast requires 8 byte built-in double");
+
+      return (double) (*(volatile double*) (this));
     }
 
-    template<typename UnknownBuiltInFloatType>
-    operator typename std::enable_if<(   (std::is_floating_point<UnknownBuiltInFloatType>::value == true)
-                                      && (std::is_same<UnknownBuiltInFloatType, long double>::value == true)
-                                      && (sizeof(UnknownBuiltInFloatType) == 4)), UnknownBuiltInFloatType>::type() const noexcept
+    operator long double() const noexcept
     {
-      return f64_to_f32(my_value);
-    }
-
-    template<typename UnknownBuiltInFloatType>
-    operator typename std::enable_if<(   (std::is_floating_point<UnknownBuiltInFloatType>::value == true)
-                                      && (std::is_same<UnknownBuiltInFloatType, double>::value == true)
-                                      && (sizeof(UnknownBuiltInFloatType) == 8)), UnknownBuiltInFloatType>::type() const noexcept
-    {
-      return (UnknownBuiltInFloatType) (*(volatile UnknownBuiltInFloatType*) (this));
-    }
-
-    template<typename UnknownBuiltInFloatType>
-    operator typename std::enable_if<(   (std::is_floating_point<UnknownBuiltInFloatType>::value == true)
-                                      && (std::is_same<UnknownBuiltInFloatType, long double>::value == true)
-                                      && (sizeof(UnknownBuiltInFloatType) == 8)), UnknownBuiltInFloatType>::type() const noexcept
-    {
-      return (UnknownBuiltInFloatType) (*(volatile UnknownBuiltInFloatType*) (this));
-    }
-
-    template<typename UnknownBuiltInFloatType>
-    operator typename std::enable_if<(   (std::is_floating_point<UnknownBuiltInFloatType>::value == true)
-                                      && (std::is_same<UnknownBuiltInFloatType, long double>::value == true)
-                                      && (sizeof(UnknownBuiltInFloatType) > 8)), UnknownBuiltInFloatType>::type() const noexcept
-    {
-      return (UnknownBuiltInFloatType) (*(volatile double*) (this));
+      return (long double) ((double) *this);
     }
 
     soft_double& operator+=(const soft_double& other) { my_value = f64_add(my_value, other.my_value); return *this; }
