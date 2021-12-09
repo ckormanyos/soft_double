@@ -80,9 +80,6 @@
     <ClInclude Include="util\utility\util_noncopyable.h">
       <Filter>util\utility</Filter>
     </ClInclude>
-    <ClInclude Include="util\utility\util_numeric_cast.h">
-      <Filter>util\utility</Filter>
-    </ClInclude>
     <ClInclude Include="util\utility\util_dynamic_array.h">
       <Filter>util\utility</Filter>
     </ClInclude>

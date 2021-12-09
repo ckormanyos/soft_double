@@ -31,6 +31,7 @@
   #include <sstream>
   #endif
   #if !defined(WIDE_DECIMAL_DISABLE_CONSTRUCT_FROM_STRING)
+  #include <cstdlib>
   #include <string>
   #endif
   #include <type_traits>
@@ -39,8 +40,8 @@
 
   #include <util/utility/util_baselexical_cast.h>
 
-  #if !defined(WIDE_DECIMAL_DISABLE_CONSTRUCT_FROM_STRING)
-  #include <util/utility/util_numeric_cast.h>
+  #if defined(__GNUC__) && defined(__RL78__)
+  namespace std { using ::ilogb; }
   #endif
 
   namespace math { namespace wide_decimal {
@@ -1866,10 +1867,10 @@
   private:
     #if !defined(WIDE_DECIMAL_DISABLE_DYNAMIC_MEMORY_ALLOCATION)
     #else
-    static limb_type           my_school_mul_pool[std::uint32_t((decwide_t_elems_for_kara - 1) * 2)];
-    static limb_type           my_kara_mul_pool  [detail::a029750::a029750_as_constexpr(std::uint32_t(decwide_t_elems_for_fft - 1)) * 8UL];
-    static fft_float_type      my_af_fft_mul_pool[detail::a000079::a000079_as_constexpr(std::uint32_t(decwide_t_elem_number)) * 4UL];
-    static fft_float_type      my_bf_fft_mul_pool[detail::a000079::a000079_as_constexpr(std::uint32_t(decwide_t_elem_number)) * 4UL];
+    static limb_type           my_school_mul_pool[std::size_t((decwide_t_elems_for_kara - 1) * 2)];
+    static limb_type           my_kara_mul_pool  [std::size_t(detail::a029750::a029750_as_constexpr(std::uint32_t(std::uint32_t(decwide_t_elems_for_fft - 1)) * 8UL))];
+    static fft_float_type      my_af_fft_mul_pool[std::size_t(detail::a000079::a000079_as_constexpr(std::uint32_t(std::uint32_t(decwide_t_elem_number)) * 4UL))];
+    static fft_float_type      my_bf_fft_mul_pool[std::size_t(detail::a000079::a000079_as_constexpr(std::uint32_t(std::uint32_t(decwide_t_elem_number)) * 4UL))];
     static representation_type my_n_data_for_add_sub;
     #endif
 
@@ -1919,7 +1920,8 @@
          && ( i <  static_cast<std::uint_fast32_t>(std::tuple_size<local_tmp_array_type>::value)))
       )
       {
-        tmp[i] = static_cast<limb_type>(uu % static_cast<unsigned long long>(decwide_t_elem_mask));
+        tmp[std::size_t(i)] =
+          static_cast<limb_type>(uu % static_cast<unsigned long long>(decwide_t_elem_mask));
 
         uu = static_cast<unsigned long long>(uu / static_cast<unsigned long long>(decwide_t_elem_mask));
 
@@ -2412,7 +2414,15 @@
         )
       {
         // Remove the exponent part from the string.
-        my_exp = Util::numeric_cast<exponent_type>(static_cast<const char*>(str.c_str() + (pos + 1U)));
+        {
+          static_assert(std::numeric_limits<long long>::digits >= std::numeric_limits<exponent_type>::digits,
+                        "Error: Type long long is not wide enough to hold result of type exponent_type");
+
+          char* p_end;
+
+          my_exp =
+            static_cast<exponent_type>(std::strtoll(static_cast<const char*>(str.c_str() + (pos + 1U)), &p_end, 10));
+        }
 
         str = str.substr(static_cast<std::size_t>(0U), pos);
       }
@@ -2609,9 +2619,17 @@
 
       // Extract the data.
 
-      // First get the digits to the left of the decimal point...
-      my_data[static_cast<typename representation_type::size_type>(0U)] =
-        Util::numeric_cast<limb_type>(str.substr(static_cast<std::ptrdiff_t>(0), pos));
+      {
+        static_assert(std::numeric_limits<unsigned long>::digits >= std::numeric_limits<limb_type>::digits,
+                      "Error: Type unsigned long is not wide enough to hold result of type limb_type");
+
+        char* p_end;
+
+        // First get the digits to the left of the decimal point...
+
+        my_data[static_cast<typename representation_type::size_type>(0U)] =
+          static_cast<limb_type>(std::strtoul(str.substr(static_cast<std::ptrdiff_t>(0), pos).c_str(), &p_end, 10));
+      }
 
       // ...then get the remaining digits to the right of the decimal point.
       const std::string::difference_type i_end = ((static_cast<std::string::difference_type>(str.length()) - pos_plus_one) / static_cast<std::string::difference_type>(decwide_t_elem_digits10));
@@ -2627,7 +2645,14 @@
         const std::string str_i1(it,
                                  it + static_cast<std::string::difference_type>(decwide_t_elem_digits10));
 
-        my_data[i1] = Util::numeric_cast<limb_type>(str_i1);
+        {
+          static_assert(std::numeric_limits<unsigned long>::digits >= std::numeric_limits<limb_type>::digits,
+                        "Error: Type unsigned long is not wide enough to hold result of type limb_type");
+
+          char* p_end;
+
+          my_data[i1] = static_cast<limb_type>(std::strtoul(str_i1.c_str(), &p_end, 10));
+        }
       }
 
       return true;
@@ -3248,10 +3273,10 @@
 
   #if !defined(WIDE_DECIMAL_DISABLE_DYNAMIC_MEMORY_ALLOCATION)
   #else
-  template<const std::int32_t MyDigits10, typename LimbType, typename AllocatorType, typename InternalFloatType, typename ExponentType, typename FftFloatType> typename decwide_t<MyDigits10, LimbType, AllocatorType, InternalFloatType, ExponentType, FftFloatType>::limb_type      decwide_t<MyDigits10, LimbType, AllocatorType, InternalFloatType, ExponentType, FftFloatType>::my_school_mul_pool[std::uint32_t((decwide_t_elems_for_kara - 1) * 2)];
-  template<const std::int32_t MyDigits10, typename LimbType, typename AllocatorType, typename InternalFloatType, typename ExponentType, typename FftFloatType> typename decwide_t<MyDigits10, LimbType, AllocatorType, InternalFloatType, ExponentType, FftFloatType>::limb_type      decwide_t<MyDigits10, LimbType, AllocatorType, InternalFloatType, ExponentType, FftFloatType>::my_kara_mul_pool  [detail::a029750::a029750_as_constexpr(std::uint32_t(decwide_t_elems_for_fft - 1)) * 8UL];
-  template<const std::int32_t MyDigits10, typename LimbType, typename AllocatorType, typename InternalFloatType, typename ExponentType, typename FftFloatType> typename decwide_t<MyDigits10, LimbType, AllocatorType, InternalFloatType, ExponentType, FftFloatType>::fft_float_type decwide_t<MyDigits10, LimbType, AllocatorType, InternalFloatType, ExponentType, FftFloatType>::my_af_fft_mul_pool[detail::a000079::a000079_as_constexpr(std::uint32_t(decwide_t_elem_number)) * 4UL];
-  template<const std::int32_t MyDigits10, typename LimbType, typename AllocatorType, typename InternalFloatType, typename ExponentType, typename FftFloatType> typename decwide_t<MyDigits10, LimbType, AllocatorType, InternalFloatType, ExponentType, FftFloatType>::fft_float_type decwide_t<MyDigits10, LimbType, AllocatorType, InternalFloatType, ExponentType, FftFloatType>::my_bf_fft_mul_pool[detail::a000079::a000079_as_constexpr(std::uint32_t(decwide_t_elem_number)) * 4UL];
+  template<const std::int32_t MyDigits10, typename LimbType, typename AllocatorType, typename InternalFloatType, typename ExponentType, typename FftFloatType> typename decwide_t<MyDigits10, LimbType, AllocatorType, InternalFloatType, ExponentType, FftFloatType>::limb_type      decwide_t<MyDigits10, LimbType, AllocatorType, InternalFloatType, ExponentType, FftFloatType>::my_school_mul_pool[std::size_t((decwide_t_elems_for_kara - 1) * 2)];
+  template<const std::int32_t MyDigits10, typename LimbType, typename AllocatorType, typename InternalFloatType, typename ExponentType, typename FftFloatType> typename decwide_t<MyDigits10, LimbType, AllocatorType, InternalFloatType, ExponentType, FftFloatType>::limb_type      decwide_t<MyDigits10, LimbType, AllocatorType, InternalFloatType, ExponentType, FftFloatType>::my_kara_mul_pool  [std::size_t(detail::a029750::a029750_as_constexpr(std::uint32_t(std::uint32_t(decwide_t_elems_for_fft - 1)) * 8UL))];
+  template<const std::int32_t MyDigits10, typename LimbType, typename AllocatorType, typename InternalFloatType, typename ExponentType, typename FftFloatType> typename decwide_t<MyDigits10, LimbType, AllocatorType, InternalFloatType, ExponentType, FftFloatType>::fft_float_type decwide_t<MyDigits10, LimbType, AllocatorType, InternalFloatType, ExponentType, FftFloatType>::my_af_fft_mul_pool[std::size_t(detail::a000079::a000079_as_constexpr(std::uint32_t(std::uint32_t(decwide_t_elem_number)) * 4UL))];
+  template<const std::int32_t MyDigits10, typename LimbType, typename AllocatorType, typename InternalFloatType, typename ExponentType, typename FftFloatType> typename decwide_t<MyDigits10, LimbType, AllocatorType, InternalFloatType, ExponentType, FftFloatType>::fft_float_type decwide_t<MyDigits10, LimbType, AllocatorType, InternalFloatType, ExponentType, FftFloatType>::my_bf_fft_mul_pool[std::size_t(detail::a000079::a000079_as_constexpr(std::uint32_t(std::uint32_t(decwide_t_elem_number)) * 4UL))];
   template<const std::int32_t MyDigits10, typename LimbType, typename AllocatorType, typename InternalFloatType, typename ExponentType, typename FftFloatType> typename decwide_t<MyDigits10, LimbType, AllocatorType, InternalFloatType, ExponentType, FftFloatType>::representation_type     decwide_t<MyDigits10, LimbType, AllocatorType, InternalFloatType, ExponentType, FftFloatType>::my_n_data_for_add_sub;
   #endif
 
