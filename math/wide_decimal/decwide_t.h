@@ -44,6 +44,10 @@
   namespace std { using ::ilogb; }
   #endif
 
+  #if defined(__GNUC__) && defined(__RL78__)
+  namespace std { using ::ilogb; }
+  #endif
+
   namespace math { namespace wide_decimal {
 
   // Forward declaration of the decwide_t template class.
