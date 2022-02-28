@@ -1,4 +1,4 @@
-soft_double\
+﻿soft_double\
 [![Build Status](https://github.com/ckormanyos/soft_double/actions/workflows/soft_double.yml/badge.svg)](https://github.com/ckormanyos/soft_double/actions)
 ==================
 
@@ -14,7 +14,8 @@ depending on the target system/compiler combination.
 Consider, for instance, the `avr-gcc` tool chain popularly used on
 8-bit embedded systems like Arduino or standalone _bare metal_ AVR.
 Prior to version 10, this compiler does not support 64-bit `double`.
-soft_double can be used on such systems to provide a software-emulated,
+
+On such systems, soft_double can be used to provide a software-emulated,
 portable implementation of 64-bit `double`.
 
 soft_double implements common algebraic operations,
@@ -33,7 +34,7 @@ Using soft_double is straightforward. Simply `#include <math/softfloat/soft_doub
 the `soft_double` type can be used almost like familiar built-in 64-bit `double`.
 For instance,
 
-```
+```cpp
 #include <math/softfloat/soft_double.h>
 
 // Use a convenient alias for float64_t.
@@ -68,7 +69,7 @@ The following more detailed example provides an in-depth examination
 into effectively using soft_double. This code computes and checks the value of
 <img src="https://render.githubusercontent.com/render/math?math=\sqrt{\pi}\,\approx\,1.77245385090551602730">.
 
-```
+```cpp
 #include <cmath>
 #include <iomanip>
 #include <iostream>
@@ -119,7 +120,7 @@ with `avr-gcc` versions 5 and 7 (both lacking built-in 64-bit `double`).
 When working with even the most tiny microcontroller systems,
 I/O streaming can optionally be disabled with the compiler switch:
 
-```
+```cpp
 #define SOFT_DOUBLE_DISABLE_IOSTREAM
 ```
 
@@ -146,21 +147,24 @@ how to use soft_double.
 The recent status of building and executing the tests and examples
 in Continuous Integration (CI) is always shown in the Build Status banner.
 
-Simply using the [`soft_double.h` header](./math/soft_float/soft_double.h)
+Simply using the [`soft_double.h` header](./math/softfloat/soft_double.h)
 can be accomplished by identifying the header within
 its directory, including the header path and header in the normal C++ way.
 
 Building and running the tests and examples can be accomplished
 using the Microsoft VisualStudio solution workspace provided
-in `wide_integer.sln` located in the project's root directory.
+in `soft_double.sln` located in the project's root directory.
 It is also possible, if desired, to build and execute
 the tests and examples using various different OS/compiler
 combinations.
 
-Testing is a big issue and a growing test suite is in continued progress providing for tested,
-efficient functionality on the PC and workstation. The GitHub code is delivered
-with an affiliated MSVC project that uses easy-to-understand subroutines called
-from `main()` that exercise various test cases.
+Testing is a big issue and a growing test suite
+is in continued progress providing for tested,
+efficient functionality on the PC and workstation.
+The GitHub code is delivered with an affiliated MSVC project.
+It uses easy-to-understand subroutines called from
+[`main()`](https://github.com/ckormanyos/soft_double/blob/fa628ee77c002c1073256056f7dcdb57d45e758c/test/test.cpp#L13)
+that exercise various test cases.
 
 CI runs on push and pull request using GitHub Actions.
 Various compilers, operating systems, and C++ standards
