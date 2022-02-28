@@ -110,6 +110,9 @@
     <ClInclude Include="math\softfloat\soft_double.h">
       <Filter>math\softfloat</Filter>
     </ClInclude>
+    <ClInclude Include="math\wide_decimal\decwide_t_detail_namespace.h">
+      <Filter>math\wide_decimal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".github\workflows\soft_double.yml">
