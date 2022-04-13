@@ -27,40 +27,40 @@
   #endif
 
   template<typename float_type>
-  inline constexpr auto template_one() -> float_type { return static_cast<float_type>(1); }
+  constexpr auto template_one() -> float_type { return static_cast<float_type>(1); }
 
   template<typename float_type>
-  inline constexpr auto template_half() -> float_type { return static_cast<float_type>(static_cast<float_type>(1) / 2); }
+  constexpr auto template_half() -> float_type { return static_cast<float_type>(static_cast<float_type>(1) / 2); }
 
   template<>
-  inline constexpr auto template_one<float>() -> float { return static_cast<float>(1.0L); } // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+  constexpr auto template_one<float>() -> float { return static_cast<float>(1.0L); } // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
 
   template<>
-  inline constexpr auto template_one<double>() -> double { return static_cast<double>(1.0L); } // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+  constexpr auto template_one<double>() -> double { return static_cast<double>(1.0L); } // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
 
   template<>
-  inline constexpr auto template_one<long double>() -> long double { return 1.0L; } // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+  constexpr auto template_one<long double>() -> long double { return 1.0L; } // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
 
   template<>
-  inline constexpr auto template_half<float>() -> float { return static_cast<float>(0.5L); } // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+  constexpr auto template_half<float>() -> float { return static_cast<float>(0.5L); } // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
 
   template<>
-  inline constexpr auto template_half<double>() -> double { return static_cast<double>(0.5L); } // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+  constexpr auto template_half<double>() -> double { return static_cast<double>(0.5L); } // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
 
   template<>
-  inline constexpr auto template_half<long double>() -> long double { return 0.5L; } // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+  constexpr auto template_half<long double>() -> long double { return 0.5L; } // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
 
   template<typename float_type>
-  inline constexpr auto template_fast_div_by_two(float_type a) -> float_type { return static_cast<float_type>(a / 2); }
+  constexpr auto template_fast_div_by_two(float_type a) -> float_type { return static_cast<float_type>(a / 2); }
 
   template<>
-  inline constexpr auto template_fast_div_by_two<float>(float a) -> float { return static_cast<float>(a / 2); }
+  constexpr auto template_fast_div_by_two<float>(float a) -> float { return static_cast<float>(a / 2); }
 
   template<>
-  inline constexpr auto template_fast_div_by_two<double>(double a) -> double { return static_cast<double>(a / 2); }
+  constexpr auto template_fast_div_by_two<double>(double a) -> double { return static_cast<double>(a / 2); }
 
   template<>
-  inline constexpr auto template_fast_div_by_two<long double>(long double a) -> long double { return static_cast<long double>(a / 2); }
+  constexpr auto template_fast_div_by_two<long double>(long double a) -> long double { return static_cast<long double>(a / 2); }
 
   template<typename float_type>
   auto template_sin_order_1(std::uint32_t num_points) -> float_type
@@ -69,8 +69,6 @@
     // Mathematica command: Table[N[Sin[Pi / (2^n)], 41], {n, 1, 31, 1}]
     switch(num_points)
     {
-      default:
-      case 0UL       : return static_cast<float_type>(0.0L);                                            // Pi        : as uint64_t --> UINT64_C(0x0000000000000000) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
       case 2UL       : return static_cast<float_type>(1.0L);                                            // Pi / 2    : as uint64_t --> UINT64_C(0x3FF0000000000000) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
       case 4UL       : return static_cast<float_type>(7.0710678118654752440084436210484903928484E-01L); // Pi / 4    : as uint64_t --> UINT64_C(0x3FE6A09E667F3BCD) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
       case 8UL       : return static_cast<float_type>(3.8268343236508977172845998403039886676134E-01L); // Pi / 8    : as uint64_t --> UINT64_C(0x3FD87DE2A6AEA963) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
@@ -102,6 +100,7 @@
       case 1UL << 29U: return static_cast<float_type>(5.8516723170686386908097901008341396943900E-09L); // Pi / 2^29 : as uint64_t --> UINT64_C(0x3E3921FB54442D18) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
       case 1UL << 30U: return static_cast<float_type>(2.9258361585343193579282304690689559020176E-09L); // Pi / 2^30 : as uint64_t --> UINT64_C(0x3E2921FB54442D18) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
       case 1UL << 31U: return static_cast<float_type>(1.4629180792671596805295321618659637103743E-09L); // Pi / 2^31 : as uint64_t --> UINT64_C(0x3E1921FB54442D18) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+      default        : return static_cast<float_type>(0.0L);                                            // Pi        : as uint64_t --> UINT64_C(0x0000000000000000) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
     }
   }
 
@@ -116,7 +115,7 @@
            const bool IsForwardFft>
   auto const_unique_wp_real_init(const std::uint32_t num_points,
                                  const bool          my_fwd = IsForwardFft,
-                                 const typename std::enable_if<(IsForwardFft)>::type* p_nullparam = nullptr) -> float_type
+                                 const typename std::enable_if<IsForwardFft>::type* p_nullparam = nullptr) -> float_type
   {
     static_cast<void>(my_fwd);
     static_cast<void>(p_nullparam);
@@ -140,7 +139,7 @@
            const bool IsForwardFft>
   auto const_unique_wp_imag(      std::uint32_t num_points,
                                   bool          my_fwd = IsForwardFft,
-                            const typename std::enable_if<(IsForwardFft)>::type* p_nullparam = nullptr) -> float_type
+                            const typename std::enable_if<IsForwardFft>::type* p_nullparam = nullptr) -> float_type
   {
     static_cast<void>(my_fwd);
     static_cast<void>(p_nullparam);
@@ -204,8 +203,8 @@
 
       tmp_real = real_part;
 
-      real_part += (((tmp_real  * const_unique_wp_real<float_type, IsForwardFft>(num_points)) - (imag_part * const_unique_wp_imag<float_type, IsForwardFft>(num_points))));
-      imag_part += (((imag_part * const_unique_wp_real<float_type, IsForwardFft>(num_points)) + (tmp_real  * const_unique_wp_imag<float_type, IsForwardFft>(num_points))));
+      real_part += ((tmp_real  * const_unique_wp_real<float_type, IsForwardFft>(num_points)) - (imag_part * const_unique_wp_imag<float_type, IsForwardFft>(num_points)));
+      imag_part += ((imag_part * const_unique_wp_real<float_type, IsForwardFft>(num_points)) + (tmp_real  * const_unique_wp_imag<float_type, IsForwardFft>(num_points)));
     }
   }
 
@@ -285,7 +284,7 @@
   auto rfft_lanczos_rfft(      std::uint32_t num_points,
                                float_type*   data,
                                bool          my_fwd = IsForwardFft,
-                         const typename std::enable_if<(IsForwardFft )>::type* p_nullparam = nullptr) -> void
+                         const typename std::enable_if<IsForwardFft>::type* p_nullparam = nullptr) -> void
   {
     static_cast<void>(my_fwd);
     static_cast<void>(p_nullparam);
@@ -318,8 +317,8 @@
 
       const auto tmp_real = real_part;
 
-      real_part += (((tmp_real  * const_unique_wp_real<float_type, true>(num_points)) - (imag_part * const_unique_wp_imag<float_type, true>(num_points))));
-      imag_part += (((imag_part * const_unique_wp_real<float_type, true>(num_points)) + (tmp_real  * const_unique_wp_imag<float_type, true>(num_points))));
+      real_part += ((tmp_real  * const_unique_wp_real<float_type, true>(num_points)) - (imag_part * const_unique_wp_imag<float_type, true>(num_points)));
+      imag_part += ((imag_part * const_unique_wp_real<float_type, true>(num_points)) + (tmp_real  * const_unique_wp_imag<float_type, true>(num_points)));
     }
 
     const auto f0_tmp = data[0U]; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
@@ -362,8 +361,8 @@
 
       const auto tmp_real = real_part;
 
-      real_part += (((tmp_real  * const_unique_wp_real<float_type, false>(num_points)) - (imag_part * const_unique_wp_imag<float_type, false>(num_points))));
-      imag_part += (((imag_part * const_unique_wp_real<float_type, false>(num_points)) + (tmp_real  * const_unique_wp_imag<float_type, false>(num_points))));
+      real_part += ((tmp_real  * const_unique_wp_real<float_type, false>(num_points)) - (imag_part * const_unique_wp_imag<float_type, false>(num_points)));
+      imag_part += ((imag_part * const_unique_wp_real<float_type, false>(num_points)) + (tmp_real  * const_unique_wp_imag<float_type, false>(num_points)));
     }
 
     const auto f0_tmp = data[0U]; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
