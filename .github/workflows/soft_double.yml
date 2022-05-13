@@ -1,4 +1,4 @@
-﻿name: soft_double
+name: soft_double
 on:
   push:
     branches:
@@ -27,7 +27,7 @@ jobs:
           ls -la ./soft_double.exe
           ./soft_double.exe
   mingw-winhost-x64:
-    runs-on: windows-latest
+    runs-on: windows-2019
     defaults:
       run:
         shell: cmd
@@ -134,7 +134,7 @@ jobs:
           ls -la ./soft_double.exe
           ./soft_double.exe
   msvc-release-x64:
-    runs-on: windows-latest
+    runs-on: windows-2019
     steps:
       - uses: actions/checkout@v1
       - uses: ilammy/msvc-dev-cmd@v1
