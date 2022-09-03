@@ -64,7 +64,7 @@ jobs:
         with:
           fetch-depth: '0'
       - name: update-tools
-        run: sudo apt install g++11
+        run: sudo apt install g++-11
       - name: gcc-clang-native-asan
         run: |
           echo "compile ./soft_double.exe"
@@ -87,7 +87,7 @@ jobs:
         with:
           fetch-depth: '0'
       - name: update-tools
-        run: sudo apt install g++11
+        run: sudo apt install g++-11
       - name: gcc-clang-native-ubsan
         run: |
           echo "compile ./soft_double.exe"
