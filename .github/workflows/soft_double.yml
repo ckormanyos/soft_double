@@ -1,4 +1,4 @@
-name: soft_double
+﻿name: soft_double
 on:
   push:
     branches:
@@ -6,19 +6,21 @@ on:
   pull_request:
 jobs:
   gcc-clang-native:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     defaults:
       run:
         shell: bash
     strategy:
       fail-fast: false
       matrix:
-        compiler: [ g++, clang++ ]
-        standard: [ c++11, c++14, c++17, c++2a ]
+        compiler: [ g++-11, clang++ ]
+        standard: [ c++11, c++14, c++17, c++20 ]
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: '0'
+      - name: update-tools
+        run: sudo apt install g++-11
       - name: gcc-clang-native
         run: |
           echo "compile ./soft_double.exe"
@@ -48,19 +50,21 @@ jobs:
           dir .\soft_double.exe
           .\soft_double.exe
   gcc-clang-native-asan:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     defaults:
       run:
         shell: bash
     strategy:
       fail-fast: false
       matrix:
-        compiler: [ g++, clang++ ]
-        standard: [ c++11, c++14, c++17, c++2a ]
+        compiler: [ g++-11, clang++ ]
+        standard: [ c++11, c++14, c++17, c++20 ]
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: '0'
+      - name: update-tools
+        run: sudo apt install g++-11
       - name: gcc-clang-native-asan
         run: |
           echo "compile ./soft_double.exe"
@@ -69,47 +73,26 @@ jobs:
           ls -la ./soft_double.exe
           ./soft_double.exe
   gcc-clang-native-ubsan:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     defaults:
       run:
         shell: bash
     strategy:
       fail-fast: false
       matrix:
-        compiler: [ g++, clang++ ]
-        standard: [ c++11, c++14, c++17, c++2a ]
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: '0'
-      - name: gcc-clang-native-ubsan
-        run: |
-          echo "compile ./soft_double.exe"
-          ${{ matrix.compiler }} -v
-          ${{ matrix.compiler }} -finline-functions -O3 -Wall -Wextra -pedantic -m64 -std=${{ matrix.standard }} -fsanitize=undefined -fsanitize=shift -fsanitize=shift-exponent -fsanitize=shift-base -fsanitize=integer-divide-by-zero -fsanitize=unreachable -fsanitize=vla-bound -fsanitize=null -fsanitize=return -fsanitize=signed-integer-overflow -fsanitize=bounds -fsanitize=alignment -fsanitize=object-size -fsanitize=float-divide-by-zero -fsanitize=float-cast-overflow -fsanitize=nonnull-attribute -fsanitize=returns-nonnull-attribute -fsanitize=bool -fsanitize=enum -fsanitize=vptr -I. examples/example001_roots_sqrt.cpp examples/example002b_pi_100k.cpp examples/example004_bessel_recur.cpp examples/example005_polylog_series.cpp examples/example007_catalan_series.cpp examples/example010_hypergeometric_2f1.cpp examples/example011_trig_trapezoid_integral.cpp test/test.cpp test/test_soft_double.cpp test/test_soft_double_examples.cpp -o soft_double.exe
-          ls -la ./soft_double.exe
-          ./soft_double.exe
-  gcc-clang-10:
-    runs-on: ubuntu-20.04
-    defaults:
-      run:
-        shell: bash
-    strategy:
-      fail-fast: false
-      matrix:
-        compiler: [ g++-10, clang++-10 ]
+        compiler: [ g++-11, clang++ ]
         standard: [ c++11, c++14, c++17, c++20 ]
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: '0'
       - name: update-tools
-        run: sudo apt install g++-10 clang-10
-      - name: gcc-clang-10
+        run: sudo apt install g++-11
+      - name: gcc-clang-native-ubsan
         run: |
           echo "compile ./soft_double.exe"
           ${{ matrix.compiler }} -v
-          ${{ matrix.compiler }} -finline-functions -O3 -Wall -Wextra -pedantic -m64 -std=${{ matrix.standard }} -I. examples/example001_roots_sqrt.cpp examples/example002b_pi_100k.cpp examples/example004_bessel_recur.cpp examples/example005_polylog_series.cpp examples/example007_catalan_series.cpp examples/example010_hypergeometric_2f1.cpp examples/example011_trig_trapezoid_integral.cpp test/test.cpp test/test_soft_double.cpp test/test_soft_double_examples.cpp -o soft_double.exe
+          ${{ matrix.compiler }} -finline-functions -O3 -Wall -Wextra -pedantic -m64 -std=${{ matrix.standard }} -fsanitize=undefined -fsanitize=shift -fsanitize=shift-exponent -fsanitize=shift-base -fsanitize=integer-divide-by-zero -fsanitize=unreachable -fsanitize=vla-bound -fsanitize=null -fsanitize=return -fsanitize=signed-integer-overflow -fsanitize=bounds -fsanitize=alignment -fsanitize=object-size -fsanitize=float-divide-by-zero -fsanitize=float-cast-overflow -fsanitize=nonnull-attribute -fsanitize=returns-nonnull-attribute -fsanitize=bool -fsanitize=enum -fsanitize=vptr -I. examples/example001_roots_sqrt.cpp examples/example002b_pi_100k.cpp examples/example004_bessel_recur.cpp examples/example005_polylog_series.cpp examples/example007_catalan_series.cpp examples/example010_hypergeometric_2f1.cpp examples/example011_trig_trapezoid_integral.cpp test/test.cpp test/test_soft_double.cpp test/test_soft_double_examples.cpp -o soft_double.exe
           ls -la ./soft_double.exe
           ./soft_double.exe
   apple-gcc-clang-native:
@@ -121,7 +104,7 @@ jobs:
       fail-fast: false
       matrix:
         compiler: [ g++, clang++ ]
-        standard: [ c++11, c++14, c++17, c++2a ]
+        standard: [ c++11, c++14, c++17, c++20 ]
     steps:
       - uses: actions/checkout@v2
         with:
