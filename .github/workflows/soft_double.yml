@@ -13,12 +13,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler: [ g++, clang++ ]
+        compiler: [ g++-11, clang++ ]
         standard: [ c++11, c++14, c++17, c++20 ]
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: '0'
+      - name: update-tools
+        run: sudo apt install g++-11
       - name: gcc-clang-native
         run: |
           echo "compile ./soft_double.exe"
@@ -55,12 +57,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler: [ g++, clang++ ]
+        compiler: [ g++-11, clang++ ]
         standard: [ c++11, c++14, c++17, c++20 ]
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: '0'
+      - name: update-tools
+        run: sudo apt install g++11
       - name: gcc-clang-native-asan
         run: |
           echo "compile ./soft_double.exe"
@@ -76,12 +80,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler: [ g++, clang++ ]
+        compiler: [ g++-11, clang++ ]
         standard: [ c++11, c++14, c++17, c++20 ]
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: '0'
+      - name: update-tools
+        run: sudo apt install g++11
       - name: gcc-clang-native-ubsan
         run: |
           echo "compile ./soft_double.exe"
