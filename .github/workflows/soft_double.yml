@@ -128,3 +128,18 @@ jobs:
           MSBuild -m soft_double.sln -p:Configuration=Release -p:Platform=x64 /t:Rebuild
           dir %cd%\x64\Release\soft_double.exe
           %cd%\x64\Release\soft_double.exe
+  msvc-release-x64-vs2022:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'
+      - uses: actions/checkout@v1
+      - uses: ilammy/msvc-dev-cmd@v1
+      - name: msvc-release-x64-vs2022
+        shell: cmd
+        working-directory: ./
+        run: |
+          MSBuild -m soft_double_vs2022.sln -p:Configuration=Release -p:Platform=x64 /t:Rebuild
+          dir %cd%\x64\Release\soft_double_vs2022.exe
+          %cd%\x64\Release\soft_double_vs2022.exe
