@@ -67,7 +67,7 @@ the `avr-gcc` and other tool chains.
 
 The following more detailed example provides an in-depth examination
 into effectively using soft_double. This code computes and checks the value of
-<img src="https://render.githubusercontent.com/render/math?math=\sqrt{\pi}\,\approx\,1.77245385090551602730">.
+$\sqrt{\pi} \approx 1.77245385090551602730 \ldots$.
 
 ```cpp
 #include <cmath>
@@ -135,8 +135,8 @@ how to use soft_double.
   - ![`example002b_pi_100k.cpp`](./examples/example002b_pi_100k.cpp) uses soft_double together with the [wide-decimal](https://github.com/ckormanyos/wide-decimal) project which stresses demanding use of real-world double-precision FFTs to compute <img src="https://render.githubusercontent.com/render/math?math=100,001"> decimal digits of <img src="https://render.githubusercontent.com/render/math?math=\pi"> using an iterative AGM method.
   - ![`example004_bessel_recur.cpp`](./examples/example004_bessel_recur.cpp) implements cylindrical Bessel functions of integral order via downward recursion with a Neumann sum.
   - ![`example005_polylog_series.cpp`](./examples/example005_polylog_series.cpp) performs a small-argument polylogarithm series calculation.
-  - ![`example007_catalan_series.cpp`](./examples/example007_catalan_series.cpp) computes <img src="https://render.githubusercontent.com/render/math?math=\approx\,15"> decimal digits of Catalan's constant using an accelerated series.
-  - ![`example010_hypergeometric_2f1.cpp`](./examples/example010_hypergeometric_2f1.cpp) calculates an <img src="https://render.githubusercontent.com/render/math?math=\approx\,15"> decimal digit hypergeometric function value using a classic iterative rational approximation scheme.
+  - ![`example007_catalan_series.cpp`](./examples/example007_catalan_series.cpp) computes $\sim 15$ decimal digits of Catalan's constant using an accelerated series.
+  - ![`example010_hypergeometric_2f1.cpp`](./examples/example010_hypergeometric_2f1.cpp) calculates $\sim 15$ decimal digits of a hypergeometric function value using a classic iterative rational approximation scheme.
   - ![`example011_trig_trapezoid_integral.cpp`](./examples/example011_trig_trapezoid_integral.cpp) uses trapezoid integration with an integral representation involving locally-written trigonometric sine and cosine functions to compute several cylindrical Bessel function values.
 
 ## Building, testing and CI
