@@ -148,7 +148,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       );
   }
 
-  inline constexpr auto softfloat_shortShiftRightJam64(std::uint64_t a, uint_fast8_t dist) -> std::uint64_t
+  inline constexpr auto softfloat_shortShiftRightJam64(std::uint64_t a, std::uint_fast16_t dist) -> std::uint64_t
   {
     return
       static_cast<std::uint64_t>
@@ -163,7 +163,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       );
   }
 
-  inline constexpr auto softfloat_shiftRightJam64(std::uint64_t a, std::uint32_t dist) -> std::uint64_t
+  inline constexpr auto softfloat_shiftRightJam64(std::uint64_t a, std::uint_fast16_t dist) -> std::uint64_t
   {
     return
       (dist < static_cast<std::uint32_t>(UINT8_C(63)))
@@ -188,44 +188,44 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                      : static_cast<std::uint_fast8_t>(UINT8_C(0))))));
   }
 
-  constexpr uint_fast8_t softfloat_countLeadingZeros8(const uint_fast8_t index)
+  inline constexpr auto softfloat_countLeadingZeros8(std::uint8_t a) -> std::uint_fast8_t
   {
-    return (index < 0x10U) ? (uint_fast8_t) (4U + softfloat_countLeadingZeros8_z_table((uint_fast8_t) (index &  0xFU)))
-                           :                      softfloat_countLeadingZeros8_z_table((uint_fast8_t) (index >>   4U));
+    return
+      (a < static_cast<std::uint_fast8_t>(UINT8_C(0x10)))
+        ? static_cast<std::uint_fast8_t>(4U + softfloat_countLeadingZeros8_z_table(static_cast<std::uint_fast8_t>(a &  0xFU)))
+        :                                     softfloat_countLeadingZeros8_z_table(static_cast<std::uint_fast8_t>(a >>   4U));
   }
 
-  constexpr uint_fast8_t softfloat_countLeadingZeros16(std::uint16_t a)
+  inline constexpr auto softfloat_countLeadingZeros16(std::uint16_t a) -> std::uint_fast8_t
   {
-    return (a < UINT16_C(0x100)) ? (uint_fast8_t) (8U + softfloat_countLeadingZeros8((uint_fast8_t) a))
-                                 :                      softfloat_countLeadingZeros8((uint_fast8_t) (a >> 8U));
+    return
+      (a < static_cast<std::uint16_t>(UINT16_C(0x100)))
+        ? static_cast<std::uint_fast8_t>(8U + softfloat_countLeadingZeros8(static_cast<std::uint8_t>(a)))
+        :                                     softfloat_countLeadingZeros8(static_cast<std::uint8_t>(a >> 8U));
   }
 
-  constexpr uint_fast8_t softfloat_countLeadingZeros32(std::uint32_t a)
+  inline constexpr auto softfloat_countLeadingZeros32(std::uint32_t a) -> std::uint_fast8_t
   {
-    // TBD: Finding MSB to count leading zeros can probably be done more efficiently.
-    return (a < UINT32_C(0x10000)) ? (uint_fast8_t) (16U + softfloat_countLeadingZeros16((std::uint16_t) a))
-                                   :                       softfloat_countLeadingZeros16((std::uint16_t) (a >> 16U));
+    return
+      (a < static_cast<std::uint32_t>(UINT32_C(0x10000)))
+        ? static_cast<std::uint_fast8_t>(16U + softfloat_countLeadingZeros16(static_cast<std::uint16_t>(a)))
+        :                                      softfloat_countLeadingZeros16(static_cast<std::uint16_t>(a >> 16U));
   }
 
-  /*----------------------------------------------------------------------------
-  | Returns the number of leading 0 bits before the most-significant 1 bit of
-  | 'a'.  If 'a' is zero, 64 is returned.
-  *----------------------------------------------------------------------------*/
-  constexpr uint_fast8_t softfloat_countLeadingZeros64(std::uint64_t a)
+  inline constexpr auto softfloat_countLeadingZeros64(std::uint64_t a) -> std::uint_fast8_t
   {
-    // TBD: Finding MSB to count leading zeros can probably be done more efficiently.
-    return (a < UINT64_C(0x100000000)) ? (uint_fast8_t) (32U + softfloat_countLeadingZeros32((std::uint32_t) a))
-                                       :                       softfloat_countLeadingZeros32((std::uint32_t) (a >> 32U));
+    return
+      (a < static_cast<std::uint64_t>(UINT64_C(0x100000000)))
+        ? static_cast<std::uint_fast8_t>(32U + softfloat_countLeadingZeros32(static_cast<std::uint32_t>(a)))
+        :                                      softfloat_countLeadingZeros32(static_cast<std::uint32_t>(a >> 32U));
   }
 
-  /*----------------------------------------------------------------------------
-  | Returns an approximation to the reciprocal of the number represented by 'a',
-  | where 'a' is interpreted as an unsigned fixed-point number with one integer
-  | bit and 31 fraction bits.
-  *----------------------------------------------------------------------------*/
-  constexpr std::uint32_t softfloat_approxRecip32_1(std::uint32_t a)
+  inline constexpr auto softfloat_approxRecip32_1(std::uint32_t a) -> std::uint32_t
   {
-    return (std::uint32_t) (UINT64_C(0x7FFFFFFFFFFFFFFF) / a);
+    // Returns an approximation to the reciprocal of the number represented by 'a',
+    // where 'a' is interpreted as an unsigned fixed-point number with one integer
+    // bit and 31 fraction bits.
+    return static_cast<std::uint32_t>(static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF)) / a);
   }
 
   /*----------------------------------------------------------------------------
@@ -455,7 +455,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   public:
     using representation_type = std::uint64_t;
 
-    soft_double() { }
+    soft_double() = default;
 
     template<typename UnsignedIntegralType,
              typename std::enable_if<(   (std::is_integral<UnsignedIntegralType>::value == true)
@@ -870,7 +870,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       if(0 < shiftDist)
       {
-        sig = detail::softfloat_shiftRightJam64(sig, (std::uint32_t) shiftDist);
+        sig = detail::softfloat_shiftRightJam64(sig, static_cast<std::uint_fast16_t>(shiftDist));
       }
 
       return softfloat_roundToUI32(sign, sig);
@@ -891,7 +891,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       if(0 < shiftDist)
       {
-        sig = detail::softfloat_shiftRightJam64(sig, (std::uint32_t) shiftDist);
+        sig = detail::softfloat_shiftRightJam64(sig, static_cast<std::uint_fast16_t>(shiftDist));
       }
 
       return softfloat_roundToI32(sign, sig);
@@ -984,7 +984,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       sig = (sig + roundIncrement)>>7;
 
-      sig &= ~(uint_fast32_t) (((roundBits ^ 0x40) == 0U ? 1U : 0U) & 1U);
+      sig &= ~(std::uint32_t) (((roundBits ^ 0x40) == 0U ? 1U : 0U) & 1U);
 
       if(!sig)
       {
@@ -1080,7 +1080,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             sigA <<= 1;
           }
 
-          sigA = detail::softfloat_shiftRightJam64(sigA, (std::uint32_t) (-expDiff));
+          sigA = detail::softfloat_shiftRightJam64(sigA, static_cast<std::uint_fast16_t>(-expDiff));
         }
         else
         {
@@ -1095,7 +1095,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             sigB <<= 1U;
           }
 
-          sigB = detail::softfloat_shiftRightJam64(sigB, (std::uint32_t) expDiff);
+          sigB = detail::softfloat_shiftRightJam64(sigB, static_cast<std::uint_fast16_t>(expDiff));
         }
 
         sigZ = (std::uint64_t) (UINT64_C(0x2000000000000000) + sigA) + sigB;
@@ -1189,7 +1189,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       {
         if(expA < 0)
         {
-          sig  = detail::softfloat_shiftRightJam64(sig, (std::uint32_t) -expA);
+          sig  = detail::softfloat_shiftRightJam64(sig, static_cast<std::uint_fast16_t>(-expA));
           expA = 0;
         }
       }
@@ -1269,7 +1269,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           signZ = (!signZ);
 
           sigA += ((expA != 0) ? UINT64_C(0x4000000000000000) : sigA);
-          sigA  = detail::softfloat_shiftRightJam64(sigA, (std::uint32_t) -expDiff);
+          sigA  = detail::softfloat_shiftRightJam64(sigA, static_cast<std::uint_fast16_t>(-expDiff));
 
           sigB |= UINT64_C(0x4000000000000000);
 
@@ -1279,7 +1279,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         else
         {
           sigB += ((expB != 0) ? UINT64_C(0x4000000000000000) : sigB);
-          sigB  = detail::softfloat_shiftRightJam64(sigB, (std::uint32_t) expDiff);
+          sigB  = detail::softfloat_shiftRightJam64(sigB, static_cast<std::uint_fast16_t>(expDiff));
 
           sigA |= UINT64_C(0x4000000000000000);
 

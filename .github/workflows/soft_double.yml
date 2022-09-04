@@ -25,7 +25,7 @@ jobs:
         run: |
           echo "compile ./soft_double.exe"
           ${{ matrix.compiler }} -v
-          ${{ matrix.compiler }} -finline-functions -O3 -Wall -Wextra -pedantic -m64 -O3 -std=${{ matrix.standard }} -I. examples/example001_roots_sqrt.cpp examples/example002b_pi_100k.cpp examples/example004_bessel_recur.cpp examples/example005_polylog_series.cpp examples/example007_catalan_series.cpp examples/example010_hypergeometric_2f1.cpp examples/example011_trig_trapezoid_integral.cpp test/test.cpp test/test_soft_double.cpp test/test_soft_double_examples.cpp -o soft_double.exe
+          ${{ matrix.compiler }} -finline-functions -O3 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -march=native -O3 -std=${{ matrix.standard }} -I. examples/example001_roots_sqrt.cpp examples/example002b_pi_100k.cpp examples/example004_bessel_recur.cpp examples/example005_polylog_series.cpp examples/example007_catalan_series.cpp examples/example010_hypergeometric_2f1.cpp examples/example011_trig_trapezoid_integral.cpp test/test.cpp test/test_soft_double.cpp test/test_soft_double_examples.cpp -o soft_double.exe
           ls -la ./soft_double.exe
           ./soft_double.exe
   mingw-winhost-x64:
@@ -46,7 +46,7 @@ jobs:
         run: |
           echo compile ./soft_double.exe
           ${{ matrix.compiler }} -v
-          ${{ matrix.compiler }} -finline-functions -O3 -Wall -Wextra -pedantic -m64 -std=${{ matrix.standard }} -I. examples/example001_roots_sqrt.cpp examples/example002b_pi_100k.cpp examples/example004_bessel_recur.cpp examples/example005_polylog_series.cpp examples/example007_catalan_series.cpp examples/example010_hypergeometric_2f1.cpp examples/example011_trig_trapezoid_integral.cpp test/test.cpp test/test_soft_double.cpp test/test_soft_double_examples.cpp -o soft_double.exe
+          ${{ matrix.compiler }} -finline-functions -O3 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -march=native -std=${{ matrix.standard }} -I. examples/example001_roots_sqrt.cpp examples/example002b_pi_100k.cpp examples/example004_bessel_recur.cpp examples/example005_polylog_series.cpp examples/example007_catalan_series.cpp examples/example010_hypergeometric_2f1.cpp examples/example011_trig_trapezoid_integral.cpp test/test.cpp test/test_soft_double.cpp test/test_soft_double_examples.cpp -o soft_double.exe
           dir .\soft_double.exe
           .\soft_double.exe
   gcc-clang-native-asan:
@@ -69,7 +69,7 @@ jobs:
         run: |
           echo "compile ./soft_double.exe"
           ${{ matrix.compiler }} -v
-          ${{ matrix.compiler }} -finline-functions -O3 -Wall -Wextra -pedantic -m64 -std=${{ matrix.standard }} -fsanitize=address -fsanitize=leak -I. examples/example001_roots_sqrt.cpp examples/example002b_pi_100k.cpp examples/example004_bessel_recur.cpp examples/example005_polylog_series.cpp examples/example007_catalan_series.cpp examples/example010_hypergeometric_2f1.cpp examples/example011_trig_trapezoid_integral.cpp test/test.cpp test/test_soft_double.cpp test/test_soft_double_examples.cpp -o soft_double.exe
+          ${{ matrix.compiler }} -finline-functions -O3 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -march=native -std=${{ matrix.standard }} -fsanitize=address -fsanitize=leak -I. examples/example001_roots_sqrt.cpp examples/example002b_pi_100k.cpp examples/example004_bessel_recur.cpp examples/example005_polylog_series.cpp examples/example007_catalan_series.cpp examples/example010_hypergeometric_2f1.cpp examples/example011_trig_trapezoid_integral.cpp test/test.cpp test/test_soft_double.cpp test/test_soft_double_examples.cpp -o soft_double.exe
           ls -la ./soft_double.exe
           ./soft_double.exe
   gcc-clang-native-ubsan:
@@ -92,7 +92,7 @@ jobs:
         run: |
           echo "compile ./soft_double.exe"
           ${{ matrix.compiler }} -v
-          ${{ matrix.compiler }} -finline-functions -O3 -Wall -Wextra -pedantic -m64 -std=${{ matrix.standard }} -fsanitize=undefined -fsanitize=shift -fsanitize=shift-exponent -fsanitize=shift-base -fsanitize=integer-divide-by-zero -fsanitize=unreachable -fsanitize=vla-bound -fsanitize=null -fsanitize=return -fsanitize=signed-integer-overflow -fsanitize=bounds -fsanitize=alignment -fsanitize=object-size -fsanitize=float-divide-by-zero -fsanitize=float-cast-overflow -fsanitize=nonnull-attribute -fsanitize=returns-nonnull-attribute -fsanitize=bool -fsanitize=enum -fsanitize=vptr -I. examples/example001_roots_sqrt.cpp examples/example002b_pi_100k.cpp examples/example004_bessel_recur.cpp examples/example005_polylog_series.cpp examples/example007_catalan_series.cpp examples/example010_hypergeometric_2f1.cpp examples/example011_trig_trapezoid_integral.cpp test/test.cpp test/test_soft_double.cpp test/test_soft_double_examples.cpp -o soft_double.exe
+          ${{ matrix.compiler }} -finline-functions -O3 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -march=native -std=${{ matrix.standard }} -fsanitize=undefined -fsanitize=shift -fsanitize=shift-exponent -fsanitize=shift-base -fsanitize=integer-divide-by-zero -fsanitize=unreachable -fsanitize=vla-bound -fsanitize=null -fsanitize=return -fsanitize=signed-integer-overflow -fsanitize=bounds -fsanitize=alignment -fsanitize=object-size -fsanitize=float-divide-by-zero -fsanitize=float-cast-overflow -fsanitize=nonnull-attribute -fsanitize=returns-nonnull-attribute -fsanitize=bool -fsanitize=enum -fsanitize=vptr -I. examples/example001_roots_sqrt.cpp examples/example002b_pi_100k.cpp examples/example004_bessel_recur.cpp examples/example005_polylog_series.cpp examples/example007_catalan_series.cpp examples/example010_hypergeometric_2f1.cpp examples/example011_trig_trapezoid_integral.cpp test/test.cpp test/test_soft_double.cpp test/test_soft_double_examples.cpp -o soft_double.exe
           ls -la ./soft_double.exe
           ./soft_double.exe
   apple-gcc-clang-native:
@@ -113,7 +113,7 @@ jobs:
         run: |
           echo "compile ./soft_double.exe"
           ${{ matrix.compiler }} -v
-          ${{ matrix.compiler }} -finline-functions -O3 -Wall -Wextra -pedantic -m64 -O3 -std=${{ matrix.standard }} -I. examples/example001_roots_sqrt.cpp examples/example002b_pi_100k.cpp examples/example004_bessel_recur.cpp examples/example005_polylog_series.cpp examples/example007_catalan_series.cpp examples/example010_hypergeometric_2f1.cpp examples/example011_trig_trapezoid_integral.cpp test/test.cpp test/test_soft_double.cpp test/test_soft_double_examples.cpp -o soft_double.exe
+          ${{ matrix.compiler }} -finline-functions -O3 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -march=native -O3 -std=${{ matrix.standard }} -I. examples/example001_roots_sqrt.cpp examples/example002b_pi_100k.cpp examples/example004_bessel_recur.cpp examples/example005_polylog_series.cpp examples/example007_catalan_series.cpp examples/example010_hypergeometric_2f1.cpp examples/example011_trig_trapezoid_integral.cpp test/test.cpp test/test_soft_double.cpp test/test_soft_double_examples.cpp -o soft_double.exe
           ls -la ./soft_double.exe
           ./soft_double.exe
   msvc-release-x64:

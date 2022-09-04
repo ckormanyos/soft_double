@@ -63,8 +63,9 @@ namespace local
 
     for(std::uint_fast32_t k = UINT32_C(2); k < UINT32_C(10000000); ++k)
     {
-      const std::uint32_t tk = 2U * k;
-      const std::uint64_t tk_plus_one_squared = (std::uint64_t) (tk + 1U) * (tk + 1U);
+      const auto tk                  = static_cast<std::uint32_t>(2U * k);
+      const auto tk_plus_one         = static_cast<std::uint32_t>(tk + 1U);
+      const auto tk_plus_one_squared = static_cast<std::uint64_t>(static_cast<std::uint64_t>(tk_plus_one) * tk_plus_one);
 
       k_fact  *= k;
       tk_fact *= (std::uint64_t) tk * (tk - 1U);
