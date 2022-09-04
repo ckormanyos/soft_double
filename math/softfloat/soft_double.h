@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////
-//  Copyright Christopher Kormanyos 2012 - 2021.                 //
+//  Copyright Christopher Kormanyos 2012 - 2022.                 //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
 //  or copy at http://www.boost.org/LICENSE_1_0.txt)             //
@@ -9,11 +9,44 @@
 // SoftFloat IEEE Floating-Point Arithmetic Package,
 // Release 3e, by John R. Hauser.
 
-// Full original copyright information is included
-// at the bottom of this header file.
+// Full original copyright information follows.
+/*----------------------------------------------------------------------------
 
-#ifndef SOFT_DOUBLE_2020_10_27_H_
-  #define SOFT_DOUBLE_2020_10_27_H_
+This C header file is part of the SoftFloat IEEE Floating-Point Arithmetic
+Package, Release 3e, by John R. Hauser.
+
+Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017 The Regents of the
+University of California.  All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice,
+    this list of conditions, and the following disclaimer.
+
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions, and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+
+ 3. Neither the name of the University nor the names of its contributors may
+    be used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS "AS IS", AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE, ARE
+DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-----------------------------------------------------------------------------*/
+
+#ifndef SOFT_DOUBLE_2020_10_27_H
+  #define SOFT_DOUBLE_2020_10_27_H
 
   //#define SOFT_DOUBLE_DISABLE_IOSTREAM
 
@@ -27,12 +60,21 @@
   #include <limits>
   #include <type_traits>
 
-  namespace math { namespace softfloat {
+  #if(__cplusplus >= 201703L)
+  namespace math::softfloat {
+  #else
+  namespace math { namespace softfloat { // NOLINT(modernize-concat-nested-namespaces)
+  #endif
 
   // Forward declaration the math::softfloat::soft_double class.
   class soft_double;
 
-  } }
+  #if(__cplusplus >= 201703L)
+  } // namespace math::softfloat
+  #else
+  } // namespace softfloat
+  } // namespace math
+  #endif
 
   namespace std {
 
@@ -40,9 +82,13 @@
   template<>
   class numeric_limits<math::softfloat::soft_double>;
 
-  }
+  } // namespace std
 
-  namespace math { namespace softfloat {
+  #if(__cplusplus >= 201703L)
+  namespace math::softfloat {
+  #else
+  namespace math { namespace softfloat { // NOLINT(modernize-concat-nested-namespaces)
+  #endif
 
   namespace detail {
 
@@ -50,125 +96,136 @@
   struct uint64_extra       { std::uint64_t extra, v; };
 
   template<typename UnsignedIntegralType>
-  constexpr typename std::enable_if<   (std::is_integral<UnsignedIntegralType>::value == true)
-                                    && (std::is_unsigned<UnsignedIntegralType>::value == true), UnsignedIntegralType>::type
-  negate(UnsignedIntegralType u)
+  constexpr auto negate(UnsignedIntegralType u) -> typename std::enable_if<   (std::is_integral<UnsignedIntegralType>::value == true)
+                                                                           && (std::is_unsigned<UnsignedIntegralType>::value == true), UnsignedIntegralType>::type
   {
-    return (UnsignedIntegralType) (((UnsignedIntegralType) ~u) + 1U);
+    return
+      static_cast<UnsignedIntegralType>
+      (
+          static_cast<UnsignedIntegralType>(~u)
+        + static_cast<UnsignedIntegralType>(UINT8_C(1))
+      );
   }
 
   template<typename SignedIntegralType>
-  constexpr typename std::enable_if<   (std::is_integral<SignedIntegralType>::value == true)
-                                    && (std::is_signed  <SignedIntegralType>::value == true), SignedIntegralType>::type
-  negate(SignedIntegralType n)
+  constexpr auto negate(SignedIntegralType n) -> typename std::enable_if<   (std::is_integral<SignedIntegralType>::value == true)
+                                                                         && (std::is_signed  <SignedIntegralType>::value == true), SignedIntegralType>::type
   {
-    return (SignedIntegralType) detail::negate((unsigned long long) n);
+    return static_cast<SignedIntegralType>(detail::negate(static_cast<unsigned long long>(n)));
   }
 
-  inline constexpr bool          signF32UI(std::uint32_t a) { return ((bool) ((std::uint32_t) (a)>>31)); }
-  inline constexpr std::int16_t  expF32UI (std::uint32_t a) { return ((std::int16_t) ((a)>>23) & 0xFF); }
-  inline constexpr std::uint32_t fracF32UI(std::uint32_t a) { return ((a) & UINT32_C(0x007FFFFF)); }
+  inline constexpr auto signF32UI(std::uint32_t a) -> bool          { return (static_cast<unsigned>(a >> 31U) != static_cast<unsigned>(UINT8_C(0))); }
+  inline constexpr auto expF32UI (std::uint32_t a) -> std::int16_t  { return static_cast<std::int16_t>(static_cast<std::int16_t>(a >> 23U) & static_cast<std::int16_t>(INT16_C(0xFF))); }
+  inline constexpr auto fracF32UI(std::uint32_t a) -> std::uint32_t { return static_cast<std::uint32_t>(a & static_cast<std::uint32_t>(UINT32_C(0x007FFFFF))); }
 
-  inline constexpr bool          signF64UI(std::uint64_t a) { return ((unsigned) ((std::uint64_t) a >> 63U) != 0U); }
-  inline constexpr std::int16_t  expF64UI (std::uint64_t a) { return (std::int16_t) (a >> 52U) & INT16_C(0x7FF); }
-  inline constexpr std::uint64_t fracF64UI(std::uint64_t a) { return (std::uint64_t) (a & UINT64_C(0x000FFFFFFFFFFFFF)); }
+  inline constexpr auto signF64UI(std::uint64_t a) -> bool          { return (static_cast<unsigned>(a >> 63U) != static_cast<unsigned>(UINT8_C(0))); }
+  inline constexpr auto expF64UI (std::uint64_t a) -> std::int16_t  { return static_cast<std::int16_t>(static_cast<std::int16_t>(a >> 52U) & static_cast<std::int16_t>(INT16_C(0x7FF))); }
+  inline constexpr auto fracF64UI(std::uint64_t a) -> std::uint64_t { return static_cast<std::uint64_t>(a & static_cast<std::uint64_t>(UINT64_C(0x000FFFFFFFFFFFFF))); }
 
   template<typename IntegralTypeExp,
            typename IntegralTypeSig>
-  constexpr std::uint64_t packToF64UI(bool sign, IntegralTypeExp expA, IntegralTypeSig sig)
+  constexpr auto packToF64UI(bool sign, IntegralTypeExp expA, IntegralTypeSig sig) -> std::uint64_t
   {
-    return ((std::uint64_t) ((std::uint64_t) (((std::uint64_t) (sign ? 1U : 0U))<<63) + (std::uint64_t) (((std::uint64_t) expA)<<52) + (std::uint64_t) sig));
+    return
+      static_cast<std::uint64_t>
+      (
+          static_cast<std::uint64_t>(sign ? 1ULL << 63U : 0ULL)
+        + static_cast<std::uint64_t>(static_cast<std::uint64_t>(expA) << 52U)
+        + static_cast<std::uint64_t>(sig)
+      );
   }
 
   template<typename IntegralTypeExp,
            typename IntegralTypeSig>
-  constexpr std::uint32_t packToF32UI(bool sign, IntegralTypeExp expA, IntegralTypeSig sig)
+  constexpr auto packToF32UI(bool sign, IntegralTypeExp expA, IntegralTypeSig sig) -> std::uint32_t
   {
-    return ((std::uint32_t) ((std::uint32_t) (((std::uint32_t) (sign ? 1U : 0U))<<31) + (std::uint32_t) (((std::uint32_t) expA)<<23) + (std::uint32_t) sig));
+    return
+      static_cast<std::uint32_t>
+      (
+          static_cast<std::uint32_t>(sign ? 1ULL << 31U : 0ULL)
+        + static_cast<std::uint32_t>(static_cast<std::uint32_t>(expA) << 23U)
+        + static_cast<std::uint32_t>(sig)
+      );
   }
 
-  /*----------------------------------------------------------------------------
-  | Shifts 'a' right by the number of bits given in 'dist', which must be in
-  | the range 1 to 63.  If any nonzero bits are shifted off, they are "jammed"
-  | into the least-significant bit of the shifted value by setting the least-
-  | significant bit to 1.  This shifted-and-jammed value is returned.
-  *----------------------------------------------------------------------------*/
-  constexpr std::uint64_t softfloat_shortShiftRightJam64(std::uint64_t a, uint_fast8_t dist)
+  inline constexpr auto softfloat_shortShiftRightJam64(std::uint64_t a, std::uint_fast16_t dist) -> std::uint64_t
   {
-    return a >> dist | ((a & ((UINT64_C(1) << dist) - 1)) != 0 ? 1U : 0U);
+    return
+      static_cast<std::uint64_t>
+      (
+          static_cast<std::uint64_t>(a >> dist)
+        | static_cast<unsigned>
+          (
+            (static_cast<std::uint64_t>(a << static_cast<unsigned>(negate(dist) & 63U)) != static_cast<std::uint64_t>(UINT8_C(0)))
+              ? static_cast<unsigned>(UINT8_C(1))
+              : static_cast<unsigned>(UINT8_C(0))
+          )
+      );
   }
 
-  /*----------------------------------------------------------------------------
-  | Shifts 'a' right by the number of bits given in 'dist', which must not
-  | be zero.  If any nonzero bits are shifted off, they are "jammed" into the
-  | least-significant bit of the shifted value by setting the least-significant
-  | bit to 1.  This shifted-and-jammed value is returned.
-  *----------------------------------------------------------------------------*/
-  constexpr std::uint32_t softfloat_shiftRightJam32(std::uint32_t a, std::uint16_t dist)
+  inline constexpr auto softfloat_shiftRightJam64(std::uint64_t a, std::uint_fast16_t dist) -> std::uint64_t
   {
-    return (dist < 31) ? a >> dist | ((std::uint32_t)(a << (negate(dist) & 31)) != 0U ? 1U : 0U) : (a != 0U ? 1U : 0U);
+    return
+      (dist < static_cast<std::uint32_t>(UINT8_C(63)))
+        ? softfloat_shortShiftRightJam64(a, dist)
+        : static_cast<std::uint64_t>
+          (
+            (a != static_cast<std::uint64_t>(UINT8_C(0)))
+              ? static_cast<unsigned>(UINT8_C(1))
+              : static_cast<unsigned>(UINT8_C(0))
+          );
   }
 
-  /*----------------------------------------------------------------------------
-  | Shifts 'a' right by the number of bits given in 'dist', which must not
-  | be zero.
-  *----------------------------------------------------------------------------*/
-  constexpr std::uint64_t softfloat_shiftRightJam64(std::uint64_t a, std::uint32_t dist)
+  inline constexpr auto softfloat_countLeadingZeros8_z_table(std::uint_fast8_t index) -> std::uint_fast8_t
   {
-    return (dist < 63) ? a >> dist | ((std::uint64_t)(a << (negate(dist) & 63)) != 0 ? 1U : 0U) : (a != 0 ? 1U : 0U);
+    // A constant table that translates an 8-bit unsigned integer (the array index)
+    // into the number of leading 0 bits before the most-significant 1 of that
+    // integer.  For integer zero (index 0), the corresponding table element is 8.
+    return   ((index < static_cast<std::uint_fast8_t>(UINT8_C(0x1))) ? static_cast<std::uint_fast8_t>(UINT8_C(4))
+           : ((index < static_cast<std::uint_fast8_t>(UINT8_C(0x2))) ? static_cast<std::uint_fast8_t>(UINT8_C(3))
+           : ((index < static_cast<std::uint_fast8_t>(UINT8_C(0x4))) ? static_cast<std::uint_fast8_t>(UINT8_C(2))
+           : ((index < static_cast<std::uint_fast8_t>(UINT8_C(0x8))) ? static_cast<std::uint_fast8_t>(UINT8_C(1))
+                                                                     : static_cast<std::uint_fast8_t>(UINT8_C(0))))));
   }
 
-  /*----------------------------------------------------------------------------
-  | A constant table that translates an 8-bit unsigned integer (the array index)
-  | into the number of leading 0 bits before the most-significant 1 of that
-  | integer.  For integer zero (index 0), the corresponding table element is 8.
-  *----------------------------------------------------------------------------*/
-  constexpr uint_fast8_t softfloat_countLeadingZeros8_z_table(const uint_fast8_t index)
+  inline constexpr auto softfloat_countLeadingZeros8(std::uint8_t a) -> std::uint_fast8_t
   {
-    return ((index < 0x1U) ? 4U :
-           ((index < 0x2U) ? 3U :
-           ((index < 0x4U) ? 2U :
-           ((index < 0x8U) ? 1U : 0U))));
+    return
+      (a < static_cast<std::uint_fast8_t>(UINT8_C(0x10)))
+        ? static_cast<std::uint_fast8_t>(4U + softfloat_countLeadingZeros8_z_table(static_cast<std::uint_fast8_t>(a &  0xFU)))
+        :                                     softfloat_countLeadingZeros8_z_table(static_cast<std::uint_fast8_t>(a >>   4U));
   }
 
-  constexpr uint_fast8_t softfloat_countLeadingZeros8(const uint_fast8_t index)
+  inline constexpr auto softfloat_countLeadingZeros16(std::uint16_t a) -> std::uint_fast8_t
   {
-    return (index < 0x10U) ? (uint_fast8_t) (4U + softfloat_countLeadingZeros8_z_table((uint_fast8_t) (index &  0xFU)))
-                           :                      softfloat_countLeadingZeros8_z_table((uint_fast8_t) (index >>   4U));
+    return
+      (a < static_cast<std::uint16_t>(UINT16_C(0x100)))
+        ? static_cast<std::uint_fast8_t>(8U + softfloat_countLeadingZeros8(static_cast<std::uint8_t>(a)))
+        :                                     softfloat_countLeadingZeros8(static_cast<std::uint8_t>(a >> 8U));
   }
 
-  constexpr uint_fast8_t softfloat_countLeadingZeros16(std::uint16_t a)
+  inline constexpr auto softfloat_countLeadingZeros32(std::uint32_t a) -> std::uint_fast8_t
   {
-    return (a < UINT16_C(0x100)) ? (uint_fast8_t) (8U + softfloat_countLeadingZeros8((uint_fast8_t) a))
-                                 :                      softfloat_countLeadingZeros8((uint_fast8_t) (a >> 8U));
+    return
+      (a < static_cast<std::uint32_t>(UINT32_C(0x10000)))
+        ? static_cast<std::uint_fast8_t>(16U + softfloat_countLeadingZeros16(static_cast<std::uint16_t>(a)))
+        :                                      softfloat_countLeadingZeros16(static_cast<std::uint16_t>(a >> 16U));
   }
 
-  constexpr uint_fast8_t softfloat_countLeadingZeros32(std::uint32_t a)
+  inline constexpr auto softfloat_countLeadingZeros64(std::uint64_t a) -> std::uint_fast8_t
   {
-    // TBD: Finding MSB to count leading zeros can probably be done more efficiently.
-    return (a < UINT32_C(0x10000)) ? (uint_fast8_t) (16U + softfloat_countLeadingZeros16((std::uint16_t) a))
-                                   :                       softfloat_countLeadingZeros16((std::uint16_t) (a >> 16U));
+    return
+      (a < static_cast<std::uint64_t>(UINT64_C(0x100000000)))
+        ? static_cast<std::uint_fast8_t>(32U + softfloat_countLeadingZeros32(static_cast<std::uint32_t>(a)))
+        :                                      softfloat_countLeadingZeros32(static_cast<std::uint32_t>(a >> 32U));
   }
 
-  /*----------------------------------------------------------------------------
-  | Returns the number of leading 0 bits before the most-significant 1 bit of
-  | 'a'.  If 'a' is zero, 64 is returned.
-  *----------------------------------------------------------------------------*/
-  constexpr uint_fast8_t softfloat_countLeadingZeros64(std::uint64_t a)
+  inline constexpr auto softfloat_approxRecip32_1(std::uint32_t a) -> std::uint32_t
   {
-    // TBD: Finding MSB to count leading zeros can probably be done more efficiently.
-    return (a < UINT64_C(0x100000000)) ? (uint_fast8_t) (32U + softfloat_countLeadingZeros32((std::uint32_t) a))
-                                       :                       softfloat_countLeadingZeros32((std::uint32_t) (a >> 32U));
-  }
-
-  /*----------------------------------------------------------------------------
-  | Returns an approximation to the reciprocal of the number represented by 'a',
-  | where 'a' is interpreted as an unsigned fixed-point number with one integer
-  | bit and 31 fraction bits.
-  *----------------------------------------------------------------------------*/
-  constexpr std::uint32_t softfloat_approxRecip32_1(std::uint32_t a)
-  {
-    return (std::uint32_t) (UINT64_C(0x7FFFFFFFFFFFFFFF) / a);
+    // Returns an approximation to the reciprocal of the number represented by 'a',
+    // where 'a' is interpreted as an unsigned fixed-point number with one integer
+    // bit and 31 fraction bits.
+    return static_cast<std::uint32_t>(static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF)) / a);
   }
 
   /*----------------------------------------------------------------------------
@@ -221,7 +278,7 @@
 
   struct nothing { };
 
-  }
+  } // namespace detail
 
   class soft_double;
 
@@ -398,7 +455,7 @@
   public:
     using representation_type = std::uint64_t;
 
-    soft_double() { }
+    soft_double() = default;
 
     template<typename UnsignedIntegralType,
              typename std::enable_if<(   (std::is_integral<UnsignedIntegralType>::value == true)
@@ -813,7 +870,7 @@
 
       if(0 < shiftDist)
       {
-        sig = detail::softfloat_shiftRightJam64(sig, (std::uint32_t) shiftDist);
+        sig = detail::softfloat_shiftRightJam64(sig, static_cast<std::uint_fast16_t>(shiftDist));
       }
 
       return softfloat_roundToUI32(sign, sig);
@@ -834,7 +891,7 @@
 
       if(0 < shiftDist)
       {
-        sig = detail::softfloat_shiftRightJam64(sig, (std::uint32_t) shiftDist);
+        sig = detail::softfloat_shiftRightJam64(sig, static_cast<std::uint_fast16_t>(shiftDist));
       }
 
       return softfloat_roundToI32(sign, sig);
@@ -927,7 +984,7 @@
 
       sig = (sig + roundIncrement)>>7;
 
-      sig &= ~(uint_fast32_t) (((roundBits ^ 0x40) == 0U ? 1U : 0U) & 1U);
+      sig &= ~(std::uint32_t) (((roundBits ^ 0x40) == 0U ? 1U : 0U) & 1U);
 
       if(!sig)
       {
@@ -1023,7 +1080,7 @@
             sigA <<= 1;
           }
 
-          sigA = detail::softfloat_shiftRightJam64(sigA, (std::uint32_t) (-expDiff));
+          sigA = detail::softfloat_shiftRightJam64(sigA, static_cast<std::uint_fast16_t>(-expDiff));
         }
         else
         {
@@ -1038,7 +1095,7 @@
             sigB <<= 1U;
           }
 
-          sigB = detail::softfloat_shiftRightJam64(sigB, (std::uint32_t) expDiff);
+          sigB = detail::softfloat_shiftRightJam64(sigB, static_cast<std::uint_fast16_t>(expDiff));
         }
 
         sigZ = (std::uint64_t) (UINT64_C(0x2000000000000000) + sigA) + sigB;
@@ -1132,7 +1189,7 @@
       {
         if(expA < 0)
         {
-          sig  = detail::softfloat_shiftRightJam64(sig, (std::uint32_t) -expA);
+          sig  = detail::softfloat_shiftRightJam64(sig, static_cast<std::uint_fast16_t>(-expA));
           expA = 0;
         }
       }
@@ -1212,7 +1269,7 @@
           signZ = (!signZ);
 
           sigA += ((expA != 0) ? UINT64_C(0x4000000000000000) : sigA);
-          sigA  = detail::softfloat_shiftRightJam64(sigA, (std::uint32_t) -expDiff);
+          sigA  = detail::softfloat_shiftRightJam64(sigA, static_cast<std::uint_fast16_t>(-expDiff));
 
           sigB |= UINT64_C(0x4000000000000000);
 
@@ -1222,7 +1279,7 @@
         else
         {
           sigB += ((expB != 0) ? UINT64_C(0x4000000000000000) : sigB);
-          sigB  = detail::softfloat_shiftRightJam64(sigB, (std::uint32_t) expDiff);
+          sigB  = detail::softfloat_shiftRightJam64(sigB, static_cast<std::uint_fast16_t>(expDiff));
 
           sigA |= UINT64_C(0x4000000000000000);
 
@@ -1933,7 +1990,12 @@
 
   using float64_t = soft_double;
 
-  } } // namespace math::softfloat
+  #if(__cplusplus >= 201703L)
+  } // namespace math::softfloat
+  #else
+  } // namespace softfloat
+  } // namespace math
+  #endif
 
   namespace std {
 
@@ -1978,41 +2040,6 @@
     static constexpr math::softfloat::soft_double signaling_NaN() noexcept { return math::softfloat::soft_double::my_value_signaling_NaN(); }
   };
 
-  }
+  } // namespace std
 
-#endif // SOFT_DOUBLE_2020_10_27_H_
-
-/*----------------------------------------------------------------------------
-
-This C header file is part of the SoftFloat IEEE Floating-Point Arithmetic
-Package, Release 3e, by John R. Hauser.
-
-Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017 The Regents of the
-University of California.  All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
- 1. Redistributions of source code must retain the above copyright notice,
-    this list of conditions, and the following disclaimer.
-
- 2. Redistributions in binary form must reproduce the above copyright notice,
-    this list of conditions, and the following disclaimer in the documentation
-    and/or other materials provided with the distribution.
-
- 3. Neither the name of the University nor the names of its contributors may
-    be used to endorse or promote products derived from this software without
-    specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS "AS IS", AND ANY
-EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE, ARE
-DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
------------------------------------------------------------------------------*/
+#endif // SOFT_DOUBLE_2020_10_27_H
