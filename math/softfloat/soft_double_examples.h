@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////
-//  Copyright Christopher Kormanyos 2020 - 2021.                 //
+//  Copyright Christopher Kormanyos 2020 - 2022.                 //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
 //  or copy at http://www.boost.org/LICENSE_1_0.txt)             //
@@ -10,13 +10,13 @@
 
   namespace math { namespace softfloat {
 
-  bool example001_roots_sqrt             ();
-  bool example002b_pi_100k               ();
-  bool example004_bessel_recur           ();
-  bool example005_polylog_series         ();
-  bool example007_catalan_series         ();
-  bool example010_hypergeometric_2f1     ();
-  bool example011_trig_trapezoid_integral();
+  auto example001_roots_sqrt             () -> bool;
+  auto example002b_pi_100k               () -> bool;
+  auto example004_bessel_recur           () -> bool;
+  auto example005_polylog_series         () -> bool;
+  auto example007_catalan_series         () -> bool;
+  auto example010_hypergeometric_2f1     () -> bool;
+  auto example011_trig_trapezoid_integral() -> bool;
 
   } }
 
