@@ -222,18 +222,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   inline constexpr auto softfloat_approxRecip32_1(std::uint32_t a) -> std::uint32_t
   {
-    // Returns an approximation to the reciprocal of the number represented by 'a',
-    // where 'a' is interpreted as an unsigned fixed-point number with one integer
+    // Returns an approximation to the reciprocal of the number represented by a,
+    // where a is interpreted as an unsigned fixed-point number with one integer
     // bit and 31 fraction bits.
     return static_cast<std::uint32_t>(static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF)) / a);
   }
 
   constexpr struct uint64_extra softfloat_shiftRightJam64Extra(std::uint64_t a, std::uint64_t extra, std::uint32_t dist)
   {
-    // Shifts the 128 bits formed by concatenating 'a' and 'extra' right by 64
-    // _plus_ the number of bits given in 'dist', which must not be zero.  This
-    // shifted value is at most 64 nonzero bits and is returned in the 'v' field
-    // of the 'struct uint64_extra' result.
+    // Shifts the 128 bits formed by concatenating a and extra right by 64
+    // _plus_ the number of bits given in dist, which must not be zero. This
+    // shifted value is at most 64 nonzero bits and is returned in the v field
+    // of the struct uint64_extra result.
     return
     {
       (dist < 64U) ? static_cast<std::uint64_t>(a << static_cast<unsigned>(static_cast<unsigned>(negate(dist)) & 63U)) | (extra != 0U ? 1U : 0U) : ((dist == 64U) ? a : ((a != 0U) || (extra != 0U)) ? 1U : 0U),
@@ -493,12 +493,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     constexpr soft_double(const long double ld)
       : my_value(detail::uz_type<double>(static_cast<double>(ld)).my_u) { }
 
-    constexpr soft_double(const soft_double& other) = default;
+    constexpr soft_double(const soft_double&) = default;
 
     constexpr soft_double(soft_double&& other) noexcept
       : my_value(other.my_value) { }
 
-    constexpr soft_double(std::uint64_t n, const detail::nothing&) noexcept
+    constexpr soft_double(std::uint64_t n, detail::nothing&&) noexcept
       : my_value(static_cast<std::uint64_t>(n)) { }
 
     ~soft_double() = default;
@@ -599,14 +599,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       const bool signA = detail::signF64UI(a);
       const bool signB = detail::signF64UI(b);
 
-      if(signA == signB)
-      {
-        return softfloat_addMagsF64(a, b, signA);
-      }
-      else
-      {
-        return softfloat_subMagsF64(a, b, signA);
-      }
+      return ((signA == signB) ? softfloat_addMagsF64(a, b, signA)
+                               : softfloat_subMagsF64(a, b, signA));
     }
 
     static auto f64_sub(const std::uint64_t a, const std::uint64_t b) -> std::uint64_t
@@ -614,14 +608,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       const bool signA = detail::signF64UI(a);
       const bool signB = detail::signF64UI(b);
 
-      if(signA == signB)
-      {
-        return softfloat_subMagsF64(a, b, signA);
-      }
-      else
-      {
-        return softfloat_addMagsF64(a, b, signA);
-      }
+      return ((signA == signB) ? softfloat_subMagsF64(a, b, signA)
+                               : softfloat_addMagsF64(a, b, signA));
     }
 
     static auto f64_mul(const std::uint64_t a, const std::uint64_t b) -> std::uint64_t
@@ -642,11 +630,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       }
       else
       {
-        std::int16_t expZ =  (std::int16_t) ((std::int16_t) (expA + expB) -  (std::int16_t) 0x3FF);
+        std::int16_t expZ =
+          static_cast<std::int16_t>
+          (
+              static_cast<std::int16_t>(expA + expB)
+            - static_cast<std::int16_t>(INT16_C(0x3FF))
+          );
 
-        sigA = (sigA | UINT64_C(0x0010000000000000)) << 10U;
-        sigB = (sigB | UINT64_C(0x0010000000000000)) << 11U;
-
+        sigA = static_cast<std::uint64_t>(static_cast<std::uint64_t>(sigA | static_cast<std::uint64_t>(UINT64_C(0x0010000000000000))) << 10U);
+        sigB = static_cast<std::uint64_t>(static_cast<std::uint64_t>(sigB | static_cast<std::uint64_t>(UINT64_C(0x0010000000000000))) << 11U);
 
         // Compute the 128-bit product of sigA and sigB.
 
@@ -657,7 +649,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
         struct detail::uint128_as_struct sig128Z;
 
-        sig128Z.v0 = ((std::uint64_t) a0) * b0;
+        sig128Z.v0 = static_cast<std::uint64_t>(static_cast<std::uint64_t>(a0) * b0);
 
         auto mid1 = static_cast<std::uint64_t>(                                  (static_cast<std::uint64_t>(a32)) * b0);
         auto mid  = static_cast<std::uint64_t>(mid1 + static_cast<std::uint64_t>((static_cast<std::uint64_t>(b32)) * a0));
@@ -675,7 +667,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           sig128Z.v64 |= 1U;
         }
 
-        if(sig128Z.v64 < UINT64_C(0x4000000000000000))
+        if(sig128Z.v64 < static_cast<std::uint64_t>(UINT64_C(0x4000000000000000)))
         {
           --expZ;
 
@@ -704,10 +696,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       }
       else
       {
-        std::int16_t expZ =   (std::int16_t) ((std::int16_t) (expA - expB) +  (std::int16_t) 0x3FE);
+        auto expZ =
+          static_cast<std::int16_t>
+          (
+            static_cast<std::int16_t>(expA - expB) + static_cast<std::int16_t>(INT16_C(0x3FE))
+          );
 
-        sigA |= UINT64_C(0x0010000000000000);
-        sigB |= UINT64_C(0x0010000000000000);
+        sigA |= static_cast<std::uint64_t>(UINT64_C(0x0010000000000000));
+        sigB |= static_cast<std::uint64_t>(UINT64_C(0x0010000000000000));
 
         if(sigA < sigB)
         {
@@ -722,37 +718,76 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
         sigB <<= 11U;
 
-        const std::uint32_t recip32 = detail::softfloat_approxRecip32_1((uint32_t) (sigB >> 32U)) - 2U;
-        const std::uint32_t sig32Z  = (std::uint32_t) ((std::uint64_t) ((std::uint32_t) (sigA >> 32U) * (std::uint64_t) recip32) >> 32U);
+        const auto recip32 = static_cast<std::uint32_t>(detail::softfloat_approxRecip32_1(static_cast<std::uint32_t>(sigB >> 32U)) - 2U);
+        const auto sig32Z  = static_cast<std::uint32_t>(static_cast<std::uint64_t>(static_cast<std::uint32_t>(sigA >> 32U) * static_cast<std::uint64_t>(recip32)) >> 32U);
 
-        std::uint32_t doubleTerm = sig32Z << 1U;
+        auto doubleTerm = static_cast<std::uint32_t>(sig32Z << 1U);
 
-        std::uint64_t rem =   ((sigA - (std::uint64_t) doubleTerm *  (std::uint32_t) (sigB >> 32U)) << 28U)
-                                - (std::uint64_t) doubleTerm * ((std::uint32_t)  sigB >> 4U);
+        auto rem =
+          static_cast<std::uint64_t>
+          (
+            static_cast<std::uint64_t>
+            (
+              (sigA - static_cast<std::uint64_t>(static_cast<std::uint64_t>(doubleTerm) * static_cast<std::uint32_t>(sigB >> 32U))) << 28U
+            )
+          - static_cast<std::uint64_t>
+            (
+              static_cast<std::uint64_t>(doubleTerm) * static_cast<std::uint32_t>(static_cast<std::uint32_t>(sigB) >> 4U)
+            )
+          );
 
-        std::uint32_t q = (std::uint32_t) ((std::uint32_t) ((std::uint64_t) ((std::uint32_t) (rem >> 32U) * (std::uint64_t) recip32) >> 32U) + 4U);
+        auto q =
+          static_cast<std::uint32_t>
+          (
+              static_cast<std::uint32_t>
+              (
+                   static_cast<std::uint64_t>(static_cast<std::uint32_t>(rem >> 32U) * static_cast<std::uint64_t>(recip32))
+                >> 32U
+              )
+            + 4U
+          );
 
-        std::uint64_t sigZ = ((std::uint64_t) sig32Z << 32U) + ((std::uint64_t) q << 4U);
+        auto sigZ =
+          static_cast<std::uint64_t>
+          (
+              static_cast<std::uint64_t>(static_cast<std::uint64_t>(sig32Z) << 32U)
+            + static_cast<std::uint64_t>(static_cast<std::uint64_t>(q)      <<  4U)
+          );
 
-        if((sigZ & 0x1FF) < (4UL << 4U))
+        if(static_cast<std::uint_fast16_t>(sigZ & 0x1FFU) < static_cast<std::uint_fast16_t>(4UL << 4U))
         {
-          q    &=  (std::uint32_t) ~7U;
-          sigZ &= ~(std::uint64_t) 0x7F;
+          q    &= static_cast<std::uint32_t>(~static_cast<std::uint32_t>(UINT8_C(7)));
+          sigZ &= static_cast<std::uint64_t>(~static_cast<std::uint64_t>(UINT8_C(0x7F)));
 
-          doubleTerm = q << 1U;
+          doubleTerm = static_cast<std::uint32_t>(q << 1U);
 
-          rem =   ((rem - (std::uint64_t) doubleTerm *  (std::uint32_t) (sigB >> 32U)) << 28U)
-                -         (std::uint64_t) doubleTerm * ((std::uint32_t)  sigB >> 4U);
+          rem =
+            static_cast<std::uint64_t>
+            (
+                static_cast<std::uint64_t>
+                (
+                  static_cast<std::uint64_t>
+                  (
+                    rem - static_cast<std::uint64_t>(static_cast<std::uint64_t>(doubleTerm) * static_cast<std::uint32_t>(sigB >> 32U))
+                  ) << 28U
+                )
+              - static_cast<std::uint64_t>
+                (
+                  static_cast<std::uint64_t>(doubleTerm) * static_cast<std::uint32_t>(static_cast<std::uint32_t>(sigB) >> 4U)
+                )
+            );
 
-          if(rem & UINT64_C(0x8000000000000000))
+          const auto rem_hi_bit_is_set = (static_cast<unsigned>(rem >> 63U) != static_cast<unsigned>(UINT8_C(0)));
+
+          if(rem_hi_bit_is_set)
           {
-            sigZ -= (1UL << 7U);
+            sigZ = static_cast<std::uint64_t>(sigZ - static_cast<std::uint_fast8_t>(1UL << 7U));
           }
           else
           {
-            if(rem)
+            if(rem != static_cast<std::uint64_t>(UINT8_C(0)))
             {
-              sigZ |= 1U;
+              sigZ = static_cast<std::uint64_t>(sigZ | static_cast<std::uint_fast8_t>(UINT8_C(1)));
             }
           }
         }
@@ -773,9 +808,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       }
       else
       {
-        // (`sig32Z' is guaranteed to be a lower bound on the square root of
-        // `sig32A', which makes `sig32Z' also a lower bound on the square root of
-        // `sigA'.)
+        // sig32Z is guaranteed to be a lower bound on the square root of
+        // sig32A, which makes sig32Z also a lower bound on the square root of
+        // sigA.
         const std::int16_t expZ = (std::int16_t) ((std::int16_t) ((std::int16_t) (expA - 0x3FF) >> 1) + (std::int16_t) 0x3FE);
 
         expA &= 1;
@@ -1086,14 +1121,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       return softfloat_roundPackToF64(signZ, expZ, sigZ);
     }
 
-    /*----------------------------------------------------------------------------
-    | Returns an approximation to the reciprocal of the square root of the number
-    | represented by 'a', where 'a' is interpreted as an unsigned fixed-point
-    | number either with one integer bit and 31 fraction bits or with two integer
-    | bits and 30 fraction bits.
-    *----------------------------------------------------------------------------*/
     static auto softfloat_approxRecipSqrt32_1(std::uint32_t oddExpA, std::uint32_t a) -> std::uint32_t
     {
+      // Returns an approximation to the reciprocal of the square root of the number
+      // represented by a, where a is interpreted as an unsigned fixed-point
+      // number either with one integer bit and 31 fraction bits or with two integer
+      // bits and 30 fraction bits.
       constexpr std::array<std::uint16_t, 16U> softfloat_approxRecipSqrt_1k0s =
       {{
         UINT16_C(0xB4C9), UINT16_C(0xFFAB), UINT16_C(0xAA7D), UINT16_C(0xF11C),
@@ -1272,6 +1305,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     template<typename char_type, typename traits_type>
     friend auto operator<<(std::basic_ostream<char_type, traits_type>& os, const soft_double& f) -> std::basic_ostream<char_type, traits_type>&
     {
+      // Note that this output stream function relies on
+      // the availability of 64-bit native double.
+
       std::basic_ostringstream<char_type, traits_type> ostr;
 
       // Copy all ostream settings from out to local ostr.
@@ -1279,7 +1315,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       ostr.imbue(os.getloc());
       ostr.precision(os.precision());
 
-      static_cast<void>(ostr << (double) f);
+      static_cast<void>(ostr << static_cast<double>(f));
 
       return (os << ostr.str());
     }
@@ -1287,6 +1323,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     template<typename char_type, typename traits_type>
     friend auto operator>>(std::basic_istream<char_type, traits_type>& is, soft_double& f) -> std::basic_istream<char_type, traits_type>&
     {
+      // Note that this input stream function relies on
+      // the availability of 64-bit native double.
+
       double v;
 
       // Receive a floating-point number from the input stream.
@@ -1314,7 +1353,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       if(expptr != nullptr)
       {
-        *expptr = (int) expA;
+        *expptr = static_cast<int>(expA);
       }
 
       return soft_double(detail::packToF64UI(sign, INT16_C(0x3FE), frac), detail::nothing());
@@ -1414,7 +1453,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       else if(x > soft_double::my_value_one())
       {
         // See J.F. Hart et al., "Computer Approximations" (Krieger Publishing 1978),
-        // page 111 (with correction) log_e = zP(z^2) / Q(z^2), where the leading 'z'
+        // page 111 (with correction) log_e = zP(z^2) / Q(z^2), where the leading z
         // in the book is incorrect and coefficients are listed in LOGE 2688 on page 194.
 
         // P00 = -0.9812796124599728774775146E3;
