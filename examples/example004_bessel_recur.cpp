@@ -18,9 +18,9 @@ static_assert(sizeof(double) == 8U,
 namespace
 {
   template<typename FloatingPointType>
-  FloatingPointType bisect(FloatingPointType (*pfn)(const FloatingPointType),
-                           const FloatingPointType x_lo,
-                           const FloatingPointType x_hi)
+  auto bisect(FloatingPointType (*pfn)(const FloatingPointType),
+              const FloatingPointType x_lo,
+              const FloatingPointType x_hi) -> FloatingPointType
   {
     using floating_point_type = FloatingPointType;
 
@@ -90,7 +90,7 @@ namespace
     static float        m_n;
     static std::int32_t m_p;
 
-    static float fn_mstart1(const float m)
+    static auto fn_mstart1(const float m) -> float
     {
       // This equation corresponds to | Jm(z) | = 10^(-p)
 
@@ -108,7 +108,7 @@ namespace
              + (  m  * log10(e_half() * m_z / m));
     }
 
-    static float fn_mstart2(const float m)
+    static auto fn_mstart2(const float m) -> float
     {
       // This equation corresponds to | Jm(z) | = 10^(-p / 2) * | Jn(z)|
 
@@ -128,7 +128,7 @@ namespace
              - (m_n  * log10(e_half() * m_z / m_n));
     }
 
-    static std::uint32_t mstart1(const float x, const std::uint32_t digits)
+    static auto mstart1(const float x, const std::uint32_t digits) -> std::uint32_t
     {
       m_z = (std::max)(x, 0.1F);
       m_p = static_cast<std::int32_t>(digits);
@@ -141,7 +141,7 @@ namespace
       return ((((n_order % 2U) == 0U) && (n_order > 0U)) ? n_order - 1U : n_order);
     }
 
-    static std::uint32_t mstart2(const float x, const float dn, const std::uint32_t digits)
+    static auto mstart2(const float x, const float dn, const std::uint32_t digits) -> std::uint32_t
     {
       m_z = (std::max)(x, 0.1F);
       m_n = dn;
@@ -164,7 +164,7 @@ namespace
 namespace local
 {
   template<typename FloatingPointType>
-  FloatingPointType cyl_bessel_j(const std::int32_t n, const FloatingPointType x)
+  auto cyl_bessel_j(const std::int32_t n, const FloatingPointType x) -> FloatingPointType
   {
     using floating_point_type = FloatingPointType;
 
@@ -218,7 +218,7 @@ namespace local
   }
 }
 
-bool math::softfloat::example004_bessel_recur()
+auto math::softfloat::example004_bessel_recur() -> bool
 {
   // Calculate the double value of a Bessel function.
   // N[BesselJ[9, 123456789/10000000], 40]
