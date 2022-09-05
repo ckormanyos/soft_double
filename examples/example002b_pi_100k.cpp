@@ -25,7 +25,7 @@
 
 namespace
 {
-  void example002b_pi_100k_digits10_callback(const std::uint32_t d10)
+  auto example002b_pi_100k_digits10_callback(const std::uint32_t d10) -> void
   {
     char p_str[16U] = { 0 };
     char* p_end = util::baselexical_cast(d10, p_str);
@@ -36,7 +36,7 @@ namespace
   }
 }
 
-bool math::softfloat::example002b_pi_100k()
+auto math::softfloat::example002b_pi_100k() -> bool
 {
   std::cout << "Start example002b_pi_100k()" << std::endl;
 

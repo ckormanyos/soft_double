@@ -19,19 +19,19 @@ namespace
   using float64_t = math::softfloat::soft_double;
 
   template<typename FloatingPointType>
-  FloatingPointType pi()
+  auto pi() -> FloatingPointType
   {
     return FloatingPointType(3.1415926535897932384626433832795029L);
   }
 
   template<>
-  float64_t pi()
+  auto pi() -> float64_t
   {
     return float64_t::my_value_pi();
   }
 
   template<typename FloatingPointType>
-  FloatingPointType log_two_plus_sqrt_three()
+  auto log_two_plus_sqrt_three() -> FloatingPointType
   {
     using std::log;
     using std::sqrt;
@@ -39,7 +39,7 @@ namespace
   }
 
   template<>
-  float64_t log_two_plus_sqrt_three()
+  auto log_two_plus_sqrt_three() -> float64_t
   {
     return float64_t(UINT64_C(0x3FF5124271980435), math::softfloat::detail::nothing());
   }
@@ -48,7 +48,7 @@ namespace
 namespace local
 {
   template<typename FloatingPointType>
-  FloatingPointType catalan()
+  auto catalan() -> FloatingPointType
   {
     using floating_point_type = FloatingPointType;
 
@@ -87,7 +87,7 @@ namespace local
   }
 }
 
-bool math::softfloat::example007_catalan_series()
+auto math::softfloat::example007_catalan_series() -> bool
 {
   const float64_t c = local::catalan<float64_t>();
 
