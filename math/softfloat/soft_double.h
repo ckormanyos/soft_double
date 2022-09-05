@@ -596,20 +596,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static auto f64_add(const std::uint64_t a, const std::uint64_t b) -> std::uint64_t
     {
-      const bool signA = detail::signF64UI(a);
-      const bool signB = detail::signF64UI(b);
+      const auto signA = detail::signF64UI(a);
 
-      return ((signA == signB) ? softfloat_addMagsF64(a, b, signA)
-                               : softfloat_subMagsF64(a, b, signA));
+      return ((signA == detail::signF64UI(b)) ? softfloat_addMagsF64(a, b, signA)
+                                              : softfloat_subMagsF64(a, b, signA));
     }
 
     static auto f64_sub(const std::uint64_t a, const std::uint64_t b) -> std::uint64_t
     {
-      const bool signA = detail::signF64UI(a);
-      const bool signB = detail::signF64UI(b);
+      const auto signA = detail::signF64UI(a);
 
-      return ((signA == signB) ? softfloat_subMagsF64(a, b, signA)
-                               : softfloat_addMagsF64(a, b, signA));
+      return ((signA == detail::signF64UI(b)) ? softfloat_subMagsF64(a, b, signA)
+                                              : softfloat_addMagsF64(a, b, signA));
     }
 
     static auto f64_mul(const std::uint64_t a, const std::uint64_t b) -> std::uint64_t
@@ -622,11 +620,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       const auto expB  = detail::expF64UI (b);
             auto sigB  = detail::fracF64UI(b);
 
-      const bool signZ = signA ^ signB;
+      const bool signZ = (signA ^ signB);
 
-      if(((!expA) && (!sigA)) || ((!expB) && (!sigB)))
+      auto result = std::uint64_t { };
+
+      if(    (   (expA == static_cast<std::int16_t> ( INT8_C(0)))
+              && (sigA == static_cast<std::uint64_t>(UINT8_C(0))))
+          || (   (expB == static_cast<std::int16_t> ( INT8_C(0)))
+              && (sigB == static_cast<std::uint64_t>(UINT8_C(0)))))
       {
-        return detail::packToF64UI(signZ, 0, 0);
+        result = detail::packToF64UI(signZ, 0, 0);
       }
       else
       {
@@ -674,8 +677,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           sig128Z.v64 <<= 1U;
         }
 
-        return softfloat_roundPackToF64(signZ, expZ, sig128Z.v64);
+        result = softfloat_roundPackToF64(signZ, expZ, sig128Z.v64);
       }
+
+      return result;
     }
 
     static auto f64_div(const std::uint64_t a, const std::uint64_t b) -> std::uint64_t
@@ -690,9 +695,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       const bool signZ = signA ^ signB;
 
-      if((!expA) && (!sigA))
+      auto result = std::uint64_t { };
+
+      const auto a_is_zero = (   (expA == static_cast<std::int16_t> ( INT8_C(0)))
+                              && (sigA == static_cast<std::uint64_t>(UINT8_C(0))));
+
+      if(a_is_zero)
       {
-        return detail::packToF64UI(signZ, 0, 0);
+        result = detail::packToF64UI(signZ, 0, 0);
       }
       else
       {
@@ -792,35 +802,49 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           }
         }
 
-        return softfloat_roundPackToF64(signZ, expZ, sigZ);
+        result = softfloat_roundPackToF64(signZ, expZ, sigZ);
       }
+
+      return result;
     }
 
     static auto f64_sqrt(const std::uint64_t a) -> std::uint64_t
     {
-      auto signA = detail::signF64UI(a);
-      auto expA  = detail::expF64UI (a);
-      auto sigA  = detail::fracF64UI(a);
+      auto expA = detail::expF64UI (a);
+      auto sigA = detail::fracF64UI(a);
 
-      if(((!expA) && (!sigA)) || signA)
+      auto result = std::uint64_t { };
+
+      if(  (   (expA == static_cast<std::int16_t> ( INT8_C(0)))
+            && (sigA == static_cast<std::uint64_t>(UINT8_C(0))))
+         || detail::signF64UI(a))
       {
-        return a;
+        result = a;
       }
       else
       {
-        // sig32Z is guaranteed to be a lower bound on the square root of
-        // sig32A, which makes sig32Z also a lower bound on the square root of
-        // sigA.
-        const std::int16_t expZ = (std::int16_t) ((std::int16_t) ((std::int16_t) (expA - 0x3FF) >> 1) + (std::int16_t) 0x3FE);
+        // sig32Z is guaranteed to be a lower bound on the square root
+        // of sig32A, which makes sig32Z also a lower bound on the
+        // square root of sigA.
 
-        expA &= 1;
-        sigA |= UINT64_C(0x0010000000000000);
+        const auto expZ =
+          static_cast<std::int16_t>
+          (
+              static_cast<std::int16_t>(static_cast<std::int16_t>(expA - static_cast<std::int16_t>(INT16_C(0x3FF))) >> 1U)
+            + static_cast<std::int16_t>(INT16_C(0x3FE))
+          );
 
-        std::uint32_t sig32A      = (std::uint32_t) (sigA >> 21U);
-        std::uint32_t recipSqrt32 = softfloat_approxRecipSqrt32_1((std::uint32_t) expA, sig32A);
-        std::uint32_t sig32Z      = (std::uint32_t) ((std::uint64_t) ((std::uint64_t) sig32A * recipSqrt32) >> 32U);
+        expA = static_cast<std::int16_t>(expA & static_cast<std::int16_t>(INT8_C(1)));
+        sigA = static_cast<std::uint64_t>(sigA | static_cast<std::uint64_t>(UINT64_C(0x0010000000000000)));
 
-        if(expA != 0)
+        const auto sig32A      = static_cast<std::uint32_t>(sigA >> 21U);
+              auto recipSqrt32 = softfloat_approxRecipSqrt32_1(static_cast<std::uint32_t>(expA), sig32A);
+              auto sig32Z      = static_cast<std::uint32_t>
+                                 (
+                                   static_cast<std::uint64_t>(static_cast<std::uint64_t>(sig32A) * recipSqrt32) >> 32U
+                                 );
+
+        if(expA != static_cast<std::int16_t>(INT8_C(0)))
         {
           sigA   <<= 8U;
           sig32Z >>= 1U;
@@ -830,81 +854,105 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           sigA <<= 9U;
         }
 
-              std::uint64_t rem = sigA - (std::uint64_t) sig32Z * sig32Z;
-        const std::uint32_t q   = (std::uint32_t) ((std::uint64_t) ((std::uint32_t) (rem >> 2U) * (std::uint64_t) recipSqrt32) >> 32U);
+              auto rem = static_cast<std::uint64_t>(sigA - static_cast<std::uint64_t>(static_cast<std::uint64_t>(sig32Z) * sig32Z));
+        const auto q   = static_cast<std::uint32_t>
+                         (
+                           static_cast<std::uint64_t>
+                           (
+                             static_cast<std::uint32_t>(rem >> 2U) * static_cast<std::uint64_t>(recipSqrt32)
+                           ) >> 32U
+                         );
 
-        std::uint64_t sigZ = (std::uint64_t) (((std::uint64_t) sig32Z << 32U | (1UL << 5U)) + ((std::uint64_t) q << 3U));
+        auto sigZ =
+          static_cast<std::uint64_t>
+          (
+              static_cast<std::uint64_t>
+              (
+                  static_cast<std::uint64_t>(static_cast<std::uint64_t>(sig32Z) << 32U)
+                | static_cast<std::uint_fast8_t>(1UL << 5U)
+              )
+            + static_cast<std::uint64_t>((static_cast<std::uint64_t>(q) << 3U))
+          );
 
-        if((sigZ & 0x1FFU) < 0x22U)
+        const auto sig_z_is_small =
+          (static_cast<std::uint_fast16_t>(sigZ & static_cast<std::uint_fast16_t>(UINT16_C(0x1FF))) < static_cast<std::uint_fast16_t>(UINT16_C(0x22)));
+
+        if(sig_z_is_small)
         {
-          sigZ &= ~(std::uint64_t) 0x3FU;
+          sigZ &= static_cast<std::uint64_t>(~static_cast<std::uint64_t>(UINT8_C(0x3F)));
 
-          const std::uint64_t shiftedSigZ = sigZ >> 6U;
+          const auto shiftedSigZ = static_cast<std::uint64_t>(sigZ >> 6U);
 
-          rem = (sigA << 52U) - shiftedSigZ * shiftedSigZ;
+          rem =
+            static_cast<std::uint64_t>
+            (
+                static_cast<std::uint64_t>(sigA << 52U)
+              - static_cast<std::uint64_t>(shiftedSigZ * shiftedSigZ)
+            );
 
-          if((std::uint64_t) (rem & UINT64_C(0x8000000000000000)) != 0U)
+          const auto rem_hi_bit_is_set = (static_cast<unsigned>(rem >> 63U) != static_cast<unsigned>(UINT8_C(0)));
+
+          if(rem_hi_bit_is_set)
           {
             --sigZ;
           }
           else
           {
-            if(rem != 0U)
+            if(rem != static_cast<std::uint64_t>(UINT8_C(0)))
             {
               sigZ |= 1U;
             }
           }
         }
 
-        return softfloat_roundPackToF64(0, expZ, sigZ);
+        result = softfloat_roundPackToF64(0, expZ, sigZ);
       }
+
+      return result;
     }
 
     static auto f64_to_ui32(const std::uint64_t a) -> std::uint32_t
     {
-      const auto sign = detail::signF64UI(a);
       const auto expA = detail::expF64UI (a);
             auto sig  = detail::fracF64UI(a);
 
-      if(expA)
+      if(expA != static_cast<std::int16_t>(INT8_C(0)))
       {
-        sig |= UINT64_C(0x0010000000000000);
+        sig |= static_cast<std::uint64_t>(UINT64_C(0x0010000000000000));
       }
 
-      const std::int16_t shiftDist = (std::int16_t) ((std::int16_t) 0x427 - expA);
+      const auto shiftDist = static_cast<std::int16_t>(static_cast<std::int16_t>(INT16_C(0x427)) - expA);
 
-      if(0 < shiftDist)
+      if(static_cast<std::int16_t>(INT16_C(0)) < shiftDist)
       {
         sig = detail::softfloat_shiftRightJam64(sig, static_cast<std::uint_fast16_t>(shiftDist));
       }
 
-      return softfloat_roundToUI32(sign, sig);
+      return softfloat_roundToUI32(detail::signF64UI(a), sig);
     }
 
     static int32_t f64_to__i32(const std::uint64_t a)
     {
-      const auto sign = detail::signF64UI(a);
       const auto expA = detail::expF64UI (a);
             auto sig  = detail::fracF64UI(a);
 
-      if(expA)
+      if(expA != static_cast<std::int16_t>(INT8_C(0)))
       {
-        sig |= UINT64_C(0x0010000000000000);
+        sig |= static_cast<std::uint64_t>(UINT64_C(0x0010000000000000));
       }
 
-      std::int16_t shiftDist = (std::int16_t) ((std::int16_t) 0x427 - expA);
+      const auto shiftDist = static_cast<std::int16_t>(static_cast<std::int16_t>(INT16_C(0x427)) - expA);
 
-      if(0 < shiftDist)
+      if(static_cast<std::int16_t>(INT16_C(0)) < shiftDist)
       {
         sig = detail::softfloat_shiftRightJam64(sig, static_cast<std::uint_fast16_t>(shiftDist));
       }
 
-      return softfloat_roundToI32(sign, sig);
+      return softfloat_roundToI32(detail::signF64UI(a), sig);
     }
 
     static std::uint64_t f64_to_ui64(const std::uint64_t a)
     {
-      const auto sign = detail::signF64UI(a);
       const auto expA = detail::expF64UI (a);
             auto sig  = detail::fracF64UI(a);
 
@@ -932,7 +980,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         sigExtra = detail::softfloat_shiftRightJam64Extra(sig, 0U, (std::uint32_t) shiftDist);
       }
 
-      return softfloat_roundToUI64(sign, sigExtra.v);
+      return softfloat_roundToUI64(detail::signF64UI(a), sigExtra.v);
     }
 
     static auto f64_to__i64(const std::uint64_t a) -> std::int64_t
@@ -970,15 +1018,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static auto f64_to_f32(const std::uint64_t a) -> float
     {
-      const auto sign = detail::signF64UI(a);
-      const auto expA = detail::expF64UI (a);
-      const auto frac = detail::fracF64UI(a);
+      const auto frac32 =
+        static_cast<std::uint32_t>
+        (
+          detail::softfloat_shortShiftRightJam64(detail::fracF64UI(a), 22)
+        );
 
-      const std::uint32_t frac32 = (std::uint32_t) detail::softfloat_shortShiftRightJam64(frac, 22);
-
-      const float f = softfloat_roundPackToF32(sign, (std::int16_t) (expA - INT16_C(0x381)), frac32 | UINT32_C(0x40000000));
-
-      return f;
+      return
+        softfloat_roundPackToF32
+        (
+          detail::signF64UI(a),
+          static_cast<std::int16_t>(detail::expF64UI(a) - static_cast<std::int16_t>(INT16_C(0x381))),
+          static_cast<std::uint32_t>(frac32 | static_cast<std::uint32_t>(UINT32_C(0x40000000)))
+        );
     }
 
     static auto softfloat_roundPackToF32(bool sign, std::int16_t expA, std::uint32_t sig) -> float
