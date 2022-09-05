@@ -18,7 +18,7 @@ namespace local
 {
   template<typename FloatingPointType,
            typename UnsignedIntegralType>
-  FloatingPointType pow(FloatingPointType b, const UnsignedIntegralType p)
+  auto pow(FloatingPointType b, const UnsignedIntegralType p) -> FloatingPointType
   {
     // Calculate (b ^ p).
 
@@ -52,7 +52,7 @@ namespace local
   }
 
   template<typename FloatingPointType>
-  FloatingPointType polylog(const std::int32_t s, const FloatingPointType& x)
+  auto polylog(const std::int32_t s, const FloatingPointType& x) -> FloatingPointType
   {
     using floating_point_type = FloatingPointType;
 
@@ -83,7 +83,7 @@ namespace local
   }
 }
 
-bool math::softfloat::example005_polylog_series()
+auto math::softfloat::example005_polylog_series() -> bool
 {
   using float64_t = math::softfloat::soft_double;
 

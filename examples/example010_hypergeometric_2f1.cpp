@@ -20,7 +20,7 @@ static_assert(sizeof(double) == 8U,
 namespace local
 {
   template<typename T>
-  T hypergeometric_2f1(const T& AP, const T& BP, const T& CP, const T& ZM)
+  auto hypergeometric_2f1(const T& AP, const T& BP, const T& CP, const T& ZM) -> T
   {
     // Implement a rational approximation of hypergeometric_2f1.
     // This C++11 code uses a computational scheme similar to
@@ -159,7 +159,7 @@ namespace local
   }
 }
 
-bool math::softfloat::example010_hypergeometric_2f1()
+auto math::softfloat::example010_hypergeometric_2f1() -> bool
 {
   using float64_t = math::softfloat::float64_t;
 

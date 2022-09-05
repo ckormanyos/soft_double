@@ -23,26 +23,26 @@ namespace
 namespace local
 {
   template<typename FloatType>
-  FloatType pi() { return FloatType(); }
+  auto pi() -> FloatType { return FloatType(); }
 
   template<>
-  constexpr float pi() { return (float) 3.14159265358979323846264338327950288419716939937510582097L; }
+  constexpr auto pi() -> float { return (float) 3.14159265358979323846264338327950288419716939937510582097L; }
 
   template<>
-  constexpr double pi() { return (double) 3.14159265358979323846264338327950288419716939937510582097L; }
+  constexpr auto pi() -> double { return (double) 3.14159265358979323846264338327950288419716939937510582097L; }
 
   template<>
-  constexpr long double pi() { return (long double) 3.14159265358979323846264338327950288419716939937510582097L; }
+  constexpr auto pi() -> long double { return (long double) 3.14159265358979323846264338327950288419716939937510582097L; }
 
   template<>
-  constexpr float64_t pi() { return float64_t::my_value_pi(); }
+  constexpr auto pi() -> float64_t { return float64_t::my_value_pi(); }
 
   template<typename real_value_type,
            typename real_function_type>
-  real_value_type integral(const real_value_type& a,
-                           const real_value_type& b,
-                           const real_value_type& tol,
-                           real_function_type real_function)
+  auto integral(const real_value_type&   a,
+                const real_value_type&   b,
+                const real_value_type&   tol,
+                      real_function_type real_function) -> real_value_type
   {
     std::uint_fast32_t n2(1);
 
@@ -87,8 +87,7 @@ namespace local
   }
 
   template<typename float_type>
-  float_type cyl_bessel_j(const std::uint_fast8_t n,
-                          const float_type& x)
+  auto cyl_bessel_j(const std::uint_fast8_t n, const float_type& x) -> float_type
   {
     using std::sqrt;
 
@@ -117,7 +116,7 @@ namespace local
   }
 }
 
-bool math::softfloat::example011_trig_trapezoid_integral()
+auto math::softfloat::example011_trig_trapezoid_integral() -> bool
 {
   const float64_t j2 = local::cyl_bessel_j(2U, float64_t(123U) / 100U);
   const float64_t j3 = local::cyl_bessel_j(3U, float64_t(456U) / 100U);

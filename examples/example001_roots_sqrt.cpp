@@ -14,7 +14,7 @@
 static_assert(sizeof(double) == 8U,
               "Error: This example requires 8 byte built-in double for verification");
 
-bool math::softfloat::example001_roots_sqrt()
+auto math::softfloat::example001_roots_sqrt() -> bool
 {
   using float64_t = math::softfloat::float64_t;
 
