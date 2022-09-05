@@ -1,4 +1,4 @@
-///////////////////////////////////////////////////////////////////
+﻿///////////////////////////////////////////////////////////////////
 //  Copyright Christopher Kormanyos 2012 - 2022.                 //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
@@ -958,26 +958,26 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       if(expA)
       {
-        sig |= UINT64_C(0x0010000000000000);
+        sig |= static_cast<std::uint64_t>(UINT64_C(0x0010000000000000));
       }
 
-      std::int16_t shiftDist = (std::int16_t) ((std::int16_t) 0x433 - expA);
+      auto shiftDist = static_cast<std::int16_t>(static_cast<std::int16_t>(INT16_C(0x433)) - expA);
 
       struct detail::uint64_extra sigExtra;
 
-      if(shiftDist <= 0)
+      if(shiftDist <= static_cast<std::int16_t>(INT16_C(0)))
       {
-        if(shiftDist < -11)
+        if(shiftDist < static_cast<std::int16_t>(INT16_C(-11)))
         {
-          shiftDist = -11;
+          shiftDist = static_cast<std::int16_t>(INT16_C(-11));
         }
 
-        sigExtra.v = sig << -shiftDist;
-        sigExtra.extra = 0;
+        sigExtra.v     = static_cast<std::uint64_t>(sig << static_cast<std::uint_fast16_t>(-shiftDist));
+        sigExtra.extra = static_cast<std::uint64_t>(UINT8_C(0));
       }
       else
       {
-        sigExtra = detail::softfloat_shiftRightJam64Extra(sig, 0U, (std::uint32_t) shiftDist);
+        sigExtra = detail::softfloat_shiftRightJam64Extra(sig, 0U, static_cast<std::uint32_t>(shiftDist));
       }
 
       return softfloat_roundToUI64(detail::signF64UI(a), sigExtra.v);
@@ -985,35 +985,34 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static auto f64_to__i64(const std::uint64_t a) -> std::int64_t
     {
-      const auto sign = detail::signF64UI(a);
       const auto expA = detail::expF64UI (a);
             auto sig  = detail::fracF64UI(a);
 
       if(expA)
       {
-        sig |= UINT64_C(0x0010000000000000);
+        sig |= static_cast<std::uint64_t>(UINT64_C(0x0010000000000000));
       }
 
-      std::int16_t shiftDist = (std::int16_t) (INT16_C(0x433) - expA);
+      auto shiftDist = static_cast<std::int16_t>(static_cast<std::int16_t>(INT16_C(0x433)) - expA);
 
       struct detail::uint64_extra sigExtra;
 
-      if(shiftDist <= 0)
+      if(shiftDist <= static_cast<std::int16_t>(INT16_C(0)))
       {
-        if(shiftDist < -11)
+        if(shiftDist < static_cast<std::int16_t>(INT16_C(-11)))
         {
-          shiftDist = -11;
+          shiftDist = static_cast<std::int16_t>(INT16_C(-11));
         }
 
-        sigExtra.v = sig << -shiftDist;
-        sigExtra.extra = 0;
+        sigExtra.v     = static_cast<std::uint64_t>(sig << static_cast<std::uint_fast16_t>(-shiftDist));
+        sigExtra.extra = static_cast<std::uint64_t>(UINT8_C(0));
       }
       else
       {
-        sigExtra = detail::softfloat_shiftRightJam64Extra(sig, 0U, (std::uint32_t) shiftDist);
+        sigExtra = detail::softfloat_shiftRightJam64Extra(sig, 0U, static_cast<std::uint32_t>(shiftDist));
       }
 
-      return softfloat_roundToI64(sign, sigExtra.v);
+      return softfloat_roundToI64(detail::signF64UI(a), sigExtra.v);
     }
 
     static auto f64_to_f32(const std::uint64_t a) -> float
@@ -1056,11 +1055,57 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       return detail::uz_type<float>(detail::packToF32UI(sign, expA, sig)).my_f;
     }
 
-    static constexpr auto my__i32_to_f64(const int32_t a) -> std::uint64_t
+    static constexpr auto my__i32_to_f64(const std::int32_t a) -> std::uint64_t
     {
       return
-        (!a) ? 0U
-             : detail::packToF64UI((a < 0), 0x432 - int_fast8_t((int_fast8_t) (detail::softfloat_countLeadingZeros32(std::uint32_t((a < 0) ? detail::negate((std::uint32_t) a) : (std::uint32_t) a)) + 21U)), (std::uint64_t) std::uint32_t((a < 0) ? detail::negate((std::uint32_t) a) : (std::uint32_t) a) << int_fast8_t((int_fast8_t) (detail::softfloat_countLeadingZeros32(std::uint32_t((a < 0) ? detail::negate((std::uint32_t) a) : (std::uint32_t) a)) + 21U)));
+        (a == static_cast<std::int32_t>(INT8_C(0)))
+          ? static_cast<std::uint64_t>(UINT8_C(0))
+          : detail::packToF64UI
+            (
+              (a < static_cast<std::int32_t>(INT8_C(0))),
+              static_cast<std::int_fast16_t>
+              (
+                  static_cast<std::int_fast16_t>(INT16_C(0x432))
+                - static_cast<std::int_fast16_t>
+                  (
+                    static_cast<std::uint_fast16_t>
+                    (
+                      detail::softfloat_countLeadingZeros32
+                      (
+                        static_cast<std::uint32_t>
+                        (
+                          (a < static_cast<std::int32_t>(INT8_C(0))) ? detail::negate(static_cast<std::uint32_t>(a))
+                                                                     :                static_cast<std::uint32_t>(a)
+                        )
+                      )
+                    )
+                    + static_cast<std::uint_fast16_t>(UINT16_C(21))
+                  )
+              ),
+              static_cast<std::uint64_t>
+              (
+                static_cast<std::uint64_t>
+                (
+                  (a < static_cast<std::int32_t>(INT8_C(0))) ? detail::negate(static_cast<std::uint32_t>(a))
+                                                             :                static_cast<std::uint32_t>(a)
+                )
+                << static_cast<std::uint_fast16_t>
+                   (
+                       static_cast<std::uint_fast16_t>
+                       (
+                         detail::softfloat_countLeadingZeros32
+                         (
+                           static_cast<std::uint32_t>
+                           (
+                             (a < static_cast<std::int32_t>(INT8_C(0))) ? detail::negate(static_cast<std::uint32_t>(a))
+                                                                        :                static_cast<std::uint32_t>(a)
+                           )
+                         )
+                       )
+                     + static_cast<std::uint_fast16_t>(UINT8_C(21))
+                   )
+              )
+            );
     }
 
     static constexpr auto my__i64_to_f64(const int64_t a) -> std::uint64_t
