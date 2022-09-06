@@ -9,8 +9,8 @@
 #include <array>
 #include <cstdint>
 #include <ctime>
-#include <limits>
 #include <iostream>
+#include <limits>
 #include <random>
 
 #define WIDE_DECIMAL_DISABLE_IOSTREAM
@@ -23,18 +23,18 @@
 #include <math/softfloat/soft_double_examples.h>
 #include <math/wide_decimal/decwide_t.h>
 
-namespace
+namespace local
 {
   auto example002b_pi_100k_digits10_callback(const std::uint32_t d10) -> void
   {
-    char p_str[16U] = { 0 };
-    char* p_end = util::baselexical_cast(d10, p_str);
+    char p_str[16U] = { 0 };                          // NOLINT(cppcoreguidelines-avoid-c-arrays,hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+    char* p_end = util::baselexical_cast(d10, p_str); // NOLINT(hicpp-no-array-decay,cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
     static_cast<void>(p_end);
 
-    std::cout << p_str << std::endl;
+    std::cout << p_str << std::endl; // NOLINT(hicpp-no-array-decay,cppcoreguidelines-pro-bounds-array-to-pointer-decay)
   }
-}
+} // namespace local
 
 auto math::softfloat::example002b_pi_100k() -> bool
 {
@@ -63,13 +63,13 @@ auto math::softfloat::example002b_pi_100k() -> bool
   const local_wide_decimal_type my_pi =
     math::wide_decimal::pi<wide_decimal_digits10, local_limb_type, std::allocator<void>, local_float_type_fft, std::int32_t, local_float_type>
     (
-      example002b_pi_100k_digits10_callback
+      local::example002b_pi_100k_digits10_callback
     );
 
   const std::clock_t stop = std::clock();
 
   std::cout << "Time example002b_pi_100k(): "
-            << (float) (stop - start) / (float) CLOCKS_PER_SEC
+            << static_cast<float>(stop - start) / static_cast<float>(CLOCKS_PER_SEC)
             << std::endl;
 
   const bool head_is_ok = std::equal(my_pi.crepresentation().cbegin(),
@@ -78,8 +78,13 @@ auto math::softfloat::example002b_pi_100k() -> bool
 
   using const_iterator_type = typename local_wide_decimal_type::representation_type::const_iterator;
 
-  const_iterator_type fi(my_pi.crepresentation().cbegin() + (std::uint32_t) (  (std::uint32_t) (1UL + ((wide_decimal_digits10 - 1UL) / local_elem_digits10))
-                                                                             - (std::uint32_t) math::constants::const_pi_control_tail_32_100001.size()));
+  const_iterator_type
+    fi
+    (
+        my_pi.crepresentation().cbegin()
+      + static_cast<std::uint32_t>(  static_cast<std::uint32_t>(1UL + ((wide_decimal_digits10 - 1UL) / local_elem_digits10))
+                                   - static_cast<std::uint32_t>(math::constants::const_pi_control_tail_32_100001.size()))
+    );
 
   const bool tail_is_ok = std::equal(fi,
                                      fi + math::constants::const_pi_control_tail_32_100001.size(),

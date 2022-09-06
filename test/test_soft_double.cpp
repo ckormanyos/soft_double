@@ -9,41 +9,48 @@
 #include <cmath>
 #include <cstdint>
 #include <ctime>
-#include <limits>
 #include <iostream>
+#include <limits>
 #include <random>
 
 #include <math/softfloat/soft_double.h>
 
-static_assert(sizeof(double) == 8U,
+static_assert(sizeof(double) == 8U, // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
               "Error: These tests require 8 byte built-in double for verification");
 
 // For an implementation of libm for 64-bit double precision
 // floating point (IEEE-754 format), see http://www.netlib.org/fdlibm
 
-namespace math
-{
-  namespace constants
-  {
-    template<typename float_type>
-    float_type pi()
-    {
-      return static_cast<float_type>(3.1415926535897932384626433832795028841972L);
-    }
+#if(__cplusplus >= 201703L)
+namespace math::constants {
+#else
+namespace math { namespace constants { // NOLINT(modernize-concat-nested-namespaces)
+#endif
 
-    template<>
-    math::softfloat::float64_t pi()
-    {
-      return math::softfloat::float64_t::my_value_pi();
-    }
-  }
+template<typename float_type>
+auto pi() -> float_type
+{
+  return static_cast<float_type>(3.1415926535897932384626433832795028841972L); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
 }
+
+template<>
+auto pi() -> math::softfloat::float64_t
+{
+  return math::softfloat::float64_t::my_value_pi();
+}
+
+#if(__cplusplus >= 201703L)
+} // namespace math::constants
+#else
+} // namespace constants
+} // namespace math
+#endif
 
 template<typename real_value_type,
          typename real_function_type>
-real_value_type derivative(const real_value_type& x,
-                           const real_value_type& dx,
-                           real_function_type real_function)
+auto derivative(const real_value_type&   x,
+                const real_value_type&   dx,
+                      real_function_type real_function) -> real_value_type
 {
   // Compute the first derivative of the input function
   // using a three-point central difference rule of O(dx^6).
@@ -70,24 +77,26 @@ namespace local
   using eng32_type = std::default_random_engine;
   using eng64_type = std::mt19937_64;
 
-  eng32_type eng32;
-  eng64_type eng64;
+  eng32_type eng32; // NOLINT(cert-err58-cpp,cert-msc32-c,cert-msc51-cpp)
+  eng64_type eng64; // NOLINT(cert-err58-cpp,cert-msc32-c,cert-msc51-cpp)
 
   // Mantissa range from 10^15 ... 2^53-1
-  std::uniform_int_distribution<std::uint64_t> dst_mantissa(UINT64_C(1000000000000000), UINT64_C(9007199254740991));
-  std::uniform_int_distribution<std::uint32_t> dst_exp     (UINT32_C(0),                UINT32_C(36));
-  std::uniform_int_distribution<std::uint32_t> dst_sign    (UINT32_C(0),                UINT32_C(1));
+  std::uniform_int_distribution<std::uint64_t> dst_mantissa(UINT64_C(1000000000000000), UINT64_C(9007199254740991)); // NOLINT(cert-err58-cpp)
+  std::uniform_int_distribution<std::uint32_t> dst_exp     (UINT32_C(0),                UINT32_C(36));               // NOLINT(cert-err58-cpp)
+  std::uniform_int_distribution<std::uint32_t> dst_sign    (UINT32_C(0),                UINT32_C(1));                // NOLINT(cert-err58-cpp)
 
-  void get_sf_float64_t_and_double(math::softfloat::float64_t& x1, double& d1, const bool is_positive = false)
+  auto get_sf_float64_t_and_double(math::softfloat::float64_t& x1, // NOLINT(google-runtime-references)
+                                   double&                     d1, // NOLINT(google-runtime-references)
+                                   const bool                  is_positive = false) -> void
   {
     for(;;)
     {
       // Select a random mantissa scaled within approximately 1.0 ... 9.007199...
-      d1 = (double) dst_mantissa(eng64) * 1.0E-15;
+      d1 = static_cast<double>(dst_mantissa(eng64)) * 1.0E-15; // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
 
-      const std::mt19937::result_type r_exp = dst_exp(eng32);
+      const auto r_exp = dst_exp(eng32);
 
-      const std::mt19937::result_type exp_is_neg = (dst_sign(eng32) != 0U);
+      const auto exp_is_neg = (dst_sign(eng32) != 0U);
 
       const double d_scale =
         exp_is_neg ? r_exp ==  0 ? 1.0E-00 : r_exp ==  1 ? 1.0E-01 : r_exp ==  2 ? 1.0E-02 : r_exp ==  3 ? 1.0E-03 :
@@ -111,56 +120,56 @@ namespace local
 
       d1 *= d_scale;
 
-      if((is_positive == false) && (dst_sign(eng32) != 0U))
+      if((!is_positive) && (dst_sign(eng32) != 0U))
       {
         d1 = -d1;
       }
 
-      const bool d_is_ok = (    std::isfinite(d1)
-                            && (d1 > (double) (std::numeric_limits<float>::lowest)())
-                            && (d1 < (double) (std::numeric_limits<float>::max)()));
+      const auto d_is_ok = (    std::isfinite(d1)
+                            && (d1 > static_cast<double>( std::numeric_limits<float>::lowest()))
+                            && (d1 < static_cast<double>((std::numeric_limits<float>::max)())));
 
       if(d_is_ok)
       {
-        x1 = math::softfloat::soft_double(math::softfloat::detail::uz_type<double>(d1).my_u,
+        x1 = math::softfloat::soft_double(math::softfloat::detail::uz_type<double>(d1).my_u, // NOLINT(cppcoreguidelines-pro-type-union-access)
                                           math::softfloat::detail::nothing());
 
         break;
       }
     }
   }
-}
+} // namespace local
 
-void add____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,
-                                    double&                     d_result, const double&                     da, const double&                     db)
+auto add____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,         // NOLINT(google-runtime-references)
+                                    double&                     d_result, const double&                     da, const double&                     db) -> void // NOLINT(google-runtime-references)
 {
   x_result = xa + xb;
   d_result = da + db;
 }
 
-void sub____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,
-                                    double&                     d_result, const double&                     da, const double&                     db)
+auto sub____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,         // NOLINT(google-runtime-references)
+                                    double&                     d_result, const double&                     da, const double&                     db) -> void // NOLINT(google-runtime-references)
 {
   x_result = xa - xb;
   d_result = da - db;
 }
 
-void mul____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,
-                                    double&                     d_result, const double&                     da, const double&                     db)
+auto mul____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,         // NOLINT(google-runtime-references)
+                                    double&                     d_result, const double&                     da, const double&                     db) -> void // NOLINT(google-runtime-references)
 {
   x_result = xa * xb;
   d_result = da * db;
 }
 
-void div____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,
-                                    double&                     d_result, const double&                     da, const double&                     db)
+auto div____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,         // NOLINT(google-runtime-references)
+                                    double&                     d_result, const double&                     da, const double&                     db) -> void // NOLINT(google-runtime-references)
 {
   x_result = xa / xb;
   d_result = da / db;
 }
 
-void sqrt___sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa,
-                                    double&                     d_result, const double&                     da)
+auto sqrt___sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa,         // NOLINT(google-runtime-references)
+                                    double&                     d_result, const double&                     da) -> void // NOLINT(google-runtime-references)
 {
   using std::sqrt;
 
@@ -168,22 +177,22 @@ void sqrt___sf_float64_t_and_double(math::softfloat::float64_t& x_result, const 
   d_result = sqrt(da);
 }
 
-bool test_to_f32(const std::uint32_t n)
+auto test_to_f32(const std::uint32_t n) -> bool
 {
   bool result_is_ok = true;
 
   for(std::uint32_t i = 0U; i < n; ++i)
   {
-    math::softfloat::float64_t x;
-    double                     d;
+    math::softfloat::float64_t x { };
+    double                     d { };
 
     local::get_sf_float64_t_and_double(x, d);
 
-    const float f_x = (float) x;
-    const float f_d = (float) d;
+    const auto f_x = static_cast<float>(x);
+    const auto f_d = static_cast<float>(d);
 
-    const uint32_t u_x = math::softfloat::detail::uz_type<float>(f_x).my_u;
-    const uint32_t u_d = math::softfloat::detail::uz_type<float>(f_d).my_u;
+    const uint32_t u_x = math::softfloat::detail::uz_type<float>(f_x).my_u; // NOLINT(cppcoreguidelines-pro-type-union-access)
+    const uint32_t u_d = math::softfloat::detail::uz_type<float>(f_d).my_u; // NOLINT(cppcoreguidelines-pro-type-union-access)
 
     result_is_ok &= (u_x == u_d);
   }
@@ -191,14 +200,16 @@ bool test_to_f32(const std::uint32_t n)
   return result_is_ok;
 }
 
-bool test_frexp(const std::uint32_t n)
+auto test_frexp(const std::uint32_t n) -> bool
 {
   bool result_is_ok = true;
 
   for(std::uint32_t i = 0U; i < n; ++i)
   {
-    math::softfloat::float64_t x; int nx;
-    double                     d; int nd;
+    math::softfloat::float64_t x  { };
+    int                        nx { };
+    double                     d  { };
+    int                        nd { };
 
     local::get_sf_float64_t_and_double(x, d);
 
@@ -208,14 +219,14 @@ bool test_frexp(const std::uint32_t n)
     const double                     fr_x = frexp(d, &nx);
 
     result_is_ok &=
-      (   (math::softfloat::detail::uz_type<double>(fr_x).my_u == fr_d.crepresentation())
+      (   (math::softfloat::detail::uz_type<double>(fr_x).my_u == fr_d.crepresentation()) // NOLINT(cppcoreguidelines-pro-type-union-access)
        && (nx == nd));
   }
 
   return result_is_ok;
 }
 
-bool test_ldexp(const std::uint32_t n)
+auto test_ldexp(const std::uint32_t n) -> bool
 {
   const auto s = std::random_device().operator()();
 
@@ -227,8 +238,8 @@ bool test_ldexp(const std::uint32_t n)
 
   for(std::uint32_t i = 0U; i < n; ++i)
   {
-    math::softfloat::float64_t x; int nx;
-    double                     d; int nd;
+    math::softfloat::float64_t x { }; int nx { };
+    double                     d { }; int nd { };
 
     local::get_sf_float64_t_and_double(x, d);
 
@@ -239,7 +250,7 @@ bool test_ldexp(const std::uint32_t n)
 
     const std::mt19937::result_type r_exp = dst_exp_unsigned(eng32);
 
-    nx = (int) r_exp - 1001;
+    nx = static_cast<int>(r_exp) - 1001; // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
     nd = nx;
 
     using std::ldexp;
@@ -248,38 +259,38 @@ bool test_ldexp(const std::uint32_t n)
     const double                     ld_x = ldexp(fr_x, nx);
 
     result_is_ok &=
-      (   (math::softfloat::detail::uz_type<double>(ld_x).my_u == ld_d.crepresentation())
+      (   (math::softfloat::detail::uz_type<double>(ld_x).my_u == ld_d.crepresentation()) // NOLINT(cppcoreguidelines-pro-type-union-access)
        && (nx == nd));
   }
 
   return result_is_ok;
 }
 
-bool test_exp()
+auto test_exp() -> bool
 {
   bool result_is_ok = true;
 
-  const math::softfloat::float64_t x201(201);
+  const auto x201 = math::softfloat::float64_t(201);
 
-  for(int i = 1; i < 400; ++i)
+  for(int i = 1; i < 400; ++i) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
   {
     const math::softfloat::float64_t x = x201 / math::softfloat::float64_t(i);
-    const double                     d = (double) x;
+    const auto                       d = static_cast<double>(x);
 
     using std::exp;
 
     const math::softfloat::float64_t e_x = exp(x);
     const double                     e_d = exp(d);
 
-    const double closeness = std::fabs(1.0 - std::fabs((double) e_x / e_d));
+    const double closeness = std::fabs(1.0 - std::fabs(static_cast<double>(e_x) / e_d));
 
-    result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 40.0);
+    result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 40.0); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
   }
 
-  for(int i = 1; i < 400; ++i)
+  for(int i = 1; i < 400; ++i) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
   {
     const math::softfloat::float64_t x = -x201 / math::softfloat::float64_t(i);
-    const double                     d = (double) x;
+    const auto                       d = static_cast<double>(x);
 
     using std::exp;
 
@@ -288,24 +299,24 @@ bool test_exp()
 
     using std::fabs;
 
-    const double closeness = std::fabs(1.0 - std::fabs((double) e_x / e_d));
+    const auto closeness = fabs(1.0 - fabs(static_cast<double>(e_x) / e_d));
 
-    result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 40.0);
+    result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 40.0); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
   }
 
   return result_is_ok;
 }
 
-bool test_log()
+auto test_log() -> bool
 {
   bool result_is_ok = true;
 
-  for(std::uint32_t i = 1U; i < 100U; ++i)
+  for(std::uint32_t i = 1U; i < 100U; ++i) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
   {
-    const double d = (double) i / (double) 100.0;
+    const auto d = static_cast<double>(static_cast<double>(i) / 100.0);
 
     math::softfloat::float64_t x =
-      math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u,
+      math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u, // NOLINT(cppcoreguidelines-pro-type-union-access)
                                  math::softfloat::detail::nothing());
 
     using std::log;
@@ -315,17 +326,17 @@ bool test_log()
 
     using std::fabs;
 
-    const double closeness = fabs(1.0 - fabs((double) l_d / l_x));
+    const double closeness = fabs(1.0 - fabs(static_cast<double>(l_d) / l_x));
 
-    result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 40.0);
+    result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 40.0); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
   }
 
-  for(std::uint32_t i = 1001U; i < 2000U; ++i)
+  for(std::uint32_t i = 1001U; i < 2000U; ++i) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
   {
-    const double d = (double) i / 1000.0;
+    const auto d = static_cast<double>(static_cast<double>(i) / 1000.0);
 
     math::softfloat::float64_t x =
-      math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u,
+      math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u, // NOLINT(cppcoreguidelines-pro-type-union-access)
                                  math::softfloat::detail::nothing());
 
     using std::log;
@@ -335,55 +346,55 @@ bool test_log()
 
     using std::fabs;
 
-    const double closeness = fabs(1.0 - fabs((double) l_d / l_x));
+    const double closeness = fabs(1.0 - fabs(static_cast<double>(l_d) / l_x));
 
-    result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 40.0);
+    result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 40.0); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
   }
 
   using std::fabs;
   using std::log;
 
-  double                     d;
+  double                     d { };
   math::softfloat::float64_t x;
   math::softfloat::float64_t l_d;
-  double                     l_x;
-  double                     closeness;
+  double                     l_x { };
+  double                     closeness { };
 
-  d             = 1.1E1;
-  x             = math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u,
+  d             = 1.1E1; // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+  x             = math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u, // NOLINT(cppcoreguidelines-pro-type-union-access)
                                              math::softfloat::detail::nothing());
   l_d           = log(x);
   l_x           = log(d);
-  closeness     = fabs(1.0 - fabs((double) l_d / l_x));
-  result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 40.0);
+  closeness     = fabs(1.0 - fabs(static_cast<double>(l_d) / l_x));
+  result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 40.0); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
 
-  d             = 1.1E10;
-  x             = math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u,
+  d             = 1.1E10; // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+  x             = math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u, // NOLINT(cppcoreguidelines-pro-type-union-access)
                                              math::softfloat::detail::nothing());
   l_d           = log(x);
   l_x           = log(d);
-  closeness     = fabs(1.0 - fabs((double) l_d / l_x));
-  result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 40.0);
+  closeness     = fabs(1.0 - fabs(static_cast<double>(l_d) / l_x));
+  result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 40.0); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
 
-  d             = 1.1E100;
-  x             = math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u,
+  d             = 1.1E100; // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+  x             = math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u, // NOLINT(cppcoreguidelines-pro-type-union-access)
                                              math::softfloat::detail::nothing());
   l_d           = log(x);
   l_x           = log(d);
-  closeness     = fabs(1.0 - fabs((double) l_d / l_x));
-  result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 40.0);
+  closeness     = fabs(1.0 - fabs(static_cast<double>(l_d) / l_x));
+  result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 40.0); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
 
   return result_is_ok;
 }
 
-bool test_sin()
+auto test_sin() -> bool
 {
   bool result_is_ok = true;
 
-  for(int i = 0; i < 2001; ++i)
+  for(int i = 0; i < 2001; ++i) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
   {
     const math::softfloat::float64_t x = math::softfloat::float64_t(i) / 1000;
-    const double                     d = (double) x;
+    const auto                       d = static_cast<double>(x);
 
     using std::sin;
 
@@ -396,38 +407,38 @@ bool test_sin()
     }
     else
     {
-      const double closeness = std::fabs(1.0 - std::fabs((double) s_x / s_d));
+      const double closeness = std::fabs(1.0 - std::fabs(static_cast<double>(s_x) / s_d));
 
-      result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 50.0);
+      result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 50.0); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
     }
   }
 
   return result_is_ok;
 }
 
-bool test_cos()
+auto test_cos() -> bool
 {
   bool result_is_ok = true;
 
-  for(int i = 0; i < 1501; ++i)
+  for(int i = 0; i < 1501; ++i) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
   {
     const math::softfloat::float64_t x = math::softfloat::float64_t(i) / 1000;
-    const double                     d = (double) x;
+    const auto                       d = static_cast<double>(x);
 
     using std::cos;
 
     const math::softfloat::float64_t c_x = cos(x);
     const double                     c_d = cos(d);
 
-    const double closeness = std::fabs(1.0 - std::fabs((double) c_x / c_d));
+    const double closeness = std::fabs(1.0 - std::fabs(static_cast<double>(c_x) / c_d));
 
-    result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 60.0);
+    result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 60.0); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
   }
 
   return result_is_ok;
 }
 
-bool test_floor(const std::uint32_t n)
+auto test_floor(const std::uint32_t n) -> bool
 {
   bool result_is_ok = true;
 
@@ -445,11 +456,23 @@ bool test_floor(const std::uint32_t n)
 
   for(std::uint32_t i = 0U; i < n; ++i)
   {
-    double d;
+    double d { };
 
     {
       // Select a random mantissa scaled within approximately 0.1 ... 0.9007199...
-      const double dp = (double) ((double) local::dst_mantissa(local::eng64) * 1.0E-16) * powers_of_ten[i % powers_of_ten.size()];
+      const auto dp =
+        static_cast<double>
+        (
+            static_cast<double>
+            (
+              static_cast<double>(local::dst_mantissa(local::eng64)) * 1.0E-16
+            )
+          *
+            static_cast<double>
+            (
+              powers_of_ten.at(static_cast<std::size_t>(i % powers_of_ten.size()))
+            )
+        );
 
       const bool d_is_neg = (local::dst_sign(local::eng32) != 0U);
 
@@ -457,7 +480,7 @@ bool test_floor(const std::uint32_t n)
     }
 
     const math::softfloat::float64_t x =
-      math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u,
+      math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u, // NOLINT(cppcoreguidelines-pro-type-union-access)
                                  math::softfloat::detail::nothing());
 
     using std::floor;
@@ -465,13 +488,13 @@ bool test_floor(const std::uint32_t n)
     const math::softfloat::float64_t f_x = floor(x);
     const double                     f_d = floor(d);
 
-    result_is_ok &= ((std::int32_t) f_x == (std::int32_t) f_d);
+    result_is_ok &= (static_cast<std::int32_t>(f_x) == static_cast<std::int32_t>(f_d));
   }
 
   return result_is_ok;
 }
 
-bool test_ceil(const std::uint32_t n)
+auto test_ceil(const std::uint32_t n) -> bool
 {
   bool result_is_ok = true;
 
@@ -489,19 +512,27 @@ bool test_ceil(const std::uint32_t n)
 
   for(std::uint32_t i = 0U; i < n; ++i)
   {
-    double d;
+    double d { };
 
     {
       // Select a random mantissa scaled within approximately 0.1 ... 0.9007199...
-      const double dp = (double) ((double) local::dst_mantissa(local::eng64) * 1.0E-16) * powers_of_ten[i % powers_of_ten.size()];
+      const auto dp =
+        static_cast<double>
+        (
+            static_cast<double>
+            (
+              static_cast<double>(local::dst_mantissa(local::eng64)) * 1.0E-16
+            )
+          * powers_of_ten.at(static_cast<std::size_t>(i % powers_of_ten.size()))
+        );
 
-      const bool d_is_neg = (local::dst_sign(local::eng32) != 0U);
+      const auto d_is_neg = (local::dst_sign(local::eng32) != 0U);
 
       d = d_is_neg ? -dp : dp;
     }
 
     const math::softfloat::float64_t x =
-      math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u,
+      math::softfloat::float64_t(math::softfloat::detail::uz_type<double>(d).my_u, // NOLINT(cppcoreguidelines-pro-type-union-access)
                                  math::softfloat::detail::nothing());
 
     using std::ceil;
@@ -509,13 +540,13 @@ bool test_ceil(const std::uint32_t n)
     const math::softfloat::float64_t f_x = ceil(x);
     const double                     f_d = ceil(d);
 
-    result_is_ok &= ((std::int32_t) f_x == (std::int32_t) f_d);
+    result_is_ok &= (static_cast<std::int32_t>(f_x) == static_cast<std::int32_t>(f_d));
   }
 
   return result_is_ok;
 }
 
-bool test_ops(const std::uint32_t n, std::uint_fast8_t op_index)
+auto test_ops(const std::uint32_t n, std::uint_fast8_t op_index) -> bool
 {
   bool result_is_ok = true;
 
@@ -525,9 +556,9 @@ bool test_ops(const std::uint32_t n, std::uint_fast8_t op_index)
     math::softfloat::float64_t xb;
     math::softfloat::float64_t xr;
 
-    double        da;
-    double        db;
-    double        dr;
+    double da { };
+    double db { };
+    double dr { };
 
     if     (op_index == 4U) { local::get_sf_float64_t_and_double(xa, da, true);                                       sqrt___sf_float64_t_and_double(xr, xa,     dr, da); }
     else if(op_index == 3U) { local::get_sf_float64_t_and_double(xa, da); local::get_sf_float64_t_and_double(xb, db); div____sf_float64_t_and_double(xr, xa, xb, dr, da, db); }
@@ -535,9 +566,9 @@ bool test_ops(const std::uint32_t n, std::uint_fast8_t op_index)
     else if(op_index == 1U) { local::get_sf_float64_t_and_double(xa, da); local::get_sf_float64_t_and_double(xb, db); sub____sf_float64_t_and_double(xr, xa, xb, dr, da, db); }
     else                    { local::get_sf_float64_t_and_double(xa, da); local::get_sf_float64_t_and_double(xb, db); add____sf_float64_t_and_double(xr, xa, xb, dr, da, db); }
 
-    result_is_ok &= (xr.crepresentation() == math::softfloat::detail::uz_type<double>(dr).my_u);
+    result_is_ok &= (xr.crepresentation() == math::softfloat::detail::uz_type<double>(dr).my_u); // NOLINT(cppcoreguidelines-pro-type-union-access)
 
-    if(result_is_ok == false)
+    if(!result_is_ok)
     {
       std::cout << dr << std::endl;
 
@@ -548,14 +579,16 @@ bool test_ops(const std::uint32_t n, std::uint_fast8_t op_index)
   return result_is_ok;
 }
 
-bool test_neq(const std::uint32_t n, std::uint_fast8_t op_index)
+auto test_neq(const std::uint32_t n, std::uint_fast8_t op_index) -> bool
 {
   bool result_is_ok = true;
 
   for(std::uint32_t i = 0U; i < n; ++i)
   {
-    math::softfloat::float64_t xa, xb;
-    double                     da, db;
+    math::softfloat::float64_t xa { };
+    math::softfloat::float64_t xb { };
+    double                     da { };
+    double                     db { };
 
     bool x_result = false;
     bool d_result = true;
@@ -566,7 +599,7 @@ bool test_neq(const std::uint32_t n, std::uint_fast8_t op_index)
 
     result_is_ok &= (x_result == d_result);
 
-    if(result_is_ok == false)
+    if(!result_is_ok)
     {
       std::cout << da << std::endl;
       std::cout << db << std::endl;
@@ -578,25 +611,25 @@ bool test_neq(const std::uint32_t n, std::uint_fast8_t op_index)
   return result_is_ok;
 }
 
-bool test_eq_(const std::uint32_t n, std::uint_fast8_t op_index)
+auto test_eq_(const std::uint32_t n, std::uint_fast8_t op_index) -> bool // NOLINT(readability-identifier-naming)
 {
   bool result_is_ok = true;
 
   for(std::uint32_t i = 0U; i < n; ++i)
   {
     math::softfloat::float64_t x;
-    double                       d;
+    double                     d { };
 
-    bool x_ok;
+    bool x_ok { };
 
-    if     (op_index == 0U) { local::get_sf_float64_t_and_double(x, d);                                              x_ok = (math::softfloat::detail::uz_type<double>(x.crepresentation()).my_f == d); }
-    else if(op_index == 1U) { local::get_sf_float64_t_and_double(x, d); const math::softfloat::float64_t x2 = x / 2; x_ok = (math::softfloat::detail::uz_type<double>(x.crepresentation()).my_f <= d) && ((d > 0) ? (math::softfloat::detail::uz_type<double>(x2.crepresentation()).my_f < d) : (math::softfloat::detail::uz_type<double>(x2.crepresentation()).my_f > d)); }
-    else if(op_index == 2U) { local::get_sf_float64_t_and_double(x, d); const math::softfloat::float64_t x2 = x * 2; x_ok = (math::softfloat::detail::uz_type<double>(x.crepresentation()).my_f <= d) && ((d > 0) ? (math::softfloat::detail::uz_type<double>(x2.crepresentation()).my_f > d) : (math::softfloat::detail::uz_type<double>(x2.crepresentation()).my_f < d)); }
+    if     (op_index == 0U) { local::get_sf_float64_t_and_double(x, d);                                              x_ok = (math::softfloat::detail::uz_type<double>(x.crepresentation()).my_f == d); } // NOLINT(cppcoreguidelines-pro-type-union-access)
+    else if(op_index == 1U) { local::get_sf_float64_t_and_double(x, d); const math::softfloat::float64_t x2 = x / 2; x_ok = (math::softfloat::detail::uz_type<double>(x.crepresentation()).my_f <= d) && ((d > 0) ? (math::softfloat::detail::uz_type<double>(x2.crepresentation()).my_f < d) : (math::softfloat::detail::uz_type<double>(x2.crepresentation()).my_f > d)); } // NOLINT(cppcoreguidelines-pro-type-union-access)
+    else if(op_index == 2U) { local::get_sf_float64_t_and_double(x, d); const math::softfloat::float64_t x2 = x * 2; x_ok = (math::softfloat::detail::uz_type<double>(x.crepresentation()).my_f <= d) && ((d > 0) ? (math::softfloat::detail::uz_type<double>(x2.crepresentation()).my_f > d) : (math::softfloat::detail::uz_type<double>(x2.crepresentation()).my_f < d)); } // NOLINT(cppcoreguidelines-pro-type-union-access)
     else                    { x_ok = false; d = 0.0; }
 
     result_is_ok &= x_ok;
 
-    if(result_is_ok == false)
+    if(!result_is_ok)
     {
       std::cout << d << std::endl;
 
@@ -607,23 +640,23 @@ bool test_eq_(const std::uint32_t n, std::uint_fast8_t op_index)
   return result_is_ok;
 }
 
-bool test_soft_double()
+auto test_soft_double() -> bool
 {
   local::eng32.seed(static_cast<typename local::eng32_type::result_type>(std::clock()));
   local::eng64.seed(static_cast<typename local::eng64_type::result_type>(~static_cast<uint64_t>(std::clock())));
 
-  bool result_is_ok = true;
+  auto result_is_ok = true;
 
   std::cout << "Start test_soft_double()" << std::endl;
 
-  const std::clock_t start = std::clock();
+  const auto start = std::clock();
 
   {
     std::cout << "testing cast___... ";
 
     const math::softfloat::float64_t xp  = math::constants::pi<math::softfloat::float64_t>();
-    const std::uint64_t u64 = (std::uint64_t) xp;
-    const bool result_cast___is_ok = (u64 == 3U);
+    const auto u64 = static_cast<std::uint64_t>(xp);
+    const auto result_cast___is_ok = (u64 == 3U);
     std::cout << std::boolalpha << result_cast___is_ok << std::endl;
     result_is_ok &= result_cast___is_ok;
   }
@@ -631,8 +664,8 @@ bool test_soft_double()
   {
     std::cout << "testing f32____... ";
 
-    math::softfloat::float64_t xf = math::softfloat::float64_t(0.125F) + math::softfloat::float64_t(0.5F);
-    double df = math::softfloat::detail::uz_type<double>(xf.crepresentation()).my_f;
+    math::softfloat::float64_t xf = math::softfloat::float64_t(0.125F) + math::softfloat::float64_t(0.5F); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+    double df = math::softfloat::detail::uz_type<double>(xf.crepresentation()).my_f; // NOLINT(cppcoreguidelines-pro-type-union-access)
     const bool result_f32____is_ok = (df == 0.625);
     std::cout << std::boolalpha << result_f32____is_ok << std::endl;
     result_is_ok &= result_f32____is_ok;
@@ -643,12 +676,12 @@ bool test_soft_double()
 
     math::softfloat::float64_t  xn(1 / math::softfloat::float64_t(3));
     xn = -xn;
-    double dn = math::softfloat::detail::uz_type<double>(xn.crepresentation()).my_f;
-    bool result_neg____is_ok = fabs(1.0 - (dn / -0.33333333333333333)) < std::numeric_limits<double>::epsilon();
+    double dn = math::softfloat::detail::uz_type<double>(xn.crepresentation()).my_f; // NOLINT(cppcoreguidelines-pro-type-union-access)
+    bool result_neg____is_ok = fabs(1.0 - (dn / -0.33333333333333333)) < std::numeric_limits<double>::epsilon(); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
 
     xn = -xn;
-    dn = math::softfloat::detail::uz_type<double>(xn.crepresentation()).my_f;
-    result_neg____is_ok &= fabs(1.0 - (dn / 0.33333333333333333)) < std::numeric_limits<double>::epsilon();
+    dn = math::softfloat::detail::uz_type<double>(xn.crepresentation()).my_f; // NOLINT(cppcoreguidelines-pro-type-union-access)
+    result_neg____is_ok &= fabs(1.0 - (dn / 0.33333333333333333)) < std::numeric_limits<double>::epsilon(); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
     std::cout << std::boolalpha << result_neg____is_ok << std::endl;
     result_is_ok &= result_neg____is_ok;
   }
@@ -657,7 +690,7 @@ bool test_soft_double()
     std::cout << "testing ddx____... ";
 
     math::softfloat::float64_t  x(1 / math::softfloat::float64_t(2));
-    math::softfloat::float64_t dx(1 / math::softfloat::float64_t(8388608));
+    math::softfloat::float64_t dx(1 / math::softfloat::float64_t(8388608)); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
 
     math::softfloat::float64_t result = derivative(x,
                                       dx,
@@ -666,7 +699,7 @@ bool test_soft_double()
                                         return ((my_x * my_x) / math::softfloat::float64_t(3)) + my_x;
                                       });
 
-    double d = math::softfloat::detail::uz_type<double>(result.crepresentation()).my_f;
+    double d = math::softfloat::detail::uz_type<double>(result.crepresentation()).my_f; // NOLINT(cppcoreguidelines-pro-type-union-access)
 
     using std::fabs;
 
@@ -720,13 +753,13 @@ bool test_soft_double()
   std::cout << "testing leq____... "; const bool result_leq____is_ok = test_neq   ( 20000000U, 1U); std::cout << std::boolalpha << result_leq____is_ok << std::endl;
   std::cout << "testing geq____... "; const bool result_geq____is_ok = test_neq   ( 20000000U, 2U); std::cout << std::boolalpha << result_geq____is_ok << std::endl;
 
-  const std::clock_t stop = std::clock();
+  const auto stop = std::clock();
 
   std::cout << "Time test_soft_double(): "
             << float(stop - start) / float(CLOCKS_PER_SEC)
             << std::endl;
 
-  const bool result_algebra_is_ok = (   result_to_f32_is_ok
+  const auto result_algebra_is_ok = (   result_to_f32_is_ok
                                      && result_frexp__is_ok
                                      && result_ldexp__is_ok
                                      && result_exp____is_ok
@@ -747,7 +780,7 @@ bool test_soft_double()
                                      && result_leq____is_ok
                                      && result_geq____is_ok);
 
-  const bool result_double_is_ok = (result_is_ok && result_algebra_is_ok);
+  const auto result_double_is_ok = (result_is_ok && result_algebra_is_ok);
 
   std::cout << "result_double_is_ok: " << std::boolalpha << result_double_is_ok << std::endl;
 
