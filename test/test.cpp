@@ -20,22 +20,22 @@
 // make prepare -f make_tidy_01_generic.gmk
 // make tidy -f make_tidy_01_generic.gmk --jobs=8
 
-extern bool test_soft_double();
+extern auto test_soft_double() -> bool;
 
-int main()
+auto main() -> int
 {
-  const std::clock_t start = std::clock();
+  const auto start = std::clock();
 
-  const bool result_is_ok_examples = test_soft_double_examples();
-  const bool result_is_ok_double   = test_soft_double();
+  const auto result_is_ok_examples = test_soft_double_examples();
+  const auto result_is_ok_double   = test_soft_double();
 
-  const std::clock_t stop = std::clock();
+  const auto stop = std::clock();
 
   std::cout << "Time total: "
-            << (float) (stop - start) / (float) CLOCKS_PER_SEC
+            << static_cast<float>(stop - start) / static_cast<float>(CLOCKS_PER_SEC)
             << std::endl;
 
-  const bool result_all_is_ok = (result_is_ok_examples && result_is_ok_double);
+  const auto result_all_is_ok = (result_is_ok_examples && result_is_ok_double);
 
   std::cout << "result_all_is_ok: " << std::boolalpha << result_all_is_ok << std::endl;
 

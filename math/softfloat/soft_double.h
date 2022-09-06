@@ -1414,47 +1414,72 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static auto softfloat_normRoundPackToF64(bool sign, std::int16_t expA, std::uint64_t sig) -> std::uint64_t
     {
-      const int_fast8_t shiftDist = (int_fast8_t) (detail::softfloat_countLeadingZeros64(sig) - 1U);
+      std::uint64_t result { };
 
-      expA = (std::int16_t) (expA - (std::int16_t) shiftDist);
+      const auto shiftDist =
+        static_cast<std::int_fast8_t>
+        (
+            detail::softfloat_countLeadingZeros64(sig)
+          - static_cast<std::uint_fast8_t>(UINT8_C(1))
+        );
 
-      if((10 <= shiftDist) && ((std::uint32_t) expA < 0x7FDU))
+      expA = static_cast<std::int16_t>(expA - static_cast<std::int16_t>(shiftDist));
+
+      if(   (static_cast<std::int_fast8_t>(INT8_C(10)) <= shiftDist)
+         && (static_cast<std::uint_fast16_t>(expA) < static_cast<std::uint_fast16_t>(UINT16_C(0x7FD))))
       {
-        const std::uint64_t uZ = detail::packToF64UI(sign, sig ? expA : 0, sig << (shiftDist - 10));
-
-        return uZ;
+        result =
+          detail::packToF64UI
+          (
+            sign,
+            static_cast<std::int16_t>(sig != static_cast<std::uint64_t>(UINT8_C(0)) ? expA : static_cast<std::int16_t>(INT8_C(0))),
+            sig << static_cast<unsigned>(shiftDist - static_cast<std::int_fast8_t>(INT8_C(10)))
+          );
       }
       else
       {
-        return softfloat_roundPackToF64(sign, expA, sig << shiftDist);
+        result = softfloat_roundPackToF64(sign, expA, static_cast<std::uint64_t>(sig << static_cast<unsigned>(shiftDist)));
       }
+
+      return result;
     }
 
     static auto softfloat_roundPackToF64(bool sign, std::int16_t expA, std::uint64_t sig) -> std::uint64_t
     {
-      if(0x7FDU <= (std::uint16_t) expA)
+      if(static_cast<std::uint16_t>(UINT16_C(0x7FD)) <= static_cast<std::uint16_t>(expA))
       {
-        if(expA < 0)
+        if(expA < static_cast<std::int16_t>(INT8_C(0)))
         {
           sig  = detail::softfloat_shiftRightJam64(sig, static_cast<std::uint_fast16_t>(-expA));
-          expA = 0;
+          expA = static_cast<std::int16_t>(INT8_C(0));
         }
       }
 
-      const auto roundBits = static_cast<std::uint16_t>(sig & 0x3FFU);
+      const auto roundBits = static_cast<std::uint16_t>(sig & static_cast<std::uint64_t>(UINT16_C(0x3FF)));
 
-      sig = (sig + 0x200U) >> 10U;
+      sig = static_cast<std::uint64_t>(static_cast<std::uint64_t>(sig + 0x200U) >> 10U);
 
-      sig &= (std::uint64_t) (~(std::uint64_t) (((roundBits ^ 0x200U) == 0U ? 1U : 0U) & 1U));
+      sig =
+        static_cast<std::uint64_t>
+        (
+            sig
+          & static_cast<std::uint64_t>
+            (
+              ~static_cast<std::uint64_t>
+               (
+                 (static_cast<std::uint16_t>(roundBits ^ static_cast<std::uint16_t>(UINT16_C(0x200))) == static_cast<std::uint16_t>(UINT8_C(0)))
+                   ? static_cast<unsigned>(UINT8_C(1))
+                   : static_cast<unsigned>(UINT8_C(0))
+               )
+            )
+        );
 
-      if(!sig)
+      if(sig == static_cast<std::uint64_t>(UINT8_C(0)))
       {
-        expA = 0;
+        expA = static_cast<std::int16_t>(INT8_C(0));
       }
 
-      const std::uint64_t uiZ = detail::packToF64UI(sign, expA, sig);
-
-      return uiZ;
+      return detail::packToF64UI(sign, expA, sig);
     }
 
     static auto softfloat_subMagsF64(std::uint64_t uiA, std::uint64_t uiB, bool signZ) -> std::uint64_t
@@ -1462,16 +1487,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       std::uint64_t uiZ;
       std::int16_t  expZ;
 
-      auto expA = detail::expF64UI(uiA);
+      auto expA = detail::expF64UI (uiA);
       auto sigA = detail::fracF64UI(uiA);
-      auto expB = detail::expF64UI(uiB);
+      auto expB = detail::expF64UI (uiB);
       auto sigB = detail::fracF64UI(uiB);
 
-      const std::int16_t expDiff = (std::int16_t) (expA - expB);
+      const auto expDiff = static_cast<std::int16_t>(expA - expB);
 
-      if(!expDiff)
+      if(expDiff == static_cast<std::int16_t>(INT8_C(0)))
       {
-        std::int64_t sigDiff = (std::int64_t) (sigA - sigB);
+        auto sigDiff = static_cast<std::int64_t>(sigA - sigB);
 
         if(!sigDiff)
         {
@@ -1484,21 +1509,26 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             --expA;
           }
 
-          if(sigDiff < 0)
+          if(sigDiff < static_cast<std::int64_t>(INT8_C(0)))
           {
             signZ   = (!signZ);
             sigDiff = -sigDiff;
           }
 
-          std::int_fast8_t shiftDist = (std::int_fast8_t) (detail::softfloat_countLeadingZeros64((std::uint64_t) sigDiff) - 11U);
+          auto shiftDist =
+            static_cast<std::int_fast8_t>
+            (
+                detail::softfloat_countLeadingZeros64(static_cast<std::uint64_t>(sigDiff))
+              - static_cast<std::uint_fast8_t>(UINT8_C(11))
+            );
 
-          expZ = (std::int16_t) (expA - shiftDist);
+          expZ = static_cast<std::int16_t>(expA - static_cast<std::int16_t>(shiftDist));
 
-          if(expZ < 0)
+          if(expZ < static_cast<std::int16_t>(INT8_C(0)))
           {
-            shiftDist = (std::int_fast8_t) expA;
+            shiftDist = static_cast<std::int_fast8_t>(expA);
 
-            expZ = 0;
+            expZ = static_cast<std::int16_t>(INT8_C(0));
           }
 
           uiZ = detail::packToF64UI(signZ, expZ, sigDiff << shiftDist);
@@ -1506,35 +1536,57 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       }
       else
       {
-        sigA <<= 10U;
-        sigB <<= 10U;
+        sigA = static_cast<std::uint64_t>(sigA << 10U);
+        sigB = static_cast<std::uint64_t>(sigB << 10U);
 
-        std::uint64_t sigZ;
+        auto sigZ = std::uint64_t { };
 
-        if(expDiff < 0)
+        if(expDiff < static_cast<std::int16_t>(INT8_C(0)))
         {
           signZ = (!signZ);
 
-          sigA += ((expA != 0) ? UINT64_C(0x4000000000000000) : sigA);
-          sigA  = detail::softfloat_shiftRightJam64(sigA, static_cast<std::uint_fast16_t>(-expDiff));
+          sigA =
+            static_cast<std::uint64_t>
+            (
+                sigA
+              + static_cast<std::uint64_t>
+                (
+                  (expA != static_cast<std::int16_t>(INT8_C(0)))
+                    ? static_cast<std::uint64_t>(UINT64_C(0x4000000000000000))
+                    : sigA
+                )
+            );
 
-          sigB |= UINT64_C(0x4000000000000000);
+          sigA = detail::softfloat_shiftRightJam64(sigA, static_cast<std::uint_fast16_t>(-expDiff));
+
+          sigB = static_cast<std::uint64_t>(sigB | static_cast<std::uint64_t>(UINT64_C(0x4000000000000000)));
 
           expZ = expB;
-          sigZ = sigB - sigA;
+          sigZ = static_cast<std::uint64_t>(sigB - sigA);
         }
         else
         {
-          sigB += ((expB != 0) ? UINT64_C(0x4000000000000000) : sigB);
-          sigB  = detail::softfloat_shiftRightJam64(sigB, static_cast<std::uint_fast16_t>(expDiff));
+          sigB =
+            static_cast<std::uint64_t>
+            (
+                sigB
+              + static_cast<std::uint64_t>
+                (
+                  (expB != static_cast<std::int16_t>(INT8_C(0)))
+                    ? static_cast<std::uint64_t>(UINT64_C(0x4000000000000000))
+                    : sigB
+                )
+            );
 
-          sigA |= UINT64_C(0x4000000000000000);
+          sigB = detail::softfloat_shiftRightJam64(sigB, static_cast<std::uint_fast16_t>(expDiff));
+
+          sigA = static_cast<std::uint64_t>(sigA | static_cast<std::uint64_t>(UINT64_C(0x4000000000000000)));
 
           expZ = expA;
-          sigZ = sigA - sigB;
+          sigZ = static_cast<std::uint64_t>(sigA - sigB);
         }
 
-        return softfloat_normRoundPackToF64(signZ, (std::int16_t) (expZ - 1), sigZ);
+        return softfloat_normRoundPackToF64(signZ, static_cast<std::int16_t>(expZ - static_cast<std::int16_t>(INT8_C(1))), sigZ);
       }
 
       return uiZ;
