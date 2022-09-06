@@ -26,13 +26,13 @@ namespace local
   auto pi() -> FloatType { return FloatType(); }
 
   template<>
-  constexpr auto pi() -> float { return (float) 3.14159265358979323846264338327950288419716939937510582097L; }
+  constexpr auto pi() -> float { return static_cast<float>(3.14159265358979323846264338327950288419716939937510582097L); }
 
   template<>
-  constexpr auto pi() -> double { return (double) 3.14159265358979323846264338327950288419716939937510582097L; }
+  constexpr auto pi() -> double { return static_cast<double>(3.14159265358979323846264338327950288419716939937510582097L); }
 
   template<>
-  constexpr auto pi() -> long double { return (long double) 3.14159265358979323846264338327950288419716939937510582097L; }
+  constexpr auto pi() -> long double { return static_cast<long double>(3.14159265358979323846264338327950288419716939937510582097L); }
 
   template<>
   constexpr auto pi() -> float64_t { return float64_t::my_value_pi(); }

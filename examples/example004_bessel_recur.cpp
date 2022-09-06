@@ -182,7 +182,7 @@ namespace local
 
     // Get the starting order for recursive calculations.
     const auto n_start1 = static_cast<std::int32_t>(Jn_algo::mstart1(static_cast<float>(x), d10));
-    const auto n_start2 = static_cast<std::int32_t>(Jn_algo::mstart2(static_cast<float>(x), (float) static_cast<float>(n - 1), d10));
+    const auto n_start2 = static_cast<std::int32_t>(Jn_algo::mstart2(static_cast<float>(x), static_cast<float>(n - 1), d10));
 
     const auto n_start = (std::max)(n_start2, n_start1);
 

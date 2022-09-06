@@ -10,7 +10,7 @@
 
 #include <math/softfloat/soft_double_examples.h>
 
-bool test_soft_double_examples()
+auto test_soft_double_examples() -> bool
 {
   bool result_examples_is_ok = true;
 
