@@ -26,13 +26,13 @@ namespace math
   namespace constants
   {
     template<typename float_type>
-    float_type pi()
+    auto pi() -> float_type
     {
       return static_cast<float_type>(3.1415926535897932384626433832795028841972L);
     }
 
     template<>
-    math::softfloat::float64_t pi()
+    auto pi() -> math::softfloat::float64_t
     {
       return math::softfloat::float64_t::my_value_pi();
     }
@@ -41,9 +41,9 @@ namespace math
 
 template<typename real_value_type,
          typename real_function_type>
-real_value_type derivative(const real_value_type& x,
-                           const real_value_type& dx,
-                           real_function_type real_function)
+auto derivative(const real_value_type&   x,
+                const real_value_type&   dx,
+                      real_function_type real_function) -> real_value_type
 {
   // Compute the first derivative of the input function
   // using a three-point central difference rule of O(dx^6).
@@ -78,7 +78,9 @@ namespace local
   std::uniform_int_distribution<std::uint32_t> dst_exp     (UINT32_C(0),                UINT32_C(36));
   std::uniform_int_distribution<std::uint32_t> dst_sign    (UINT32_C(0),                UINT32_C(1));
 
-  void get_sf_float64_t_and_double(math::softfloat::float64_t& x1, double& d1, const bool is_positive = false)
+  auto get_sf_float64_t_and_double(math::softfloat::float64_t& x1,
+                                   double&                     d1,
+                                   const bool                  is_positive = false) -> void
   {
     for(;;)
     {
@@ -116,7 +118,7 @@ namespace local
         d1 = -d1;
       }
 
-      const bool d_is_ok = (    std::isfinite(d1)
+      const auto d_is_ok = (    std::isfinite(d1)
                             && (d1 > (double) (std::numeric_limits<float>::lowest)())
                             && (d1 < (double) (std::numeric_limits<float>::max)()));
 
@@ -131,36 +133,36 @@ namespace local
   }
 }
 
-void add____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,
-                                    double&                     d_result, const double&                     da, const double&                     db)
+auto add____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,
+                                    double&                     d_result, const double&                     da, const double&                     db) -> void
 {
   x_result = xa + xb;
   d_result = da + db;
 }
 
-void sub____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,
-                                    double&                     d_result, const double&                     da, const double&                     db)
+auto sub____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,
+                                    double&                     d_result, const double&                     da, const double&                     db) -> void
 {
   x_result = xa - xb;
   d_result = da - db;
 }
 
-void mul____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,
-                                    double&                     d_result, const double&                     da, const double&                     db)
+auto mul____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,
+                                    double&                     d_result, const double&                     da, const double&                     db) -> void
 {
   x_result = xa * xb;
   d_result = da * db;
 }
 
-void div____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,
-                                    double&                     d_result, const double&                     da, const double&                     db)
+auto div____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,
+                                    double&                     d_result, const double&                     da, const double&                     db) -> void
 {
   x_result = xa / xb;
   d_result = da / db;
 }
 
-void sqrt___sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa,
-                                    double&                     d_result, const double&                     da)
+auto sqrt___sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa,
+                                    double&                     d_result, const double&                     da) -> void
 {
   using std::sqrt;
 
@@ -168,7 +170,7 @@ void sqrt___sf_float64_t_and_double(math::softfloat::float64_t& x_result, const 
   d_result = sqrt(da);
 }
 
-bool test_to_f32(const std::uint32_t n)
+auto test_to_f32(const std::uint32_t n) -> bool
 {
   bool result_is_ok = true;
 
@@ -191,7 +193,7 @@ bool test_to_f32(const std::uint32_t n)
   return result_is_ok;
 }
 
-bool test_frexp(const std::uint32_t n)
+auto test_frexp(const std::uint32_t n) -> bool
 {
   bool result_is_ok = true;
 
@@ -215,7 +217,7 @@ bool test_frexp(const std::uint32_t n)
   return result_is_ok;
 }
 
-bool test_ldexp(const std::uint32_t n)
+auto test_ldexp(const std::uint32_t n) -> bool
 {
   const auto s = std::random_device().operator()();
 
@@ -255,7 +257,7 @@ bool test_ldexp(const std::uint32_t n)
   return result_is_ok;
 }
 
-bool test_exp()
+auto test_exp() -> bool
 {
   bool result_is_ok = true;
 
@@ -296,7 +298,7 @@ bool test_exp()
   return result_is_ok;
 }
 
-bool test_log()
+auto test_log() -> bool
 {
   bool result_is_ok = true;
 
@@ -376,7 +378,7 @@ bool test_log()
   return result_is_ok;
 }
 
-bool test_sin()
+auto test_sin() -> bool
 {
   bool result_is_ok = true;
 
@@ -405,7 +407,7 @@ bool test_sin()
   return result_is_ok;
 }
 
-bool test_cos()
+auto test_cos() -> bool
 {
   bool result_is_ok = true;
 
@@ -427,7 +429,7 @@ bool test_cos()
   return result_is_ok;
 }
 
-bool test_floor(const std::uint32_t n)
+auto test_floor(const std::uint32_t n) -> bool
 {
   bool result_is_ok = true;
 
@@ -471,7 +473,7 @@ bool test_floor(const std::uint32_t n)
   return result_is_ok;
 }
 
-bool test_ceil(const std::uint32_t n)
+auto test_ceil(const std::uint32_t n) -> bool
 {
   bool result_is_ok = true;
 
@@ -515,7 +517,7 @@ bool test_ceil(const std::uint32_t n)
   return result_is_ok;
 }
 
-bool test_ops(const std::uint32_t n, std::uint_fast8_t op_index)
+auto test_ops(const std::uint32_t n, std::uint_fast8_t op_index) -> bool
 {
   bool result_is_ok = true;
 
@@ -548,7 +550,7 @@ bool test_ops(const std::uint32_t n, std::uint_fast8_t op_index)
   return result_is_ok;
 }
 
-bool test_neq(const std::uint32_t n, std::uint_fast8_t op_index)
+auto test_neq(const std::uint32_t n, std::uint_fast8_t op_index) -> bool
 {
   bool result_is_ok = true;
 
@@ -578,7 +580,7 @@ bool test_neq(const std::uint32_t n, std::uint_fast8_t op_index)
   return result_is_ok;
 }
 
-bool test_eq_(const std::uint32_t n, std::uint_fast8_t op_index)
+auto test_eq_(const std::uint32_t n, std::uint_fast8_t op_index) -> bool
 {
   bool result_is_ok = true;
 
@@ -607,16 +609,16 @@ bool test_eq_(const std::uint32_t n, std::uint_fast8_t op_index)
   return result_is_ok;
 }
 
-bool test_soft_double()
+auto test_soft_double() -> bool
 {
   local::eng32.seed(static_cast<typename local::eng32_type::result_type>(std::clock()));
   local::eng64.seed(static_cast<typename local::eng64_type::result_type>(~static_cast<uint64_t>(std::clock())));
 
-  bool result_is_ok = true;
+  auto result_is_ok = true;
 
   std::cout << "Start test_soft_double()" << std::endl;
 
-  const std::clock_t start = std::clock();
+  const auto start = std::clock();
 
   {
     std::cout << "testing cast___... ";
@@ -720,13 +722,13 @@ bool test_soft_double()
   std::cout << "testing leq____... "; const bool result_leq____is_ok = test_neq   ( 20000000U, 1U); std::cout << std::boolalpha << result_leq____is_ok << std::endl;
   std::cout << "testing geq____... "; const bool result_geq____is_ok = test_neq   ( 20000000U, 2U); std::cout << std::boolalpha << result_geq____is_ok << std::endl;
 
-  const std::clock_t stop = std::clock();
+  const auto stop = std::clock();
 
   std::cout << "Time test_soft_double(): "
             << float(stop - start) / float(CLOCKS_PER_SEC)
             << std::endl;
 
-  const bool result_algebra_is_ok = (   result_to_f32_is_ok
+  const auto result_algebra_is_ok = (   result_to_f32_is_ok
                                      && result_frexp__is_ok
                                      && result_ldexp__is_ok
                                      && result_exp____is_ok
@@ -747,7 +749,7 @@ bool test_soft_double()
                                      && result_leq____is_ok
                                      && result_geq____is_ok);
 
-  const bool result_double_is_ok = (result_is_ok && result_algebra_is_ok);
+  const auto result_double_is_ok = (result_is_ok && result_algebra_is_ok);
 
   std::cout << "result_double_is_ok: " << std::boolalpha << result_double_is_ok << std::endl;
 
