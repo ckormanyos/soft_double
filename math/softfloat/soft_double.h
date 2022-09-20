@@ -573,21 +573,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static constexpr auto get_rep(soft_double a) -> representation_type { return a.my_value; }
 
-    operator   signed char     () const { return   static_cast<signed char>     (f64_to__i32(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
-    operator   signed short    () const { return   static_cast<signed short>    (f64_to__i32(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
-    operator   signed int      () const { return   static_cast<signed int>      (f64_to__i32(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
-    operator   signed long     () const { return   static_cast<signed long>     (f64_to__i64(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions,google-runtime-int)
-    operator   signed long long() const { return   static_cast<signed long long>(f64_to__i64(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions,google-runtime-int)
+    operator   signed char     () const { return static_cast<signed char>     (f64_to__i32(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+    operator   signed short    () const { return static_cast<signed short>    (f64_to__i32(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions,google-runtime-int)
+    operator   signed int      () const { return static_cast<signed int>      (f64_to__i32(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+    operator   signed long     () const { return static_cast<signed long>     (f64_to__i64(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions,google-runtime-int)
+    operator   signed long long() const { return static_cast<signed long long>(f64_to__i64(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions,google-runtime-int)
 
     operator unsigned char     () const { return static_cast<unsigned char>     (f64_to_ui32(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
-    operator unsigned short    () const { return static_cast<unsigned short>    (f64_to_ui32(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+    operator unsigned short    () const { return static_cast<unsigned short>    (f64_to_ui32(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions,google-runtime-int)
     operator unsigned int      () const { return static_cast<unsigned int>      (f64_to_ui32(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
     operator unsigned long     () const { return static_cast<unsigned long>     (f64_to_ui64(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions,google-runtime-int)
     operator unsigned long long() const { return static_cast<unsigned long long>(f64_to_ui64(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions,google-runtime-int)
 
-    operator float      () const noexcept { return to_float<float>(); }                        // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
-    operator double     () const noexcept { return to_float<double>(); }                       // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
-    operator long double() const noexcept { return static_cast<long double>((double) *this); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+    operator float      () const noexcept { return to_float<float>(); }                            // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+    operator double     () const noexcept { return to_float<double>(); }                           // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+    operator long double() const noexcept { return static_cast<long double>(to_float<double>()); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
 
     auto operator+=(const soft_double& other) -> soft_double& { my_value = f64_add(my_value, other.my_value); return *this; }
     auto operator-=(const soft_double& other) -> soft_double& { my_value = f64_sub(my_value, other.my_value); return *this; }
@@ -627,34 +627,34 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     representation_type my_value;
 
     template<typename FloatingPointType>
-    auto to_float() const -> typename std::enable_if<(   (sizeof(FloatingPointType) == 4)
+    SOFT_DOUBLE_NODISCARD auto to_float() const -> typename std::enable_if<(   (sizeof(FloatingPointType) == 4)
                                                       && std::numeric_limits<FloatingPointType>::is_iec559), FloatingPointType>::type
     {
       return f64_to_f32(my_value);
     }
 
     template<typename FloatingPointType>
-    auto to_float() const -> typename std::enable_if<(   (sizeof(FloatingPointType) == 8)
-                                                      && std::numeric_limits<FloatingPointType>::is_iec559), FloatingPointType>::type
+    SOFT_DOUBLE_NODISCARD auto to_float() const -> typename std::enable_if<(   (sizeof(FloatingPointType) == 8)
+                                                                            && std::numeric_limits<FloatingPointType>::is_iec559), FloatingPointType>::type
     {
-      return (FloatingPointType) (*(volatile FloatingPointType*) (this));
+      return static_cast<FloatingPointType>(*static_cast<const volatile FloatingPointType*>(static_cast<const volatile void*>(this)));
     }
 
     static constexpr auto my_le(const soft_double& a, const soft_double& b) -> bool
     {
       return (detail::signF64UI(a.my_value) != detail::signF64UI(b.my_value))
-               ? (detail::signF64UI(a.my_value) || !((a.my_value | b.my_value) & UINT64_C(0x7FFFFFFFFFFFFFFF)))
-               : (a.my_value == b.my_value) || (detail::signF64UI(a.my_value) ^ (a.my_value < b.my_value));
+               ? (detail::signF64UI(a.my_value) ||  (static_cast<std::uint64_t>(a.my_value | b.my_value) & static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF))) == static_cast<std::uint64_t>(UINT8_C(0)))
+               : (a.my_value == b.my_value)     || ((static_cast<unsigned>(detail::signF64UI(a.my_value) ? 1U : 0U) ^ static_cast<unsigned>((a.my_value < b.my_value) ? 1U : 0U)) != 0U);
     }
 
     static constexpr auto my_lt(const soft_double& a, const soft_double& b) -> bool
     {
       return (detail::signF64UI(a.my_value) != detail::signF64UI(b.my_value))
-               ? detail::signF64UI(a.my_value) && ((a.my_value | b.my_value) & UINT64_C(0x7FFFFFFFFFFFFFFF))
-               : (a.my_value != b.my_value) && (detail::signF64UI(a.my_value) ^ (a.my_value < b.my_value));
+               ? (detail::signF64UI(a.my_value) &&  (static_cast<std::uint64_t>(a.my_value | b.my_value) & static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF))) != static_cast<std::uint64_t>(UINT8_C(0)))
+               : (a.my_value != b.my_value)     && ((static_cast<unsigned>(detail::signF64UI(a.my_value) ? 1U : 0U) ^ static_cast<unsigned>((a.my_value < b.my_value) ? 1U : 0U)) != 0U);
     }
 
-    static auto f64_add(const std::uint64_t a, const std::uint64_t b) -> std::uint64_t
+    static SOFT_DOUBLE_CONSTEXPR auto f64_add(const std::uint64_t a, const std::uint64_t b) -> std::uint64_t
     {
       const auto signA = detail::signF64UI(a);
 
@@ -662,7 +662,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                               : softfloat_subMagsF64(a, b, signA));
     }
 
-    static auto f64_sub(const std::uint64_t a, const std::uint64_t b) -> std::uint64_t
+    static SOFT_DOUBLE_CONSTEXPR auto f64_sub(const std::uint64_t a, const std::uint64_t b) -> std::uint64_t
     {
       const auto signA = detail::signF64UI(a);
 
@@ -670,7 +670,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                               : softfloat_addMagsF64(a, b, signA));
     }
 
-    static auto f64_mul(const std::uint64_t a, const std::uint64_t b) -> std::uint64_t
+    static SOFT_DOUBLE_CONSTEXPR auto f64_mul(const std::uint64_t a, const std::uint64_t b) -> std::uint64_t
     {
       const auto signA = detail::signF64UI(a);
       const auto expA  = detail::expF64UI (a);
@@ -743,7 +743,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       return result;
     }
 
-    static auto f64_div(const std::uint64_t a, const std::uint64_t b) -> std::uint64_t
+    static SOFT_DOUBLE_CONSTEXPR auto f64_div(const std::uint64_t a, const std::uint64_t b) -> std::uint64_t
     {
       const auto signA = detail::signF64UI(a);
             auto expA  = detail::expF64UI (a);
@@ -868,7 +868,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       return result;
     }
 
-    static auto f64_sqrt(const std::uint64_t a) -> std::uint64_t
+    static SOFT_DOUBLE_CONSTEXPR auto f64_sqrt(const std::uint64_t a) -> std::uint64_t
     {
       auto expA = detail::expF64UI (a);
       auto sigA = detail::fracF64UI(a);
