@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////
-//  Copyright Christopher Kormanyos 2020 - 2021.                 //
+//  Copyright Christopher Kormanyos 2020 - 2022.                 //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
 //  or copy at http://www.boost.org/LICENSE_1_0.txt)             //
@@ -12,211 +12,210 @@
 #include <math/softfloat/soft_double.h>
 #include <math/softfloat/soft_double_examples.h>
 
-static_assert(sizeof(double) == 8U,
+static_assert(sizeof(double) == 8U, // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
               "Error: This example requires 8 byte built-in double for verification");
 
-namespace
+namespace local { namespace detail {
+
+template<typename FloatingPointType>
+auto bisect(FloatingPointType (*pfn)(const FloatingPointType),
+            const FloatingPointType x_lo,
+            const FloatingPointType x_hi) -> FloatingPointType
 {
-  template<typename FloatingPointType>
-  auto bisect(FloatingPointType (*pfn)(const FloatingPointType),
-              const FloatingPointType x_lo,
-              const FloatingPointType x_hi) -> FloatingPointType
+  using floating_point_type = FloatingPointType;
+
+  const floating_point_type f_lo = pfn(x_lo);
+  const floating_point_type f_hi = pfn(x_hi);
+
+  const bool f_lo_is_neg = (f_lo < floating_point_type(0.0L));
+  const bool f_hi_is_neg = (f_hi < floating_point_type(0.0L));
+
+  // Make sure that there is at least one root in the interval.
+  if(f_lo_is_neg == f_hi_is_neg)
   {
-    using floating_point_type = FloatingPointType;
+    // Bisection interval has no root or it has multiple roots!
 
-    const floating_point_type f_lo = pfn(x_lo);
-    const floating_point_type f_hi = pfn(x_hi);
-
-    const bool f_lo_is_neg = (f_lo < floating_point_type(0.0L));
-    const bool f_hi_is_neg = (f_hi < floating_point_type(0.0L));
-
-    // Make sure that there is at least one root in the interval.
-    if(f_lo_is_neg == f_hi_is_neg)
-    {
-      // Bisection interval has no root or it has multiple roots!
-
-      return floating_point_type(0);
-    }
-
-    // Orient the search such that f > 0 lies at x + dx.
-    floating_point_type dx;
-    floating_point_type rtb;
-
-    if(f_lo_is_neg)
-    {
-      dx  = x_hi - x_lo;
-      rtb = x_lo;
-    }
-    else
-    {
-      dx  = x_lo - x_hi;
-      rtb = x_hi;
-    }
-
-    // Bisection iteration loop, maximum 64 times.
-    for(std::uint_fast8_t i = 0U; i < 64U; ++i)
-    {
-      dx /= 2;
-
-      const floating_point_type xmid = rtb + dx;
-      const floating_point_type fmid = pfn(xmid);
-
-      if(fmid <= floating_point_type(0.0L))
-      {
-        rtb = xmid;
-      }
-
-      // Test for convergence.
-      using std::fabs;
-
-      if(   (fabs(dx)   < floating_point_type(0.5L))
-         || (fabs(fmid) < std::numeric_limits<floating_point_type>::epsilon()))
-      {
-        // Return root.
-        return rtb;
-      }
-    }
-
-    // Bisection iteration did not converge.
     return floating_point_type(0);
   }
 
-  struct Jn_algo
+  // Orient the search such that f > 0 lies at x + dx.
+  floating_point_type dx;
+  floating_point_type rtb;
+
+  if(f_lo_is_neg)
   {
-    static constexpr float e_half() { return float(1.359140914229522617680143735676331248879L); }
-    static constexpr float two_pi() { return float(6.283185307179586476925286766559005768394L); }
-
-    static float        m_z;
-    static float        m_n;
-    static std::int32_t m_p;
-
-    static auto fn_mstart1(const float m) -> float
-    {
-      // This equation corresponds to | Jm(z) | = 10^(-p)
-
-      //                          1             e * z
-      // Jm asymptotic --> ----------------  * [-----]^m = 10^-p
-      //                   sqrt(2 * pi * m)     2 * m
-      //
-      // The resulting root equation is:
-      // p + log10(Jnu asymptotic) = 0
-
-      using std::log10;
-
-      return   static_cast<float>(m_p)
-             - (0.5F * log10(two_pi() * m))
-             + (  m  * log10(e_half() * m_z / m));
-    }
-
-    static auto fn_mstart2(const float m) -> float
-    {
-      // This equation corresponds to | Jm(z) | = 10^(-p / 2) * | Jn(z)|
-
-      //                          1             e * z                         1             e * z
-      // Jm asymptotic --> ----------------  * [-----]^m = 10^(-p/2) * ----------------  * [-----]^n
-      //                   sqrt(2 * pi * m)     2 * m                  sqrt(2 * pi * n)     2 * n
-      //
-      // The resulting root equation is:
-      // p + log10(Jnu asymptotic) = 0
-
-      using std::log10;
-
-      return   (static_cast<float>(m_p) / 2.0F)
-             - (0.5F * log10(two_pi() * m))
-             + (  m  * log10(e_half() * m_z / m))
-             + (0.5F * log10(two_pi() * m_n))
-             - (m_n  * log10(e_half() * m_z / m_n));
-    }
-
-    static auto mstart1(const float x, const std::uint32_t digits) -> std::uint32_t
-    {
-      m_z = (std::max)(x, 0.1F);
-      m_p = static_cast<std::int32_t>(digits);
-
-      // Get the starting order for recursion.
-      const float         f_order = bisect(fn_mstart1, 0.1F, x + 100000.0F);
-      const std::uint32_t n_order = static_cast<std::uint32_t>(f_order);
-
-      // Make sure the return value is an odd integer.
-      return ((((n_order % 2U) == 0U) && (n_order > 0U)) ? n_order - 1U : n_order);
-    }
-
-    static auto mstart2(const float x, const float dn, const std::uint32_t digits) -> std::uint32_t
-    {
-      m_z = (std::max)(x, 0.1F);
-      m_n = dn;
-      m_p = static_cast<std::int32_t>(digits);
-
-      // Get the starting order for recursion.
-      const float         f_order = bisect(fn_mstart2, 0.1F, x + 100000.0F);
-      const std::uint32_t n_order = static_cast<std::uint32_t>(f_order);
-
-      // Make sure the return value is an odd integer.
-      return ((((n_order % 2U) == 0U) && (n_order > 0U)) ? n_order - 1U : n_order);
-    }
-  };
-
-  float         Jn_algo::m_z;
-  float         Jn_algo::m_n;
-  std::int32_t  Jn_algo::m_p;
-}
-
-namespace local
-{
-  template<typename FloatingPointType>
-  auto cyl_bessel_j(const std::int32_t n, const FloatingPointType x) -> FloatingPointType
-  {
-    using floating_point_type = FloatingPointType;
-
-    const floating_point_type one_over_x = floating_point_type(1U) / x;
-
-    floating_point_type my_jn_result(0U);
-
-    // Start recursion using two J's, Jn+2 and Jn+1.
-    // Arbitrarily set Jn+2 = 0 and Jn+1 = 1.
-    floating_point_type jn_p2    (0U);
-    floating_point_type jn_p1    (1U);
-    floating_point_type norm_half(1U);
-
-    constexpr auto d10 = static_cast<std::uint32_t>(std::numeric_limits<floating_point_type>::digits10);
-
-    // Get the starting order for recursive calculations.
-    const auto n_start1 = static_cast<std::int32_t>(Jn_algo::mstart1(static_cast<float>(x), d10));
-    const auto n_start2 = static_cast<std::int32_t>(Jn_algo::mstart2(static_cast<float>(x), static_cast<float>(n - 1), d10));
-
-    const auto n_start = (std::max)(n_start2, n_start1);
-
-    // Do the recursion. The direction of the recursion is downward.
-    for(std::int32_t m = n_start; m >= 0; --m)
-    {
-      //                                 Jn+1(x)
-      // Downward recursion is:  Jn(x) = ------- * [2 * (m + 1)] - Jn+2(x)
-      //                                    x
-      const floating_point_type jn = ((jn_p1 * one_over_x) * (floating_point_type(2U) * (m + 1))) - jn_p2;
-
-      jn_p2 = jn_p1;
-      jn_p1 = jn;
-
-      // For Normalization use a Neumann expansion of the form
-      // 1 = J_0(x) + 2 * J_2(x) + 2 * J_4(x) + 2 * J_6(x) + ...
-
-      if((m % 2) == 0)
-      {
-        norm_half += ((m == 0) ? jn / 2 : jn);
-      }
-
-      // Store the requested value of jn in the result.
-      if(m == n)
-      {
-        my_jn_result = jn;
-      }
-    }
-
-    // Divide by the normalization in order to get the scaled result.
-
-    return my_jn_result / (norm_half * 2);
+    dx  = x_hi - x_lo;
+    rtb = x_lo;
   }
+  else
+  {
+    dx  = x_lo - x_hi;
+    rtb = x_hi;
+  }
+
+  // Bisection iteration loop, maximum 64 times.
+  for(std::uint_fast8_t i = 0U; i < 64U; ++i) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+  {
+    dx /= 2;
+
+    const floating_point_type xmid = rtb + dx;
+    const floating_point_type fmid = pfn(xmid);
+
+    if(fmid <= floating_point_type(0.0L))
+    {
+      rtb = xmid;
+    }
+
+    // Test for convergence.
+    using std::fabs;
+
+    if(   (fabs(dx)   < static_cast<floating_point_type>(0.5L)) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+        || (fabs(fmid) < std::numeric_limits<floating_point_type>::epsilon()))
+    {
+      // Return root.
+      return rtb;
+    }
+  }
+
+  // Bisection iteration did not converge.
+  return floating_point_type(0);
 }
+
+struct jn_algo
+{
+  static constexpr auto e_half() -> float { return static_cast<float>(1.359140914229522617680143735676331248879L); } // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+  static constexpr auto two_pi() -> float { return static_cast<float>(6.283185307179586476925286766559005768394L); } // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+
+  static float        m_z;
+  static float        m_n;
+  static std::int32_t m_p;
+
+  static auto fn_mstart1(const float m) -> float
+  {
+    // This equation corresponds to | Jm(z) | = 10^(-p)
+
+    //                          1             e * z
+    // Jm asymptotic --> ----------------  * [-----]^m = 10^-p
+    //                   sqrt(2 * pi * m)     2 * m
+    //
+    // The resulting root equation is:
+    // p + log10(Jnu asymptotic) = 0
+
+    using std::log10;
+
+    return   static_cast<float>(m_p)
+            - (0.5F * log10(two_pi() * m)) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+            + (  m  * log10(e_half() * m_z / m));
+  }
+
+  static auto fn_mstart2(const float m) -> float
+  {
+    // This equation corresponds to | Jm(z) | = 10^(-p / 2) * | Jn(z)|
+
+    //                          1             e * z                         1             e * z
+    // Jm asymptotic --> ----------------  * [-----]^m = 10^(-p/2) * ----------------  * [-----]^n
+    //                   sqrt(2 * pi * m)     2 * m                  sqrt(2 * pi * n)     2 * n
+    //
+    // The resulting root equation is:
+    // p + log10(Jnu asymptotic) = 0
+
+    using std::log10;
+
+    return   (static_cast<float>(m_p) / 2.0F)      // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+            - (0.5F * log10(two_pi() * m))          // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+            + (  m  * log10(e_half() * m_z / m))    // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+            + (0.5F * log10(two_pi() * m_n))        // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+            - (m_n  * log10(e_half() * m_z / m_n)); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+  }
+
+  static auto mstart1(const float x, const std::uint32_t digits) -> std::uint32_t
+  {
+    m_z = (std::max)(x, 0.1F); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+    m_p = static_cast<std::int32_t>(digits);
+
+    // Get the starting order for recursion.
+    const auto f_order = bisect(fn_mstart1, 0.1F, x + 100000.0F); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+    const auto n_order = static_cast<std::uint32_t>(f_order);     // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+
+    // Make sure the return value is an odd integer.
+    return ((((n_order % 2U) == 0U) && (n_order > 0U)) ? n_order - 1U : n_order);
+  }
+
+  static auto mstart2(const float x, const float dn, const std::uint32_t digits) -> std::uint32_t
+  {
+    m_z = (std::max)(x, 0.1F); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+    m_n = dn;
+    m_p = static_cast<std::int32_t>(digits);
+
+    // Get the starting order for recursion.
+    const auto f_order = bisect(fn_mstart2, 0.1F, x + 100000.0F); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+    const auto n_order = static_cast<std::uint32_t>(f_order);     // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+
+    // Make sure the return value is an odd integer.
+    return ((((n_order % 2U) == 0U) && (n_order > 0U)) ? n_order - 1U : n_order);
+  }
+};
+
+float         jn_algo::m_z;
+float         jn_algo::m_n;
+std::int32_t  jn_algo::m_p;
+
+} // namespace detail
+
+template<typename FloatingPointType>
+auto cyl_bessel_j(const std::int32_t n, const FloatingPointType x) -> FloatingPointType
+{
+  using floating_point_type = FloatingPointType;
+
+  const floating_point_type one_over_x = floating_point_type(1U) / x;
+
+  floating_point_type my_jn_result(0U);
+
+  // Start recursion using two J's, Jn+2 and Jn+1.
+  // Arbitrarily set Jn+2 = 0 and Jn+1 = 1.
+  floating_point_type jn_p2    (0U);
+  floating_point_type jn_p1    (1U);
+  floating_point_type norm_half(1U);
+
+  constexpr auto d10 = static_cast<std::uint32_t>(std::numeric_limits<floating_point_type>::digits10);
+
+  // Get the starting order for recursive calculations.
+  const auto n_start1 = static_cast<std::int32_t>(detail::jn_algo::mstart1(static_cast<float>(x), d10));
+  const auto n_start2 = static_cast<std::int32_t>(detail::jn_algo::mstart2(static_cast<float>(x), static_cast<float>(n - 1), d10));
+
+  const auto n_start = (std::max)(n_start2, n_start1);
+
+  // Do the recursion. The direction of the recursion is downward.
+  for(std::int32_t m = n_start; m >= 0; --m)
+  {
+    //                                 Jn+1(x)
+    // Downward recursion is:  Jn(x) = ------- * [2 * (m + 1)] - Jn+2(x)
+    //                                    x
+    const floating_point_type jn = ((jn_p1 * one_over_x) * (floating_point_type(2U) * (m + 1))) - jn_p2;
+
+    jn_p2 = jn_p1;
+    jn_p1 = jn;
+
+    // For Normalization use a Neumann expansion of the form
+    // 1 = J_0(x) + 2 * J_2(x) + 2 * J_4(x) + 2 * J_6(x) + ...
+
+    if((m % 2) == 0)
+    {
+      norm_half += ((m == 0) ? jn / 2 : jn);
+    }
+
+    // Store the requested value of jn in the result.
+    if(m == n)
+    {
+      my_jn_result = jn;
+    }
+  }
+
+  // Divide by the normalization in order to get the scaled result.
+
+  return my_jn_result / (norm_half * 2);
+}
+} // namespace local
 
 auto math::softfloat::example004_bessel_recur() -> bool
 {

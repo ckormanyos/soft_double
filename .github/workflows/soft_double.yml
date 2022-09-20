@@ -28,6 +28,34 @@ jobs:
           ${{ matrix.compiler }} -finline-functions -O3 -Werror -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -march=native -O3 -std=${{ matrix.standard }} -I. examples/example001_roots_sqrt.cpp examples/example002b_pi_100k.cpp examples/example004_bessel_recur.cpp examples/example005_polylog_series.cpp examples/example007_catalan_series.cpp examples/example010_hypergeometric_2f1.cpp examples/example011_trig_trapezoid_integral.cpp test/test.cpp test/test_soft_double.cpp test/test_soft_double_examples.cpp -o soft_double.exe
           ls -la ./soft_double.exe
           ./soft_double.exe
+  gnumake-clang-tidy-12-native:
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        standard: [ c++20 ]
+        compiler: [ g++, clang++ ]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'
+      - name: update-tools
+        run: sudo apt install clang clang-tidy
+      - name: gnumake-clang-tidy-12-native
+        run: |
+          cd .tidy/make
+          echo "running clang-tidy"
+          echo "make prepare -f make_tidy_01_generic.gmk MY_CC=${{ matrix.compiler }} MY_STD=${{ matrix.standard }}"
+          echo
+          make prepare -f make_tidy_01_generic.gmk MY_CC=${{ matrix.compiler }} MY_STD=${{ matrix.standard }}
+          echo "make tidy -f make_tidy_01_generic.gmk --jobs=8 MY_CC=${{ matrix.compiler }} MY_STD=${{ matrix.standard }}"
+          make tidy -f make_tidy_01_generic.gmk --jobs=8 MY_CC=${{ matrix.compiler }} MY_STD=${{ matrix.standard }}
+          echo
+          echo "verify empty word count of ./tmp/all.tidy_txt"
+          wc ./tmp/all.tidy_txt | grep '0 0 0'
   mingw-winhost-x64:
     runs-on: windows-2019
     defaults:

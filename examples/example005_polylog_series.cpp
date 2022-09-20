@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////
-//  Copyright Christopher Kormanyos 2020 - 2021.                 //
+//  Copyright Christopher Kormanyos 2020 - 2022.                 //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
 //  or copy at http://www.boost.org/LICENSE_1_0.txt)             //
@@ -11,14 +11,14 @@
 #include <math/softfloat/soft_double.h>
 #include <math/softfloat/soft_double_examples.h>
 
-static_assert(sizeof(double) == 8U,
+static_assert(sizeof(double) == 8U, // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
               "Error: This example requires 8 byte built-in double for verification");
 
 namespace local
 {
   template<typename FloatingPointType,
            typename UnsignedIntegralType>
-  auto pow(FloatingPointType b, const UnsignedIntegralType p) -> FloatingPointType
+  auto pow(FloatingPointType b, UnsignedIntegralType p) -> FloatingPointType
   {
     // Calculate (b ^ p).
 
@@ -37,9 +37,9 @@ namespace local
 
       floating_point_type y(b);
 
-      for(std::uint64_t p_local = (std::uint64_t) p; p_local != 0U; p_local >>= 1U)
+      for(auto p_local = static_cast<std::uint64_t>(p); p_local != static_cast<std::uint64_t>(UINT8_C(0)); p_local >>= 1U)
       {
-        if((p_local & 1U) != 0U)
+        if(static_cast<std::uint8_t>(p_local & static_cast<std::uint8_t>(UINT8_C(1))) != static_cast<std::uint8_t>(UINT8_C(0)))
         {
           result *= y;
         }
@@ -81,7 +81,7 @@ namespace local
 
     return sum;
   }
-}
+} // namespace local
 
 auto math::softfloat::example005_polylog_series() -> bool
 {
