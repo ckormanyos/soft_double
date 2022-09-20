@@ -1,6 +1,18 @@
-﻿soft_double\
-[![Build Status](https://github.com/ckormanyos/soft_double/actions/workflows/soft_double.yml/badge.svg)](https://github.com/ckormanyos/soft_double/actions)
+soft_double
 ==================
+
+<p align="center">
+    <a href="https://github.com/ckormanyos/soft_double/actions">
+        <img src="https://github.com/ckormanyos/soft_double/actions/workflows/soft_double.yml/badge.svg" alt="Build Status"></a>
+    <a href="https://github.com/ckormanyos/soft_double/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc">
+        <img src="https://custom-icon-badges.herokuapp.com/github/issues-raw/ckormanyos/soft_double?logo=github" alt="Issues" /></a>
+    <a href="https://github.com/ckormanyos/soft_double/blob/master/LICENSE_1_0.txt">
+        <img src="https://img.shields.io/badge/license-BSL%201.0-blue.svg" alt="Boost Software License 1.0"></a>
+    <a href="https://img.shields.io/github/commit-activity/y/ckormanyos/soft_double">
+        <img src="https://img.shields.io/github/commit-activity/y/ckormanyos/soft_double" alt="GitHub commit activity" /></a>
+    <a href="https://github.com/ckormanyos/soft_double">
+        <img src="https://img.shields.io/github/languages/code-size/ckormanyos/soft_double" alt="GitHub code size in bytes" /></a>
+</p>
 
 soft_double is a C++ header-only library that implements
 a 64-bit double-precision floating-point data type in software.

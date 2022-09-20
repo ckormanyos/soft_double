@@ -58,6 +58,7 @@
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
     <Text Include="examples\CMakeLists.txt" />
+    <Text Include="LICENSE_1_0.txt" />
     <Text Include="test\CMakeLists.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

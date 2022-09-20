@@ -7,15 +7,15 @@ include(CTest)
 add_subdirectory("examples")
 add_subdirectory("test")
 
-add_library(SoftDouble INTERFACE)
-target_compile_features(SoftDouble INTERFACE cxx_std_11)
+add_library(SoftFloat INTERFACE)
+target_compile_features(SoftFloat INTERFACE cxx_std_11)
 
 target_include_directories(
-  SoftDouble SYSTEM INTERFACE
+  SoftFloat SYSTEM INTERFACE
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:include>)
 
-install(TARGETS SoftDouble EXPORT SoftDoubleTargets)
+install(TARGETS SoftFloat EXPORT SoftFloatTargets)
 install(
   FILES math/softfloat/soft_double.h
   DESTINATION include/math/softfloat/)
