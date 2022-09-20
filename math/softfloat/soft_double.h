@@ -288,7 +288,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return static_cast<std::uint32_t>(static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF)) / a);
   }
 
-  constexpr struct uint64_extra softfloat_shiftRightJam64Extra(std::uint64_t a, std::uint64_t extra, std::uint32_t dist)
+  constexpr auto softfloat_shiftRightJam64Extra(std::uint64_t a, std::uint64_t extra, std::uint32_t dist) -> struct uint64_extra
   {
     // Shifts the 128 bits formed by concatenating a and extra right by 64
     // _plus_ the number of bits given in dist, which must not be zero. This
@@ -330,8 +330,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     const float_type    my_f;
     const unsigned_type my_u;
 
-    constexpr uz_type(float_type    f) : my_f(f) { }
-    constexpr uz_type(unsigned_type u) : my_u(u) { }
+    constexpr uz_type(float_type    f) : my_f(f) { } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+    constexpr uz_type(unsigned_type u) : my_u(u) { } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
   };
 
   struct nothing { };
@@ -499,12 +499,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   template<typename UnsignedIntegralType,
            typename std::enable_if<(   std::is_integral<UnsignedIntegralType>::value
                                     && std::is_unsigned<UnsignedIntegralType>::value)>::type const* = nullptr>
-  auto pow(const soft_double x, UnsignedIntegralType u) -> soft_double;
+  auto pow(soft_double x, UnsignedIntegralType u) -> soft_double;
 
   template<typename SignedIntegralType,
            typename std::enable_if<(   std::is_integral<SignedIntegralType>::value
                                     && std::is_signed  <SignedIntegralType>::value)>::type const* = nullptr>
-  auto pow(const soft_double x, SignedIntegralType n) -> soft_double;
+  auto pow(soft_double x, SignedIntegralType n) -> soft_double;
 
   class soft_double final
   {
@@ -519,38 +519,38 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
              typename std::enable_if<(   std::is_integral<UnsignedIntegralType>::value
                                       && std::is_unsigned<UnsignedIntegralType>::value
                                       && (sizeof(UnsignedIntegralType) <= sizeof(std::uint32_t)))>::type const* = nullptr>
-    constexpr soft_double(UnsignedIntegralType u) : my_value(my_ui32_to_f64(static_cast<std::uint32_t>(u))) { }
+    constexpr soft_double(UnsignedIntegralType u) : my_value(my_ui32_to_f64(static_cast<std::uint32_t>(u))) { } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
 
     template<typename UnsignedIntegralType,
              typename std::enable_if<(   std::is_integral<UnsignedIntegralType>::value
                                       && std::is_unsigned<UnsignedIntegralType>::value
                                       && (!(sizeof(UnsignedIntegralType) <= sizeof(std::uint32_t))))>::type const* = nullptr>
-    constexpr soft_double(UnsignedIntegralType u) : my_value(my_ui64_to_f64(static_cast<std::uint64_t>(u))) { }
+    constexpr soft_double(UnsignedIntegralType u) : my_value(my_ui64_to_f64(static_cast<std::uint64_t>(u))) { } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
 
     template<typename SignedIntegralType,
              typename std::enable_if<(   std::is_integral<SignedIntegralType>::value
                                       && std::is_signed  <SignedIntegralType>::value
                                       && (sizeof(SignedIntegralType) <= sizeof(int32_t)))>::type const* = nullptr>
-    constexpr soft_double(SignedIntegralType n) : my_value(my__i32_to_f64(static_cast<std::int32_t>(n))) { }
+    constexpr soft_double(SignedIntegralType n) : my_value(my__i32_to_f64(static_cast<std::int32_t>(n))) { } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
 
     template<typename SignedIntegralType,
              typename std::enable_if<(   std::is_integral<SignedIntegralType>::value
                                       && std::is_signed  <SignedIntegralType>::value
                                       && (!(sizeof(SignedIntegralType) <= sizeof(int32_t))))>::type const* = nullptr>
-    constexpr soft_double(SignedIntegralType n) : my_value(my__i64_to_f64(static_cast<std::int64_t>(n))) { }
+    constexpr soft_double(SignedIntegralType n) : my_value(my__i64_to_f64(static_cast<std::int64_t>(n))) { } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
 
-    constexpr soft_double(float f)
+    constexpr soft_double(float f) // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
       : my_value
         (
-          ((detail::expF32UI (detail::uz_type<float>(f).my_u) == 0) && (detail::fracF32UI(detail::uz_type<float>(f).my_u) == 0U))
-            ? detail::packToF64UI(detail::signF32UI(detail::uz_type<float>(f).my_u), 0, 0)
-            : detail::packToF64UI(detail::signF32UI(detail::uz_type<float>(f).my_u), detail::expF32UI(detail::uz_type<float>(f).my_u) + 0x380, static_cast<std::uint64_t>(detail::fracF32UI(detail::uz_type<float>(f).my_u)) << 29)
+          ((detail::expF32UI (detail::uz_type<float>(f).my_u) == 0) && (detail::fracF32UI(detail::uz_type<float>(f).my_u) == 0U))                                                                                                    // NOLINT(cppcoreguidelines-pro-type-union-access)
+            ? detail::packToF64UI(detail::signF32UI(detail::uz_type<float>(f).my_u), 0, 0)                                                                                                                                           // NOLINT(cppcoreguidelines-pro-type-union-access)
+            : detail::packToF64UI(detail::signF32UI(detail::uz_type<float>(f).my_u), detail::expF32UI(detail::uz_type<float>(f).my_u) + 0x380, static_cast<std::uint64_t>(detail::fracF32UI(detail::uz_type<float>(f).my_u)) << 29U) // NOLINT(cppcoreguidelines-pro-type-union-access)
         ) { }
 
-    constexpr soft_double(double d)
+    constexpr soft_double(double d) // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
       : my_value(detail::uz_type<double>(d).my_u) { }
 
-    constexpr soft_double(const long double ld)
+    constexpr soft_double(long double ld) // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
       : my_value(detail::uz_type<double>(static_cast<double>(ld)).my_u) { }
 
     constexpr soft_double(const soft_double&) = default;
@@ -991,7 +991,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       return softfloat_roundToUI32(detail::signF64UI(a), sig);
     }
 
-    static int32_t f64_to__i32(const std::uint64_t a)
+    static auto f64_to__i32(std::uint64_t a) -> std::int32_t // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
     {
       const auto expA = detail::expF64UI (a);
             auto sig  = detail::fracF64UI(a);
@@ -1023,7 +1023,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       auto shiftDist = static_cast<std::int16_t>(static_cast<std::int16_t>(INT16_C(0x433)) - expA);
 
-      struct detail::uint64_extra sigExtra;
+      struct detail::uint64_extra sigExtra { };
 
       if(shiftDist <= static_cast<std::int16_t>(INT16_C(0)))
       {
@@ -1043,7 +1043,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       return softfloat_roundToUI64(detail::signF64UI(a), sigExtra.v);
     }
 
-    static auto f64_to__i64(const std::uint64_t a) -> std::int64_t
+    static auto f64_to__i64(const std::uint64_t a) -> std::int64_t // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
     {
       const auto expA = detail::expF64UI (a);
             auto sig  = detail::fracF64UI(a);
@@ -1129,10 +1129,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         expA = static_cast<std::int16_t>(INT8_C(0));
       }
 
-      return detail::uz_type<float>(detail::packToF32UI(sign, expA, sig)).my_f;
+      return detail::uz_type<float>(detail::packToF32UI(sign, expA, sig)).my_f; // NOLINT(cppcoreguidelines-pro-type-union-access)
     }
 
-    static constexpr auto my__i32_to_f64(const std::int32_t a) -> std::uint64_t
+    static constexpr auto my__i32_to_f64(const std::int32_t a) -> std::uint64_t // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
     {
       return
         (a == static_cast<std::int32_t>(INT8_C(0)))
@@ -1185,7 +1185,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             );
     }
 
-    static constexpr auto my__i64_to_f64(const int64_t a) -> std::uint64_t
+    static constexpr auto my__i64_to_f64(const int64_t a) -> std::uint64_t // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
     {
       return
         (static_cast<std::uint64_t>(static_cast<std::uint64_t>(a) & static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF))) == static_cast<std::uint64_t>(UINT8_C(0)))
@@ -1299,8 +1299,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       const auto expDiff = static_cast<std::int16_t>(expA - expB);
 
-      std::int16_t  expZ;
-      std::uint64_t sigZ;
+      std::int16_t  expZ { };
+      std::uint64_t sigZ { };
 
       if(expDiff == static_cast<std::int16_t>(INT8_C(0)))
       {
@@ -1544,8 +1544,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static auto softfloat_subMagsF64(std::uint64_t uiA, std::uint64_t uiB, bool signZ) -> std::uint64_t
     {
-      std::uint64_t uiZ;
-      std::int16_t  expZ;
+      std::uint64_t uiZ { };
+      std::int16_t  expZ { };
 
       auto expA = detail::expF64UI (uiA);
       auto sigA = detail::fracF64UI(uiA);
@@ -1558,13 +1558,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       {
         auto sigDiff = static_cast<std::int64_t>(sigA - sigB);
 
-        if(!sigDiff)
+        if(sigDiff == static_cast<std::int64_t>(INT8_C(0)))
         {
           uiZ = detail::packToF64UI(false, 0, 0);
         }
         else
         {
-          if(expA)
+          if(expA != static_cast<std::int16_t>(INT8_C(0)))
           {
             --expA;
           }
@@ -1591,7 +1591,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             expZ = static_cast<std::int16_t>(INT8_C(0));
           }
 
-          uiZ = detail::packToF64UI(signZ, expZ, sigDiff << shiftDist);
+          uiZ = detail::packToF64UI(signZ, expZ, sigDiff << shiftDist); // NOLINT(hicpp-signed-bitwise)
         }
       }
       else
@@ -1677,7 +1677,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       // Note that this input stream function relies on
       // the availability of 64-bit native double.
 
-      double v;
+      double v { };
 
       // Receive a floating-point number from the input stream.
       static_cast<void>(is >> v);
@@ -1746,9 +1746,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
         floating_point_type y(x);
 
-        for(std::uint32_t p_local = (std::uint32_t) u; p_local != 0U; p_local >>= 1U)
+        for(auto p_local = static_cast<std::uint32_t>(u); p_local != static_cast<std::uint32_t>(UINT8_C(0)); p_local >>= 1U)
         {
-          if((p_local & 1U) != 0U)
+          const auto bit_is_set =
+            (static_cast<std::uint8_t>(p_local & static_cast<std::uint8_t>(UINT8_C(1))) != static_cast<std::uint8_t>(UINT8_C(0)));
+
+          if(bit_is_set)
           {
             result *= y;
           }
@@ -2384,7 +2387,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return exp(a * log(x));
   }
 
-  inline auto tan(const soft_double x) -> soft_double
+  inline auto tan(soft_double x) -> soft_double
   {
     return sin(x) / cos(x);
   }
