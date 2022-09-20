@@ -75,7 +75,7 @@
   }
 
   template<>
-  constexpr auto template_sin_order_1<math::softfloat::float64_t>(const std::uint32_t num_points) -> math::softfloat::float64_t
+  constexpr auto template_sin_order_1<math::softfloat::float64_t>(const std::uint32_t num_points) -> math::softfloat::float64_t // NOLINT(readability-function-cognitive-complexity)
   {
     // Table[N[Sin[Pi / (2^n)], 41], {n, 1, 31, 1}]
     // Mathematica command: Table[N[Sin[Pi / (2^n)], 41], {n, 1, 31, 1}]
