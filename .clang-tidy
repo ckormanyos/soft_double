@@ -5,7 +5,9 @@ Checks: >
   -fuchsia-*,
   -llvm-header-guard,
   -llvmlibc-*,
-  -readability-identifier-naming
+  -readability-identifier-naming,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -readability-magic-numbers
 
 
 WarningsAsErrors: '*'

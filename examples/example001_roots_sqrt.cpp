@@ -16,8 +16,6 @@ static_assert(sizeof(double) == 8U, // NOLINT(cppcoreguidelines-avoid-magic-numb
 
 auto math::softfloat::example001_roots_sqrt() -> bool
 {
-  using float64_t = math::softfloat::float64_t;
-
   // Use a cached value for pi.
   const float64_t my_pi = float64_t::my_value_pi();
 

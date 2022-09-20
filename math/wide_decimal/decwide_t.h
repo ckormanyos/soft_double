@@ -770,7 +770,7 @@
              typename std::enable_if<(    std::is_integral<UnsignedIntegralType>::value
                                       &&  std::is_unsigned<UnsignedIntegralType>::value
                                       && (std::numeric_limits<UnsignedIntegralType>::digits <= std::numeric_limits<limb_type>::digits))>::type const* = nullptr>
-    decwide_t(const UnsignedIntegralType u) // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+    decwide_t(UnsignedIntegralType u) // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
       : my_data     (decwide_t_elem_number),
         my_exp      (static_cast<exponent_type>(0)),
         my_neg      (false),
@@ -800,7 +800,7 @@
              typename std::enable_if<(    std::is_integral<UnsignedIntegralType>::value
                                       &&  std::is_unsigned<UnsignedIntegralType>::value
                                       && (std::numeric_limits<limb_type>::digits < std::numeric_limits<UnsignedIntegralType>::digits))>::type const* = nullptr>
-    decwide_t(const UnsignedIntegralType u) : my_data     (), // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+    decwide_t(UnsignedIntegralType u) : my_data     (), // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
                                               my_exp      (static_cast<exponent_type>(0)),
                                               my_neg      (false),
                                               my_fpclass  (fpclass_type::decwide_t_finite),
@@ -813,7 +813,7 @@
     template<typename SignedIntegralType,
              typename std::enable_if<(   std::is_integral<SignedIntegralType>::value
                                       && std::is_signed  <SignedIntegralType>::value)>::type const* = nullptr>
-    decwide_t(const SignedIntegralType n) : my_data     (), // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+    decwide_t(SignedIntegralType n) : my_data     (), // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
                                             my_exp      (static_cast<exponent_type>(0)),
                                             my_neg      (n < static_cast<signed long long>(0)), // NOLINT(google-runtime-int)
                                             my_fpclass  (fpclass_type::decwide_t_finite),
