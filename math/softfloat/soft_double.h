@@ -547,11 +547,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             : detail::packToF64UI(detail::signF32UI(detail::uz_type<float>(f).my_u), detail::expF32UI(detail::uz_type<float>(f).my_u) + 0x380, static_cast<std::uint64_t>(detail::fracF32UI(detail::uz_type<float>(f).my_u)) << 29U) // NOLINT(cppcoreguidelines-pro-type-union-access)
         ) { }
 
-    constexpr soft_double(double d) // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
-      : my_value(detail::uz_type<double>(d).my_u) { }
+    constexpr soft_double(double d)                   // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+      : my_value(detail::uz_type<double>(d).my_u) { } // NOLINT(cppcoreguidelines-pro-type-union-access)
 
-    constexpr soft_double(long double ld) // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
-      : my_value(detail::uz_type<double>(static_cast<double>(ld)).my_u) { }
+    constexpr soft_double(long double ld)                                   // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+      : my_value(detail::uz_type<double>(static_cast<double>(ld)).my_u) { } // NOLINT(cppcoreguidelines-pro-type-union-access)
 
     constexpr soft_double(const soft_double&) = default;
 
@@ -695,7 +695,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       }
       else
       {
-        std::int16_t expZ =
+        auto expZ =
           static_cast<std::int16_t>
           (
               static_cast<std::int16_t>(expA + expB)
@@ -712,7 +712,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         const auto b32 = static_cast<std::uint32_t>(sigB >> 32U);
         const auto b0  = static_cast<std::uint32_t>(sigB);
 
-        struct detail::uint128_as_struct sig128Z;
+        struct detail::uint128_as_struct sig128Z { };
 
         sig128Z.v0 = static_cast<std::uint64_t>(static_cast<std::uint64_t>(a0) * b0);
 
@@ -725,7 +725,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         mid <<= 32U;
 
         sig128Z.v0  += mid;
-        sig128Z.v64 += (sig128Z.v0 < mid);
+        sig128Z.v64 += static_cast<unsigned>(sig128Z.v0 < mid ? 1U : 0U);
 
         if(sig128Z.v0 != 0U)
         {
@@ -892,11 +892,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         const auto expZ =
           static_cast<std::int16_t>
           (
-              static_cast<std::int16_t>(static_cast<std::int16_t>(expA - static_cast<std::int16_t>(INT16_C(0x3FF))) >> 1U)
+              static_cast<std::int16_t>(static_cast<std::int16_t>(expA - static_cast<std::int16_t>(INT16_C(0x3FF))) >> 1U) // NOLINT(hicpp-signed-bitwise)
             + static_cast<std::int16_t>(INT16_C(0x3FE))
           );
 
-        expA = static_cast<std::int16_t>(expA & static_cast<std::int16_t>(INT8_C(1)));
+        expA = static_cast<std::int16_t>(expA & static_cast<std::int16_t>(INT8_C(1))); // NOLINT(hicpp-signed-bitwise)
         sigA = static_cast<std::uint64_t>(sigA | static_cast<std::uint64_t>(UINT64_C(0x0010000000000000)));
 
         const auto sig32A      = static_cast<std::uint32_t>(sigA >> 21U);
@@ -967,7 +967,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           }
         }
 
-        result = softfloat_roundPackToF64(0, expZ, sigZ);
+        result = softfloat_roundPackToF64(false, expZ, sigZ);
       }
 
       return result;
@@ -1018,7 +1018,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       const auto expA = detail::expF64UI (a);
             auto sig  = detail::fracF64UI(a);
 
-      if(expA)
+      if(expA != static_cast<std::int16_t>(INT8_C(0)))
       {
         sig |= static_cast<std::uint64_t>(UINT64_C(0x0010000000000000));
       }
@@ -1050,7 +1050,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       const auto expA = detail::expF64UI (a);
             auto sig  = detail::fracF64UI(a);
 
-      if(expA)
+      if(expA != static_cast<std::int16_t>(INT8_C(0)))
       {
         sig |= static_cast<std::uint64_t>(UINT64_C(0x0010000000000000));
       }
@@ -1887,10 +1887,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     friend inline auto operator==(long double f, const soft_double& a) -> bool;
   };
 
-  inline auto operator+(const soft_double& a, const soft_double& b) -> soft_double { return soft_double(soft_double::f64_add(a.my_value, b.my_value), detail::nothing()); }
-  inline auto operator-(const soft_double& a, const soft_double& b) -> soft_double { return soft_double(soft_double::f64_sub(a.my_value, b.my_value), detail::nothing()); }
-  inline auto operator*(const soft_double& a, const soft_double& b) -> soft_double { return soft_double(soft_double::f64_mul(a.my_value, b.my_value), detail::nothing()); }
-  inline auto operator/(const soft_double& a, const soft_double& b) -> soft_double { return soft_double(soft_double::f64_div(a.my_value, b.my_value), detail::nothing()); }
+  inline auto operator+(const soft_double& a, const soft_double& b) -> soft_double { return { soft_double::f64_add(a.my_value, b.my_value), detail::nothing() }; }
+  inline auto operator-(const soft_double& a, const soft_double& b) -> soft_double { return { soft_double::f64_sub(a.my_value, b.my_value), detail::nothing() }; }
+  inline auto operator*(const soft_double& a, const soft_double& b) -> soft_double { return { soft_double::f64_mul(a.my_value, b.my_value), detail::nothing() }; }
+  inline auto operator/(const soft_double& a, const soft_double& b) -> soft_double { return { soft_double::f64_div(a.my_value, b.my_value), detail::nothing() }; }
 
   inline auto operator+(const soft_double& u, float f) -> soft_double { return soft_double(u) += soft_double(f); }
   inline auto operator-(const soft_double& u, float f) -> soft_double { return soft_double(u) -= soft_double(f); }
@@ -2042,7 +2042,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   }
 
-  inline auto sin(soft_double x) -> soft_double
+  inline auto sin(soft_double x) -> soft_double // NOLINT(misc-no-recursion)
   {
     soft_double s;
 
@@ -2149,7 +2149,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return s;
   }
 
-  inline auto cos(soft_double x) -> soft_double
+  inline auto cos(soft_double x) -> soft_double // NOLINT(misc-no-recursion)
   {
     soft_double c;
 
