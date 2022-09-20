@@ -105,16 +105,18 @@ auto catalan() -> FloatingPointType
 
 auto math::softfloat::example007_catalan_series() -> bool
 {
-  const float64_t c = local::catalan<float64_t>();
+  const auto c = local::catalan<float64_t>();
 
   // N[Catalan, 41]
   const float64_t control(0.9159655941772190150546035149323841107741);
 
   using std::fabs;
 
-  const float64_t closeness = fabs(1 - (c / control));
+  const float64_t closeness = fabs(1 - fabs(c / control));
 
-  const bool result_is_ok = (closeness < (std::numeric_limits<float64_t>::epsilon() * 10));
+  const auto tol = static_cast<float64_t>(std::numeric_limits<float64_t>::epsilon() * 10);
+
+  const auto result_is_ok = (closeness < tol);
 
   return result_is_ok;
 }
