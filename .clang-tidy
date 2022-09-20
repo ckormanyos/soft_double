@@ -5,6 +5,7 @@ Checks: >
   -fuchsia-*,
   -llvm-header-guard,
   -llvmlibc-*
+  -readability-identifier-naming
 
 
 WarningsAsErrors: '*'
