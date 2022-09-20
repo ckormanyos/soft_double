@@ -4,7 +4,7 @@ Checks: >
   -altera-*,
   -fuchsia-*,
   -llvm-header-guard,
-  -llvmlibc-*
+  -llvmlibc-*,
   -readability-identifier-naming
 
 
