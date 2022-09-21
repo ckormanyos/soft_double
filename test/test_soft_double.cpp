@@ -1,4 +1,4 @@
-///////////////////////////////////////////////////////////////////
+﻿///////////////////////////////////////////////////////////////////
 //  Copyright Christopher Kormanyos 2012 - 2022.                 //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
@@ -77,15 +77,15 @@ namespace local
   using eng32_type = std::default_random_engine;
   using eng64_type = std::mt19937_64;
 
-  eng32_type eng32; // NOLINT(cert-err58-cpp,cert-msc32-c,cert-msc51-cpp)
-  eng64_type eng64; // NOLINT(cert-err58-cpp,cert-msc32-c,cert-msc51-cpp)
+  eng32_type eng32; // NOLINT(cppcoreguidelines-avoid-non-const-global-variables,cert-err58-cpp,cert-msc32-c,cert-msc51-cpp)
+  eng64_type eng64; // NOLINT(cppcoreguidelines-avoid-non-const-global-variables,cert-err58-cpp,cert-msc32-c,cert-msc51-cpp)
 
   // Mantissa range from 10^15 ... 2^53-1
-  std::uniform_int_distribution<std::uint64_t> dst_mantissa(UINT64_C(1000000000000000), UINT64_C(9007199254740991)); // NOLINT(cert-err58-cpp)
-  std::uniform_int_distribution<std::uint32_t> dst_exp     (UINT32_C(0),                UINT32_C(36));               // NOLINT(cert-err58-cpp)
-  std::uniform_int_distribution<std::uint32_t> dst_sign    (UINT32_C(0),                UINT32_C(1));                // NOLINT(cert-err58-cpp)
+  std::uniform_int_distribution<std::uint64_t> dst_mantissa(UINT64_C(1000000000000000), UINT64_C(9007199254740991)); // NOLINT(cppcoreguidelines-avoid-non-const-global-variables,cert-err58-cpp)
+  std::uniform_int_distribution<std::uint32_t> dst_exp     (UINT32_C(0),                UINT32_C(36));               // NOLINT(cppcoreguidelines-avoid-non-const-global-variables,cert-err58-cpp)
+  std::uniform_int_distribution<std::uint32_t> dst_sign    (UINT32_C(0),                UINT32_C(1));                // NOLINT(cppcoreguidelines-avoid-non-const-global-variables,cert-err58-cpp)
 
-  auto get_sf_float64_t_and_double(math::softfloat::float64_t& x1, // NOLINT(google-runtime-references)
+  auto get_sf_float64_t_and_double(math::softfloat::float64_t& x1, // NOLINT(google-runtime-references,readability-function-cognitive-complexity)
                                    double&                     d1, // NOLINT(google-runtime-references)
                                    const bool                  is_positive = false) -> void
   {
@@ -140,35 +140,35 @@ namespace local
   }
 } // namespace local
 
-auto add____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,         // NOLINT(google-runtime-references)
+auto add____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,         // NOLINT(google-runtime-references,bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
                                     double&                     d_result, const double&                     da, const double&                     db) -> void // NOLINT(google-runtime-references)
 {
   x_result = xa + xb;
   d_result = da + db;
 }
 
-auto sub____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,         // NOLINT(google-runtime-references)
+auto sub____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,         // NOLINT(google-runtime-references,bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
                                     double&                     d_result, const double&                     da, const double&                     db) -> void // NOLINT(google-runtime-references)
 {
   x_result = xa - xb;
   d_result = da - db;
 }
 
-auto mul____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,         // NOLINT(google-runtime-references)
+auto mul____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,         // NOLINT(google-runtime-references,bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
                                     double&                     d_result, const double&                     da, const double&                     db) -> void // NOLINT(google-runtime-references)
 {
   x_result = xa * xb;
   d_result = da * db;
 }
 
-auto div____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,         // NOLINT(google-runtime-references)
+auto div____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,         // NOLINT(google-runtime-references,bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
                                     double&                     d_result, const double&                     da, const double&                     db) -> void // NOLINT(google-runtime-references)
 {
   x_result = xa / xb;
   d_result = da / db;
 }
 
-auto sqrt___sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa,         // NOLINT(google-runtime-references)
+auto sqrt___sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa,         // NOLINT(google-runtime-references,bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
                                     double&                     d_result, const double&                     da) -> void // NOLINT(google-runtime-references)
 {
   using std::sqrt;
@@ -656,7 +656,7 @@ auto test_soft_double() -> bool
 
     const math::softfloat::float64_t xp  = math::constants::pi<math::softfloat::float64_t>();
     const auto u64 = static_cast<std::uint64_t>(xp);
-    const auto result_cast___is_ok = (u64 == 3U);
+    const auto result_cast___is_ok = (u64 == 3U); // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
     std::cout << std::boolalpha << result_cast___is_ok << std::endl;
     result_is_ok &= result_cast___is_ok;
   }
@@ -666,7 +666,7 @@ auto test_soft_double() -> bool
 
     math::softfloat::float64_t xf = math::softfloat::float64_t(0.125F) + math::softfloat::float64_t(0.5F); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
     double df = math::softfloat::detail::uz_type<double>(xf.crepresentation()).my_f; // NOLINT(cppcoreguidelines-pro-type-union-access)
-    const bool result_f32____is_ok = (df == 0.625);
+    const auto result_f32____is_ok = (df == 0.625); // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
     std::cout << std::boolalpha << result_f32____is_ok << std::endl;
     result_is_ok &= result_f32____is_ok;
   }
@@ -677,7 +677,7 @@ auto test_soft_double() -> bool
     math::softfloat::float64_t  xn(1 / math::softfloat::float64_t(3));
     xn = -xn;
     double dn = math::softfloat::detail::uz_type<double>(xn.crepresentation()).my_f; // NOLINT(cppcoreguidelines-pro-type-union-access)
-    bool result_neg____is_ok = fabs(1.0 - (dn / -0.33333333333333333)) < std::numeric_limits<double>::epsilon(); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+    auto result_neg____is_ok = fabs(1.0 - (dn / -0.33333333333333333)) < std::numeric_limits<double>::epsilon(); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers,bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
 
     xn = -xn;
     dn = math::softfloat::detail::uz_type<double>(xn.crepresentation()).my_f; // NOLINT(cppcoreguidelines-pro-type-union-access)
@@ -703,7 +703,7 @@ auto test_soft_double() -> bool
 
     using std::fabs;
 
-    const bool result_ddx____is_ok = fabs(1.0 - (d / 1.33333333333333333)) < std::numeric_limits<double>::epsilon() * 1.0E6;
+    const auto result_ddx____is_ok = fabs(1.0 - (d / 1.33333333333333333)) < std::numeric_limits<double>::epsilon() * 1.0E6; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
     std::cout << std::boolalpha << result_ddx____is_ok << std::endl;
     result_is_ok &= result_ddx____is_ok;
   }
@@ -713,45 +713,45 @@ auto test_soft_double() -> bool
   local::eng32.seed(static_cast<typename local::eng32_type::result_type>(std::clock()));
   local::eng64.seed(static_cast<typename local::eng64_type::result_type>(~static_cast<uint64_t>(std::clock())));
 
-  std::cout << "testing frexp__... "; const bool result_frexp__is_ok = test_frexp ( 20000000U);     std::cout << std::boolalpha << result_frexp__is_ok << std::endl;
-  std::cout << "testing ldexp__... "; const bool result_ldexp__is_ok = test_ldexp ( 20000000U);     std::cout << std::boolalpha << result_ldexp__is_ok << std::endl;
-  std::cout << "testing exp____... "; const bool result_exp____is_ok = test_exp   ( );              std::cout << std::boolalpha << result_exp____is_ok << std::endl;
-  std::cout << "testing log____... "; const bool result_log____is_ok = test_log   ( );              std::cout << std::boolalpha << result_log____is_ok << std::endl;
-  std::cout << "testing sin____... "; const bool result_sin____is_ok = test_sin   ( );              std::cout << std::boolalpha << result_sin____is_ok << std::endl;
-  std::cout << "testing cos____... "; const bool result_cos____is_ok = test_cos   ( );              std::cout << std::boolalpha << result_cos____is_ok << std::endl;
+  std::cout << "testing frexp__... "; const auto result_frexp__is_ok = test_frexp ( 20000000U);     std::cout << std::boolalpha << result_frexp__is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing ldexp__... "; const auto result_ldexp__is_ok = test_ldexp ( 20000000U);     std::cout << std::boolalpha << result_ldexp__is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing exp____... "; const auto result_exp____is_ok = test_exp   ( );              std::cout << std::boolalpha << result_exp____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing log____... "; const auto result_log____is_ok = test_log   ( );              std::cout << std::boolalpha << result_log____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing sin____... "; const auto result_sin____is_ok = test_sin   ( );              std::cout << std::boolalpha << result_sin____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing cos____... "; const auto result_cos____is_ok = test_cos   ( );              std::cout << std::boolalpha << result_cos____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
 
   local::eng32.seed(static_cast<typename local::eng32_type::result_type>(std::clock()));
   local::eng64.seed(static_cast<typename local::eng64_type::result_type>(~static_cast<uint64_t>(std::clock())));
 
-  std::cout << "testing floor__... "; const bool result_floor__is_ok = test_floor (200000000U);     std::cout << std::boolalpha << result_floor__is_ok << std::endl;
+  std::cout << "testing floor__... "; const auto result_floor__is_ok = test_floor (200000000U);     std::cout << std::boolalpha << result_floor__is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
 
   local::eng32.seed(static_cast<typename local::eng32_type::result_type>(std::clock()));
   local::eng64.seed(static_cast<typename local::eng64_type::result_type>(~static_cast<uint64_t>(std::clock())));
 
-  std::cout << "testing ceil___... "; const bool result_ceil___is_ok = test_ceil  (200000000U);     std::cout << std::boolalpha << result_ceil___is_ok << std::endl;
+  std::cout << "testing ceil___... "; const auto result_ceil___is_ok = test_ceil  (200000000U);     std::cout << std::boolalpha << result_ceil___is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
 
   local::eng32.seed(static_cast<typename local::eng32_type::result_type>(std::clock()));
   local::eng64.seed(static_cast<typename local::eng64_type::result_type>(~static_cast<uint64_t>(std::clock())));
 
-  std::cout << "testing add____... "; const bool result_add____is_ok = test_ops   ( 20000000U, 0U); std::cout << std::boolalpha << result_add____is_ok << std::endl;
-  std::cout << "testing sub____... "; const bool result_sub____is_ok = test_ops   ( 20000000U, 1U); std::cout << std::boolalpha << result_sub____is_ok << std::endl;
-  std::cout << "testing mul____... "; const bool result_mul____is_ok = test_ops   ( 20000000U, 2U); std::cout << std::boolalpha << result_mul____is_ok << std::endl;
-  std::cout << "testing div____... "; const bool result_div____is_ok = test_ops   ( 20000000U, 3U); std::cout << std::boolalpha << result_div____is_ok << std::endl;
-  std::cout << "testing sqrt___... "; const bool result_sqrt___is_ok = test_ops   ( 20000000U, 4U); std::cout << std::boolalpha << result_sqrt___is_ok << std::endl;
+  std::cout << "testing add____... "; const auto result_add____is_ok = test_ops   ( 20000000U, 0U); std::cout << std::boolalpha << result_add____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing sub____... "; const auto result_sub____is_ok = test_ops   ( 20000000U, 1U); std::cout << std::boolalpha << result_sub____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing mul____... "; const auto result_mul____is_ok = test_ops   ( 20000000U, 2U); std::cout << std::boolalpha << result_mul____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing div____... "; const auto result_div____is_ok = test_ops   ( 20000000U, 3U); std::cout << std::boolalpha << result_div____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing sqrt___... "; const auto result_sqrt___is_ok = test_ops   ( 20000000U, 4U); std::cout << std::boolalpha << result_sqrt___is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
 
   local::eng32.seed(static_cast<typename local::eng32_type::result_type>(std::clock()));
   local::eng64.seed(static_cast<typename local::eng64_type::result_type>(~static_cast<uint64_t>(std::clock())));
 
-  std::cout << "testing lt_____... "; const bool result_lt_____is_ok = test_neq   ( 20000000U, 0U); std::cout << std::boolalpha << result_lt_____is_ok << std::endl;
-  std::cout << "testing gt_____... "; const bool result_gt_____is_ok = test_neq   ( 20000000U, 1U); std::cout << std::boolalpha << result_gt_____is_ok << std::endl;
-  std::cout << "testing neq____... "; const bool result_neq____is_ok = test_neq   ( 20000000U, 2U); std::cout << std::boolalpha << result_neq____is_ok << std::endl;
+  std::cout << "testing lt_____... "; const auto result_lt_____is_ok = test_neq   ( 20000000U, 0U); std::cout << std::boolalpha << result_lt_____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing gt_____... "; const auto result_gt_____is_ok = test_neq   ( 20000000U, 1U); std::cout << std::boolalpha << result_gt_____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing neq____... "; const auto result_neq____is_ok = test_neq   ( 20000000U, 2U); std::cout << std::boolalpha << result_neq____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
 
   local::eng32.seed(static_cast<typename local::eng32_type::result_type>(std::clock()));
   local::eng64.seed(static_cast<typename local::eng64_type::result_type>(~static_cast<uint64_t>(std::clock())));
 
-  std::cout << "testing eq_____... "; const bool result_eq_____is_ok = test_neq   ( 20000000U, 0U); std::cout << std::boolalpha << result_eq_____is_ok << std::endl;
-  std::cout << "testing leq____... "; const bool result_leq____is_ok = test_neq   ( 20000000U, 1U); std::cout << std::boolalpha << result_leq____is_ok << std::endl;
-  std::cout << "testing geq____... "; const bool result_geq____is_ok = test_neq   ( 20000000U, 2U); std::cout << std::boolalpha << result_geq____is_ok << std::endl;
+  std::cout << "testing eq_____... "; const auto result_eq_____is_ok = test_neq   ( 20000000U, 0U); std::cout << std::boolalpha << result_eq_____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing leq____... "; const auto result_leq____is_ok = test_neq   ( 20000000U, 1U); std::cout << std::boolalpha << result_leq____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing geq____... "; const auto result_geq____is_ok = test_neq   ( 20000000U, 2U); std::cout << std::boolalpha << result_geq____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
 
   const auto stop = std::clock();
 

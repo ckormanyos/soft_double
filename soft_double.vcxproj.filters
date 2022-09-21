@@ -43,6 +43,9 @@
     <Filter Include=".tidy\make">
       <UniqueIdentifier>{e060f0e6-5117-43aa-b804-2a62f098c58d}</UniqueIdentifier>
     </Filter>
+    <Filter Include=".github\toolchains">
+      <UniqueIdentifier>{4ec239b8-1a14-49a9-b283-c08681500bb7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test\test.cpp">
@@ -137,5 +140,18 @@
     <None Include=".tidy\make\make_tidy_03_flags.gmk">
       <Filter>.tidy\make</Filter>
     </None>
+    <None Include=".github\toolchains\gcc.cmake">
+      <Filter>.github\toolchains</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="examples\CMakeLists.txt">
+      <Filter>examples</Filter>
+    </Text>
+    <Text Include="test\CMakeLists.txt">
+      <Filter>test</Filter>
+    </Text>
+    <Text Include="CMakeLists.txt" />
+    <Text Include="LICENSE_1_0.txt" />
   </ItemGroup>
 </Project>

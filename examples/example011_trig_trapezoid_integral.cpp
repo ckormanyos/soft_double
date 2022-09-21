@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////
-//  Copyright Christopher Kormanyos 2021.                        //
+//  Copyright Christopher Kormanyos 2021 - 2022.                 //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
 //  or copy at http://www.boost.org/LICENSE_1_0.txt)             //
@@ -12,109 +12,121 @@
 #include <math/softfloat/soft_double.h>
 #include <math/softfloat/soft_double_examples.h>
 
-static_assert(sizeof(double) == 8U,
+static_assert(sizeof(double) == 8U, // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
               "Error: This example requires 8 byte built-in double for verification");
 
-namespace
+namespace local { namespace detail {
+
+using float64_t = math::softfloat::soft_double;
+
+} // namespace detail
+
+using detail::float64_t;
+
+constexpr auto pi_value_as_long_double =
+  static_cast<long double>
+  (
+    3.14159265358979323846264338327950288419716939937510582097L // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+  );
+
+template<typename FloatType>
+auto pi() -> FloatType { return FloatType(); }
+
+template<>
+constexpr auto pi() -> float { return static_cast<float>(pi_value_as_long_double); }
+
+template<>
+constexpr auto pi() -> double { return static_cast<double>(pi_value_as_long_double); }
+
+template<>
+constexpr auto pi() -> long double { return static_cast<long double>(pi_value_as_long_double); }
+
+template<>
+constexpr auto pi() -> float64_t { return float64_t::my_value_pi(); }
+
+template<typename real_value_type,
+          typename real_function_type>
+auto integral(const real_value_type&   a,
+              const real_value_type&   b, // NOLINT(bugprone-easily-swappable-parameters)
+              const real_value_type&   tol,
+                    real_function_type real_function) -> real_value_type
 {
-  using float64_t = math::softfloat::soft_double;
-}
+  std::uint_fast32_t n2(1);
 
-namespace local
-{
-  template<typename FloatType>
-  auto pi() -> FloatType { return FloatType(); }
+  real_value_type step = ((b - a) / 2U);
 
-  template<>
-  constexpr auto pi() -> float { return static_cast<float>(3.14159265358979323846264338327950288419716939937510582097L); }
+  real_value_type result = (real_function(a) + real_function(b)) * step;
 
-  template<>
-  constexpr auto pi() -> double { return static_cast<double>(3.14159265358979323846264338327950288419716939937510582097L); }
+  const std::uint_fast8_t k_max = UINT8_C(32);
 
-  template<>
-  constexpr auto pi() -> long double { return static_cast<long double>(3.14159265358979323846264338327950288419716939937510582097L); }
-
-  template<>
-  constexpr auto pi() -> float64_t { return float64_t::my_value_pi(); }
-
-  template<typename real_value_type,
-           typename real_function_type>
-  auto integral(const real_value_type&   a,
-                const real_value_type&   b,
-                const real_value_type&   tol,
-                      real_function_type real_function) -> real_value_type
+  for(auto k = static_cast<std::uint_fast8_t>(UINT8_C(0)); k < k_max; ++k)
   {
-    std::uint_fast32_t n2(1);
+    real_value_type sum(0);
 
-    real_value_type step = ((b - a) / 2U);
-
-    real_value_type result = (real_function(a) + real_function(b)) * step;
-
-    const std::uint_fast8_t k_max = UINT8_C(32);
-
-    for(std::uint_fast8_t k = UINT8_C(0); k < k_max; ++k)
+    for(auto j = static_cast<std::uint_fast32_t>(UINT8_C(0)); j < n2; ++j)
     {
-      real_value_type sum(0);
+      const auto two_j_plus_one =
+        static_cast<std::uint_fast32_t>
+        (
+          static_cast<std::uint_fast32_t>(j * UINT32_C(2)) + UINT32_C(1)
+        );
 
-      for(std::uint_fast32_t j(0U); j < n2; ++j)
-      {
-        const std::uint_fast32_t two_j_plus_one = (j * UINT32_C(2)) + UINT32_C(1);
-
-        sum += real_function(a + (step * two_j_plus_one));
-      }
-
-      const real_value_type tmp = result;
-
-      result = (result / 2U) + (step * sum);
-
-      using std::fabs;
-
-      const real_value_type ratio = fabs(tmp / result);
-
-      const real_value_type delta = fabs(ratio - 1U);
-
-      if((k > UINT8_C(1)) && (delta < tol))
-      {
-        break;
-      }
-
-      n2 *= 2U;
-
-      step /= 2U;
+      sum += real_function(a + (step * two_j_plus_one));
     }
 
-    return result;
+    const real_value_type tmp = result;
+
+    result = (result / 2U) + (step * sum);
+
+    using std::fabs;
+
+    const real_value_type ratio = fabs(tmp / result);
+
+    const real_value_type delta = fabs(ratio - 1U);
+
+    if((k > UINT8_C(1)) && (delta < tol))
+    {
+      break;
+    }
+
+    n2 *= 2U;
+
+    step /= 2U;
   }
 
-  template<typename float_type>
-  auto cyl_bessel_j(const std::uint_fast8_t n, const float_type& x) -> float_type
-  {
-    using std::sqrt;
-
-    constexpr float_type eps = std::numeric_limits<float_type>::epsilon();
-
-    const float_type tol = sqrt(eps);
-
-    const float_type integration_result =
-      integral
-      (
-        float_type(0),
-        pi<float_type>(),
-        tol,
-        [&x, &n](const float_type& t) -> float_type
-        {
-          using std::cos;
-          using std::sin;
-
-          return cos(x * sin(t) - (t * n));
-        }
-      );
-
-    const float_type jn = integration_result / pi<float_type>();
-
-    return jn;
-  }
+  return result;
 }
+
+template<typename float_type>
+auto cyl_bessel_j(const std::uint_fast8_t n, const float_type& x) -> float_type
+{
+  using std::sqrt;
+
+  constexpr float_type eps = std::numeric_limits<float_type>::epsilon();
+
+  const float_type tol = sqrt(eps);
+
+  const float_type integration_result =
+    integral
+    (
+      float_type(0),
+      pi<float_type>(),
+      tol,
+      [&x, &n](const float_type& t) -> float_type
+      {
+        using std::cos;
+        using std::sin;
+
+        return cos(x * sin(t) - (t * n));
+      }
+    );
+
+  const float_type jn = integration_result / pi<float_type>();
+
+  return jn;
+}
+
+} // namespace local
 
 auto math::softfloat::example011_trig_trapezoid_integral() -> bool
 {
