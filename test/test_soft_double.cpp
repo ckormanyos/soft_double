@@ -1,4 +1,4 @@
-///////////////////////////////////////////////////////////////////
+﻿///////////////////////////////////////////////////////////////////
 //  Copyright Christopher Kormanyos 2012 - 2022.                 //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
@@ -703,7 +703,7 @@ auto test_soft_double() -> bool
 
     using std::fabs;
 
-    const bool result_ddx____is_ok = fabs(1.0 - (d / 1.33333333333333333)) < std::numeric_limits<double>::epsilon() * 1.0E6;
+    const auto result_ddx____is_ok = fabs(1.0 - (d / 1.33333333333333333)) < std::numeric_limits<double>::epsilon() * 1.0E6; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
     std::cout << std::boolalpha << result_ddx____is_ok << std::endl;
     result_is_ok &= result_ddx____is_ok;
   }
