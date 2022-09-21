@@ -682,7 +682,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       const auto expB  = detail::expF64UI (b);
             auto sigB  = detail::fracF64UI(b);
 
-      const bool signZ = (signA ^ signB);
+      const auto signZ =
+        static_cast<unsigned>
+        (
+          static_cast<unsigned>(signA ? 1U : 0U) ^ static_cast<unsigned>(signB ? 1U : 0U)
+        ) != 0U;
 
       auto result = std::uint64_t { };
 
@@ -1057,7 +1061,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       auto shiftDist = static_cast<std::int16_t>(static_cast<std::int16_t>(INT16_C(0x433)) - expA);
 
-      struct detail::uint64_extra sigExtra;
+      struct detail::uint64_extra sigExtra { };
 
       if(shiftDist <= static_cast<std::int16_t>(INT16_C(0)))
       {
@@ -1712,16 +1716,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       }
 
       return
-        soft_double
+      {
+        detail::packToF64UI
         (
-          detail::packToF64UI
-          (
-            detail::signF64UI(x.my_value),
-            static_cast<std::int16_t>(INT16_C(0x3FE)),
-            detail::fracF64UI(x.my_value)
-          ),
-          detail::nothing()
-        );
+          detail::signF64UI(x.my_value),
+          static_cast<std::int16_t>(INT16_C(0x3FE)),
+          detail::fracF64UI(x.my_value)
+        ),
+        detail::nothing()
+      };
     }
 
     friend inline auto ldexp(soft_double x, int expval) -> soft_double;
@@ -1735,7 +1738,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                       && std::is_unsigned<UnsignedIntegralType>::value)>::type const*>
     friend auto pow(soft_double x, UnsignedIntegralType u) -> soft_double
     {
-      soft_double result;
+      soft_double result { };
 
       if     (u == 0U) { result = soft_double::my_value_one(); }
       else if(u == 1U) { result = x; }
@@ -1748,7 +1751,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
         floating_point_type y(x);
 
-        for(auto p_local = static_cast<std::uint32_t>(u); p_local != static_cast<std::uint32_t>(UINT8_C(0)); p_local >>= 1U)
+        for(auto p_local   = static_cast<std::uint32_t>(u);
+                 p_local  != static_cast<std::uint32_t>(UINT8_C(0));
+                 p_local >>= 1U)
         {
           const auto bit_is_set =
             (static_cast<std::uint8_t>(p_local & static_cast<std::uint8_t>(UINT8_C(1))) != static_cast<std::uint8_t>(UINT8_C(0)));
@@ -1770,9 +1775,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                       && std::is_signed  <SignedIntegralType>::value)>::type const*>
     friend auto pow(soft_double x, SignedIntegralType n) -> soft_double
     {
-      soft_double result;
+      soft_double result { };
 
-      if     (n <  0) { result = soft_double::my_value_one() / pow(x, (SignedIntegralType) -n); }
+      if     (n <  0) { result = soft_double::my_value_one() / pow(x, static_cast<SignedIntegralType>(-n)); }
       else if(n == 0) { result = soft_double::my_value_one(); }
       else if(n == 1) { result = x; }
       else if(n == 2) { result = x * x; }
@@ -1784,7 +1789,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
         floating_point_type y(x);
 
-        for(auto p_local = static_cast<std::uint32_t>(n); p_local != static_cast<std::uint32_t>(UINT8_C(0)); p_local >>= 1U)
+        for(auto p_local   = static_cast<std::uint32_t>(n);
+                 p_local  != static_cast<std::uint32_t>(UINT8_C(0));
+                 p_local >>= 1U)
         {
           const auto bit_zero_is_set =
             (static_cast<std::uint8_t>(p_local & static_cast<std::uint8_t>(UINT8_C(1))) != static_cast<std::uint8_t>(UINT8_C(0)));
@@ -2040,11 +2047,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return 1U + ((x2 * top) / (bot * 24));
   }
 
-  }
+  } // namespace detail
 
   inline auto sin(soft_double x) -> soft_double // NOLINT(misc-no-recursion)
   {
-    soft_double s;
+    soft_double s { };
 
     if(x < 0)
     {
@@ -2151,7 +2158,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   inline auto cos(soft_double x) -> soft_double // NOLINT(misc-no-recursion)
   {
-    soft_double c;
+    soft_double c { };
 
     if(x < 0)
     {
@@ -2251,7 +2258,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   inline auto floor(soft_double x) -> soft_double
   {
-    soft_double result;
+    soft_double result { };
 
     if(x < 0)
     {
@@ -2273,7 +2280,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   inline auto ceil(soft_double x) -> soft_double
   {
-    soft_double result;
+    soft_double result { };
 
     if(x < 0)
     {
@@ -2300,16 +2307,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     //   (84 x (7920 + 240 x^2 + x^4))
     // / (665280 + x (-332640 + x (75600 + x (-10080 + x (840 + (-42 + x) x)))))
 
-    const int n = (int) (x / soft_double::my_value_ln2());
+    const auto n = static_cast<int>(x / soft_double::my_value_ln2());
 
     // Scale the argument such that Exp[x] = Exp[a + n * ln2].
     soft_double a = x - (n * soft_double::my_value_ln2());
 
     // Scale the argument yet again with division by 4.
-    const int expA = (int) (detail::expF64UI(a.my_value) - 2);
+    const auto expA = static_cast<int>(detail::expF64UI(a.my_value) - 2);
 
     a.my_value &= static_cast<std::uint64_t>(~static_cast<std::uint64_t>(static_cast<std::uint64_t>(UINT64_C(0x7FF)) << 52U));
-    a.my_value |= static_cast<std::uint64_t>(expA) << 52U;
+    a.my_value |= static_cast<std::uint64_t>(static_cast<std::uint64_t>(expA) << 52U);
 
     const soft_double a2 = a * a;
 
@@ -2325,9 +2332,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return ((n != 0) ? ldexp(result, n) : result);
   }
 
-  inline auto log(soft_double x) -> soft_double
+  inline auto log(soft_double x) -> soft_double // NOLINT(misc-no-recursion)
   {
-    soft_double result;
+    soft_double result { };
 
     if(x < soft_double::my_value_one())
     {
