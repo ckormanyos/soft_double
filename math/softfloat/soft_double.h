@@ -176,13 +176,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return static_cast<SignedIntegralType>(detail::negate(static_cast<unsigned long long>(n))); // NOLINT(google-runtime-int)
   }
 
-  inline constexpr auto signF32UI(std::uint32_t a) -> bool          { return (static_cast<unsigned>(a >> 31U) != static_cast<unsigned>(UINT8_C(0))); }
-  inline constexpr auto expF32UI (std::uint32_t a) -> std::int16_t  { return static_cast<std::int16_t>(static_cast<std::int16_t>(a >> 23U) & static_cast<std::int16_t>(INT16_C(0xFF))); } // NOLINT(hicpp-signed-bitwise)
-  inline constexpr auto fracF32UI(std::uint32_t a) -> std::uint32_t { return static_cast<std::uint32_t>(a & static_cast<std::uint32_t>(UINT32_C(0x007FFFFF))); }
+  constexpr auto signF32UI(std::uint32_t a) -> bool          { return (static_cast<unsigned>(a >> 31U) != static_cast<unsigned>(UINT8_C(0))); }
+  constexpr auto expF32UI (std::uint32_t a) -> std::int16_t  { return static_cast<std::int16_t>(static_cast<std::int16_t>(a >> 23U) & static_cast<std::int16_t>(INT16_C(0xFF))); } // NOLINT(hicpp-signed-bitwise)
+  constexpr auto fracF32UI(std::uint32_t a) -> std::uint32_t { return static_cast<std::uint32_t>(a & static_cast<std::uint32_t>(UINT32_C(0x007FFFFF))); }
 
-  inline constexpr auto signF64UI(std::uint64_t a) -> bool          { return (static_cast<unsigned>(a >> 63U) != static_cast<unsigned>(UINT8_C(0))); }
-  inline constexpr auto expF64UI (std::uint64_t a) -> std::int16_t  { return static_cast<std::int16_t>(static_cast<std::int16_t>(a >> 52U) & static_cast<std::int16_t>(INT16_C(0x7FF))); } // NOLINT(hicpp-signed-bitwise)
-  inline constexpr auto fracF64UI(std::uint64_t a) -> std::uint64_t { return static_cast<std::uint64_t>(a & static_cast<std::uint64_t>(UINT64_C(0x000FFFFFFFFFFFFF))); }
+  constexpr auto signF64UI(std::uint64_t a) -> bool          { return (static_cast<unsigned>(a >> 63U) != static_cast<unsigned>(UINT8_C(0))); }
+  constexpr auto expF64UI (std::uint64_t a) -> std::int16_t  { return static_cast<std::int16_t>(static_cast<std::int16_t>(a >> 52U) & static_cast<std::int16_t>(INT16_C(0x7FF))); } // NOLINT(hicpp-signed-bitwise)
+  constexpr auto fracF64UI(std::uint64_t a) -> std::uint64_t { return static_cast<std::uint64_t>(a & static_cast<std::uint64_t>(UINT64_C(0x000FFFFFFFFFFFFF))); }
 
   template<typename IntegralTypeExp,
            typename IntegralTypeSig>
@@ -210,7 +210,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       );
   }
 
-  inline constexpr auto softfloat_shortShiftRightJam64(std::uint64_t a, std::uint_fast16_t dist) -> std::uint64_t
+  constexpr auto softfloat_shortShiftRightJam64(std::uint64_t a, std::uint_fast16_t dist) -> std::uint64_t
   {
     return
       static_cast<std::uint64_t>
@@ -225,7 +225,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       );
   }
 
-  inline constexpr auto softfloat_shiftRightJam64(std::uint64_t a, std::uint_fast16_t dist) -> std::uint64_t
+  constexpr auto softfloat_shiftRightJam64(std::uint64_t a, std::uint_fast16_t dist) -> std::uint64_t
   {
     return
       (dist < static_cast<std::uint32_t>(UINT8_C(63)))
@@ -238,7 +238,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           );
   }
 
-  inline constexpr auto softfloat_countLeadingZeros8_z_table(std::uint_fast8_t index) -> std::uint_fast8_t
+  constexpr auto softfloat_countLeadingZeros8_z_table(std::uint_fast8_t index) -> std::uint_fast8_t
   {
     // A constant table that translates an 8-bit unsigned integer (the array index)
     // into the number of leading 0 bits before the most-significant 1 of that
@@ -250,7 +250,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                      : static_cast<std::uint_fast8_t>(UINT8_C(0))))));
   }
 
-  inline constexpr auto softfloat_countLeadingZeros8(std::uint8_t a) -> std::uint_fast8_t
+  constexpr auto softfloat_countLeadingZeros8(std::uint8_t a) -> std::uint_fast8_t
   {
     return
       (a < static_cast<std::uint_fast8_t>(UINT8_C(0x10)))
@@ -258,7 +258,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         :                                     softfloat_countLeadingZeros8_z_table(static_cast<std::uint_fast8_t>(a >>   4U));
   }
 
-  inline constexpr auto softfloat_countLeadingZeros16(std::uint16_t a) -> std::uint_fast8_t
+  constexpr auto softfloat_countLeadingZeros16(std::uint16_t a) -> std::uint_fast8_t
   {
     return
       (a < static_cast<std::uint16_t>(UINT16_C(0x100)))
@@ -266,7 +266,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         :                                     softfloat_countLeadingZeros8(static_cast<std::uint8_t>(a >> 8U));
   }
 
-  inline constexpr auto softfloat_countLeadingZeros32(std::uint32_t a) -> std::uint_fast8_t
+  constexpr auto softfloat_countLeadingZeros32(std::uint32_t a) -> std::uint_fast8_t
   {
     return
       (a < static_cast<std::uint32_t>(UINT32_C(0x10000)))
@@ -274,7 +274,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         :                                      softfloat_countLeadingZeros16(static_cast<std::uint16_t>(a >> 16U));
   }
 
-  inline constexpr auto softfloat_countLeadingZeros64(std::uint64_t a) -> std::uint_fast8_t
+  constexpr auto softfloat_countLeadingZeros64(std::uint64_t a) -> std::uint_fast8_t
   {
     return
       (a < static_cast<std::uint64_t>(UINT64_C(0x100000000)))
@@ -282,7 +282,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         :                                      softfloat_countLeadingZeros32(static_cast<std::uint32_t>(a >> 32U));
   }
 
-  inline constexpr auto softfloat_approxRecip32_1(std::uint32_t a) -> std::uint32_t
+  constexpr auto softfloat_approxRecip32_1(std::uint32_t a) -> std::uint32_t
   {
     // Returns an approximation to the reciprocal of the number represented by a,
     // where a is interpreted as an unsigned fixed-point number with one integer
@@ -290,7 +290,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return static_cast<std::uint32_t>(static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF)) / a);
   }
 
-  inline constexpr auto softfloat_shiftRightJam64Extra(std::uint64_t a, std::uint64_t extra, std::uint32_t dist) -> struct uint64_extra
+  constexpr auto softfloat_shiftRightJam64Extra(std::uint64_t a, std::uint64_t extra, std::uint32_t dist) -> struct uint64_extra
   {
     // Shifts the 128 bits formed by concatenating a and extra right by 64
     // _plus_ the number of bits given in dist, which must not be zero. This
@@ -397,12 +397,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   inline SOFT_DOUBLE_CONSTEXPR auto operator*(long double f, const soft_double& u) -> soft_double;
   inline SOFT_DOUBLE_CONSTEXPR auto operator/(long double f, const soft_double& u) -> soft_double;
 
-  inline constexpr auto operator< (const soft_double& a, const soft_double& b) -> bool;
-  inline constexpr auto operator<=(const soft_double& a, const soft_double& b) -> bool;
-  inline constexpr auto operator==(const soft_double& a, const soft_double& b) -> bool;
-  inline constexpr auto operator!=(const soft_double& a, const soft_double& b) -> bool;
-  inline constexpr auto operator>=(const soft_double& a, const soft_double& b) -> bool;
-  inline constexpr auto operator> (const soft_double& a, const soft_double& b) -> bool;
+  constexpr auto operator< (const soft_double& a, const soft_double& b) -> bool;
+  constexpr auto operator<=(const soft_double& a, const soft_double& b) -> bool;
+  constexpr auto operator==(const soft_double& a, const soft_double& b) -> bool;
+  constexpr auto operator!=(const soft_double& a, const soft_double& b) -> bool;
+  constexpr auto operator>=(const soft_double& a, const soft_double& b) -> bool;
+  constexpr auto operator> (const soft_double& a, const soft_double& b) -> bool;
 
   template<typename UnsignedIntegralType> constexpr auto operator< (const soft_double& a, UnsignedIntegralType u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type;
   template<typename UnsignedIntegralType> constexpr auto operator<=(const soft_double& a, UnsignedIntegralType u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type;
@@ -432,47 +432,47 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   template<typename SignedIntegralType> constexpr auto operator>=(SignedIntegralType n, const soft_double& a) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type;
   template<typename SignedIntegralType> constexpr auto operator> (SignedIntegralType n, const soft_double& a) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type;
 
-  inline constexpr auto operator< (const soft_double& a, float f) -> bool;
-  inline constexpr auto operator<=(const soft_double& a, float f) -> bool;
-  inline constexpr auto operator==(const soft_double& a, float f) -> bool;
-  inline constexpr auto operator!=(const soft_double& a, float f) -> bool;
-  inline constexpr auto operator>=(const soft_double& a, float f) -> bool;
-  inline constexpr auto operator> (const soft_double& a, float f) -> bool;
+  constexpr auto operator< (const soft_double& a, float f) -> bool;
+  constexpr auto operator<=(const soft_double& a, float f) -> bool;
+  constexpr auto operator==(const soft_double& a, float f) -> bool;
+  constexpr auto operator!=(const soft_double& a, float f) -> bool;
+  constexpr auto operator>=(const soft_double& a, float f) -> bool;
+  constexpr auto operator> (const soft_double& a, float f) -> bool;
 
-  inline constexpr auto operator< (float f, const soft_double& a) -> bool;
-  inline constexpr auto operator<=(float f, const soft_double& a) -> bool;
-  inline constexpr auto operator==(float f, const soft_double& a) -> bool;
-  inline constexpr auto operator!=(float f, const soft_double& a) -> bool;
-  inline constexpr auto operator>=(float f, const soft_double& a) -> bool;
-  inline constexpr auto operator> (float f, const soft_double& a) -> bool;
+  constexpr auto operator< (float f, const soft_double& a) -> bool;
+  constexpr auto operator<=(float f, const soft_double& a) -> bool;
+  constexpr auto operator==(float f, const soft_double& a) -> bool;
+  constexpr auto operator!=(float f, const soft_double& a) -> bool;
+  constexpr auto operator>=(float f, const soft_double& a) -> bool;
+  constexpr auto operator> (float f, const soft_double& a) -> bool;
 
-  inline constexpr auto operator< (const soft_double& a, double f) -> bool;
-  inline constexpr auto operator<=(const soft_double& a, double f) -> bool;
-  inline constexpr auto operator==(const soft_double& a, double f) -> bool;
-  inline constexpr auto operator!=(const soft_double& a, double f) -> bool;
-  inline constexpr auto operator>=(const soft_double& a, double f) -> bool;
-  inline constexpr auto operator> (const soft_double& a, double f) -> bool;
+  constexpr auto operator< (const soft_double& a, double f) -> bool;
+  constexpr auto operator<=(const soft_double& a, double f) -> bool;
+  constexpr auto operator==(const soft_double& a, double f) -> bool;
+  constexpr auto operator!=(const soft_double& a, double f) -> bool;
+  constexpr auto operator>=(const soft_double& a, double f) -> bool;
+  constexpr auto operator> (const soft_double& a, double f) -> bool;
 
-  inline constexpr auto operator< (double f, const soft_double& a) -> bool;
-  inline constexpr auto operator<=(double f, const soft_double& a) -> bool;
-  inline constexpr auto operator==(double f, const soft_double& a) -> bool;
-  inline constexpr auto operator!=(double f, const soft_double& a) -> bool;
-  inline constexpr auto operator>=(double f, const soft_double& a) -> bool;
-  inline constexpr auto operator> (double f, const soft_double& a) -> bool;
+  constexpr auto operator< (double f, const soft_double& a) -> bool;
+  constexpr auto operator<=(double f, const soft_double& a) -> bool;
+  constexpr auto operator==(double f, const soft_double& a) -> bool;
+  constexpr auto operator!=(double f, const soft_double& a) -> bool;
+  constexpr auto operator>=(double f, const soft_double& a) -> bool;
+  constexpr auto operator> (double f, const soft_double& a) -> bool;
 
-  inline constexpr auto operator< (const soft_double& a, long double f) -> bool;
-  inline constexpr auto operator<=(const soft_double& a, long double f) -> bool;
-  inline constexpr auto operator==(const soft_double& a, long double f) -> bool;
-  inline constexpr auto operator!=(const soft_double& a, long double f) -> bool;
-  inline constexpr auto operator>=(const soft_double& a, long double f) -> bool;
-  inline constexpr auto operator> (const soft_double& a, long double f) -> bool;
+  constexpr auto operator< (const soft_double& a, long double f) -> bool;
+  constexpr auto operator<=(const soft_double& a, long double f) -> bool;
+  constexpr auto operator==(const soft_double& a, long double f) -> bool;
+  constexpr auto operator!=(const soft_double& a, long double f) -> bool;
+  constexpr auto operator>=(const soft_double& a, long double f) -> bool;
+  constexpr auto operator> (const soft_double& a, long double f) -> bool;
 
-  inline constexpr auto operator< (long double f, const soft_double& a) -> bool;
-  inline constexpr auto operator<=(long double f, const soft_double& a) -> bool;
-  inline constexpr auto operator==(long double f, const soft_double& a) -> bool;
-  inline constexpr auto operator!=(long double f, const soft_double& a) -> bool;
-  inline constexpr auto operator>=(long double f, const soft_double& a) -> bool;
-  inline constexpr auto operator> (long double f, const soft_double& a) -> bool;
+  constexpr auto operator< (long double f, const soft_double& a) -> bool;
+  constexpr auto operator<=(long double f, const soft_double& a) -> bool;
+  constexpr auto operator==(long double f, const soft_double& a) -> bool;
+  constexpr auto operator!=(long double f, const soft_double& a) -> bool;
+  constexpr auto operator>=(long double f, const soft_double& a) -> bool;
+  constexpr auto operator> (long double f, const soft_double& a) -> bool;
 
   #if !defined(SOFT_DOUBLE_DISABLE_IOSTREAM)
   template<typename char_type, typename traits_type> auto operator<<(std::basic_ostream<char_type, traits_type>& os, const soft_double& f) -> std::basic_ostream<char_type, traits_type>&;
@@ -762,7 +762,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             auto expB  = detail::expF64UI (b);
             auto sigB  = detail::fracF64UI(b);
 
-      const bool signZ = signA ^ signB;
+      const auto signZ =
+        static_cast<unsigned>
+        (
+          static_cast<unsigned>(signA ? 1U : 0U) ^ static_cast<unsigned>(signB ? 1U : 0U)
+        ) != static_cast<unsigned>(UINT8_C(0));
 
       auto result = std::uint64_t { };
 
@@ -1515,13 +1519,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static SOFT_DOUBLE_CONSTEXPR auto softfloat_roundPackToF64(bool sign, std::int16_t expA, std::uint64_t sig) -> std::uint64_t
     {
-      if(static_cast<std::uint16_t>(UINT16_C(0x7FD)) <= static_cast<std::uint16_t>(expA))
+      if(   (static_cast<std::uint16_t>(UINT16_C(0x7FD)) <= static_cast<std::uint16_t>(expA))
+         && (expA < static_cast<std::int16_t>(INT8_C(0))))
       {
-        if(expA < static_cast<std::int16_t>(INT8_C(0)))
-        {
-          sig  = detail::softfloat_shiftRightJam64(sig, static_cast<std::uint_fast16_t>(-expA));
-          expA = static_cast<std::int16_t>(INT8_C(0));
-        }
+        sig  = detail::softfloat_shiftRightJam64(sig, static_cast<std::uint_fast16_t>(-expA));
+        expA = static_cast<std::int16_t>(INT8_C(0));
       }
 
       const auto roundBits = static_cast<std::uint16_t>(sig & static_cast<std::uint64_t>(UINT16_C(0x3FF)));
@@ -1840,9 +1842,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     template<typename SignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator*(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(n) *= u; }
     template<typename SignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator/(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(n) /= u; }
 
-    friend inline constexpr auto operator< (const soft_double& a, const soft_double& b) -> bool;
-    friend inline constexpr auto operator<=(const soft_double& a, const soft_double& b) -> bool;
-    friend inline constexpr auto operator==(const soft_double& a, const soft_double& b) -> bool;
+    friend constexpr auto operator< (const soft_double& a, const soft_double& b) -> bool;
+    friend constexpr auto operator<=(const soft_double& a, const soft_double& b) -> bool;
+    friend constexpr auto operator==(const soft_double& a, const soft_double& b) -> bool;
 
     template<typename UnsignedIntegralType> friend constexpr auto operator< (const soft_double& a, UnsignedIntegralType u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type { return soft_double::my_lt(a, soft_double(u)); }
     template<typename UnsignedIntegralType> friend constexpr auto operator<=(const soft_double& a, UnsignedIntegralType u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type { return soft_double::my_le(a, soft_double(u)); }
@@ -1872,29 +1874,29 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     template<typename SignedIntegralType> friend constexpr auto operator>=(SignedIntegralType n, const soft_double& a) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type { return (!(soft_double(n) <  a)); }
     template<typename SignedIntegralType> friend constexpr auto operator> (SignedIntegralType n, const soft_double& a) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type { return (!(soft_double(n) <= a)); }
 
-    friend inline constexpr auto operator< (const soft_double& a, float f) -> bool;
-    friend inline constexpr auto operator<=(const soft_double& a, float f) -> bool;
-    friend inline constexpr auto operator==(const soft_double& a, float f) -> bool;
+    friend constexpr auto operator< (const soft_double& a, float f) -> bool;
+    friend constexpr auto operator<=(const soft_double& a, float f) -> bool;
+    friend constexpr auto operator==(const soft_double& a, float f) -> bool;
 
-    friend inline constexpr auto operator< (float f, const soft_double& a) -> bool;
-    friend inline constexpr auto operator<=(float f, const soft_double& a) -> bool;
-    friend inline constexpr auto operator==(float f, const soft_double& a) -> bool;
+    friend constexpr auto operator< (float f, const soft_double& a) -> bool;
+    friend constexpr auto operator<=(float f, const soft_double& a) -> bool;
+    friend constexpr auto operator==(float f, const soft_double& a) -> bool;
 
-    friend inline constexpr auto operator< (const soft_double& a, double f) -> bool;
-    friend inline constexpr auto operator<=(const soft_double& a, double f) -> bool;
-    friend inline constexpr auto operator==(const soft_double& a, double f) -> bool;
+    friend constexpr auto operator< (const soft_double& a, double f) -> bool;
+    friend constexpr auto operator<=(const soft_double& a, double f) -> bool;
+    friend constexpr auto operator==(const soft_double& a, double f) -> bool;
 
-    friend inline constexpr auto operator< (double f, const soft_double& a) -> bool;
-    friend inline constexpr auto operator<=(double f, const soft_double& a) -> bool;
-    friend inline constexpr auto operator==(double f, const soft_double& a) -> bool;
+    friend constexpr auto operator< (double f, const soft_double& a) -> bool;
+    friend constexpr auto operator<=(double f, const soft_double& a) -> bool;
+    friend constexpr auto operator==(double f, const soft_double& a) -> bool;
 
-    friend inline constexpr auto operator< (const soft_double& a, long double f) -> bool;
-    friend inline constexpr auto operator<=(const soft_double& a, long double f) -> bool;
-    friend inline constexpr auto operator==(const soft_double& a, long double f) -> bool;
+    friend constexpr auto operator< (const soft_double& a, long double f) -> bool;
+    friend constexpr auto operator<=(const soft_double& a, long double f) -> bool;
+    friend constexpr auto operator==(const soft_double& a, long double f) -> bool;
 
-    friend inline constexpr auto operator< (long double f, const soft_double& a) -> bool;
-    friend inline constexpr auto operator<=(long double f, const soft_double& a) -> bool;
-    friend inline constexpr auto operator==(long double f, const soft_double& a) -> bool;
+    friend constexpr auto operator< (long double f, const soft_double& a) -> bool;
+    friend constexpr auto operator<=(long double f, const soft_double& a) -> bool;
+    friend constexpr auto operator==(long double f, const soft_double& a) -> bool;
   };
 
   inline SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& a, const soft_double& b) -> soft_double { return { soft_double::f64_add(a.my_value, b.my_value), detail::nothing() }; }
@@ -1932,54 +1934,54 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   inline SOFT_DOUBLE_CONSTEXPR auto operator*(long double f, const soft_double& u) -> soft_double { return soft_double(static_cast<double>(f)) *= u; }
   inline SOFT_DOUBLE_CONSTEXPR auto operator/(long double f, const soft_double& u) -> soft_double { return soft_double(static_cast<double>(f)) /= u; }
 
-  inline constexpr auto operator< (const soft_double& a, const soft_double& b) -> bool { return soft_double::my_lt(a, b); }
-  inline constexpr auto operator<=(const soft_double& a, const soft_double& b) -> bool { return soft_double::my_le(a, b); }
-  inline constexpr auto operator==(const soft_double& a, const soft_double& b) -> bool { return (a.my_value == b.my_value); }
-  inline constexpr auto operator!=(const soft_double& a, const soft_double& b) -> bool { return (!(a == b)); }
-  inline constexpr auto operator>=(const soft_double& a, const soft_double& b) -> bool { return (!(a <  b)); }
-  inline constexpr auto operator> (const soft_double& a, const soft_double& b) -> bool { return (!(a <= b)); }
+  constexpr auto operator< (const soft_double& a, const soft_double& b) -> bool { return soft_double::my_lt(a, b); }
+  constexpr auto operator<=(const soft_double& a, const soft_double& b) -> bool { return soft_double::my_le(a, b); }
+  constexpr auto operator==(const soft_double& a, const soft_double& b) -> bool { return (a.my_value == b.my_value); }
+  constexpr auto operator!=(const soft_double& a, const soft_double& b) -> bool { return (!(a == b)); }
+  constexpr auto operator>=(const soft_double& a, const soft_double& b) -> bool { return (!(a <  b)); }
+  constexpr auto operator> (const soft_double& a, const soft_double& b) -> bool { return (!(a <= b)); }
 
-  inline constexpr auto operator< (const soft_double& a, float f) -> bool { return soft_double::my_lt(a, soft_double(f)); }
-  inline constexpr auto operator<=(const soft_double& a, float f) -> bool { return soft_double::my_le(a, soft_double(f)); }
-  inline constexpr auto operator==(const soft_double& a, float f) -> bool { return  (a.my_value == soft_double(f).my_value); }
-  inline constexpr auto operator!=(const soft_double& a, float f) -> bool { return (!(a == soft_double(f))); }
-  inline constexpr auto operator>=(const soft_double& a, float f) -> bool { return (!(a <  soft_double(f))); }
-  inline constexpr auto operator> (const soft_double& a, float f) -> bool { return (!(a <= soft_double(f))); }
+  constexpr auto operator< (const soft_double& a, float f) -> bool { return soft_double::my_lt(a, soft_double(f)); }
+  constexpr auto operator<=(const soft_double& a, float f) -> bool { return soft_double::my_le(a, soft_double(f)); }
+  constexpr auto operator==(const soft_double& a, float f) -> bool { return  (a.my_value == soft_double(f).my_value); }
+  constexpr auto operator!=(const soft_double& a, float f) -> bool { return (!(a == soft_double(f))); }
+  constexpr auto operator>=(const soft_double& a, float f) -> bool { return (!(a <  soft_double(f))); }
+  constexpr auto operator> (const soft_double& a, float f) -> bool { return (!(a <= soft_double(f))); }
 
-  inline constexpr auto operator< (float f, const soft_double& a) -> bool { return soft_double::my_lt(soft_double(f), a); }
-  inline constexpr auto operator<=(float f, const soft_double& a) -> bool { return soft_double::my_le(soft_double(f), a); }
-  inline constexpr auto operator==(float f, const soft_double& a) -> bool { return  (soft_double(f).my_value == a.my_value); }
-  inline constexpr auto operator!=(float f, const soft_double& a) -> bool { return (!(soft_double(f) == a)); }
-  inline constexpr auto operator>=(float f, const soft_double& a) -> bool { return (!(soft_double(f) <  a)); }
-  inline constexpr auto operator> (float f, const soft_double& a) -> bool { return (!(soft_double(f) <= a)); }
+  constexpr auto operator< (float f, const soft_double& a) -> bool { return soft_double::my_lt(soft_double(f), a); }
+  constexpr auto operator<=(float f, const soft_double& a) -> bool { return soft_double::my_le(soft_double(f), a); }
+  constexpr auto operator==(float f, const soft_double& a) -> bool { return  (soft_double(f).my_value == a.my_value); }
+  constexpr auto operator!=(float f, const soft_double& a) -> bool { return (!(soft_double(f) == a)); }
+  constexpr auto operator>=(float f, const soft_double& a) -> bool { return (!(soft_double(f) <  a)); }
+  constexpr auto operator> (float f, const soft_double& a) -> bool { return (!(soft_double(f) <= a)); }
 
-  inline constexpr auto operator< (const soft_double& a, double f) -> bool { return soft_double::my_lt(a, soft_double(f)); }
-  inline constexpr auto operator<=(const soft_double& a, double f) -> bool { return soft_double::my_le(a, soft_double(f)); }
-  inline constexpr auto operator==(const soft_double& a, double f) -> bool { return  (a.my_value == soft_double(f).my_value); }
-  inline constexpr auto operator!=(const soft_double& a, double f) -> bool { return (!(a == soft_double(f))); }
-  inline constexpr auto operator>=(const soft_double& a, double f) -> bool { return (!(a <  soft_double(f))); }
-  inline constexpr auto operator> (const soft_double& a, double f) -> bool { return (!(a <= soft_double(f))); }
+  constexpr auto operator< (const soft_double& a, double f) -> bool { return soft_double::my_lt(a, soft_double(f)); }
+  constexpr auto operator<=(const soft_double& a, double f) -> bool { return soft_double::my_le(a, soft_double(f)); }
+  constexpr auto operator==(const soft_double& a, double f) -> bool { return  (a.my_value == soft_double(f).my_value); }
+  constexpr auto operator!=(const soft_double& a, double f) -> bool { return (!(a == soft_double(f))); }
+  constexpr auto operator>=(const soft_double& a, double f) -> bool { return (!(a <  soft_double(f))); }
+  constexpr auto operator> (const soft_double& a, double f) -> bool { return (!(a <= soft_double(f))); }
 
-  inline constexpr auto operator< (double f, const soft_double& a) -> bool { return soft_double::my_lt(soft_double(f), a); }
-  inline constexpr auto operator<=(double f, const soft_double& a) -> bool { return soft_double::my_le(soft_double(f), a); }
-  inline constexpr auto operator==(double f, const soft_double& a) -> bool { return  (soft_double(f).my_value == a.my_value); }
-  inline constexpr auto operator!=(double f, const soft_double& a) -> bool { return (!(soft_double(f) == a)); }
-  inline constexpr auto operator>=(double f, const soft_double& a) -> bool { return (!(soft_double(f) <  a)); }
-  inline constexpr auto operator> (double f, const soft_double& a) -> bool { return (!(soft_double(f) <= a)); }
+  constexpr auto operator< (double f, const soft_double& a) -> bool { return soft_double::my_lt(soft_double(f), a); }
+  constexpr auto operator<=(double f, const soft_double& a) -> bool { return soft_double::my_le(soft_double(f), a); }
+  constexpr auto operator==(double f, const soft_double& a) -> bool { return  (soft_double(f).my_value == a.my_value); }
+  constexpr auto operator!=(double f, const soft_double& a) -> bool { return (!(soft_double(f) == a)); }
+  constexpr auto operator>=(double f, const soft_double& a) -> bool { return (!(soft_double(f) <  a)); }
+  constexpr auto operator> (double f, const soft_double& a) -> bool { return (!(soft_double(f) <= a)); }
 
-  inline constexpr auto operator< (const soft_double& a, long double f) -> bool { return soft_double::my_lt(a, soft_double(static_cast<double>(f))); }
-  inline constexpr auto operator<=(const soft_double& a, long double f) -> bool { return soft_double::my_le(a, soft_double(static_cast<double>(f))); }
-  inline constexpr auto operator==(const soft_double& a, long double f) -> bool { return  (a.my_value == soft_double(static_cast<double>(f)).my_value); }
-  inline constexpr auto operator!=(const soft_double& a, long double f) -> bool { return (!(a == soft_double(static_cast<double>(f)))); }
-  inline constexpr auto operator>=(const soft_double& a, long double f) -> bool { return (!(a <  soft_double(static_cast<double>(f)))); }
-  inline constexpr auto operator> (const soft_double& a, long double f) -> bool { return (!(a <= soft_double(static_cast<double>(f)))); }
+  constexpr auto operator< (const soft_double& a, long double f) -> bool { return soft_double::my_lt(a, soft_double(static_cast<double>(f))); }
+  constexpr auto operator<=(const soft_double& a, long double f) -> bool { return soft_double::my_le(a, soft_double(static_cast<double>(f))); }
+  constexpr auto operator==(const soft_double& a, long double f) -> bool { return  (a.my_value == soft_double(static_cast<double>(f)).my_value); }
+  constexpr auto operator!=(const soft_double& a, long double f) -> bool { return (!(a == soft_double(static_cast<double>(f)))); }
+  constexpr auto operator>=(const soft_double& a, long double f) -> bool { return (!(a <  soft_double(static_cast<double>(f)))); }
+  constexpr auto operator> (const soft_double& a, long double f) -> bool { return (!(a <= soft_double(static_cast<double>(f)))); }
 
-  inline constexpr auto operator< (long double f, const soft_double& a) -> bool { return soft_double::my_lt(soft_double(static_cast<double>(f)), a); }
-  inline constexpr auto operator<=(long double f, const soft_double& a) -> bool { return soft_double::my_le(soft_double(static_cast<double>(f)), a); }
-  inline constexpr auto operator==(long double f, const soft_double& a) -> bool { return  (soft_double(static_cast<double>(f)).my_value == a.my_value); }
-  inline constexpr auto operator!=(long double f, const soft_double& a) -> bool { return (!(soft_double(static_cast<double>(f)) == a)); }
-  inline constexpr auto operator>=(long double f, const soft_double& a) -> bool { return (!(soft_double(static_cast<double>(f)) <  a)); }
-  inline constexpr auto operator> (long double f, const soft_double& a) -> bool { return (!(soft_double(static_cast<double>(f)) <= a)); }
+  constexpr auto operator< (long double f, const soft_double& a) -> bool { return soft_double::my_lt(soft_double(static_cast<double>(f)), a); }
+  constexpr auto operator<=(long double f, const soft_double& a) -> bool { return soft_double::my_le(soft_double(static_cast<double>(f)), a); }
+  constexpr auto operator==(long double f, const soft_double& a) -> bool { return  (soft_double(static_cast<double>(f)).my_value == a.my_value); }
+  constexpr auto operator!=(long double f, const soft_double& a) -> bool { return (!(soft_double(static_cast<double>(f)) == a)); }
+  constexpr auto operator>=(long double f, const soft_double& a) -> bool { return (!(soft_double(static_cast<double>(f)) <  a)); }
+  constexpr auto operator> (long double f, const soft_double& a) -> bool { return (!(soft_double(static_cast<double>(f)) <= a)); }
 
   namespace detail {
 
@@ -2064,9 +2066,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     {
       // Remove even multiples of pi.
 
-      bool b_negate_sin = false;
+      auto b_negate_sin = false;
 
-      const std::uint32_t n_pi = static_cast<std::uint32_t>(x / soft_double::my_value_pi());
+      const auto n_pi = static_cast<std::uint32_t>(x / soft_double::my_value_pi());
 
       if(n_pi != 0U)
       {
@@ -2171,9 +2173,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     {
       // Remove even multiples of pi.
 
-      bool b_negate_cos = false;
+      auto b_negate_cos = false;
 
-      const std::uint32_t n_pi = static_cast<std::uint32_t>(x / soft_double::my_value_pi());
+      const auto n_pi = static_cast<std::uint32_t>(x / soft_double::my_value_pi());
 
       if(n_pi != 0U)
       {
