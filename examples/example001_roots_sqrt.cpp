@@ -1,4 +1,4 @@
-///////////////////////////////////////////////////////////////////
+﻿///////////////////////////////////////////////////////////////////
 //  Copyright Christopher Kormanyos 2020 - 2022.                 //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
@@ -17,16 +17,25 @@ static_assert(sizeof(double) == 8U, // NOLINT(cppcoreguidelines-avoid-magic-numb
 auto math::softfloat::example001_roots_sqrt() -> bool
 {
   // Use a cached value for pi.
-  const float64_t my_pi = float64_t::my_value_pi();
+  SOFT_DOUBLE_CONSTEXPR float64_t my_pi = float64_t::my_value_pi();
 
   // Compute soft_double sqrt(pi).
-  const float64_t s = sqrt(my_pi);
+  SOFT_DOUBLE_CONSTEXPR float64_t s = sqrt(my_pi);
 
   using std::sqrt;
 
   // Compare with native double sqrt(pi).
-  const bool result_is_ok =
+  const auto result_root_is_ok =
     (s.crepresentation() == float64_t(sqrt(3.1415926535897932384626433832795028841972)).crepresentation());
+
+  SOFT_DOUBLE_CONSTEXPR auto result_root_as_constexpr_is_ok =
+    (s.crepresentation() == static_cast<typename float64_t::representation_type>(UINT64_C(0x3FFC5BF891B4EF6A)));
+
+  #if (defined(SOFT_DOUBLE_CONSTEXPR_IS_COMPILE_TIME_CONST) && (SOFT_DOUBLE_CONSTEXPR_IS_COMPILE_TIME_CONST != 0))
+  static_assert(result_root_as_constexpr_is_ok, "Error: example001_roots_sqrt not OK!");
+  #endif
+
+  const auto result_is_ok = (result_root_is_ok && result_root_as_constexpr_is_ok);
 
   return result_is_ok;
 }

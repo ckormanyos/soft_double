@@ -1,4 +1,4 @@
-soft_double
+﻿soft_double
 ==================
 
 <p align="center">
@@ -151,6 +151,79 @@ how to use soft_double.
   - ![`example007_catalan_series.cpp`](./examples/example007_catalan_series.cpp) computes $\sim 15$ decimal digits of Catalan's constant using an accelerated series.
   - ![`example010_hypergeometric_2f1.cpp`](./examples/example010_hypergeometric_2f1.cpp) calculates $\sim 15$ decimal digits of a hypergeometric function value using a classic iterative rational approximation scheme.
   - ![`example011_trig_trapezoid_integral.cpp`](./examples/example011_trig_trapezoid_integral.cpp) uses trapezoid integration with an integral representation involving locally-written trigonometric sine and cosine functions to compute several cylindrical Bessel function values.
+
+## C++14, 17, 20 `constexpr` support
+
+When using C++20, `soft_double` supports compile-time
+`constexpr` construction and evaluation of results
+of binary arithmetic, comparison operators
+and various elementary functions.
+The following code, for instance, shows a compile-time instantiation
+of `soft_double` with subsequent `constexpr` evaluation
+of a square root function and its comparison of its result
+with the known control value.
+
+```cpp
+#include <math/softfloat/soft_double.h>
+
+// Use a C++20 compiler for this example.
+
+// Use a cached value for pi.
+SOFT_DOUBLE_CONSTEXPR float64_t my_pi = float64_t::my_value_pi();
+
+// Compute soft_double sqrt(pi).
+SOFT_DOUBLE_CONSTEXPR float64_t s = sqrt(my_pi);
+
+using std::sqrt;
+
+// Compare with native double sqrt(pi).
+// This is a run-time comparison.
+const auto result_root_is_ok =
+  (s.crepresentation() == float64_t(sqrt(3.1415926535897932384626433832795028841972)).crepresentation());
+
+SOFT_DOUBLE_CONSTEXPR auto result_root_as_constexpr_is_ok =
+  (s.crepresentation() == static_cast<typename float64_t::representation_type>(UINT64_C(0x3FFC5BF891B4EF6A)));
+
+// constexpr verification.
+// This is a compile-time comparison.
+static_assert(result_root_as_constexpr_is_ok, "Error: example001_roots_sqrt not OK!");
+```
+
+`constexpr`-_ness_ of `soft_double` has been checked on GCC 10 and up, clang 10 and up
+(with `-std=c++20`) and VC 14.2 (with `/std:c++latest`),
+also for various embedded compilers such as `avr-gcc` 10 and up,
+`arm-non-eabi-gcc` 10 and up, and more. In addition,
+less modern compiler versions in addition to some other compilers
+having standards such as C++14, 17, 2a have also been checked
+for `constexpr` usage of `soft_double`. If you have an older
+compiler, you might have to check the compiler's
+ability to obtain the entire benefit of `constexpr` with `soft_double`.
+
+If full `constexpr` compliance is not available or its
+availability is unknown, the preprocessor symbols below can be useful.
+These symbols are defined or set directly within the header(s)
+of the soft_double library.
+
+```cpp
+SOFT_DOUBLE_CONSTEXPR
+SOFT_DOUBLE_CONSTEXPR_IS_COMPILE_TIME_CONST
+```
+
+The preprocessor symbol `SOFT_DOUBLE_CONSTEXPR` acts as either
+a synonym for `constexpr` or expands to nothing depending on
+whether the availability of `constexpr` support has been automatically
+detected or not.
+The preprocessor symbol `SOFT_DOUBLE_CONSTEXPR_IS_COMPILE_TIME_CONST`
+has the value of 0 or 1, where 1 indicates that `soft_double`
+values qualified with `SOFT_DOUBLE_CONSTEXPR` are actually
+compile-time constant (i.e., `constexpr`).
+
+Detection of availability of `constexpr` support is implemented
+[with preprocessor queries in soft_double.h](https://github.com/ckormanyos/soft_double/blob/2219a71a5e434c6c19e1fb33e7d5eedd7b6866a4/math/softfloat/soft_double.h#L71).
+These complicated proprocessor queries are not complete (in the sense of
+detecting all world-wide compiler/target systems). If you have
+a specific compiler/target system needing `constexpr` detection,
+please feel free to contact me directly so that this can be implemented.
 
 ## Building, testing and CI
 

@@ -29,6 +29,7 @@
     <ClCompile Include="test\test.cpp" />
     <ClCompile Include="test\test_soft_double_examples.cpp" />
     <ClCompile Include="test\test_soft_double.cpp" />
+    <ClCompile Include="test\test_soft_double_spot_values.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="math\constants\constants_pi_control_for_decwide_t.h" />
@@ -47,8 +48,16 @@
     <ClInclude Include="util\utility\util_noncopyable.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".clang-tidy" />
     <None Include=".github\workflows\soft_double.yml" />
+    <None Include=".tidy\make\make_tidy_01_generic.gmk" />
+    <None Include=".tidy\make\make_tidy_02_files.gmk" />
+    <None Include=".tidy\make\make_tidy_03_flags.gmk" />
     <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt" />
+    <Text Include="LICENSE_1_0.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -131,6 +140,7 @@
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile />
       <DisableSpecificWarnings>4146</DisableSpecificWarnings>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -149,6 +159,7 @@
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile />
       <DisableSpecificWarnings>4146</DisableSpecificWarnings>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -169,6 +180,7 @@
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile />
       <DisableSpecificWarnings>4146</DisableSpecificWarnings>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -191,6 +203,7 @@
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile />
       <DisableSpecificWarnings>4146</DisableSpecificWarnings>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

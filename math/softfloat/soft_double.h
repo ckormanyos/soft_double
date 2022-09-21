@@ -9,7 +9,7 @@
 // SoftFloat IEEE Floating-Point Arithmetic Package,
 // Release 3e, by John R. Hauser.
 
-// Full original copyright information follows.
+// Full original SoftFloat 3e copyright information follows.
 /*----------------------------------------------------------------------------
 
 This C header file is part of the SoftFloat IEEE Floating-Point Arithmetic
@@ -479,40 +479,41 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   template<typename char_type, typename traits_type> auto operator>>(std::basic_istream<char_type, traits_type>& is,       soft_double& f) -> std::basic_istream<char_type, traits_type>&;
   #endif // !WIDE_DECIMAL_DISABLE_IOSTREAM
 
-  inline auto isnan   (soft_double x) -> bool;
-  inline auto isinf   (soft_double x) -> bool;
-  inline auto isfinite(soft_double x) -> bool;
-  inline auto fabs    (soft_double x) -> soft_double;
-  inline auto frexp   (soft_double x, int* expptr) -> soft_double;
-  inline auto ldexp   (soft_double x, int expval) -> soft_double;
-  inline auto floor   (soft_double x) -> soft_double;
-  inline auto ceil    (soft_double x) -> soft_double;
-  inline auto sqrt    (soft_double x) -> soft_double;
-  inline auto exp     (soft_double x) -> soft_double;
-  inline auto log     (soft_double x) -> soft_double;
-  inline auto pow     (soft_double x, soft_double a) -> soft_double;
-  inline auto sin     (soft_double x) -> soft_double;
-  inline auto cos     (soft_double x) -> soft_double;
-  inline auto tan     (soft_double x) -> soft_double;
-  inline auto sinh    (soft_double x) -> soft_double;
-  inline auto cosh    (soft_double x) -> soft_double;
-  inline auto tanh    (soft_double x) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto isnan   (soft_double x) -> bool;
+  inline SOFT_DOUBLE_CONSTEXPR auto isinf   (soft_double x) -> bool;
+  inline SOFT_DOUBLE_CONSTEXPR auto isfinite(soft_double x) -> bool;
+  inline SOFT_DOUBLE_CONSTEXPR auto fabs    (soft_double x) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto frexp   (soft_double x, int* expptr) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto ldexp   (soft_double x, int expval) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto floor   (soft_double x) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto ceil    (soft_double x) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto sqrt    (soft_double x) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto exp     (soft_double x) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto log     (soft_double x) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto pow     (soft_double x, soft_double a) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto sin     (soft_double x) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto cos     (soft_double x) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto tan     (soft_double x) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto sinh    (soft_double x) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto cosh    (soft_double x) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto tanh    (soft_double x) -> soft_double;
 
   template<typename UnsignedIntegralType,
            typename std::enable_if<(   std::is_integral<UnsignedIntegralType>::value
                                     && std::is_unsigned<UnsignedIntegralType>::value)>::type const* = nullptr>
-  auto pow(soft_double x, UnsignedIntegralType u) -> soft_double;
+  SOFT_DOUBLE_CONSTEXPR auto pow(soft_double x, UnsignedIntegralType u) -> soft_double;
 
   template<typename SignedIntegralType,
            typename std::enable_if<(   std::is_integral<SignedIntegralType>::value
                                     && std::is_signed  <SignedIntegralType>::value)>::type const* = nullptr>
-  auto pow(soft_double x, SignedIntegralType n) -> soft_double;
+  SOFT_DOUBLE_CONSTEXPR auto pow(soft_double x, SignedIntegralType n) -> soft_double;
 
   class soft_double final
   {
+  public:
     static_assert(sizeof(float) == 4U,
                   "Error: This template is designed for 4 byte built-in float");
-  public:
+
     using representation_type = std::uint64_t;
 
     soft_double() = default;
@@ -563,15 +564,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     constexpr soft_double(std::uint64_t n, detail::nothing&&) noexcept // NOLINT(hicpp-named-parameter,readability-named-parameter)
       : my_value(static_cast<std::uint64_t>(n)) { }
 
-    ~soft_double() = default;
+    SOFT_DOUBLE_CONSTEXPR ~soft_double() = default;
 
-    auto operator=(const soft_double&) -> soft_double& = default;
+    SOFT_DOUBLE_CONSTEXPR auto operator=(const soft_double&) -> soft_double& = default;
 
-    auto operator=(soft_double&&) noexcept -> soft_double& = default;
+    SOFT_DOUBLE_CONSTEXPR auto operator=(soft_double&&) noexcept -> soft_double& = default;
 
-    SOFT_DOUBLE_NODISCARD auto  representation()       ->       representation_type& { return my_value; }
-    SOFT_DOUBLE_NODISCARD auto  representation() const -> const representation_type& { return my_value; }
-    SOFT_DOUBLE_NODISCARD auto crepresentation() const -> const representation_type& { return my_value; }
+                          SOFT_DOUBLE_CONSTEXPR auto  representation()       ->       representation_type& { return my_value; }
+    SOFT_DOUBLE_NODISCARD SOFT_DOUBLE_CONSTEXPR auto  representation() const -> const representation_type& { return my_value; }
+    SOFT_DOUBLE_NODISCARD SOFT_DOUBLE_CONSTEXPR auto crepresentation() const -> const representation_type& { return my_value; }
 
     static constexpr auto get_rep(soft_double a) -> representation_type { return a.my_value; }
 
@@ -1697,14 +1698,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     }
     #endif // !SOFT_DOUBLE_DISABLE_IOSTREAM
 
-    friend inline auto isfinite(soft_double x) -> bool { return ((!(isnan)(x)) && (!(isinf)(x))); }
-    friend inline auto isnan   (soft_double x) -> bool { return  (x.my_value == my_value_quiet_NaN().my_value); }
-    friend inline auto isinf   (soft_double x) -> bool { return ((x.my_value & my_value_infinity().my_value) == my_value_infinity().my_value); }
+    friend inline SOFT_DOUBLE_CONSTEXPR auto isfinite(soft_double x) -> bool { return ((!(isnan)(x)) && (!(isinf)(x))); }
+    friend inline SOFT_DOUBLE_CONSTEXPR auto isnan   (soft_double x) -> bool { return  (x.my_value == my_value_quiet_NaN().my_value); }
+    friend inline SOFT_DOUBLE_CONSTEXPR auto isinf   (soft_double x) -> bool { return ((x.my_value & my_value_infinity().my_value) == my_value_infinity().my_value); }
 
-    friend inline auto fabs (soft_double x) -> soft_double { return { static_cast<std::uint64_t>(x.my_value & static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF))), detail::nothing() }; }
-    friend inline auto sqrt (soft_double x) -> soft_double { return { f64_sqrt(x.my_value), detail::nothing() }; }
+    friend inline SOFT_DOUBLE_CONSTEXPR auto fabs (soft_double x) -> soft_double { return { static_cast<std::uint64_t>(x.my_value & static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF))), detail::nothing() }; }
+    friend inline SOFT_DOUBLE_CONSTEXPR auto sqrt (soft_double x) -> soft_double { return { f64_sqrt(x.my_value), detail::nothing() }; }
 
-    friend inline auto frexp(soft_double x, int* expptr) -> soft_double
+    friend inline SOFT_DOUBLE_CONSTEXPR auto frexp(soft_double x, int* expptr) -> soft_double
     {
       const auto expA =
         static_cast<std::int16_t>
@@ -1729,16 +1730,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       };
     }
 
-    friend inline auto ldexp(soft_double x, int expval) -> soft_double;
-    friend inline auto floor(soft_double x) -> soft_double;
-    friend inline auto ceil (soft_double x) -> soft_double;
-    friend inline auto exp  (soft_double x) -> soft_double;
-    friend inline auto log  (soft_double x) -> soft_double;
+    friend inline SOFT_DOUBLE_CONSTEXPR auto ldexp(soft_double x, int expval) -> soft_double;
+    friend inline SOFT_DOUBLE_CONSTEXPR auto floor(soft_double x) -> soft_double;
+    friend inline SOFT_DOUBLE_CONSTEXPR auto ceil (soft_double x) -> soft_double;
+    friend inline SOFT_DOUBLE_CONSTEXPR auto exp  (soft_double x) -> soft_double;
+    friend inline SOFT_DOUBLE_CONSTEXPR auto log  (soft_double x) -> soft_double;
 
     template<typename UnsignedIntegralType,
              typename std::enable_if<(   std::is_integral<UnsignedIntegralType>::value
                                       && std::is_unsigned<UnsignedIntegralType>::value)>::type const*>
-    friend auto pow(soft_double x, UnsignedIntegralType u) -> soft_double
+    friend SOFT_DOUBLE_CONSTEXPR auto pow(soft_double x, UnsignedIntegralType u) -> soft_double
     {
       soft_double result { };
 
@@ -1775,7 +1776,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     template<typename SignedIntegralType,
              typename std::enable_if<(   std::is_integral<SignedIntegralType>::value
                                       && std::is_signed  <SignedIntegralType>::value)>::type const*>
-    friend auto pow(soft_double x, SignedIntegralType n) -> soft_double
+    friend SOFT_DOUBLE_CONSTEXPR auto pow(soft_double x, SignedIntegralType n) -> soft_double
     {
       soft_double result { };
 
@@ -1810,9 +1811,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       return result;
     }
 
-    friend inline auto sin(soft_double x) -> soft_double;
-    friend inline auto cos(soft_double x) -> soft_double;
-    friend inline auto tan(soft_double x) -> soft_double;
+    friend inline SOFT_DOUBLE_CONSTEXPR auto sin(soft_double x) -> soft_double;
+    friend inline SOFT_DOUBLE_CONSTEXPR auto cos(soft_double x) -> soft_double;
+    friend inline SOFT_DOUBLE_CONSTEXPR auto tan(soft_double x) -> soft_double;
 
     friend inline SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& a, const soft_double& b) -> soft_double;
     friend inline SOFT_DOUBLE_CONSTEXPR auto operator-(const soft_double& a, const soft_double& b) -> soft_double;
@@ -1982,7 +1983,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   namespace detail {
 
-  inline auto sin_pade(soft_double x) -> soft_double
+  inline SOFT_DOUBLE_CONSTEXPR auto sin_pade(soft_double x) -> soft_double
   {
     // PadeApproximant[Sin[x], {x, 0, {7,7}}]
     // FullSimplify[%]
@@ -1990,15 +1991,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     //    x (11511339840 - 1640635920 x^2 + 52785432 x^4 - 479249 x^6)
     // / (7 ( 1644477120  +  39702960 x^2 +   453960 x^4 +   2623 x^6))
 
-    static const soft_double coef_sin_top_0(INT64_C(+11511339840));
-    static const soft_double coef_sin_top_1(INT32_C(-1640635920));
-    static const soft_double coef_sin_top_2(INT32_C(+52785432));
-    static const soft_double coef_sin_top_3(INT32_C(-479249));
+    SOFT_DOUBLE_CONSTEXPR soft_double coef_sin_top_0(INT64_C(+11511339840));
+    SOFT_DOUBLE_CONSTEXPR soft_double coef_sin_top_1(INT32_C(-1640635920));
+    SOFT_DOUBLE_CONSTEXPR soft_double coef_sin_top_2(INT32_C(+52785432));
+    SOFT_DOUBLE_CONSTEXPR soft_double coef_sin_top_3(INT32_C(-479249));
 
-    static const soft_double coef_sin_bot_0(UINT32_C(+1644477120));
-    static const soft_double coef_sin_bot_1(UINT32_C(+39702960));
-    static const soft_double coef_sin_bot_2(UINT32_C(+453960));
-    static const soft_double coef_sin_bot_3(UINT32_C(+2623));
+    SOFT_DOUBLE_CONSTEXPR soft_double coef_sin_bot_0(UINT32_C(+1644477120));
+    SOFT_DOUBLE_CONSTEXPR soft_double coef_sin_bot_1(UINT32_C(+39702960));
+    SOFT_DOUBLE_CONSTEXPR soft_double coef_sin_bot_2(UINT32_C(+453960));
+    SOFT_DOUBLE_CONSTEXPR soft_double coef_sin_bot_3(UINT32_C(+2623));
 
 
     const soft_double x2(x * x);
@@ -2016,7 +2017,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return (x * top) / (bot * 7);
   }
 
-  inline auto cos_pade(soft_double x) -> soft_double
+  inline SOFT_DOUBLE_CONSTEXPR auto cos_pade(soft_double x) -> soft_double
   {
     // PadeApproximant[Cos[x] - 1, {x, 0, {8,6}}]
     // FullSimplify[%]
@@ -2024,15 +2025,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     //   (x^2 (-5491886400 + 346666320 x^2 - 7038360 x^4 + 45469 x^6))
     // / (24  (  457657200 +   9249240 x^2 +   86030 x^4 +   389 x^6))
 
-    static const soft_double coef_cos_top_0(INT64_C(-5491886400));
-    static const soft_double coef_cos_top_1(INT32_C(+346666320));
-    static const soft_double coef_cos_top_2(INT32_C(-7038360));
-    static const soft_double coef_cos_top_3(INT32_C(+45469));
+    SOFT_DOUBLE_CONSTEXPR soft_double coef_cos_top_0(INT64_C(-5491886400));
+    SOFT_DOUBLE_CONSTEXPR soft_double coef_cos_top_1(INT32_C(+346666320));
+    SOFT_DOUBLE_CONSTEXPR soft_double coef_cos_top_2(INT32_C(-7038360));
+    SOFT_DOUBLE_CONSTEXPR soft_double coef_cos_top_3(INT32_C(+45469));
 
-    static const soft_double coef_cos_bot_0(UINT32_C(457657200));
-    static const soft_double coef_cos_bot_1(UINT32_C(9249240));
-    static const soft_double coef_cos_bot_2(UINT32_C(86030));
-    static const soft_double coef_cos_bot_3(UINT32_C(389));
+    SOFT_DOUBLE_CONSTEXPR soft_double coef_cos_bot_0(UINT32_C(457657200));
+    SOFT_DOUBLE_CONSTEXPR soft_double coef_cos_bot_1(UINT32_C(9249240));
+    SOFT_DOUBLE_CONSTEXPR soft_double coef_cos_bot_2(UINT32_C(86030));
+    SOFT_DOUBLE_CONSTEXPR soft_double coef_cos_bot_3(UINT32_C(389));
 
     const soft_double x2(x * x);
 
@@ -2051,7 +2052,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   } // namespace detail
 
-  inline auto sin(soft_double x) -> soft_double // NOLINT(misc-no-recursion)
+  inline SOFT_DOUBLE_CONSTEXPR auto sin(soft_double x) -> soft_double // NOLINT(misc-no-recursion)
   {
     soft_double s { };
 
@@ -2088,15 +2089,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         //   (39251520 - 18471600 dx^2 + 1075032 dx^4 - 14615 dx^6)
         // / (39251520 +  1154160 dx^2 +   16632 dx^4 +   127 dx^6)
 
-        static const soft_double coef_top_0(INT32_C(+39251520));
-        static const soft_double coef_top_1(INT32_C(-18471600));
-        static const soft_double coef_top_2(INT32_C(+1075032));
-        static const soft_double coef_top_3(INT32_C(-14615));
+        SOFT_DOUBLE_CONSTEXPR soft_double coef_top_0(INT32_C(+39251520));
+        SOFT_DOUBLE_CONSTEXPR soft_double coef_top_1(INT32_C(-18471600));
+        SOFT_DOUBLE_CONSTEXPR soft_double coef_top_2(INT32_C(+1075032));
+        SOFT_DOUBLE_CONSTEXPR soft_double coef_top_3(INT32_C(-14615));
 
-        static const soft_double coef_bot_0(UINT32_C(39251520));
-        static const soft_double coef_bot_1(UINT32_C(1154160));
-        static const soft_double coef_bot_2(UINT32_C(16632));
-        static const soft_double coef_bot_3(UINT32_C(127));
+        SOFT_DOUBLE_CONSTEXPR soft_double coef_bot_0(UINT32_C(39251520));
+        SOFT_DOUBLE_CONSTEXPR soft_double coef_bot_1(UINT32_C(1154160));
+        SOFT_DOUBLE_CONSTEXPR soft_double coef_bot_2(UINT32_C(16632));
+        SOFT_DOUBLE_CONSTEXPR soft_double coef_bot_3(UINT32_C(127));
 
         const soft_double x2(delta_pi_half * delta_pi_half);
 
@@ -2158,7 +2159,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return s;
   }
 
-  inline auto cos(soft_double x) -> soft_double // NOLINT(misc-no-recursion)
+  inline SOFT_DOUBLE_CONSTEXPR auto cos(soft_double x) -> soft_double // NOLINT(misc-no-recursion)
   {
     soft_double c { };
 
@@ -2247,7 +2248,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return c;
   }
 
-  inline auto ldexp(soft_double x, int expval) -> soft_double
+  inline SOFT_DOUBLE_CONSTEXPR auto ldexp(soft_double x, int expval) -> soft_double
   {
     const auto expA = static_cast<int>(detail::expF64UI(x.my_value) + expval);
 
@@ -2258,7 +2259,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     };
   }
 
-  inline auto floor(soft_double x) -> soft_double
+  inline SOFT_DOUBLE_CONSTEXPR auto floor(soft_double x) -> soft_double
   {
     soft_double result { };
 
@@ -2280,7 +2281,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return result;
   }
 
-  inline auto ceil(soft_double x) -> soft_double
+  inline SOFT_DOUBLE_CONSTEXPR auto ceil(soft_double x) -> soft_double
   {
     soft_double result { };
 
@@ -2302,7 +2303,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return result;
   }
 
-  inline auto exp(soft_double x) -> soft_double
+  inline SOFT_DOUBLE_CONSTEXPR auto exp(soft_double x) -> soft_double
   {
     // PadeApproximant[Exp[x] - 1, {x, 0, {6, 6}}]
     // FullSimplify[%]
@@ -2334,7 +2335,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return ((n != 0) ? ldexp(result, n) : result);
   }
 
-  inline auto log(soft_double x) -> soft_double // NOLINT(misc-no-recursion)
+  inline SOFT_DOUBLE_CONSTEXPR auto log(soft_double x) -> soft_double // NOLINT(misc-no-recursion)
   {
     soft_double result { };
 
@@ -2397,31 +2398,31 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return result;
   }
 
-  inline auto pow(soft_double x, soft_double a) -> soft_double
+  inline SOFT_DOUBLE_CONSTEXPR auto pow(soft_double x, soft_double a) -> soft_double
   {
     return exp(a * log(x));
   }
 
-  inline auto tan(soft_double x) -> soft_double
+  inline SOFT_DOUBLE_CONSTEXPR auto tan(soft_double x) -> soft_double
   {
     return sin(x) / cos(x);
   }
 
-  inline auto sinh(soft_double x) -> soft_double
+  inline SOFT_DOUBLE_CONSTEXPR auto sinh(soft_double x) -> soft_double
   {
     const soft_double ep = exp(x);
 
     return (ep - (1 / ep)) / 2;
   }
 
-  inline auto cosh(soft_double x) -> soft_double
+  inline SOFT_DOUBLE_CONSTEXPR auto cosh(soft_double x) -> soft_double
   {
     const soft_double ep = exp(x);
 
     return (ep + (1 / ep)) / 2;
   }
 
-  inline auto tanh(soft_double x) -> soft_double
+  inline SOFT_DOUBLE_CONSTEXPR auto tanh(soft_double x) -> soft_double
   {
     const soft_double ep = exp(x);
     const soft_double em = 1 / ep;

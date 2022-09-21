@@ -29,6 +29,7 @@
     <ClCompile Include="test\test.cpp" />
     <ClCompile Include="test\test_soft_double_examples.cpp" />
     <ClCompile Include="test\test_soft_double.cpp" />
+    <ClCompile Include="test\test_soft_double_spot_values.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="math\constants\constants_pi_control_for_decwide_t.h" />
@@ -141,6 +142,7 @@
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile />
       <DisableSpecificWarnings>4146</DisableSpecificWarnings>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -159,6 +161,7 @@
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile />
       <DisableSpecificWarnings>4146</DisableSpecificWarnings>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -179,6 +182,7 @@
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile />
       <DisableSpecificWarnings>4146</DisableSpecificWarnings>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -201,6 +205,7 @@
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile />
       <DisableSpecificWarnings>4146</DisableSpecificWarnings>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
