@@ -1775,11 +1775,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     template<typename SignedIntegralType,
              typename std::enable_if<(   std::is_integral<SignedIntegralType>::value
                                       && std::is_signed  <SignedIntegralType>::value)>::type const*>
-    friend auto pow(soft_double x, SignedIntegralType n) -> soft_double // NOLINT(misc-no-recursion)
+    friend auto pow(soft_double x, SignedIntegralType n) -> soft_double
     {
       soft_double result { };
 
-      if     (n <  0) { result = soft_double::my_value_one() / pow(x, static_cast<SignedIntegralType>(-n)); }
+      if     (n <  0) { result = soft_double::my_value_one() / pow(x, static_cast<typename std::make_unsigned<SignedIntegralType>::type>(-n)); }
       else if(n == 0) { result = soft_double::my_value_one(); }
       else if(n == 1) { result = x; }
       else if(n == 2) { result = x * x; }

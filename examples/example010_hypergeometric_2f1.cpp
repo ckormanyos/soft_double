@@ -20,7 +20,7 @@ static_assert(sizeof(double) == 8U, // NOLINT(readability-magic-numbers,cppcoreg
 namespace local
 {
   template<typename T>
-  auto hypergeometric_2f1(const T& AP, const T& BP, const T& CP, const T& ZM) -> T // NOLINT(readability-identifier-naming)
+  auto hypergeometric_2f1(const T& AP, const T& BP, const T& CP, const T& ZM) -> T // NOLINT(readability-identifier-naming,bugprone-easily-swappable-parameters)
   {
     // Implement a rational approximation of hypergeometric_2f1.
     // This C++11 code uses a computational scheme similar to
@@ -163,8 +163,6 @@ namespace local
 
 auto math::softfloat::example010_hypergeometric_2f1() -> bool
 {
-  using float64_t = math::softfloat::float64_t;
-
   const float64_t a( float64_t(2U) / 3U);
   const float64_t b( float64_t(4U) / 3U);
   const float64_t c( float64_t(5U) / 7U);
