@@ -1,4 +1,4 @@
-soft_double
+﻿soft_double
 ==================
 
 <p align="center">
@@ -6,8 +6,8 @@ soft_double
         <img src="https://github.com/ckormanyos/soft_double/actions/workflows/soft_double.yml/badge.svg" alt="Build Status"></a>
     <a href="https://github.com/ckormanyos/soft_double/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc">
         <img src="https://custom-icon-badges.herokuapp.com/github/issues-raw/ckormanyos/soft_double?logo=github" alt="Issues" /></a>
-    <a href="https://sonarcloud.io/summary/new_code?id=ckormanyos_soft_float">
-        <img src="https://sonarcloud.io/api/project_badges/measure?project=ckormanyos_soft_float&metric=alert_status" alt="Quality Gate Status"></a>
+    <a href="https://sonarcloud.io/summary/new_code?id=ckormanyos_soft_double">
+        <img src="https://sonarcloud.io/api/project_badges/measure?project=ckormanyos_soft_double&metric=alert_status" alt="Quality Gate Status"></a>
     <a href="https://github.com/ckormanyos/soft_double/blob/master/LICENSE_1_0.txt">
         <img src="https://img.shields.io/badge/license-BSL%201.0-blue.svg" alt="Boost Software License 1.0"></a>
     <a href="https://img.shields.io/github/commit-activity/y/ckormanyos/soft_double">
