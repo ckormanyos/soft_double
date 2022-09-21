@@ -9,7 +9,7 @@
 // SoftFloat IEEE Floating-Point Arithmetic Package,
 // Release 3e, by John R. Hauser.
 
-// Full original copyright information follows.
+// Full original SoftFloat 3e copyright information follows.
 /*----------------------------------------------------------------------------
 
 This C header file is part of the SoftFloat IEEE Floating-Point Arithmetic
@@ -482,12 +482,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   inline auto isnan   (soft_double x) -> bool;
   inline auto isinf   (soft_double x) -> bool;
   inline auto isfinite(soft_double x) -> bool;
-  inline auto fabs    (soft_double x) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto fabs    (soft_double x) -> soft_double;
   inline auto frexp   (soft_double x, int* expptr) -> soft_double;
   inline auto ldexp   (soft_double x, int expval) -> soft_double;
   inline auto floor   (soft_double x) -> soft_double;
   inline auto ceil    (soft_double x) -> soft_double;
-  inline auto sqrt    (soft_double x) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto sqrt    (soft_double x) -> soft_double;
   inline auto exp     (soft_double x) -> soft_double;
   inline auto log     (soft_double x) -> soft_double;
   inline auto pow     (soft_double x, soft_double a) -> soft_double;
@@ -565,13 +565,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     ~soft_double() = default;
 
-    auto operator=(const soft_double&) -> soft_double& = default;
+    SOFT_DOUBLE_CONSTEXPR auto operator=(const soft_double&) -> soft_double& = default;
 
-    auto operator=(soft_double&&) noexcept -> soft_double& = default;
+    SOFT_DOUBLE_CONSTEXPR auto operator=(soft_double&&) noexcept -> soft_double& = default;
 
-    SOFT_DOUBLE_NODISCARD auto  representation()       ->       representation_type& { return my_value; }
-    SOFT_DOUBLE_NODISCARD auto  representation() const -> const representation_type& { return my_value; }
-    SOFT_DOUBLE_NODISCARD auto crepresentation() const -> const representation_type& { return my_value; }
+    SOFT_DOUBLE_NODISCARD constexpr auto  representation()       ->       representation_type& { return my_value; }
+    SOFT_DOUBLE_NODISCARD constexpr auto  representation() const -> const representation_type& { return my_value; }
+    SOFT_DOUBLE_NODISCARD constexpr auto crepresentation() const -> const representation_type& { return my_value; }
 
     static constexpr auto get_rep(soft_double a) -> representation_type { return a.my_value; }
 
@@ -1701,8 +1701,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     friend inline auto isnan   (soft_double x) -> bool { return  (x.my_value == my_value_quiet_NaN().my_value); }
     friend inline auto isinf   (soft_double x) -> bool { return ((x.my_value & my_value_infinity().my_value) == my_value_infinity().my_value); }
 
-    friend inline auto fabs (soft_double x) -> soft_double { return { static_cast<std::uint64_t>(x.my_value & static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF))), detail::nothing() }; }
-    friend inline auto sqrt (soft_double x) -> soft_double { return { f64_sqrt(x.my_value), detail::nothing() }; }
+    friend inline SOFT_DOUBLE_CONSTEXPR auto fabs (soft_double x) -> soft_double { return { static_cast<std::uint64_t>(x.my_value & static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF))), detail::nothing() }; }
+    friend inline SOFT_DOUBLE_CONSTEXPR auto sqrt (soft_double x) -> soft_double { return { f64_sqrt(x.my_value), detail::nothing() }; }
 
     friend inline auto frexp(soft_double x, int* expptr) -> soft_double
     {

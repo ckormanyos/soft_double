@@ -1,4 +1,4 @@
-///////////////////////////////////////////////////////////////////
+﻿///////////////////////////////////////////////////////////////////
 //  Copyright Christopher Kormanyos 2012 - 2022.                 //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
@@ -20,14 +20,16 @@
 // make prepare -f make_tidy_01_generic.gmk
 // make tidy -f make_tidy_01_generic.gmk --jobs=8
 
-extern auto test_soft_double() -> bool;
+extern auto test_soft_double            () -> bool;
+extern auto test_soft_double_spot_values() -> bool;
 
 auto main() -> int
 {
   const auto start = std::clock();
 
-  const auto result_is_ok_examples = test_soft_double_examples();
-  const auto result_is_ok_double   = test_soft_double();
+  const auto result_test_soft_double_examples_is_ok    = test_soft_double_examples();
+  const auto result_test_soft_double_is_ok             = test_soft_double();
+  const auto result_test_soft_double_spot_values_is_ok = test_soft_double_spot_values();
 
   const auto stop = std::clock();
 
@@ -35,7 +37,12 @@ auto main() -> int
             << static_cast<float>(stop - start) / static_cast<float>(CLOCKS_PER_SEC)
             << std::endl;
 
-  const auto result_all_is_ok = (result_is_ok_examples && result_is_ok_double);
+  const auto result_all_is_ok =
+  (
+       result_test_soft_double_examples_is_ok
+    && result_test_soft_double_is_ok
+    && result_test_soft_double_spot_values_is_ok
+  );
 
   std::cout << "result_all_is_ok: " << std::boolalpha << result_all_is_ok << std::endl;
 
