@@ -47,7 +47,7 @@ constexpr auto pi() -> float64_t { return float64_t::my_value_pi(); }
 template<typename real_value_type,
           typename real_function_type>
 auto integral(const real_value_type&   a,
-              const real_value_type&   b,
+              const real_value_type&   b, // NOLINT(bugprone-easily-swappable-parameters)
               const real_value_type&   tol,
                     real_function_type real_function) -> real_value_type
 {
