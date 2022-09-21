@@ -510,9 +510,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   class soft_double final
   {
+  public:
     static_assert(sizeof(float) == 4U,
                   "Error: This template is designed for 4 byte built-in float");
-  public:
+
     using representation_type = std::uint64_t;
 
     soft_double() = default;
@@ -563,15 +564,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     constexpr soft_double(std::uint64_t n, detail::nothing&&) noexcept // NOLINT(hicpp-named-parameter,readability-named-parameter)
       : my_value(static_cast<std::uint64_t>(n)) { }
 
-    ~soft_double() = default;
+    SOFT_DOUBLE_CONSTEXPR ~soft_double() = default;
 
     SOFT_DOUBLE_CONSTEXPR auto operator=(const soft_double&) -> soft_double& = default;
 
     SOFT_DOUBLE_CONSTEXPR auto operator=(soft_double&&) noexcept -> soft_double& = default;
 
-    SOFT_DOUBLE_NODISCARD constexpr auto  representation()       ->       representation_type& { return my_value; }
-    SOFT_DOUBLE_NODISCARD constexpr auto  representation() const -> const representation_type& { return my_value; }
-    SOFT_DOUBLE_NODISCARD constexpr auto crepresentation() const -> const representation_type& { return my_value; }
+                          SOFT_DOUBLE_CONSTEXPR auto  representation()       ->       representation_type& { return my_value; }
+    SOFT_DOUBLE_NODISCARD SOFT_DOUBLE_CONSTEXPR auto  representation() const -> const representation_type& { return my_value; }
+    SOFT_DOUBLE_NODISCARD SOFT_DOUBLE_CONSTEXPR auto crepresentation() const -> const representation_type& { return my_value; }
 
     static constexpr auto get_rep(soft_double a) -> representation_type { return a.my_value; }
 
