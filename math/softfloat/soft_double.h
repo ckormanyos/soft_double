@@ -332,8 +332,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     const float_type    my_f;
     const unsigned_type my_u;
 
-    constexpr uz_type(float_type    f) : my_f(f) { } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
-    constexpr uz_type(unsigned_type u) : my_u(u) { } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+    explicit constexpr uz_type(float_type    f) : my_f(f) { }
+    explicit constexpr uz_type(unsigned_type u) : my_u(u) { }
   };
 
   struct nothing { };
