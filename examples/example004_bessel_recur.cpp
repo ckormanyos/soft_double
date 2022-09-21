@@ -156,9 +156,9 @@ struct jn_algo
   }
 };
 
-float         jn_algo::m_z;
-float         jn_algo::m_n;
-std::int32_t  jn_algo::m_p;
+float         jn_algo::m_z; // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
+float         jn_algo::m_n; // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
+std::int32_t  jn_algo::m_p; // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
 
 } // namespace detail
 
@@ -222,8 +222,6 @@ auto math::softfloat::example004_bessel_recur() -> bool
   // Calculate the double value of a Bessel function.
   // N[BesselJ[9, 123456789/10000000], 40]
   // 0.1811741425937681762466579147691209001166;
-
-  using float64_t = math::softfloat::soft_double;
 
   // Downward recursion and simultaneous summation of
   // the normalization factor.

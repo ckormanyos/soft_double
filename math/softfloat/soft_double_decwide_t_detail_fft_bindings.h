@@ -27,10 +27,10 @@
   constexpr auto template_half() -> float_type;
 
   template<typename float_type>
-  constexpr auto template_fast_div_by_two(float_type) -> float_type; // NOLINT(readability-named-parameter)
+  constexpr auto template_fast_div_by_two(float_type) -> float_type; // NOLINT(readability-named-parameter,hicpp-named-parameter)
 
   template<typename float_type>
-  constexpr auto template_sin_order_1(const std::uint32_t) -> float_type; // NOLINT(readability-named-parameter,readability-avoid-const-params-in-decls)
+  constexpr auto template_sin_order_1(const std::uint32_t) -> float_type; // NOLINT(readability-named-parameter,hicpp-named-parameter,readability-avoid-const-params-in-decls)
 
   template<>
   constexpr auto template_half<math::softfloat::float64_t>() -> math::softfloat::float64_t

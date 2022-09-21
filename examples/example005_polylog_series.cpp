@@ -85,8 +85,6 @@ namespace local
 
 auto math::softfloat::example005_polylog_series() -> bool
 {
-  using float64_t = math::softfloat::soft_double;
-
   using std::fabs;
 
   const float64_t poly = local::polylog(7U, float64_t(17U) / 71U);

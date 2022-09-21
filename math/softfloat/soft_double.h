@@ -1775,7 +1775,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     template<typename SignedIntegralType,
              typename std::enable_if<(   std::is_integral<SignedIntegralType>::value
                                       && std::is_signed  <SignedIntegralType>::value)>::type const*>
-    friend auto pow(soft_double x, SignedIntegralType n) -> soft_double
+    friend auto pow(soft_double x, SignedIntegralType n) -> soft_double // NOLINT(misc-no-recursion)
     {
       soft_double result { };
 
