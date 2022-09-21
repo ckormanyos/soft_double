@@ -86,9 +86,9 @@ struct jn_algo
   static constexpr auto e_half() -> float { return static_cast<float>(1.359140914229522617680143735676331248879L); } // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
   static constexpr auto two_pi() -> float { return static_cast<float>(6.283185307179586476925286766559005768394L); } // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
 
-  static float        m_z;
-  static float        m_n;
-  static std::int32_t m_p;
+  static float        m_z; // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
+  static float        m_n; // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
+  static std::int32_t m_p; // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
 
   static auto fn_mstart1(const float m) -> float
   {
@@ -128,7 +128,7 @@ struct jn_algo
             - (m_n  * log10(e_half() * m_z / m_n)); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
   }
 
-  static auto mstart1(const float x, const std::uint32_t digits) -> std::uint32_t
+  static auto mstart1(const float x, const std::uint32_t digits) -> std::uint32_t // NOLINT(bugprone-easily-swappable-parameters)
   {
     m_z = (std::max)(x, 0.1F); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
     m_p = static_cast<std::int32_t>(digits);
@@ -141,7 +141,7 @@ struct jn_algo
     return ((((n_order % 2U) == 0U) && (n_order > 0U)) ? n_order - 1U : n_order);
   }
 
-  static auto mstart2(const float x, const float dn, const std::uint32_t digits) -> std::uint32_t
+  static auto mstart2(const float x, const float dn, const std::uint32_t digits) -> std::uint32_t // NOLINT(bugprone-easily-swappable-parameters)
   {
     m_z = (std::max)(x, 0.1F); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
     m_n = dn;

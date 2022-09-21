@@ -51,13 +51,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   //#define SOFT_DOUBLE_DISABLE_IOSTREAM
 
   #include <array>
-  #include <cstdint>
   #include <cstddef>
+  #include <cstdint>
   #if !defined(SOFT_DOUBLE_DISABLE_IOSTREAM)
   #include <iomanip>
-  #include <sstream>
   #endif
   #include <limits>
+  #if !defined(SOFT_DOUBLE_DISABLE_IOSTREAM)
+  #include <sstream>
+  #endif
   #include <type_traits>
 
   #if (defined(__clang__) && (__clang_major__ <= 9))
@@ -288,7 +290,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return static_cast<std::uint32_t>(static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF)) / a);
   }
 
-  constexpr auto softfloat_shiftRightJam64Extra(std::uint64_t a, std::uint64_t extra, std::uint32_t dist) -> struct uint64_extra
+  inline constexpr auto softfloat_shiftRightJam64Extra(std::uint64_t a, std::uint64_t extra, std::uint32_t dist) -> struct uint64_extra
   {
     // Shifts the 128 bits formed by concatenating a and extra right by 64
     // _plus_ the number of bits given in dist, which must not be zero. This
@@ -340,60 +342,60 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   class soft_double;
 
-  inline auto operator+(const soft_double& a, const soft_double& b) -> soft_double;
-  inline auto operator-(const soft_double& a, const soft_double& b) -> soft_double;
-  inline auto operator*(const soft_double& a, const soft_double& b) -> soft_double;
-  inline auto operator/(const soft_double& a, const soft_double& b) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& a, const soft_double& b) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto operator-(const soft_double& a, const soft_double& b) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto operator*(const soft_double& a, const soft_double& b) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto operator/(const soft_double& a, const soft_double& b) -> soft_double;
 
-  template<typename UnsignedIntegralType> auto operator+(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
-  template<typename UnsignedIntegralType> auto operator-(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
-  template<typename UnsignedIntegralType> auto operator*(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
-  template<typename UnsignedIntegralType> auto operator/(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
+  template<typename UnsignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
+  template<typename UnsignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator-(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
+  template<typename UnsignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator*(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
+  template<typename UnsignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator/(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
 
-  template<typename UnsignedIntegralType> auto operator+(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
-  template<typename UnsignedIntegralType> auto operator-(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
-  template<typename UnsignedIntegralType> auto operator*(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
-  template<typename UnsignedIntegralType> auto operator/(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
+  template<typename UnsignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator+(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
+  template<typename UnsignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator-(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
+  template<typename UnsignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator*(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
+  template<typename UnsignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator/(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
 
-  template<typename SignedIntegralType> auto operator+(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
-  template<typename SignedIntegralType> auto operator-(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
-  template<typename SignedIntegralType> auto operator*(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
-  template<typename SignedIntegralType> auto operator/(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
+  template<typename SignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
+  template<typename SignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator-(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
+  template<typename SignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator*(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
+  template<typename SignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator/(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
 
-  template<typename SignedIntegralType> auto operator+(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
-  template<typename SignedIntegralType> auto operator-(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
-  template<typename SignedIntegralType> auto operator*(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
-  template<typename SignedIntegralType> auto operator/(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
+  template<typename SignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator+(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
+  template<typename SignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator-(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
+  template<typename SignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator*(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
+  template<typename SignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator/(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
 
-  inline auto operator+(const soft_double& u, float f) -> soft_double;
-  inline auto operator-(const soft_double& u, float f) -> soft_double;
-  inline auto operator*(const soft_double& u, float f) -> soft_double;
-  inline auto operator/(const soft_double& u, float f) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& u, float f) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto operator-(const soft_double& u, float f) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto operator*(const soft_double& u, float f) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto operator/(const soft_double& u, float f) -> soft_double;
 
-  inline auto operator+(float f, const soft_double& u) -> soft_double;
-  inline auto operator-(float f, const soft_double& u) -> soft_double;
-  inline auto operator*(float f, const soft_double& u) -> soft_double;
-  inline auto operator/(float f, const soft_double& u) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto operator+(float f, const soft_double& u) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto operator-(float f, const soft_double& u) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto operator*(float f, const soft_double& u) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto operator/(float f, const soft_double& u) -> soft_double;
 
-  inline auto operator+(const soft_double& u, double f) -> soft_double;
-  inline auto operator-(const soft_double& u, double f) -> soft_double;
-  inline auto operator*(const soft_double& u, double f) -> soft_double;
-  inline auto operator/(const soft_double& u, double f) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& u, double f) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto operator-(const soft_double& u, double f) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto operator*(const soft_double& u, double f) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto operator/(const soft_double& u, double f) -> soft_double;
 
-  inline auto operator+(double f, const soft_double& u) -> soft_double;
-  inline auto operator-(double f, const soft_double& u) -> soft_double;
-  inline auto operator*(double f, const soft_double& u) -> soft_double;
-  inline auto operator/(double f, const soft_double& u) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto operator+(double f, const soft_double& u) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto operator-(double f, const soft_double& u) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto operator*(double f, const soft_double& u) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto operator/(double f, const soft_double& u) -> soft_double;
 
-  inline auto operator+(const soft_double& u, long double f) -> soft_double;
-  inline auto operator-(const soft_double& u, long double f) -> soft_double;
-  inline auto operator*(const soft_double& u, long double f) -> soft_double;
-  inline auto operator/(const soft_double& u, long double f) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& u, long double f) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto operator-(const soft_double& u, long double f) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto operator*(const soft_double& u, long double f) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto operator/(const soft_double& u, long double f) -> soft_double;
 
-  inline auto operator+(long double f, const soft_double& u) -> soft_double;
-  inline auto operator-(long double f, const soft_double& u) -> soft_double;
-  inline auto operator*(long double f, const soft_double& u) -> soft_double;
-  inline auto operator/(long double f, const soft_double& u) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto operator+(long double f, const soft_double& u) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto operator-(long double f, const soft_double& u) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto operator*(long double f, const soft_double& u) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto operator/(long double f, const soft_double& u) -> soft_double;
 
   inline constexpr auto operator< (const soft_double& a, const soft_double& b) -> bool;
   inline constexpr auto operator<=(const soft_double& a, const soft_double& b) -> bool;
@@ -402,75 +404,75 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   inline constexpr auto operator>=(const soft_double& a, const soft_double& b) -> bool;
   inline constexpr auto operator> (const soft_double& a, const soft_double& b) -> bool;
 
-  template<typename UnsignedIntegralType> auto operator< (const soft_double& a, UnsignedIntegralType u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type;
-  template<typename UnsignedIntegralType> auto operator<=(const soft_double& a, UnsignedIntegralType u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type;
-  template<typename UnsignedIntegralType> auto operator==(const soft_double& a, UnsignedIntegralType u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type;
-  template<typename UnsignedIntegralType> auto operator!=(const soft_double& a, UnsignedIntegralType u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type;
-  template<typename UnsignedIntegralType> auto operator>=(const soft_double& a, UnsignedIntegralType u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type;
-  template<typename UnsignedIntegralType> auto operator> (const soft_double& a, UnsignedIntegralType u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type;
+  template<typename UnsignedIntegralType> constexpr auto operator< (const soft_double& a, UnsignedIntegralType u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type;
+  template<typename UnsignedIntegralType> constexpr auto operator<=(const soft_double& a, UnsignedIntegralType u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type;
+  template<typename UnsignedIntegralType> constexpr auto operator==(const soft_double& a, UnsignedIntegralType u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type;
+  template<typename UnsignedIntegralType> constexpr auto operator!=(const soft_double& a, UnsignedIntegralType u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type;
+  template<typename UnsignedIntegralType> constexpr auto operator>=(const soft_double& a, UnsignedIntegralType u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type;
+  template<typename UnsignedIntegralType> constexpr auto operator> (const soft_double& a, UnsignedIntegralType u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type;
 
-  template<typename UnsignedIntegralType> auto operator< (UnsignedIntegralType u, const soft_double& a) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type;
-  template<typename UnsignedIntegralType> auto operator<=(UnsignedIntegralType u, const soft_double& a) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type;
-  template<typename UnsignedIntegralType> auto operator==(UnsignedIntegralType u, const soft_double& a) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type;
-  template<typename UnsignedIntegralType> auto operator!=(UnsignedIntegralType u, const soft_double& a) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type;
-  template<typename UnsignedIntegralType> auto operator>=(UnsignedIntegralType u, const soft_double& a) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type;
-  template<typename UnsignedIntegralType> auto operator> (UnsignedIntegralType u, const soft_double& a) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type;
+  template<typename UnsignedIntegralType> constexpr auto operator< (UnsignedIntegralType u, const soft_double& a) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type;
+  template<typename UnsignedIntegralType> constexpr auto operator<=(UnsignedIntegralType u, const soft_double& a) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type;
+  template<typename UnsignedIntegralType> constexpr auto operator==(UnsignedIntegralType u, const soft_double& a) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type;
+  template<typename UnsignedIntegralType> constexpr auto operator!=(UnsignedIntegralType u, const soft_double& a) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type;
+  template<typename UnsignedIntegralType> constexpr auto operator>=(UnsignedIntegralType u, const soft_double& a) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type;
+  template<typename UnsignedIntegralType> constexpr auto operator> (UnsignedIntegralType u, const soft_double& a) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type;
 
-  template<typename SignedIntegralType> auto operator< (const soft_double& a, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type;
-  template<typename SignedIntegralType> auto operator<=(const soft_double& a, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type;
-  template<typename SignedIntegralType> auto operator==(const soft_double& a, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type;
-  template<typename SignedIntegralType> auto operator!=(const soft_double& a, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type;
-  template<typename SignedIntegralType> auto operator>=(const soft_double& a, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type;
-  template<typename SignedIntegralType> auto operator> (const soft_double& a, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type;
+  template<typename SignedIntegralType> constexpr auto operator< (const soft_double& a, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type;
+  template<typename SignedIntegralType> constexpr auto operator<=(const soft_double& a, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type;
+  template<typename SignedIntegralType> constexpr auto operator==(const soft_double& a, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type;
+  template<typename SignedIntegralType> constexpr auto operator!=(const soft_double& a, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type;
+  template<typename SignedIntegralType> constexpr auto operator>=(const soft_double& a, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type;
+  template<typename SignedIntegralType> constexpr auto operator> (const soft_double& a, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type;
 
-  template<typename SignedIntegralType> auto operator< (SignedIntegralType n, const soft_double& a) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type;
-  template<typename SignedIntegralType> auto operator<=(SignedIntegralType n, const soft_double& a) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type;
-  template<typename SignedIntegralType> auto operator==(SignedIntegralType n, const soft_double& a) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type;
-  template<typename SignedIntegralType> auto operator!=(SignedIntegralType n, const soft_double& a) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type;
-  template<typename SignedIntegralType> auto operator>=(SignedIntegralType n, const soft_double& a) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type;
-  template<typename SignedIntegralType> auto operator> (SignedIntegralType n, const soft_double& a) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type;
+  template<typename SignedIntegralType> constexpr auto operator< (SignedIntegralType n, const soft_double& a) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type;
+  template<typename SignedIntegralType> constexpr auto operator<=(SignedIntegralType n, const soft_double& a) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type;
+  template<typename SignedIntegralType> constexpr auto operator==(SignedIntegralType n, const soft_double& a) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type;
+  template<typename SignedIntegralType> constexpr auto operator!=(SignedIntegralType n, const soft_double& a) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type;
+  template<typename SignedIntegralType> constexpr auto operator>=(SignedIntegralType n, const soft_double& a) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type;
+  template<typename SignedIntegralType> constexpr auto operator> (SignedIntegralType n, const soft_double& a) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type;
 
-  inline auto operator< (const soft_double& a, float f) -> bool;
-  inline auto operator<=(const soft_double& a, float f) -> bool;
-  inline auto operator==(const soft_double& a, float f) -> bool;
-  inline auto operator!=(const soft_double& a, float f) -> bool;
-  inline auto operator>=(const soft_double& a, float f) -> bool;
-  inline auto operator> (const soft_double& a, float f) -> bool;
+  inline constexpr auto operator< (const soft_double& a, float f) -> bool;
+  inline constexpr auto operator<=(const soft_double& a, float f) -> bool;
+  inline constexpr auto operator==(const soft_double& a, float f) -> bool;
+  inline constexpr auto operator!=(const soft_double& a, float f) -> bool;
+  inline constexpr auto operator>=(const soft_double& a, float f) -> bool;
+  inline constexpr auto operator> (const soft_double& a, float f) -> bool;
 
-  inline auto operator< (float f, const soft_double& a) -> bool;
-  inline auto operator<=(float f, const soft_double& a) -> bool;
-  inline auto operator==(float f, const soft_double& a) -> bool;
-  inline auto operator!=(float f, const soft_double& a) -> bool;
-  inline auto operator>=(float f, const soft_double& a) -> bool;
-  inline auto operator> (float f, const soft_double& a) -> bool;
+  inline constexpr auto operator< (float f, const soft_double& a) -> bool;
+  inline constexpr auto operator<=(float f, const soft_double& a) -> bool;
+  inline constexpr auto operator==(float f, const soft_double& a) -> bool;
+  inline constexpr auto operator!=(float f, const soft_double& a) -> bool;
+  inline constexpr auto operator>=(float f, const soft_double& a) -> bool;
+  inline constexpr auto operator> (float f, const soft_double& a) -> bool;
 
-  inline auto operator< (const soft_double& a, double f) -> bool;
-  inline auto operator<=(const soft_double& a, double f) -> bool;
-  inline auto operator==(const soft_double& a, double f) -> bool;
-  inline auto operator!=(const soft_double& a, double f) -> bool;
-  inline auto operator>=(const soft_double& a, double f) -> bool;
-  inline auto operator> (const soft_double& a, double f) -> bool;
+  inline constexpr auto operator< (const soft_double& a, double f) -> bool;
+  inline constexpr auto operator<=(const soft_double& a, double f) -> bool;
+  inline constexpr auto operator==(const soft_double& a, double f) -> bool;
+  inline constexpr auto operator!=(const soft_double& a, double f) -> bool;
+  inline constexpr auto operator>=(const soft_double& a, double f) -> bool;
+  inline constexpr auto operator> (const soft_double& a, double f) -> bool;
 
-  inline auto operator< (double f, const soft_double& a) -> bool;
-  inline auto operator<=(double f, const soft_double& a) -> bool;
-  inline auto operator==(double f, const soft_double& a) -> bool;
-  inline auto operator!=(double f, const soft_double& a) -> bool;
-  inline auto operator>=(double f, const soft_double& a) -> bool;
-  inline auto operator> (double f, const soft_double& a) -> bool;
+  inline constexpr auto operator< (double f, const soft_double& a) -> bool;
+  inline constexpr auto operator<=(double f, const soft_double& a) -> bool;
+  inline constexpr auto operator==(double f, const soft_double& a) -> bool;
+  inline constexpr auto operator!=(double f, const soft_double& a) -> bool;
+  inline constexpr auto operator>=(double f, const soft_double& a) -> bool;
+  inline constexpr auto operator> (double f, const soft_double& a) -> bool;
 
-  inline auto operator< (const soft_double& a, long double f) -> bool;
-  inline auto operator<=(const soft_double& a, long double f) -> bool;
-  inline auto operator==(const soft_double& a, long double f) -> bool;
-  inline auto operator!=(const soft_double& a, long double f) -> bool;
-  inline auto operator>=(const soft_double& a, long double f) -> bool;
-  inline auto operator> (const soft_double& a, long double f) -> bool;
+  inline constexpr auto operator< (const soft_double& a, long double f) -> bool;
+  inline constexpr auto operator<=(const soft_double& a, long double f) -> bool;
+  inline constexpr auto operator==(const soft_double& a, long double f) -> bool;
+  inline constexpr auto operator!=(const soft_double& a, long double f) -> bool;
+  inline constexpr auto operator>=(const soft_double& a, long double f) -> bool;
+  inline constexpr auto operator> (const soft_double& a, long double f) -> bool;
 
-  inline auto operator< (long double f, const soft_double& a) -> bool;
-  inline auto operator<=(long double f, const soft_double& a) -> bool;
-  inline auto operator==(long double f, const soft_double& a) -> bool;
-  inline auto operator!=(long double f, const soft_double& a) -> bool;
-  inline auto operator>=(long double f, const soft_double& a) -> bool;
-  inline auto operator> (long double f, const soft_double& a) -> bool;
+  inline constexpr auto operator< (long double f, const soft_double& a) -> bool;
+  inline constexpr auto operator<=(long double f, const soft_double& a) -> bool;
+  inline constexpr auto operator==(long double f, const soft_double& a) -> bool;
+  inline constexpr auto operator!=(long double f, const soft_double& a) -> bool;
+  inline constexpr auto operator>=(long double f, const soft_double& a) -> bool;
+  inline constexpr auto operator> (long double f, const soft_double& a) -> bool;
 
   #if !defined(SOFT_DOUBLE_DISABLE_IOSTREAM)
   template<typename char_type, typename traits_type> auto operator<<(std::basic_ostream<char_type, traits_type>& os, const soft_double& f) -> std::basic_ostream<char_type, traits_type>&;
@@ -1812,122 +1814,122 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     friend inline auto cos(soft_double x) -> soft_double;
     friend inline auto tan(soft_double x) -> soft_double;
 
-    friend inline auto operator+(const soft_double& a, const soft_double& b) -> soft_double;
-    friend inline auto operator-(const soft_double& a, const soft_double& b) -> soft_double;
-    friend inline auto operator*(const soft_double& a, const soft_double& b) -> soft_double;
-    friend inline auto operator/(const soft_double& a, const soft_double& b) -> soft_double;
+    friend inline SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& a, const soft_double& b) -> soft_double;
+    friend inline SOFT_DOUBLE_CONSTEXPR auto operator-(const soft_double& a, const soft_double& b) -> soft_double;
+    friend inline SOFT_DOUBLE_CONSTEXPR auto operator*(const soft_double& a, const soft_double& b) -> soft_double;
+    friend inline SOFT_DOUBLE_CONSTEXPR auto operator/(const soft_double& a, const soft_double& b) -> soft_double;
 
-    template<typename UnsignedIntegralType> friend auto operator+(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(u) += soft_double(n); }
-    template<typename UnsignedIntegralType> friend auto operator-(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(u) -= soft_double(n); }
-    template<typename UnsignedIntegralType> friend auto operator*(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(u) *= soft_double(n); }
-    template<typename UnsignedIntegralType> friend auto operator/(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(u) /= soft_double(n); }
+    template<typename UnsignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(u) += soft_double(n); }
+    template<typename UnsignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator-(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(u) -= soft_double(n); }
+    template<typename UnsignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator*(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(u) *= soft_double(n); }
+    template<typename UnsignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator/(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(u) /= soft_double(n); }
 
-    template<typename UnsignedIntegralType> friend auto operator+(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(n) += u; }
-    template<typename UnsignedIntegralType> friend auto operator-(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(n) -= u; }
-    template<typename UnsignedIntegralType> friend auto operator*(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(n) *= u; }
-    template<typename UnsignedIntegralType> friend auto operator/(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(n) /= u; }
+    template<typename UnsignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator+(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(n) += u; }
+    template<typename UnsignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator-(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(n) -= u; }
+    template<typename UnsignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator*(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(n) *= u; }
+    template<typename UnsignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator/(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(n) /= u; }
 
-    template<typename SignedIntegralType> friend auto operator+(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(u) += soft_double(n); }
-    template<typename SignedIntegralType> friend auto operator-(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(u) -= soft_double(n); }
-    template<typename SignedIntegralType> friend auto operator*(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(u) *= soft_double(n); }
-    template<typename SignedIntegralType> friend auto operator/(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(u) /= soft_double(n); }
+    template<typename SignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(u) += soft_double(n); }
+    template<typename SignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator-(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(u) -= soft_double(n); }
+    template<typename SignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator*(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(u) *= soft_double(n); }
+    template<typename SignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator/(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(u) /= soft_double(n); }
 
-    template<typename SignedIntegralType> friend auto operator+(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(n) += u; }
-    template<typename SignedIntegralType> friend auto operator-(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(n) -= u; }
-    template<typename SignedIntegralType> friend auto operator*(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(n) *= u; }
-    template<typename SignedIntegralType> friend auto operator/(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(n) /= u; }
+    template<typename SignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator+(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(n) += u; }
+    template<typename SignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator-(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(n) -= u; }
+    template<typename SignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator*(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(n) *= u; }
+    template<typename SignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator/(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(n) /= u; }
 
     friend inline constexpr auto operator< (const soft_double& a, const soft_double& b) -> bool;
     friend inline constexpr auto operator<=(const soft_double& a, const soft_double& b) -> bool;
     friend inline constexpr auto operator==(const soft_double& a, const soft_double& b) -> bool;
 
-    template<typename UnsignedIntegralType> friend auto operator< (const soft_double& a, UnsignedIntegralType u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type { return soft_double::my_lt(a, soft_double(u)); }
-    template<typename UnsignedIntegralType> friend auto operator<=(const soft_double& a, UnsignedIntegralType u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type { return soft_double::my_le(a, soft_double(u)); }
-    template<typename UnsignedIntegralType> friend auto operator==(const soft_double& a, UnsignedIntegralType u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type { return  (a.my_value == soft_double(u).my_value); }
-    template<typename UnsignedIntegralType> friend auto operator!=(const soft_double& a, UnsignedIntegralType u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type { return (!(a == soft_double(u))); }
-    template<typename UnsignedIntegralType> friend auto operator>=(const soft_double& a, UnsignedIntegralType u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type { return (!(a <  soft_double(u))); }
-    template<typename UnsignedIntegralType> friend auto operator> (const soft_double& a, UnsignedIntegralType u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type { return (!(a <= soft_double(u))); }
+    template<typename UnsignedIntegralType> friend constexpr auto operator< (const soft_double& a, UnsignedIntegralType u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type { return soft_double::my_lt(a, soft_double(u)); }
+    template<typename UnsignedIntegralType> friend constexpr auto operator<=(const soft_double& a, UnsignedIntegralType u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type { return soft_double::my_le(a, soft_double(u)); }
+    template<typename UnsignedIntegralType> friend constexpr auto operator==(const soft_double& a, UnsignedIntegralType u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type { return  (a.my_value == soft_double(u).my_value); }
+    template<typename UnsignedIntegralType> friend constexpr auto operator!=(const soft_double& a, UnsignedIntegralType u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type { return (!(a == soft_double(u))); }
+    template<typename UnsignedIntegralType> friend constexpr auto operator>=(const soft_double& a, UnsignedIntegralType u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type { return (!(a <  soft_double(u))); }
+    template<typename UnsignedIntegralType> friend constexpr auto operator> (const soft_double& a, UnsignedIntegralType u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type { return (!(a <= soft_double(u))); }
 
-    template<typename UnsignedIntegralType> friend auto operator< (UnsignedIntegralType u, const soft_double& a) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type { return soft_double::my_lt(soft_double(u), a); }
-    template<typename UnsignedIntegralType> friend auto operator<=(UnsignedIntegralType u, const soft_double& a) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type { return soft_double::my_le(soft_double(u), a); }
-    template<typename UnsignedIntegralType> friend auto operator==(UnsignedIntegralType u, const soft_double& a) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type { return  (soft_double(u).my_value == a.my_value); }
-    template<typename UnsignedIntegralType> friend auto operator!=(UnsignedIntegralType u, const soft_double& a) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type { return (!(soft_double(u) == a)); }
-    template<typename UnsignedIntegralType> friend auto operator>=(UnsignedIntegralType u, const soft_double& a) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type { return (!(soft_double(u) <  a)); }
-    template<typename UnsignedIntegralType> friend auto operator> (UnsignedIntegralType u, const soft_double& a) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type { return (!(soft_double(u) <= a)); }
+    template<typename UnsignedIntegralType> friend constexpr auto operator< (UnsignedIntegralType u, const soft_double& a) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type { return soft_double::my_lt(soft_double(u), a); }
+    template<typename UnsignedIntegralType> friend constexpr auto operator<=(UnsignedIntegralType u, const soft_double& a) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type { return soft_double::my_le(soft_double(u), a); }
+    template<typename UnsignedIntegralType> friend constexpr auto operator==(UnsignedIntegralType u, const soft_double& a) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type { return  (soft_double(u).my_value == a.my_value); }
+    template<typename UnsignedIntegralType> friend constexpr auto operator!=(UnsignedIntegralType u, const soft_double& a) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type { return (!(soft_double(u) == a)); }
+    template<typename UnsignedIntegralType> friend constexpr auto operator>=(UnsignedIntegralType u, const soft_double& a) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type { return (!(soft_double(u) <  a)); }
+    template<typename UnsignedIntegralType> friend constexpr auto operator> (UnsignedIntegralType u, const soft_double& a) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, bool>::type { return (!(soft_double(u) <= a)); }
 
-    template<typename SignedIntegralType> friend auto operator< (const soft_double& a, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type { return soft_double::my_lt(a, soft_double(n)); }
-    template<typename SignedIntegralType> friend auto operator<=(const soft_double& a, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type { return soft_double::my_le(a, soft_double(n)); }
-    template<typename SignedIntegralType> friend auto operator==(const soft_double& a, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type { return  (a.my_value == soft_double(n).my_value); }
-    template<typename SignedIntegralType> friend auto operator!=(const soft_double& a, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type { return (!(a == soft_double(n))); }
-    template<typename SignedIntegralType> friend auto operator>=(const soft_double& a, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type { return (!(a <  soft_double(n))); }
-    template<typename SignedIntegralType> friend auto operator> (const soft_double& a, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type { return (!(a <= soft_double(n))); }
+    template<typename SignedIntegralType> friend constexpr auto operator< (const soft_double& a, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type { return soft_double::my_lt(a, soft_double(n)); }
+    template<typename SignedIntegralType> friend constexpr auto operator<=(const soft_double& a, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type { return soft_double::my_le(a, soft_double(n)); }
+    template<typename SignedIntegralType> friend constexpr auto operator==(const soft_double& a, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type { return  (a.my_value == soft_double(n).my_value); }
+    template<typename SignedIntegralType> friend constexpr auto operator!=(const soft_double& a, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type { return (!(a == soft_double(n))); }
+    template<typename SignedIntegralType> friend constexpr auto operator>=(const soft_double& a, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type { return (!(a <  soft_double(n))); }
+    template<typename SignedIntegralType> friend constexpr auto operator> (const soft_double& a, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type { return (!(a <= soft_double(n))); }
 
-    template<typename SignedIntegralType> friend auto operator< (SignedIntegralType n, const soft_double& a) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type { return soft_double::my_lt(soft_double(n), a); }
-    template<typename SignedIntegralType> friend auto operator<=(SignedIntegralType n, const soft_double& a) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type { return soft_double::my_le(soft_double(n), a); }
-    template<typename SignedIntegralType> friend auto operator==(SignedIntegralType n, const soft_double& a) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type { return  (soft_double(n).my_value == a.my_value); }
-    template<typename SignedIntegralType> friend auto operator!=(SignedIntegralType n, const soft_double& a) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type { return (!(soft_double(n) == a)); }
-    template<typename SignedIntegralType> friend auto operator>=(SignedIntegralType n, const soft_double& a) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type { return (!(soft_double(n) <  a)); }
-    template<typename SignedIntegralType> friend auto operator> (SignedIntegralType n, const soft_double& a) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type { return (!(soft_double(n) <= a)); }
+    template<typename SignedIntegralType> friend constexpr auto operator< (SignedIntegralType n, const soft_double& a) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type { return soft_double::my_lt(soft_double(n), a); }
+    template<typename SignedIntegralType> friend constexpr auto operator<=(SignedIntegralType n, const soft_double& a) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type { return soft_double::my_le(soft_double(n), a); }
+    template<typename SignedIntegralType> friend constexpr auto operator==(SignedIntegralType n, const soft_double& a) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type { return  (soft_double(n).my_value == a.my_value); }
+    template<typename SignedIntegralType> friend constexpr auto operator!=(SignedIntegralType n, const soft_double& a) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type { return (!(soft_double(n) == a)); }
+    template<typename SignedIntegralType> friend constexpr auto operator>=(SignedIntegralType n, const soft_double& a) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type { return (!(soft_double(n) <  a)); }
+    template<typename SignedIntegralType> friend constexpr auto operator> (SignedIntegralType n, const soft_double& a) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, bool>::type { return (!(soft_double(n) <= a)); }
 
-    friend inline auto operator< (const soft_double& a, float f) -> bool;
-    friend inline auto operator<=(const soft_double& a, float f) -> bool;
-    friend inline auto operator==(const soft_double& a, float f) -> bool;
+    friend inline constexpr auto operator< (const soft_double& a, float f) -> bool;
+    friend inline constexpr auto operator<=(const soft_double& a, float f) -> bool;
+    friend inline constexpr auto operator==(const soft_double& a, float f) -> bool;
 
-    friend inline auto operator< (float f, const soft_double& a) -> bool;
-    friend inline auto operator<=(float f, const soft_double& a) -> bool;
-    friend inline auto operator==(float f, const soft_double& a) -> bool;
+    friend inline constexpr auto operator< (float f, const soft_double& a) -> bool;
+    friend inline constexpr auto operator<=(float f, const soft_double& a) -> bool;
+    friend inline constexpr auto operator==(float f, const soft_double& a) -> bool;
 
-    friend inline auto operator< (const soft_double& a, double f) -> bool;
-    friend inline auto operator<=(const soft_double& a, double f) -> bool;
-    friend inline auto operator==(const soft_double& a, double f) -> bool;
+    friend inline constexpr auto operator< (const soft_double& a, double f) -> bool;
+    friend inline constexpr auto operator<=(const soft_double& a, double f) -> bool;
+    friend inline constexpr auto operator==(const soft_double& a, double f) -> bool;
 
-    friend inline auto operator< (double f, const soft_double& a) -> bool;
-    friend inline auto operator<=(double f, const soft_double& a) -> bool;
-    friend inline auto operator==(double f, const soft_double& a) -> bool;
+    friend inline constexpr auto operator< (double f, const soft_double& a) -> bool;
+    friend inline constexpr auto operator<=(double f, const soft_double& a) -> bool;
+    friend inline constexpr auto operator==(double f, const soft_double& a) -> bool;
 
-    friend inline auto operator< (const soft_double& a, long double f) -> bool;
-    friend inline auto operator<=(const soft_double& a, long double f) -> bool;
-    friend inline auto operator==(const soft_double& a, long double f) -> bool;
+    friend inline constexpr auto operator< (const soft_double& a, long double f) -> bool;
+    friend inline constexpr auto operator<=(const soft_double& a, long double f) -> bool;
+    friend inline constexpr auto operator==(const soft_double& a, long double f) -> bool;
 
-    friend inline auto operator< (long double f, const soft_double& a) -> bool;
-    friend inline auto operator<=(long double f, const soft_double& a) -> bool;
-    friend inline auto operator==(long double f, const soft_double& a) -> bool;
+    friend inline constexpr auto operator< (long double f, const soft_double& a) -> bool;
+    friend inline constexpr auto operator<=(long double f, const soft_double& a) -> bool;
+    friend inline constexpr auto operator==(long double f, const soft_double& a) -> bool;
   };
 
-  inline auto operator+(const soft_double& a, const soft_double& b) -> soft_double { return { soft_double::f64_add(a.my_value, b.my_value), detail::nothing() }; }
-  inline auto operator-(const soft_double& a, const soft_double& b) -> soft_double { return { soft_double::f64_sub(a.my_value, b.my_value), detail::nothing() }; }
-  inline auto operator*(const soft_double& a, const soft_double& b) -> soft_double { return { soft_double::f64_mul(a.my_value, b.my_value), detail::nothing() }; }
-  inline auto operator/(const soft_double& a, const soft_double& b) -> soft_double { return { soft_double::f64_div(a.my_value, b.my_value), detail::nothing() }; }
+  inline SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& a, const soft_double& b) -> soft_double { return { soft_double::f64_add(a.my_value, b.my_value), detail::nothing() }; }
+  inline SOFT_DOUBLE_CONSTEXPR auto operator-(const soft_double& a, const soft_double& b) -> soft_double { return { soft_double::f64_sub(a.my_value, b.my_value), detail::nothing() }; }
+  inline SOFT_DOUBLE_CONSTEXPR auto operator*(const soft_double& a, const soft_double& b) -> soft_double { return { soft_double::f64_mul(a.my_value, b.my_value), detail::nothing() }; }
+  inline SOFT_DOUBLE_CONSTEXPR auto operator/(const soft_double& a, const soft_double& b) -> soft_double { return { soft_double::f64_div(a.my_value, b.my_value), detail::nothing() }; }
 
-  inline auto operator+(const soft_double& u, float f) -> soft_double { return soft_double(u) += soft_double(f); }
-  inline auto operator-(const soft_double& u, float f) -> soft_double { return soft_double(u) -= soft_double(f); }
-  inline auto operator*(const soft_double& u, float f) -> soft_double { return soft_double(u) *= soft_double(f); }
-  inline auto operator/(const soft_double& u, float f) -> soft_double { return soft_double(u) /= soft_double(f); }
+  inline SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& u, float f) -> soft_double { return soft_double(u) += soft_double(f); }
+  inline SOFT_DOUBLE_CONSTEXPR auto operator-(const soft_double& u, float f) -> soft_double { return soft_double(u) -= soft_double(f); }
+  inline SOFT_DOUBLE_CONSTEXPR auto operator*(const soft_double& u, float f) -> soft_double { return soft_double(u) *= soft_double(f); }
+  inline SOFT_DOUBLE_CONSTEXPR auto operator/(const soft_double& u, float f) -> soft_double { return soft_double(u) /= soft_double(f); }
 
-  inline auto operator+(float f, const soft_double& u) -> soft_double { return soft_double(f) += u; }
-  inline auto operator-(float f, const soft_double& u) -> soft_double { return soft_double(f) -= u; }
-  inline auto operator*(float f, const soft_double& u) -> soft_double { return soft_double(f) *= u; }
-  inline auto operator/(float f, const soft_double& u) -> soft_double { return soft_double(f) /= u; }
+  inline SOFT_DOUBLE_CONSTEXPR auto operator+(float f, const soft_double& u) -> soft_double { return soft_double(f) += u; }
+  inline SOFT_DOUBLE_CONSTEXPR auto operator-(float f, const soft_double& u) -> soft_double { return soft_double(f) -= u; }
+  inline SOFT_DOUBLE_CONSTEXPR auto operator*(float f, const soft_double& u) -> soft_double { return soft_double(f) *= u; }
+  inline SOFT_DOUBLE_CONSTEXPR auto operator/(float f, const soft_double& u) -> soft_double { return soft_double(f) /= u; }
 
-  inline auto operator+(const soft_double& u, double f) -> soft_double { return soft_double(u) += soft_double(f); }
-  inline auto operator-(const soft_double& u, double f) -> soft_double { return soft_double(u) -= soft_double(f); }
-  inline auto operator*(const soft_double& u, double f) -> soft_double { return soft_double(u) *= soft_double(f); }
-  inline auto operator/(const soft_double& u, double f) -> soft_double { return soft_double(u) /= soft_double(f); }
+  inline SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& u, double f) -> soft_double { return soft_double(u) += soft_double(f); }
+  inline SOFT_DOUBLE_CONSTEXPR auto operator-(const soft_double& u, double f) -> soft_double { return soft_double(u) -= soft_double(f); }
+  inline SOFT_DOUBLE_CONSTEXPR auto operator*(const soft_double& u, double f) -> soft_double { return soft_double(u) *= soft_double(f); }
+  inline SOFT_DOUBLE_CONSTEXPR auto operator/(const soft_double& u, double f) -> soft_double { return soft_double(u) /= soft_double(f); }
 
-  inline auto operator+(double f, const soft_double& u) -> soft_double { return soft_double(f) += u; }
-  inline auto operator-(double f, const soft_double& u) -> soft_double { return soft_double(f) -= u; }
-  inline auto operator*(double f, const soft_double& u) -> soft_double { return soft_double(f) *= u; }
-  inline auto operator/(double f, const soft_double& u) -> soft_double { return soft_double(f) /= u; }
+  inline SOFT_DOUBLE_CONSTEXPR auto operator+(double f, const soft_double& u) -> soft_double { return soft_double(f) += u; }
+  inline SOFT_DOUBLE_CONSTEXPR auto operator-(double f, const soft_double& u) -> soft_double { return soft_double(f) -= u; }
+  inline SOFT_DOUBLE_CONSTEXPR auto operator*(double f, const soft_double& u) -> soft_double { return soft_double(f) *= u; }
+  inline SOFT_DOUBLE_CONSTEXPR auto operator/(double f, const soft_double& u) -> soft_double { return soft_double(f) /= u; }
 
-  inline auto operator+(const soft_double& u, long double f) -> soft_double { return soft_double(u) += soft_double(static_cast<double>(f)); }
-  inline auto operator-(const soft_double& u, long double f) -> soft_double { return soft_double(u) -= soft_double(static_cast<double>(f)); }
-  inline auto operator*(const soft_double& u, long double f) -> soft_double { return soft_double(u) *= soft_double(static_cast<double>(f)); }
-  inline auto operator/(const soft_double& u, long double f) -> soft_double { return soft_double(u) /= soft_double(static_cast<double>(f)); }
+  inline SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& u, long double f) -> soft_double { return soft_double(u) += soft_double(static_cast<double>(f)); }
+  inline SOFT_DOUBLE_CONSTEXPR auto operator-(const soft_double& u, long double f) -> soft_double { return soft_double(u) -= soft_double(static_cast<double>(f)); }
+  inline SOFT_DOUBLE_CONSTEXPR auto operator*(const soft_double& u, long double f) -> soft_double { return soft_double(u) *= soft_double(static_cast<double>(f)); }
+  inline SOFT_DOUBLE_CONSTEXPR auto operator/(const soft_double& u, long double f) -> soft_double { return soft_double(u) /= soft_double(static_cast<double>(f)); }
 
-  inline auto operator+(long double f, const soft_double& u) -> soft_double { return soft_double(static_cast<double>(f)) += u; }
-  inline auto operator-(long double f, const soft_double& u) -> soft_double { return soft_double(static_cast<double>(f)) -= u; }
-  inline auto operator*(long double f, const soft_double& u) -> soft_double { return soft_double(static_cast<double>(f)) *= u; }
-  inline auto operator/(long double f, const soft_double& u) -> soft_double { return soft_double(static_cast<double>(f)) /= u; }
+  inline SOFT_DOUBLE_CONSTEXPR auto operator+(long double f, const soft_double& u) -> soft_double { return soft_double(static_cast<double>(f)) += u; }
+  inline SOFT_DOUBLE_CONSTEXPR auto operator-(long double f, const soft_double& u) -> soft_double { return soft_double(static_cast<double>(f)) -= u; }
+  inline SOFT_DOUBLE_CONSTEXPR auto operator*(long double f, const soft_double& u) -> soft_double { return soft_double(static_cast<double>(f)) *= u; }
+  inline SOFT_DOUBLE_CONSTEXPR auto operator/(long double f, const soft_double& u) -> soft_double { return soft_double(static_cast<double>(f)) /= u; }
 
   inline constexpr auto operator< (const soft_double& a, const soft_double& b) -> bool { return soft_double::my_lt(a, b); }
   inline constexpr auto operator<=(const soft_double& a, const soft_double& b) -> bool { return soft_double::my_le(a, b); }
@@ -1936,47 +1938,47 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   inline constexpr auto operator>=(const soft_double& a, const soft_double& b) -> bool { return (!(a <  b)); }
   inline constexpr auto operator> (const soft_double& a, const soft_double& b) -> bool { return (!(a <= b)); }
 
-  inline auto operator< (const soft_double& a, float f) -> bool { return soft_double::my_lt(a, soft_double(f)); }
-  inline auto operator<=(const soft_double& a, float f) -> bool { return soft_double::my_le(a, soft_double(f)); }
-  inline auto operator==(const soft_double& a, float f) -> bool { return  (a.my_value == soft_double(f).my_value); }
-  inline auto operator!=(const soft_double& a, float f) -> bool { return (!(a == soft_double(f))); }
-  inline auto operator>=(const soft_double& a, float f) -> bool { return (!(a <  soft_double(f))); }
-  inline auto operator> (const soft_double& a, float f) -> bool { return (!(a <= soft_double(f))); }
+  inline constexpr auto operator< (const soft_double& a, float f) -> bool { return soft_double::my_lt(a, soft_double(f)); }
+  inline constexpr auto operator<=(const soft_double& a, float f) -> bool { return soft_double::my_le(a, soft_double(f)); }
+  inline constexpr auto operator==(const soft_double& a, float f) -> bool { return  (a.my_value == soft_double(f).my_value); }
+  inline constexpr auto operator!=(const soft_double& a, float f) -> bool { return (!(a == soft_double(f))); }
+  inline constexpr auto operator>=(const soft_double& a, float f) -> bool { return (!(a <  soft_double(f))); }
+  inline constexpr auto operator> (const soft_double& a, float f) -> bool { return (!(a <= soft_double(f))); }
 
-  inline auto operator< (float f, const soft_double& a) -> bool { return soft_double::my_lt(soft_double(f), a); }
-  inline auto operator<=(float f, const soft_double& a) -> bool { return soft_double::my_le(soft_double(f), a); }
-  inline auto operator==(float f, const soft_double& a) -> bool { return  (soft_double(f).my_value == a.my_value); }
-  inline auto operator!=(float f, const soft_double& a) -> bool { return (!(soft_double(f) == a)); }
-  inline auto operator>=(float f, const soft_double& a) -> bool { return (!(soft_double(f) <  a)); }
-  inline auto operator> (float f, const soft_double& a) -> bool { return (!(soft_double(f) <= a)); }
+  inline constexpr auto operator< (float f, const soft_double& a) -> bool { return soft_double::my_lt(soft_double(f), a); }
+  inline constexpr auto operator<=(float f, const soft_double& a) -> bool { return soft_double::my_le(soft_double(f), a); }
+  inline constexpr auto operator==(float f, const soft_double& a) -> bool { return  (soft_double(f).my_value == a.my_value); }
+  inline constexpr auto operator!=(float f, const soft_double& a) -> bool { return (!(soft_double(f) == a)); }
+  inline constexpr auto operator>=(float f, const soft_double& a) -> bool { return (!(soft_double(f) <  a)); }
+  inline constexpr auto operator> (float f, const soft_double& a) -> bool { return (!(soft_double(f) <= a)); }
 
-  inline auto operator< (const soft_double& a, double f) -> bool { return soft_double::my_lt(a, soft_double(f)); }
-  inline auto operator<=(const soft_double& a, double f) -> bool { return soft_double::my_le(a, soft_double(f)); }
-  inline auto operator==(const soft_double& a, double f) -> bool { return  (a.my_value == soft_double(f).my_value); }
-  inline auto operator!=(const soft_double& a, double f) -> bool { return (!(a == soft_double(f))); }
-  inline auto operator>=(const soft_double& a, double f) -> bool { return (!(a <  soft_double(f))); }
-  inline auto operator> (const soft_double& a, double f) -> bool { return (!(a <= soft_double(f))); }
+  inline constexpr auto operator< (const soft_double& a, double f) -> bool { return soft_double::my_lt(a, soft_double(f)); }
+  inline constexpr auto operator<=(const soft_double& a, double f) -> bool { return soft_double::my_le(a, soft_double(f)); }
+  inline constexpr auto operator==(const soft_double& a, double f) -> bool { return  (a.my_value == soft_double(f).my_value); }
+  inline constexpr auto operator!=(const soft_double& a, double f) -> bool { return (!(a == soft_double(f))); }
+  inline constexpr auto operator>=(const soft_double& a, double f) -> bool { return (!(a <  soft_double(f))); }
+  inline constexpr auto operator> (const soft_double& a, double f) -> bool { return (!(a <= soft_double(f))); }
 
-  inline auto operator< (double f, const soft_double& a) -> bool { return soft_double::my_lt(soft_double(f), a); }
-  inline auto operator<=(double f, const soft_double& a) -> bool { return soft_double::my_le(soft_double(f), a); }
-  inline auto operator==(double f, const soft_double& a) -> bool { return  (soft_double(f).my_value == a.my_value); }
-  inline auto operator!=(double f, const soft_double& a) -> bool { return (!(soft_double(f) == a)); }
-  inline auto operator>=(double f, const soft_double& a) -> bool { return (!(soft_double(f) <  a)); }
-  inline auto operator> (double f, const soft_double& a) -> bool { return (!(soft_double(f) <= a)); }
+  inline constexpr auto operator< (double f, const soft_double& a) -> bool { return soft_double::my_lt(soft_double(f), a); }
+  inline constexpr auto operator<=(double f, const soft_double& a) -> bool { return soft_double::my_le(soft_double(f), a); }
+  inline constexpr auto operator==(double f, const soft_double& a) -> bool { return  (soft_double(f).my_value == a.my_value); }
+  inline constexpr auto operator!=(double f, const soft_double& a) -> bool { return (!(soft_double(f) == a)); }
+  inline constexpr auto operator>=(double f, const soft_double& a) -> bool { return (!(soft_double(f) <  a)); }
+  inline constexpr auto operator> (double f, const soft_double& a) -> bool { return (!(soft_double(f) <= a)); }
 
-  inline auto operator< (const soft_double& a, long double f) -> bool { return soft_double::my_lt(a, soft_double(static_cast<double>(f))); }
-  inline auto operator<=(const soft_double& a, long double f) -> bool { return soft_double::my_le(a, soft_double(static_cast<double>(f))); }
-  inline auto operator==(const soft_double& a, long double f) -> bool { return  (a.my_value == soft_double(static_cast<double>(f)).my_value); }
-  inline auto operator!=(const soft_double& a, long double f) -> bool { return (!(a == soft_double(static_cast<double>(f)))); }
-  inline auto operator>=(const soft_double& a, long double f) -> bool { return (!(a <  soft_double(static_cast<double>(f)))); }
-  inline auto operator> (const soft_double& a, long double f) -> bool { return (!(a <= soft_double(static_cast<double>(f)))); }
+  inline constexpr auto operator< (const soft_double& a, long double f) -> bool { return soft_double::my_lt(a, soft_double(static_cast<double>(f))); }
+  inline constexpr auto operator<=(const soft_double& a, long double f) -> bool { return soft_double::my_le(a, soft_double(static_cast<double>(f))); }
+  inline constexpr auto operator==(const soft_double& a, long double f) -> bool { return  (a.my_value == soft_double(static_cast<double>(f)).my_value); }
+  inline constexpr auto operator!=(const soft_double& a, long double f) -> bool { return (!(a == soft_double(static_cast<double>(f)))); }
+  inline constexpr auto operator>=(const soft_double& a, long double f) -> bool { return (!(a <  soft_double(static_cast<double>(f)))); }
+  inline constexpr auto operator> (const soft_double& a, long double f) -> bool { return (!(a <= soft_double(static_cast<double>(f)))); }
 
-  inline auto operator< (long double f, const soft_double& a) -> bool { return soft_double::my_lt(soft_double(static_cast<double>(f)), a); }
-  inline auto operator<=(long double f, const soft_double& a) -> bool { return soft_double::my_le(soft_double(static_cast<double>(f)), a); }
-  inline auto operator==(long double f, const soft_double& a) -> bool { return  (soft_double(static_cast<double>(f)).my_value == a.my_value); }
-  inline auto operator!=(long double f, const soft_double& a) -> bool { return (!(soft_double(static_cast<double>(f)) == a)); }
-  inline auto operator>=(long double f, const soft_double& a) -> bool { return (!(soft_double(static_cast<double>(f)) <  a)); }
-  inline auto operator> (long double f, const soft_double& a) -> bool { return (!(soft_double(static_cast<double>(f)) <= a)); }
+  inline constexpr auto operator< (long double f, const soft_double& a) -> bool { return soft_double::my_lt(soft_double(static_cast<double>(f)), a); }
+  inline constexpr auto operator<=(long double f, const soft_double& a) -> bool { return soft_double::my_le(soft_double(static_cast<double>(f)), a); }
+  inline constexpr auto operator==(long double f, const soft_double& a) -> bool { return  (soft_double(static_cast<double>(f)).my_value == a.my_value); }
+  inline constexpr auto operator!=(long double f, const soft_double& a) -> bool { return (!(soft_double(static_cast<double>(f)) == a)); }
+  inline constexpr auto operator>=(long double f, const soft_double& a) -> bool { return (!(soft_double(static_cast<double>(f)) <  a)); }
+  inline constexpr auto operator> (long double f, const soft_double& a) -> bool { return (!(soft_double(static_cast<double>(f)) <= a)); }
 
   namespace detail {
 
@@ -2359,7 +2361,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       // Q05 = +0.1E1;
 
       // Scale the argument such that 1 <= a < 2.
-      const std::int16_t n = static_cast<std::int16_t>(detail::expF64UI(x.my_value) - static_cast<std::int16_t>(INT16_C(0x3FF)));
+      const auto n =
+        static_cast<std::int16_t>
+        (
+          detail::expF64UI(x.my_value) - static_cast<std::int16_t>(INT16_C(0x3FF))
+        );
 
       const soft_double a(static_cast<std::uint64_t>(static_cast<std::uint64_t>(x.my_value & static_cast<std::uint64_t>(~(static_cast<std::uint64_t>(UINT64_C(0x7FF)) << 52U))) | UINT64_C(0x3FF) << 52U), detail::nothing());
 
