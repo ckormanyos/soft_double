@@ -762,7 +762,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             auto expB  = detail::expF64UI (b);
             auto sigB  = detail::fracF64UI(b);
 
-      const bool signZ = signA ^ signB;
+      const auto signZ =
+        static_cast<unsigned>
+        (
+          static_cast<unsigned>(signA ? 1U : 0U) ^ static_cast<unsigned>(signB ? 1U : 0U)
+        ) != static_cast<unsigned>(UINT8_C(0));
 
       auto result = std::uint64_t { };
 
@@ -1515,13 +1519,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static SOFT_DOUBLE_CONSTEXPR auto softfloat_roundPackToF64(bool sign, std::int16_t expA, std::uint64_t sig) -> std::uint64_t
     {
-      if(static_cast<std::uint16_t>(UINT16_C(0x7FD)) <= static_cast<std::uint16_t>(expA))
+      if(   (static_cast<std::uint16_t>(UINT16_C(0x7FD)) <= static_cast<std::uint16_t>(expA))
+         && (expA < static_cast<std::int16_t>(INT8_C(0))))
       {
-        if(expA < static_cast<std::int16_t>(INT8_C(0)))
-        {
-          sig  = detail::softfloat_shiftRightJam64(sig, static_cast<std::uint_fast16_t>(-expA));
-          expA = static_cast<std::int16_t>(INT8_C(0));
-        }
+        sig  = detail::softfloat_shiftRightJam64(sig, static_cast<std::uint_fast16_t>(-expA));
+        expA = static_cast<std::int16_t>(INT8_C(0));
       }
 
       const auto roundBits = static_cast<std::uint16_t>(sig & static_cast<std::uint64_t>(UINT16_C(0x3FF)));
@@ -2064,9 +2066,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     {
       // Remove even multiples of pi.
 
-      bool b_negate_sin = false;
+      auto b_negate_sin = false;
 
-      const std::uint32_t n_pi = static_cast<std::uint32_t>(x / soft_double::my_value_pi());
+      const auto n_pi = static_cast<std::uint32_t>(x / soft_double::my_value_pi());
 
       if(n_pi != 0U)
       {
@@ -2171,9 +2173,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     {
       // Remove even multiples of pi.
 
-      bool b_negate_cos = false;
+      auto b_negate_cos = false;
 
-      const std::uint32_t n_pi = static_cast<std::uint32_t>(x / soft_double::my_value_pi());
+      const auto n_pi = static_cast<std::uint32_t>(x / soft_double::my_value_pi());
 
       if(n_pi != 0U)
       {
