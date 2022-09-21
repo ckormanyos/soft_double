@@ -37,6 +37,12 @@
     <Filter Include="math\softfloat">
       <UniqueIdentifier>{38edefac-355c-4ba3-b5ef-c810713509b8}</UniqueIdentifier>
     </Filter>
+    <Filter Include=".tidy">
+      <UniqueIdentifier>{1e67bce6-a687-42d8-9ddf-802e4254ec22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include=".tidy\make">
+      <UniqueIdentifier>{8cdf15d5-434b-43cd-9b9b-46b0df8d1bfb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test\test.cpp">
@@ -68,6 +74,9 @@
     </ClCompile>
     <ClCompile Include="examples\example002b_pi_100k.cpp">
       <Filter>examples</Filter>
+    </ClCompile>
+    <ClCompile Include="test\test_soft_double_spot_values.cpp">
+      <Filter>test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -121,5 +130,19 @@
     <None Include="README.md">
       <Filter>_doc</Filter>
     </None>
+    <None Include=".clang-tidy" />
+    <None Include=".tidy\make\make_tidy_02_files.gmk">
+      <Filter>.tidy\make</Filter>
+    </None>
+    <None Include=".tidy\make\make_tidy_03_flags.gmk">
+      <Filter>.tidy\make</Filter>
+    </None>
+    <None Include=".tidy\make\make_tidy_01_generic.gmk">
+      <Filter>.tidy\make</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt" />
+    <Text Include="LICENSE_1_0.txt" />
   </ItemGroup>
 </Project>
