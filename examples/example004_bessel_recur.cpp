@@ -1,4 +1,4 @@
-///////////////////////////////////////////////////////////////////
+﻿///////////////////////////////////////////////////////////////////
 //  Copyright Christopher Kormanyos 2020 - 2022.                 //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <functional>
 
 #include <math/softfloat/soft_double.h>
 #include <math/softfloat/soft_double_examples.h>
@@ -18,7 +19,7 @@ static_assert(sizeof(double) == 8U, // NOLINT(cppcoreguidelines-avoid-magic-numb
 namespace local { namespace detail {
 
 template<typename FloatingPointType>
-auto bisect(FloatingPointType (*pfn)(const FloatingPointType),
+auto bisect(const std::function<FloatingPointType(const FloatingPointType)>& pfn,
             const FloatingPointType x_lo,
             const FloatingPointType x_hi) -> FloatingPointType
 {
@@ -70,7 +71,7 @@ auto bisect(FloatingPointType (*pfn)(const FloatingPointType),
     using std::fabs;
 
     if(   (fabs(dx)   < static_cast<floating_point_type>(0.5L)) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
-        || (fabs(fmid) < std::numeric_limits<floating_point_type>::epsilon()))
+       || (fabs(fmid) < std::numeric_limits<floating_point_type>::epsilon()))
     {
       // Return root.
       return rtb;
@@ -133,8 +134,10 @@ struct jn_algo
     m_z = (std::max)(x, 0.1F); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
     m_p = static_cast<std::int32_t>(digits);
 
+    using function_type = std::function<float(const float)>;
+
     // Get the starting order for recursion.
-    const auto f_order = bisect(fn_mstart1, 0.1F, x + 100000.0F); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+    const auto f_order = bisect(function_type(fn_mstart1), 0.1F, x + 100000.0F); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
     const auto n_order = static_cast<std::uint32_t>(f_order);     // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
 
     // Make sure the return value is an odd integer.
@@ -147,8 +150,10 @@ struct jn_algo
     m_n = dn;
     m_p = static_cast<std::int32_t>(digits);
 
+    using function_type = std::function<float(const float)>;
+
     // Get the starting order for recursion.
-    const auto f_order = bisect(fn_mstart2, 0.1F, x + 100000.0F); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+    const auto f_order = bisect(function_type(fn_mstart2), 0.1F, x + 100000.0F); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
     const auto n_order = static_cast<std::uint32_t>(f_order);     // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
 
     // Make sure the return value is an odd integer.

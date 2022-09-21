@@ -1,4 +1,4 @@
-///////////////////////////////////////////////////////////////////
+﻿///////////////////////////////////////////////////////////////////
 //  Copyright Christopher Kormanyos 2012 - 2022.                 //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
@@ -27,12 +27,16 @@ namespace local
 {
   auto example002b_pi_100k_digits10_callback(const std::uint32_t d10) -> void
   {
-    char p_str[16U] = { 0 };                          // NOLINT(cppcoreguidelines-avoid-c-arrays,hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
-    char* p_end = util::baselexical_cast(d10, p_str); // NOLINT(hicpp-no-array-decay,cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    using char_array_type = std::array<char, static_cast<std::size_t>(UINT8_C(16))>;
+
+    char_array_type p_str { };
+    p_str.fill('\0');
+
+    char* p_end = util::baselexical_cast(d10, p_str.data());
 
     static_cast<void>(p_end);
 
-    std::cout << p_str << std::endl; // NOLINT(hicpp-no-array-decay,cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    std::cout << p_str.data() << std::endl;
   }
 } // namespace local
 
