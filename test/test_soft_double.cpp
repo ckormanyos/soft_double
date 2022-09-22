@@ -1,4 +1,4 @@
-﻿///////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////
 //  Copyright Christopher Kormanyos 2012 - 2022.                 //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
@@ -15,6 +15,16 @@
 
 #include <math/softfloat/soft_double.h>
 
+#if defined(__clang__)
+  #if defined __has_feature && __has_feature(thread_sanitizer)
+  #define SOFT_DOUBLE_REDUCE_TEST_DEPTH
+  #endif
+#elif defined(__GNUC__)
+  #if defined(__SANITIZE_THREAD__) || defined(SOFT_DOUBLE_HAS_COVERAGE)
+  #define SOFT_DOUBLE_REDUCE_TEST_DEPTH
+  #endif
+#endif
+
 static_assert(sizeof(double) == 8U, // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
               "Error: These tests require 8 byte built-in double for verification");
 
@@ -28,13 +38,13 @@ namespace math { namespace constants { // NOLINT(modernize-concat-nested-namespa
 #endif
 
 template<typename float_type>
-auto pi() -> float_type
+constexpr auto pi() -> float_type
 {
   return static_cast<float_type>(3.1415926535897932384626433832795028841972L); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
 }
 
 template<>
-auto pi() -> math::softfloat::float64_t
+constexpr auto pi() -> math::softfloat::float64_t
 {
   return math::softfloat::float64_t::my_value_pi();
 }
@@ -140,35 +150,35 @@ namespace local
   }
 } // namespace local
 
-auto add____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,         // NOLINT(google-runtime-references,bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+auto add____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,         // NOLINT(google-runtime-references,bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp) // LCOV_EXCL_LINE
                                     double&                     d_result, const double&                     da, const double&                     db) -> void // NOLINT(google-runtime-references)
 {
   x_result = xa + xb;
   d_result = da + db;
 }
 
-auto sub____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,         // NOLINT(google-runtime-references,bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+auto sub____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,         // NOLINT(google-runtime-references,bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp) // LCOV_EXCL_LINE
                                     double&                     d_result, const double&                     da, const double&                     db) -> void // NOLINT(google-runtime-references)
 {
   x_result = xa - xb;
   d_result = da - db;
 }
 
-auto mul____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,         // NOLINT(google-runtime-references,bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+auto mul____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,         // NOLINT(google-runtime-references,bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp) // LCOV_EXCL_LINE
                                     double&                     d_result, const double&                     da, const double&                     db) -> void // NOLINT(google-runtime-references)
 {
   x_result = xa * xb;
   d_result = da * db;
 }
 
-auto div____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,         // NOLINT(google-runtime-references,bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+auto div____sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa, const math::softfloat::float64_t& xb,         // NOLINT(google-runtime-references,bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp) // LCOV_EXCL_LINE
                                     double&                     d_result, const double&                     da, const double&                     db) -> void // NOLINT(google-runtime-references)
 {
   x_result = xa / xb;
   d_result = da / db;
 }
 
-auto sqrt___sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa,         // NOLINT(google-runtime-references,bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+auto sqrt___sf_float64_t_and_double(math::softfloat::float64_t& x_result, const math::softfloat::float64_t& xa,         // NOLINT(google-runtime-references,bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp) // LCOV_EXCL_LINE
                                     double&                     d_result, const double&                     da) -> void // NOLINT(google-runtime-references)
 {
   using std::sqrt;
@@ -570,9 +580,11 @@ auto test_ops(const std::uint32_t n, std::uint_fast8_t op_index) -> bool
 
     if(!result_is_ok)
     {
+      // LCOV_EXCL_START
       std::cout << dr << std::endl;
 
       break;
+      // LCOV_EXCL_STOP
     }
   }
 
@@ -601,10 +613,12 @@ auto test_neq(const std::uint32_t n, std::uint_fast8_t op_index) -> bool
 
     if(!result_is_ok)
     {
+      // LCOV_EXCL_START
       std::cout << da << std::endl;
       std::cout << db << std::endl;
 
       break;
+      // LCOV_EXCL_STOP
     }
   }
 
@@ -624,16 +638,18 @@ auto test_eq_(const std::uint32_t n, std::uint_fast8_t op_index) -> bool // NOLI
 
     if     (op_index == 0U) { local::get_sf_float64_t_and_double(x, d);                                              x_ok = (math::softfloat::detail::uz_type<double>(x.crepresentation()).my_f == d); } // NOLINT(cppcoreguidelines-pro-type-union-access)
     else if(op_index == 1U) { local::get_sf_float64_t_and_double(x, d); const math::softfloat::float64_t x2 = x / 2; x_ok = (math::softfloat::detail::uz_type<double>(x.crepresentation()).my_f <= d) && ((d > 0) ? (math::softfloat::detail::uz_type<double>(x2.crepresentation()).my_f < d) : (math::softfloat::detail::uz_type<double>(x2.crepresentation()).my_f > d)); } // NOLINT(cppcoreguidelines-pro-type-union-access)
-    else if(op_index == 2U) { local::get_sf_float64_t_and_double(x, d); const math::softfloat::float64_t x2 = x * 2; x_ok = (math::softfloat::detail::uz_type<double>(x.crepresentation()).my_f <= d) && ((d > 0) ? (math::softfloat::detail::uz_type<double>(x2.crepresentation()).my_f > d) : (math::softfloat::detail::uz_type<double>(x2.crepresentation()).my_f < d)); } // NOLINT(cppcoreguidelines-pro-type-union-access)
+    else if(op_index == 2U) { local::get_sf_float64_t_and_double(x, d); const math::softfloat::float64_t x2 = x * 2; x_ok = (math::softfloat::detail::uz_type<double>(x.crepresentation()).my_f >= d) && ((d > 0) ? (math::softfloat::detail::uz_type<double>(x2.crepresentation()).my_f > d) : (math::softfloat::detail::uz_type<double>(x2.crepresentation()).my_f < d)); } // NOLINT(cppcoreguidelines-pro-type-union-access)
     else                    { x_ok = false; d = 0.0; }
 
     result_is_ok &= x_ok;
 
     if(!result_is_ok)
     {
+      // LCOV_EXCL_START
       std::cout << d << std::endl;
 
       break;
+      // LCOV_EXCL_STOP
     }
   }
 
@@ -693,11 +709,11 @@ auto test_soft_double() -> bool
     math::softfloat::float64_t dx(1 / math::softfloat::float64_t(8388608)); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
 
     math::softfloat::float64_t result = derivative(x,
-                                      dx,
-                                      [](const math::softfloat::float64_t my_x) -> math::softfloat::float64_t
-                                      {
-                                        return ((my_x * my_x) / math::softfloat::float64_t(3)) + my_x;
-                                      });
+                                                   dx,
+                                                   [](const math::softfloat::float64_t my_x) -> math::softfloat::float64_t
+                                                   {
+                                                     return ((my_x * my_x) / math::softfloat::float64_t(3)) + my_x;
+                                                   });
 
     double d = math::softfloat::detail::uz_type<double>(result.crepresentation()).my_f; // NOLINT(cppcoreguidelines-pro-type-union-access)
 
@@ -708,50 +724,59 @@ auto test_soft_double() -> bool
     result_is_ok &= result_ddx____is_ok;
   }
 
-  std::cout << "testing to_f32_... "; const bool result_to_f32_is_ok = test_to_f32(100000000U);    std::cout << std::boolalpha << result_to_f32_is_ok << std::endl;
+  #if !defined(SOFT_DOUBLE_REDUCE_TEST_DEPTH)
+  constexpr auto test_to_f32_n          = static_cast<std::uint32_t>(UINT32_C(100000000));
+  constexpr auto test_frexp_ldexp_ops_n = static_cast<std::uint32_t>(UINT32_C(20000000));
+  constexpr auto test_ffloor_ceil_n     = static_cast<std::uint32_t>(UINT32_C(200000000));
+  #else
+  constexpr auto test_to_f32_n          = static_cast<std::uint32_t>(UINT32_C(10000000));
+  constexpr auto test_frexp_ldexp_ops_n = static_cast<std::uint32_t>(UINT32_C(2000000));
+  constexpr auto test_ffloor_ceil_n     = static_cast<std::uint32_t>(UINT32_C(20000000));
+  #endif
+  std::cout << "testing to_f32_... "; const bool result_to_f32_is_ok = test_to_f32(test_to_f32_n);       std::cout << std::boolalpha << result_to_f32_is_ok << std::endl;
 
   local::eng32.seed(static_cast<typename local::eng32_type::result_type>(std::clock()));
   local::eng64.seed(static_cast<typename local::eng64_type::result_type>(~static_cast<uint64_t>(std::clock())));
 
-  std::cout << "testing frexp__... "; const auto result_frexp__is_ok = test_frexp ( 20000000U);     std::cout << std::boolalpha << result_frexp__is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
-  std::cout << "testing ldexp__... "; const auto result_ldexp__is_ok = test_ldexp ( 20000000U);     std::cout << std::boolalpha << result_ldexp__is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
-  std::cout << "testing exp____... "; const auto result_exp____is_ok = test_exp   ( );              std::cout << std::boolalpha << result_exp____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
-  std::cout << "testing log____... "; const auto result_log____is_ok = test_log   ( );              std::cout << std::boolalpha << result_log____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
-  std::cout << "testing sin____... "; const auto result_sin____is_ok = test_sin   ( );              std::cout << std::boolalpha << result_sin____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
-  std::cout << "testing cos____... "; const auto result_cos____is_ok = test_cos   ( );              std::cout << std::boolalpha << result_cos____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing frexp__... "; const auto result_frexp__is_ok = test_frexp (test_frexp_ldexp_ops_n);     std::cout << std::boolalpha << result_frexp__is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing ldexp__... "; const auto result_ldexp__is_ok = test_ldexp (test_frexp_ldexp_ops_n);     std::cout << std::boolalpha << result_ldexp__is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing exp____... "; const auto result_exp____is_ok = test_exp   ( );                          std::cout << std::boolalpha << result_exp____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing log____... "; const auto result_log____is_ok = test_log   ( );                          std::cout << std::boolalpha << result_log____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing sin____... "; const auto result_sin____is_ok = test_sin   ( );                          std::cout << std::boolalpha << result_sin____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing cos____... "; const auto result_cos____is_ok = test_cos   ( );                          std::cout << std::boolalpha << result_cos____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
 
   local::eng32.seed(static_cast<typename local::eng32_type::result_type>(std::clock()));
   local::eng64.seed(static_cast<typename local::eng64_type::result_type>(~static_cast<uint64_t>(std::clock())));
 
-  std::cout << "testing floor__... "; const auto result_floor__is_ok = test_floor (200000000U);     std::cout << std::boolalpha << result_floor__is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing floor__... "; const auto result_floor__is_ok = test_floor (test_ffloor_ceil_n);         std::cout << std::boolalpha << result_floor__is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
 
   local::eng32.seed(static_cast<typename local::eng32_type::result_type>(std::clock()));
   local::eng64.seed(static_cast<typename local::eng64_type::result_type>(~static_cast<uint64_t>(std::clock())));
 
-  std::cout << "testing ceil___... "; const auto result_ceil___is_ok = test_ceil  (200000000U);     std::cout << std::boolalpha << result_ceil___is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing ceil___... "; const auto result_ceil___is_ok = test_ceil  (test_ffloor_ceil_n);         std::cout << std::boolalpha << result_ceil___is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
 
   local::eng32.seed(static_cast<typename local::eng32_type::result_type>(std::clock()));
   local::eng64.seed(static_cast<typename local::eng64_type::result_type>(~static_cast<uint64_t>(std::clock())));
 
-  std::cout << "testing add____... "; const auto result_add____is_ok = test_ops   ( 20000000U, 0U); std::cout << std::boolalpha << result_add____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
-  std::cout << "testing sub____... "; const auto result_sub____is_ok = test_ops   ( 20000000U, 1U); std::cout << std::boolalpha << result_sub____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
-  std::cout << "testing mul____... "; const auto result_mul____is_ok = test_ops   ( 20000000U, 2U); std::cout << std::boolalpha << result_mul____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
-  std::cout << "testing div____... "; const auto result_div____is_ok = test_ops   ( 20000000U, 3U); std::cout << std::boolalpha << result_div____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
-  std::cout << "testing sqrt___... "; const auto result_sqrt___is_ok = test_ops   ( 20000000U, 4U); std::cout << std::boolalpha << result_sqrt___is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing add____... "; const auto result_add____is_ok = test_ops   (test_frexp_ldexp_ops_n, 0U); std::cout << std::boolalpha << result_add____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing sub____... "; const auto result_sub____is_ok = test_ops   (test_frexp_ldexp_ops_n, 1U); std::cout << std::boolalpha << result_sub____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing mul____... "; const auto result_mul____is_ok = test_ops   (test_frexp_ldexp_ops_n, 2U); std::cout << std::boolalpha << result_mul____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing div____... "; const auto result_div____is_ok = test_ops   (test_frexp_ldexp_ops_n, 3U); std::cout << std::boolalpha << result_div____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing sqrt___... "; const auto result_sqrt___is_ok = test_ops   (test_frexp_ldexp_ops_n, 4U); std::cout << std::boolalpha << result_sqrt___is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
 
   local::eng32.seed(static_cast<typename local::eng32_type::result_type>(std::clock()));
   local::eng64.seed(static_cast<typename local::eng64_type::result_type>(~static_cast<uint64_t>(std::clock())));
 
-  std::cout << "testing lt_____... "; const auto result_lt_____is_ok = test_neq   ( 20000000U, 0U); std::cout << std::boolalpha << result_lt_____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
-  std::cout << "testing gt_____... "; const auto result_gt_____is_ok = test_neq   ( 20000000U, 1U); std::cout << std::boolalpha << result_gt_____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
-  std::cout << "testing neq____... "; const auto result_neq____is_ok = test_neq   ( 20000000U, 2U); std::cout << std::boolalpha << result_neq____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing lt_____... "; const auto result_lt_____is_ok = test_neq   (test_frexp_ldexp_ops_n, 0U); std::cout << std::boolalpha << result_lt_____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing gt_____... "; const auto result_gt_____is_ok = test_neq   (test_frexp_ldexp_ops_n, 1U); std::cout << std::boolalpha << result_gt_____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing neq____... "; const auto result_neq____is_ok = test_neq   (test_frexp_ldexp_ops_n, 2U); std::cout << std::boolalpha << result_neq____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
 
   local::eng32.seed(static_cast<typename local::eng32_type::result_type>(std::clock()));
   local::eng64.seed(static_cast<typename local::eng64_type::result_type>(~static_cast<uint64_t>(std::clock())));
 
-  std::cout << "testing eq_____... "; const auto result_eq_____is_ok = test_neq   ( 20000000U, 0U); std::cout << std::boolalpha << result_eq_____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
-  std::cout << "testing leq____... "; const auto result_leq____is_ok = test_neq   ( 20000000U, 1U); std::cout << std::boolalpha << result_leq____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
-  std::cout << "testing geq____... "; const auto result_geq____is_ok = test_neq   ( 20000000U, 2U); std::cout << std::boolalpha << result_geq____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing eq_____... "; const auto result_eq_____is_ok = test_eq_   (test_frexp_ldexp_ops_n, 0U); std::cout << std::boolalpha << result_eq_____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing leq____... "; const auto result_leq____is_ok = test_eq_   (test_frexp_ldexp_ops_n, 1U); std::cout << std::boolalpha << result_leq____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing geq____... "; const auto result_geq____is_ok = test_eq_   (test_frexp_ldexp_ops_n, 2U); std::cout << std::boolalpha << result_geq____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
 
   const auto stop = std::clock();
 

@@ -1,0 +1,18 @@
+﻿# ------------------------------------------------------------------------------
+#  Copyright Christopher Kormanyos 2022.
+#  Distributed under the Boost Software License,
+#  Version 1.0. (See accompanying file LICENSE_1_0.txt
+#  or copy at http://www.boost.org/LICENSE_1_0.txt)
+# ------------------------------------------------------------------------------
+
+FILES_PRJ  =   $(PATH_SRC)/test/test                                            \
+               $(PATH_SRC)/test/test_soft_double                                \
+               $(PATH_SRC)/test/test_soft_double_examples                       \
+               $(PATH_SRC)/test/test_soft_double_spot_values                    \
+               $(PATH_SRC)/examples/example001_roots_sqrt                       \
+               $(PATH_SRC)/examples/example002b_pi_100k                         \
+               $(PATH_SRC)/examples/example004_bessel_recur                     \
+               $(PATH_SRC)/examples/example005_polylog_series                   \
+               $(PATH_SRC)/examples/example007_catalan_series                   \
+               $(PATH_SRC)/examples/example010_hypergeometric_2f1               \
+               $(PATH_SRC)/examples/example011_trig_trapezoid_integral
