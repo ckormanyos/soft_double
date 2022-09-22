@@ -9,7 +9,7 @@ name: soft_double_codecov
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
