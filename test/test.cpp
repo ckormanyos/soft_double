@@ -13,8 +13,8 @@
 
 // Build locally for test on Ubuntu (WSL).
 // cd /mnt/c/Users/User/Documents/Ks/PC_Software/NumericalPrograms/ExtendedNumberTypes/soft_double
-// g++     -finline-functions -march=native -mtune=native -O3 -Wall -Wextra -pedantic -std=c++11 -I. examples/example001_roots_sqrt.cpp examples/example002b_pi_100k.cpp examples/example004_bessel_recur.cpp examples/example005_polylog_series.cpp examples/example007_catalan_series.cpp examples/example010_hypergeometric_2f1.cpp examples/example011_trig_trapezoid_integral.cpp test/test.cpp test/test_soft_double.cpp test/test_soft_double_examples.cpp test/test_soft_double_spot_values.cpp -o soft_double.exe
-// clang++ -finline-functions -march=native -mtune=native -O3 -Wall -Wextra -pedantic -std=c++20 -I. examples/example001_roots_sqrt.cpp examples/example002b_pi_100k.cpp examples/example004_bessel_recur.cpp examples/example005_polylog_series.cpp examples/example007_catalan_series.cpp examples/example010_hypergeometric_2f1.cpp examples/example011_trig_trapezoid_integral.cpp test/test.cpp test/test_soft_double.cpp test/test_soft_double_examples.cpp test/test_soft_double_spot_values.cpp -o soft_double.exe
+// g++     -finline-functions -march=native -mtune=native -O3 -Wall -Wextra -pedantic -std=c++11 -I. examples/example001_roots_sqrt.cpp examples/example002b_pi_100k.cpp examples/example004_bessel_recur.cpp examples/example005_polylog_series.cpp examples/example007_catalan_series.cpp examples/example010_hypergeometric_2f1.cpp examples/example011_trig_trapezoid_integral.cpp test/test.cpp test/test_soft_double.cpp test/test_soft_double_edge_cases.cpp test/test_soft_double_examples.cpp test/test_soft_double_spot_values.cpp -o soft_double.exe
+// clang++ -finline-functions -march=native -mtune=native -O3 -Wall -Wextra -pedantic -std=c++20 -I. examples/example001_roots_sqrt.cpp examples/example002b_pi_100k.cpp examples/example004_bessel_recur.cpp examples/example005_polylog_series.cpp examples/example007_catalan_series.cpp examples/example010_hypergeometric_2f1.cpp examples/example011_trig_trapezoid_integral.cpp test/test.cpp test/test_soft_double.cpp test/test_soft_double_edge_cases.cpp test/test_soft_double_examples.cpp test/test_soft_double_spot_values.cpp -o soft_double.exe
 
 // cd .tidy/make
 // make prepare -f make_tidy_01_generic.gmk
@@ -25,6 +25,7 @@
 // make gcov -f make_gcov_01_generic.gmk --jobs=8 MY_ALL_COV=0 MY_CC=g++
 
 extern auto test_soft_double            () -> bool;
+extern auto test_soft_double_edge_cases () -> bool;
 extern auto test_soft_double_spot_values() -> bool;
 
 auto main() -> int
@@ -34,6 +35,7 @@ auto main() -> int
   const auto result_test_soft_double_examples_is_ok    = test_soft_double_examples();
   const auto result_test_soft_double_is_ok             = test_soft_double();
   const auto result_test_soft_double_spot_values_is_ok = test_soft_double_spot_values();
+  const auto result_test_soft_double_edge_cases_is_ok  = test_soft_double_edge_cases();
 
   const auto stop = std::clock();
 
@@ -46,6 +48,7 @@ auto main() -> int
        result_test_soft_double_examples_is_ok
     && result_test_soft_double_is_ok
     && result_test_soft_double_spot_values_is_ok
+    && result_test_soft_double_edge_cases_is_ok
   );
 
   std::cout << "result_all_is_ok: " << std::boolalpha << result_all_is_ok << std::endl;

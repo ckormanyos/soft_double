@@ -27,6 +27,7 @@
     <ClCompile Include="examples\example005_polylog_series.cpp" />
     <ClCompile Include="examples\example002b_pi_100k.cpp" />
     <ClCompile Include="test\test.cpp" />
+    <ClCompile Include="test\test_soft_double_edge_cases.cpp" />
     <ClCompile Include="test\test_soft_double_examples.cpp" />
     <ClCompile Include="test\test_soft_double.cpp" />
     <ClCompile Include="test\test_soft_double_spot_values.cpp" />

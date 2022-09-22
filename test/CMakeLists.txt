@@ -1,9 +1,10 @@
-﻿enable_testing()
+enable_testing()
 find_package(Threads)
 
 add_executable(test_soft_double
   test.cpp
   test_soft_double.cpp
+  test_soft_double_edge_cases.cpp
   test_soft_double_examples.cpp
   test_soft_double_spot_values.cpp)
 target_compile_features(test_soft_double PRIVATE cxx_std_11)
