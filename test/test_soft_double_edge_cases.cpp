@@ -1,4 +1,4 @@
-﻿///////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////
 //  Copyright Christopher Kormanyos 2022.                        //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
@@ -73,6 +73,79 @@ auto generate_soft_double_value(bool is_positive = true) -> ::math::softfloat::f
   return result;
 }
 
+auto test_various_functions() -> bool
+{
+  auto result_is_ok = true;
+
+  using ::math::softfloat::float64_t;
+
+  {
+    const auto val_one = float64_t::my_value_one();
+
+    using std::log;
+
+    const auto val_ln_one = log(val_one);
+
+    const auto result_val_ln_one_is_ok = (val_ln_one == float64_t::my_value_zero());
+
+    result_is_ok = (result_val_ln_one_is_ok && result_is_ok);
+  }
+
+  {
+    const auto val_one = float64_t::my_value_one();
+
+    using std::sin;
+
+    const auto val_sin_1m = sin(val_one * -1);
+    const auto val_sin_2m = sin(val_one * -2);
+    const auto val_sin_3m = sin(val_one * -3);
+
+    const auto val_sin_1p = sin(val_one * +1);
+    const auto val_sin_2p = sin(val_one * +2);
+    const auto val_sin_3p = sin(val_one * +3);
+
+    const auto result_sin_m_is_ok =
+    (
+         val_sin_1m == -val_sin_1p
+      && val_sin_2m == -val_sin_2p
+      && val_sin_3m == -val_sin_3p
+    );
+
+    result_is_ok = (result_sin_m_is_ok && result_is_ok);
+  }
+
+  {
+    using small_values_array_type = std::array<float64_t, static_cast<std::size_t>(UINT8_C(7))>;
+
+    const small_values_array_type small_values =
+    {
+      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-001).my_u, ::math::softfloat::detail::nothing() },
+      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-051).my_u, ::math::softfloat::detail::nothing() },
+      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-101).my_u, ::math::softfloat::detail::nothing() },
+      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-151).my_u, ::math::softfloat::detail::nothing() },
+      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-201).my_u, ::math::softfloat::detail::nothing() },
+      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-251).my_u, ::math::softfloat::detail::nothing() },
+      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-301).my_u, ::math::softfloat::detail::nothing() }
+    };
+
+    for(const auto& soft_double_elem : small_values)
+    {
+      const auto u_zero = static_cast<std::uint64_t>(soft_double_elem);
+      const auto n_zero = static_cast<std::int64_t> (soft_double_elem);
+
+      const auto result_round_to_zero_is_ok =
+      (
+           (u_zero == static_cast<std::uint64_t>(UINT8_C(0)))
+        && (n_zero == static_cast<std::int64_t> ( INT8_C(0)))
+      );
+
+      result_is_ok = (result_round_to_zero_is_ok && result_is_ok);
+    }
+  }
+
+  return result_is_ok;
+}
+
 auto test_various_ostream_ops() -> bool
 {
   auto result_is_ok = true;
@@ -87,7 +160,7 @@ auto test_various_ostream_ops() -> bool
              ++i)
     {
       const auto value_as_soft_double     = generate_soft_double_value(false);
-      const auto value_as_built_in_double = math::softfloat::detail::uz_type<double>(value_as_soft_double.crepresentation());
+      const auto value_as_built_in_double = ::math::softfloat::detail::uz_type<double>(value_as_soft_double.crepresentation());
 
       std::stringstream strm_for_soft_double;
       std::stringstream strm_for_built_in_double;
@@ -173,8 +246,9 @@ auto test_soft_double_edge_cases() -> bool
 {
   auto result_edge_cases_is_ok = true;
 
-  std::cout << "test_soft_double_edge_cases:    ";
+  std::cout << "test_soft_double_edge_cases          : ";
 
+  result_edge_cases_is_ok = (test_soft_double_edge::test_various_functions  () && result_edge_cases_is_ok);
   result_edge_cases_is_ok = (test_soft_double_edge::test_various_ostream_ops() && result_edge_cases_is_ok);
   result_edge_cases_is_ok = (test_soft_double_edge::test_various_pos_powers () && result_edge_cases_is_ok);
 
