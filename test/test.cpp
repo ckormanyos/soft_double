@@ -20,6 +20,10 @@
 // make prepare -f make_tidy_01_generic.gmk
 // make tidy -f make_tidy_01_generic.gmk --jobs=8
 
+// cd .gcov/make
+// make prepare -f make_gcov_01_generic.gmk MY_ALL_COV=0 MY_CC=g++
+// make gcov -f make_gcov_01_generic.gmk --jobs=8 MY_ALL_COV=0 MY_CC=g++
+
 extern auto test_soft_double            () -> bool;
 extern auto test_soft_double_spot_values() -> bool;
 

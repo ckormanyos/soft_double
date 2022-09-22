@@ -49,12 +49,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-tidy" />
+    <None Include=".gcov\make\make_gcov_01_generic.gmk" />
+    <None Include=".gcov\make\make_gcov_02_files.gmk" />
+    <None Include=".gcov\make\make_gcov_03_flags.gmk" />
     <None Include=".github\toolchains\gcc.cmake" />
     <None Include=".github\workflows\soft_double.yml" />
+    <None Include=".github\workflows\soft_double_codecov.yml" />
     <None Include=".github\workflows\soft_double_sonar.yml" />
     <None Include=".tidy\make\make_tidy_01_generic.gmk" />
     <None Include=".tidy\make\make_tidy_02_files.gmk" />
     <None Include=".tidy\make\make_tidy_03_flags.gmk" />
+    <None Include="codecov.yml" />
     <None Include="README.md" />
     <None Include="sonar-project.properties" />
   </ItemGroup>

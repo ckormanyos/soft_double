@@ -46,6 +46,12 @@
     <Filter Include=".github\toolchains">
       <UniqueIdentifier>{4ec239b8-1a14-49a9-b283-c08681500bb7}</UniqueIdentifier>
     </Filter>
+    <Filter Include=".gcov">
+      <UniqueIdentifier>{6a78c586-06c3-4ebd-ad35-9d4723f4c488}</UniqueIdentifier>
+    </Filter>
+    <Filter Include=".gcov\make">
+      <UniqueIdentifier>{eb75e937-eb5b-42b1-85d2-1b644986239e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test\test.cpp">
@@ -148,6 +154,19 @@
     </None>
     <None Include="sonar-project.properties" />
     <None Include=".github\workflows\soft_double_sonar.yml">
+      <Filter>.github\workflows</Filter>
+    </None>
+    <None Include=".gcov\make\make_gcov_02_files.gmk">
+      <Filter>.gcov\make</Filter>
+    </None>
+    <None Include=".gcov\make\make_gcov_03_flags.gmk">
+      <Filter>.gcov\make</Filter>
+    </None>
+    <None Include=".gcov\make\make_gcov_01_generic.gmk">
+      <Filter>.gcov\make</Filter>
+    </None>
+    <None Include="codecov.yml" />
+    <None Include=".github\workflows\soft_double_codecov.yml">
       <Filter>.github\workflows</Filter>
     </None>
   </ItemGroup>
