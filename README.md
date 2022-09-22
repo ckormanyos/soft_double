@@ -8,6 +8,8 @@
         <img src="https://custom-icon-badges.herokuapp.com/github/issues-raw/ckormanyos/soft_double?logo=github" alt="Issues" /></a>
     <a href="https://sonarcloud.io/summary/new_code?id=ckormanyos_soft_double">
         <img src="https://sonarcloud.io/api/project_badges/measure?project=ckormanyos_soft_double&metric=alert_status" alt="Quality Gate Status"></a>
+    <a href="https://codecov.io/gh/ckormanyos/soft_double">
+        <img src="https://codecov.io/gh/ckormanyos/soft_double/branch/main/graph/badge.svg?token=V1JNXSUQJQ"/></a>
     <a href="https://github.com/ckormanyos/soft_double/blob/master/LICENSE_1_0.txt">
         <img src="https://img.shields.io/badge/license-BSL%201.0-blue.svg" alt="Boost Software License 1.0"></a>
     <a href="https://img.shields.io/github/commit-activity/y/ckormanyos/soft_double">
