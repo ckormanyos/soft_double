@@ -89,7 +89,7 @@ auto test_various_ostream_ops() -> bool
       std::stringstream strm_for_built_in_double;
 
       strm_for_soft_double     << value_as_soft_double;
-      strm_for_built_in_double << value_as_built_in_double.my_f;
+      strm_for_built_in_double << value_as_built_in_double.my_f; // NOLINT(cppcoreguidelines-pro-type-union-access)
 
       const auto result_write_soft_double_is_ok = (strm_for_soft_double.str() == strm_for_built_in_double.str());
 
@@ -113,7 +113,7 @@ auto test_various_ostream_ops() -> bool
       std::stringstream strm_for_built_in_double;
 
       strm_for_soft_double     << std::scientific << value_as_soft_double;
-      strm_for_built_in_double << std::scientific << value_as_built_in_double.my_f;
+      strm_for_built_in_double << std::scientific << value_as_built_in_double.my_f; // NOLINT(cppcoreguidelines-pro-type-union-access)
 
       const auto result_write_soft_double_is_ok = (strm_for_soft_double.str() == strm_for_built_in_double.str());
 
