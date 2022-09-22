@@ -12,7 +12,7 @@ auto test_soft_double_spot_values() -> bool
 {
   auto result_spot_values_is_ok = true;
 
-  std::cout << "test_soft_double_spot_values():   ";
+  std::cout << "test_soft_double_spot_values:   ";
 
   std::cout << std::boolalpha << result_spot_values_is_ok << std::endl;
 

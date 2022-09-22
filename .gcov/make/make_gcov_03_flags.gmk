@@ -70,4 +70,5 @@ LCOV_BRANCH := --rc lcov_branch_coverage=1
 endif
 
 LCOV_REMOVES = '/usr/*'                                                       \
-               '*wide_decimal/*'
+               '*wide_decimal/*'                                              \
+               '*util/*'
