@@ -43,6 +43,12 @@
     <Filter Include=".tidy\make">
       <UniqueIdentifier>{8cdf15d5-434b-43cd-9b9b-46b0df8d1bfb}</UniqueIdentifier>
     </Filter>
+    <Filter Include=".gcov">
+      <UniqueIdentifier>{722fa9cd-ebae-4a7a-b874-5c9d30af8b7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include=".gcov\make">
+      <UniqueIdentifier>{b606cef0-2d18-4c74-ba61-ca6af55dc876}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test\test.cpp">
@@ -76,6 +82,9 @@
       <Filter>examples</Filter>
     </ClCompile>
     <ClCompile Include="test\test_soft_double_spot_values.cpp">
+      <Filter>test</Filter>
+    </ClCompile>
+    <ClCompile Include="test\test_soft_double_edge_cases.cpp">
       <Filter>test</Filter>
     </ClCompile>
   </ItemGroup>
@@ -139,6 +148,23 @@
     </None>
     <None Include=".tidy\make\make_tidy_01_generic.gmk">
       <Filter>.tidy\make</Filter>
+    </None>
+    <None Include=".gcov\make\make_gcov_02_files.gmk">
+      <Filter>.gcov\make</Filter>
+    </None>
+    <None Include=".gcov\make\make_gcov_03_flags.gmk">
+      <Filter>.gcov\make</Filter>
+    </None>
+    <None Include=".gcov\make\make_gcov_01_generic.gmk">
+      <Filter>.gcov\make</Filter>
+    </None>
+    <None Include="codecov.yml" />
+    <None Include="sonar-project.properties" />
+    <None Include=".github\workflows\soft_double_codecov.yml">
+      <Filter>.github\workflows</Filter>
+    </None>
+    <None Include=".github\workflows\soft_double_sonar.yml">
+      <Filter>.github\workflows</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
