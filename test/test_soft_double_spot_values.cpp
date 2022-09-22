@@ -8,13 +8,13 @@
 #include <iomanip>
 #include <iostream>
 
-#include <math/softfloat/soft_double_examples.h>
-
 auto test_soft_double_spot_values() -> bool
 {
-  bool result_spot_values_is_ok = true;
+  auto result_spot_values_is_ok = true;
 
-  std::cout << "Start test_soft_double_spot_values()" << std::endl;
+  std::cout << "test_soft_double_spot_values():   ";
+
+  std::cout << std::boolalpha << result_spot_values_is_ok << std::endl;
 
   return result_spot_values_is_ok;
 }
