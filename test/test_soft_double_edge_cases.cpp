@@ -17,15 +17,19 @@ namespace test_soft_double_edge {
 
 using eng_sgn_type = std::ranlux24;
 using eng_dig_type = std::ranlux48;
+using eng_pow_type = std::mt19937;
+
 using distribution_type = std::uniform_int_distribution<std::uint32_t>;
 
 distribution_type dist_sgn  (static_cast<std::uint32_t>(UINT32_C(0)), static_cast<std::uint32_t>(UINT32_C(1)));         // NOLINT(cert-err58-cpp,cppcoreguidelines-avoid-non-const-global-variables)
 distribution_type dist_numer(static_cast<std::uint32_t>(UINT32_C(1)), static_cast<std::uint32_t>(UINT32_C(99999999)));  // NOLINT(cert-err58-cpp,cppcoreguidelines-avoid-non-const-global-variables)
 distribution_type dist_denom(static_cast<std::uint32_t>(UINT32_C(1)), static_cast<std::uint32_t>(UINT32_C(99999999)));  // NOLINT(cert-err58-cpp,cppcoreguidelines-avoid-non-const-global-variables)
+distribution_type dist_pow  (static_cast<std::uint32_t>(UINT32_C(2)), static_cast<std::uint32_t>(UINT32_C(7)));         // NOLINT(cert-err58-cpp,cppcoreguidelines-avoid-non-const-global-variables)
 
 eng_sgn_type eng_sgn;   // NOLINT(cert-msc32-c,cert-msc51-cpp,cert-err58-cpp,cppcoreguidelines-avoid-non-const-global-variables)
 eng_dig_type eng_numer; // NOLINT(cert-msc32-c,cert-msc51-cpp,cert-err58-cpp,cppcoreguidelines-avoid-non-const-global-variables)
 eng_dig_type eng_denom; // NOLINT(cert-msc32-c,cert-msc51-cpp,cert-err58-cpp,cppcoreguidelines-avoid-non-const-global-variables)
+eng_pow_type eng_pow;   // NOLINT(cert-msc32-c,cert-msc51-cpp,cert-err58-cpp,cppcoreguidelines-avoid-non-const-global-variables)
 
 template<typename IntegralTimePointType,
          typename ClockType = std::chrono::high_resolution_clock>
@@ -124,15 +128,55 @@ auto test_various_ostream_ops() -> bool
   return result_is_ok;
 }
 
+auto test_various_pos_powers() -> bool
+{
+  auto result_is_ok = true;
+
+  {
+    eng_sgn.seed  (time_point<typename eng_sgn_type::result_type>());
+    eng_numer.seed(time_point<typename eng_dig_type::result_type>());
+    eng_denom.seed(time_point<typename eng_dig_type::result_type>());
+    eng_pow.seed  (time_point<typename eng_pow_type::result_type>());
+
+    for(auto   i = static_cast<std::uint32_t>(UINT8_C(0));
+               i < static_cast<std::uint32_t>(UINT32_C(10000));
+             ++i)
+    {
+      const auto arg_as_soft_double     = generate_soft_double_value(false);
+      const auto arg_as_built_in_double = math::softfloat::detail::uz_type<double>(arg_as_soft_double.crepresentation());
+
+      const auto pos_power = dist_pow(eng_pow);
+
+      using std::pow;
+
+      const auto pow_as_soft_double     = pow(arg_as_soft_double,          pos_power);
+      const auto pow_as_built_in_double = pow(arg_as_built_in_double.my_f, pos_power);
+
+      std::stringstream strm_for_soft_double;
+      std::stringstream strm_for_built_in_double;
+
+      strm_for_soft_double     << pow_as_soft_double;
+      strm_for_built_in_double << pow_as_built_in_double;
+
+      const auto result_pos_power_of_soft_double_is_ok = (strm_for_soft_double.str() == strm_for_built_in_double.str());
+
+      result_is_ok = (result_pos_power_of_soft_double_is_ok && result_is_ok);
+    }
+
+    return result_is_ok;
+  }
+}
+
 } // namespace test_soft_double_edge
 
 auto test_soft_double_edge_cases() -> bool
 {
   auto result_edge_cases_is_ok = true;
 
-  std::cout << "test_soft_double_edge_cases():    ";
+  std::cout << "test_soft_double_edge_cases:    ";
 
   result_edge_cases_is_ok = (test_soft_double_edge::test_various_ostream_ops() && result_edge_cases_is_ok);
+  result_edge_cases_is_ok = (test_soft_double_edge::test_various_pos_powers () && result_edge_cases_is_ok);
 
   std::cout << std::boolalpha << result_edge_cases_is_ok << std::endl;
 
