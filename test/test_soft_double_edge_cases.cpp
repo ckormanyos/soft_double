@@ -1,4 +1,4 @@
-///////////////////////////////////////////////////////////////////
+﻿///////////////////////////////////////////////////////////////////
 //  Copyright Christopher Kormanyos 2022.                        //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
@@ -150,7 +150,7 @@ auto test_various_pos_powers() -> bool
       using std::pow;
 
       const auto pow_as_soft_double     = pow(arg_as_soft_double,          pos_power);
-      const auto pow_as_built_in_double = pow(arg_as_built_in_double.my_f, pos_power);
+      const auto pow_as_built_in_double = pow(arg_as_built_in_double.my_f, pos_power); // NOLINT(cppcoreguidelines-pro-type-union-access)
 
       std::stringstream strm_for_soft_double;
       std::stringstream strm_for_built_in_double;
