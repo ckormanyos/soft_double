@@ -51,7 +51,7 @@ auto main() -> int
     && result_test_soft_double_edge_cases_is_ok
   );
 
-  std::cout << "result_all_is_ok: " << std::boolalpha << result_all_is_ok << std::endl;
+  std::cout << "result_all_is_ok                     : " << std::boolalpha << result_all_is_ok << std::endl;
 
   return (result_all_is_ok ? 0 : -1);
 }

@@ -806,8 +806,7 @@ auto test_soft_double() -> bool
                                      && result_geq____is_ok);
 
   const auto result_double_is_ok = (result_is_ok && result_algebra_is_ok);
-
-  std::cout << "result_double_is_ok: " << std::boolalpha << result_double_is_ok << std::endl;
+  std::cout << "result_double_is_ok                  : " << std::boolalpha << result_double_is_ok << std::endl;
 
   return result_double_is_ok;
 }

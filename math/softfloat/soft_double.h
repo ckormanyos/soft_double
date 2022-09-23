@@ -1034,22 +1034,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       auto shiftDist = static_cast<std::int16_t>(static_cast<std::int16_t>(INT16_C(0x433)) - expA);
 
-      struct detail::uint64_extra sigExtra { };
-
-      if(shiftDist <= static_cast<std::int16_t>(INT16_C(0)))
-      {
-        if(shiftDist < static_cast<std::int16_t>(INT16_C(-11)))
-        {
-          shiftDist = static_cast<std::int16_t>(INT16_C(-11));
-        }
-
-        sigExtra.v     = static_cast<std::uint64_t>(sig << static_cast<std::uint_fast16_t>(-shiftDist));
-        sigExtra.extra = static_cast<std::uint64_t>(UINT8_C(0));
-      }
-      else
-      {
-        sigExtra = detail::softfloat_shiftRightJam64Extra(sig, 0U, static_cast<std::uint32_t>(shiftDist));
-      }
+      const auto sigExtra =
+        detail::softfloat_shiftRightJam64Extra(sig, 0U, static_cast<std::uint32_t>(shiftDist));
 
       return softfloat_roundToUI64(detail::signF64UI(a), sigExtra.v);
     }
@@ -1066,22 +1052,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       auto shiftDist = static_cast<std::int16_t>(static_cast<std::int16_t>(INT16_C(0x433)) - expA);
 
-      struct detail::uint64_extra sigExtra { };
-
-      if(shiftDist <= static_cast<std::int16_t>(INT16_C(0)))
-      {
-        if(shiftDist < static_cast<std::int16_t>(INT16_C(-11)))
-        {
-          shiftDist = static_cast<std::int16_t>(INT16_C(-11));
-        }
-
-        sigExtra.v     = static_cast<std::uint64_t>(sig << static_cast<std::uint_fast16_t>(-shiftDist));
-        sigExtra.extra = static_cast<std::uint64_t>(UINT8_C(0));
-      }
-      else
-      {
-        sigExtra = detail::softfloat_shiftRightJam64Extra(sig, 0U, static_cast<std::uint32_t>(shiftDist));
-      }
+      const auto sigExtra =
+        detail::softfloat_shiftRightJam64Extra(sig, 0U, static_cast<std::uint32_t>(shiftDist));
 
       return softfloat_roundToI64(detail::signF64UI(a), sigExtra.v);
     }
