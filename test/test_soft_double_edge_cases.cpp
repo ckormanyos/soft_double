@@ -123,13 +123,13 @@ auto test_various_functions() -> bool
 
     const small_values_array_type small_values =
     {
-      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-001).my_u, ::math::softfloat::detail::nothing() },
-      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-051).my_u, ::math::softfloat::detail::nothing() },
-      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-101).my_u, ::math::softfloat::detail::nothing() },
-      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-151).my_u, ::math::softfloat::detail::nothing() },
-      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-201).my_u, ::math::softfloat::detail::nothing() },
-      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-251).my_u, ::math::softfloat::detail::nothing() },
-      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-301).my_u, ::math::softfloat::detail::nothing() }
+      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-001).my_u, ::math::softfloat::detail::nothing() }, // NOLINT(cppcoreguidelines-pro-type-union-access)
+      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-051).my_u, ::math::softfloat::detail::nothing() }, // NOLINT(cppcoreguidelines-pro-type-union-access)
+      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-101).my_u, ::math::softfloat::detail::nothing() }, // NOLINT(cppcoreguidelines-pro-type-union-access)
+      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-151).my_u, ::math::softfloat::detail::nothing() }, // NOLINT(cppcoreguidelines-pro-type-union-access)
+      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-201).my_u, ::math::softfloat::detail::nothing() }, // NOLINT(cppcoreguidelines-pro-type-union-access)
+      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-251).my_u, ::math::softfloat::detail::nothing() }, // NOLINT(cppcoreguidelines-pro-type-union-access)
+      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-301).my_u, ::math::softfloat::detail::nothing() }  // NOLINT(cppcoreguidelines-pro-type-union-access)
     };
 
     for(const auto& soft_double_elem : small_values)
