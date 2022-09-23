@@ -1468,7 +1468,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       expA = static_cast<std::int16_t>(expA - static_cast<std::int16_t>(shiftDist));
 
-      if(   (static_cast<std::int_fast8_t>(INT8_C(10)) <= shiftDist)
+      if(   (shiftDist >= static_cast<std::int_fast8_t>(INT8_C(10)))
          && (static_cast<std::uint_fast16_t>(expA) < static_cast<std::uint_fast16_t>(UINT16_C(0x7FD))))
       {
         result =
@@ -1476,12 +1476,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           (
             sign,
             static_cast<std::int16_t>(sig != static_cast<std::uint64_t>(UINT8_C(0)) ? expA : static_cast<std::int16_t>(INT8_C(0))),
-            sig << static_cast<unsigned>(shiftDist - static_cast<std::int_fast8_t>(INT8_C(10)))
+            static_cast<std::uint64_t>(sig << static_cast<unsigned>(shiftDist - static_cast<std::int_fast8_t>(INT8_C(10))))
           );
       }
       else
       {
-        result = softfloat_roundPackToF64(sign, expA, static_cast<std::uint64_t>(sig << static_cast<unsigned>(shiftDist)));
+        const auto safeShiftDist =
+          static_cast<std::uint_fast8_t>
+          (
+            (std::max)(static_cast<std::int_fast8_t>(INT8_C(0)), shiftDist)
+          );
+
+        result = softfloat_roundPackToF64(sign, expA, static_cast<std::uint64_t>(sig << static_cast<unsigned>(safeShiftDist)));
       }
 
       return result;
@@ -1489,8 +1495,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static SOFT_DOUBLE_CONSTEXPR auto softfloat_roundPackToF64(bool sign, std::int16_t expA, std::uint64_t sig) -> std::uint64_t
     {
-      if(   (static_cast<std::uint16_t>(UINT16_C(0x7FD)) <= static_cast<std::uint16_t>(expA))
-         && (expA < static_cast<std::int16_t>(INT8_C(0))))
+      if(   (static_cast<std::uint16_t>(expA) >= static_cast<std::uint16_t>(UINT16_C(0x7FD)))
+         && (                           expA  <  static_cast<std::int16_t> ( INT16_C(0))))
       {
         sig  = detail::softfloat_shiftRightJam64(sig, static_cast<std::uint_fast16_t>(-expA));
         expA = static_cast<std::int16_t>(INT8_C(0));
@@ -1498,12 +1504,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       const auto roundBits = static_cast<std::uint16_t>(sig & static_cast<std::uint64_t>(UINT16_C(0x3FF)));
 
-      sig = static_cast<std::uint64_t>(static_cast<std::uint64_t>(sig + 0x200U) >> 10U);
-
       sig =
         static_cast<std::uint64_t>
         (
-            sig
+            static_cast<std::uint64_t>
+            (
+              static_cast<std::uint64_t>(sig + static_cast<std::uint16_t>(UINT16_C(0x200))) >> 10U
+            )
           & static_cast<std::uint64_t>
             (
               ~static_cast<std::uint64_t>
@@ -1572,7 +1579,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             expZ = static_cast<std::int16_t>(INT8_C(0));
           }
 
-          uiZ = detail::packToF64UI(signZ, expZ, sigDiff << shiftDist); // NOLINT(hicpp-signed-bitwise)
+          const auto safeShiftDist =
+            static_cast<std::uint_fast8_t>
+            (
+              (std::max)(static_cast<std::int_fast8_t>(INT8_C(0)), shiftDist)
+            );
+
+          uiZ = detail::packToF64UI(signZ, expZ, sigDiff << static_cast<unsigned>(safeShiftDist)); // NOLINT(hicpp-signed-bitwise)
         }
       }
       else
