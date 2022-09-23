@@ -5,17 +5,19 @@
     <a href="https://github.com/ckormanyos/soft_double/actions">
         <img src="https://github.com/ckormanyos/soft_double/actions/workflows/soft_double.yml/badge.svg" alt="Build Status"></a>
     <a href="https://github.com/ckormanyos/soft_double/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc">
-        <img src="https://custom-icon-badges.herokuapp.com/github/issues-raw/ckormanyos/soft_double?logo=github" alt="Issues" /></a>
+        <img src="https://custom-icon-badges.herokuapp.com/github/issues-raw/ckormanyos/soft_double?logo=github" alt="Issues"></a>
+    <a href="https://scan.coverity.com/projects/ckormanyos-soft_double">
+        <img src="https://scan.coverity.com/projects/26197/badge.svg" alt="Coverity Scan Build Status"></a>
     <a href="https://sonarcloud.io/summary/new_code?id=ckormanyos_soft_double">
         <img src="https://sonarcloud.io/api/project_badges/measure?project=ckormanyos_soft_double&metric=alert_status" alt="Quality Gate Status"></a>
     <a href="https://codecov.io/gh/ckormanyos/soft_double">
-        <img src="https://codecov.io/gh/ckormanyos/soft_double/branch/main/graph/badge.svg?token=V1JNXSUQJQ"/></a>
+        <img src="https://codecov.io/gh/ckormanyos/soft_double/branch/main/graph/badge.svg?token=V1JNXSUQJQ"></a>
     <a href="https://github.com/ckormanyos/soft_double/blob/master/LICENSE_1_0.txt">
         <img src="https://img.shields.io/badge/license-BSL%201.0-blue.svg" alt="Boost Software License 1.0"></a>
     <a href="https://img.shields.io/github/commit-activity/y/ckormanyos/soft_double">
-        <img src="https://img.shields.io/github/commit-activity/y/ckormanyos/soft_double" alt="GitHub commit activity" /></a>
+        <img src="https://img.shields.io/github/commit-activity/y/ckormanyos/soft_double" alt="GitHub commit activity"></a>
     <a href="https://github.com/ckormanyos/soft_double">
-        <img src="https://img.shields.io/github/languages/code-size/ckormanyos/soft_double" alt="GitHub code size in bytes" /></a>
+        <img src="https://img.shields.io/github/languages/code-size/ckormanyos/soft_double" alt="GitHub code size in bytes"></a>
 </p>
 
 soft_double is a C++ header-only library that implements
