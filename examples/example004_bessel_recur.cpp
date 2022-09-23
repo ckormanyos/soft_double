@@ -1,4 +1,4 @@
-﻿///////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////
 //  Copyright Christopher Kormanyos 2020 - 2022.                 //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
@@ -45,8 +45,8 @@ auto bisect(const std::function<FloatingPointType(const FloatingPointType)>& pfn
 
   if(f_lo_is_neg)
   {
-    dx  = x_hi - x_lo;
-    rtb = x_lo;
+    dx  = x_hi - x_lo; // LCOV_EXCL_LINE
+    rtb = x_lo;        // LCOV_EXCL_LINE
   }
   else
   {

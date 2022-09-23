@@ -1,4 +1,4 @@
-﻿///////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////
 //  Copyright Christopher Kormanyos 2012 - 2022.                 //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
@@ -96,7 +96,7 @@ auto math::softfloat::example002b_pi_100k() -> bool
 
   const bool result_pi_is_ok = (head_is_ok && tail_is_ok);
 
-  std::cout << "result_pi_is_ok: " << std::boolalpha << result_pi_is_ok << std::endl;
+  std::cout << "result_pi_is_ok                      : " << std::boolalpha << result_pi_is_ok << std::endl;
 
   return result_pi_is_ok;
 }
