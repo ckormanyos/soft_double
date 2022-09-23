@@ -96,7 +96,13 @@ auto math::softfloat::example002b_pi_100k() -> bool
 
   const bool result_pi_is_ok = (head_is_ok && tail_is_ok);
 
-  std::cout << "result_pi_is_ok                      : " << std::boolalpha << result_pi_is_ok << std::endl;
+  {
+    const auto flg = std::cout.flags();
+
+    std::cout << "result_pi_is_ok                      : " << std::boolalpha << result_pi_is_ok << std::endl;
+
+    std::cout.flags(flg);
+  }
 
   return result_pi_is_ok;
 }
