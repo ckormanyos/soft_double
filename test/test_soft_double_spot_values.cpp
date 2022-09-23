@@ -1,4 +1,4 @@
-///////////////////////////////////////////////////////////////////
+﻿///////////////////////////////////////////////////////////////////
 //  Copyright Christopher Kormanyos 2022.                        //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
@@ -14,7 +14,13 @@ auto test_soft_double_spot_values() -> bool
 
   std::cout << "test_soft_double_spot_values         : ";
 
-  std::cout << std::boolalpha << result_spot_values_is_ok << std::endl;
+  {
+    const auto flg = std::cout.flags();
+
+    std::cout << std::boolalpha << result_spot_values_is_ok << std::endl;
+
+    std::cout.flags(flg);
+  }
 
   return result_spot_values_is_ok;
 }
