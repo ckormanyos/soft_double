@@ -1585,7 +1585,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
               (std::max)(static_cast<std::int_fast8_t>(INT8_C(0)), shiftDist)
             );
 
-          uiZ = detail::packToF64UI(signZ, expZ, sigDiff << safeShiftDist); // NOLINT(hicpp-signed-bitwise)
+          uiZ = detail::packToF64UI(signZ, expZ, sigDiff << static_cast<unsigned>(safeShiftDist)); // NOLINT(hicpp-signed-bitwise)
         }
       }
       else
