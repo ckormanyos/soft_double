@@ -155,9 +155,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   namespace detail {
 
   struct uint128_compound
-  {
-    std::uint64_t v0 { };
-    std::uint64_t v1 { };
+  {    constexpr uint128_compound(std::uint64_t a = std::uint64_t(),
+                                  std::uint64_t b = std::uint64_t())
+      : v0(a),
+        v1(b) { }
+
+    std::uint64_t v0;
+    std::uint64_t v1;
   };
 
   template<typename UnsignedIntegralType>
