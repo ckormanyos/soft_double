@@ -155,13 +155,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   namespace detail {
 
   struct uint128_compound
-  {    constexpr uint128_compound(std::uint64_t a = std::uint64_t(),
+  {    constexpr uint128_compound(std::uint64_t a = std::uint64_t(), // NOLINT(google-explicit-constructor,hicpp-explicit-conversions,bugprone-easily-swappable-parameters)
                                   std::uint64_t b = std::uint64_t())
       : v0(a),
         v1(b) { }
 
-    std::uint64_t v0;
-    std::uint64_t v1;
+    std::uint64_t v0; // NOLINT(misc-non-private-member-variables-in-classes)
+    std::uint64_t v1; // NOLINT(misc-non-private-member-variables-in-classes)
   };
 
   template<typename UnsignedIntegralType>
