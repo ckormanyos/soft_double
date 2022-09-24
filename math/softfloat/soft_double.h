@@ -154,8 +154,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   namespace detail {
 
-  struct uint128_as_struct { std::uint64_t v0;    std::uint64_t v64; };
-  struct uint64_extra      { std::uint64_t extra; std::uint64_t v; };
+  struct uint128_compound
+  {
+    std::uint64_t v0 { };
+    std::uint64_t v1 { };
+  };
 
   template<typename UnsignedIntegralType>
   constexpr auto negate(UnsignedIntegralType u) -> typename std::enable_if<   std::is_integral<UnsignedIntegralType>::value
@@ -290,7 +293,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return static_cast<std::uint32_t>(static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF)) / a);
   }
 
-  constexpr auto softfloat_shiftRightJam64Extra(std::uint64_t a, std::uint64_t extra, std::uint32_t dist) -> struct uint64_extra
+  constexpr auto softfloat_shiftRightJam64Extra(std::uint64_t a, std::uint64_t extra, std::uint32_t dist) -> struct uint128_compound
   {
     // Shifts the 128 bits formed by concatenating a and extra right by 64
     // _plus_ the number of bits given in dist, which must not be zero. This
@@ -717,34 +720,43 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         const auto b32 = static_cast<std::uint32_t>(sigB >> 32U);
         const auto b0  = static_cast<std::uint32_t>(sigB);
 
-        struct detail::uint128_as_struct sig128Z { };
+        const auto mid1 = static_cast<std::uint64_t>(                                  (static_cast<std::uint64_t>(a32)) * b0);
+              auto mid  = static_cast<std::uint64_t>(mid1 + static_cast<std::uint64_t>((static_cast<std::uint64_t>(b32)) * a0));
 
-        sig128Z.v0 = static_cast<std::uint64_t>(static_cast<std::uint64_t>(a0) * b0);
+        struct detail::uint128_compound
+          sig128Z
+          {
+            static_cast<std::uint64_t>(static_cast<std::uint64_t>(a0)  * b0),
+            static_cast<std::uint64_t>
+            (
+                static_cast<std::uint64_t>(static_cast<std::uint64_t>(a32) * b32)
+              + static_cast<std::uint32_t>(mid >> 32U)
+            )
+          };
 
-        auto mid1 = static_cast<std::uint64_t>(                                  (static_cast<std::uint64_t>(a32)) * b0);
-        auto mid  = static_cast<std::uint64_t>(mid1 + static_cast<std::uint64_t>((static_cast<std::uint64_t>(b32)) * a0));
+        if(mid < mid1)
+        {
+          sig128Z.v1 += static_cast<std::uint64_t>(UINT64_C(0x100000000));
+        }
 
-        sig128Z.v64  = static_cast<std::uint64_t> (static_cast<std::uint64_t>(a32) * b32);
-        sig128Z.v64 += static_cast<std::uint64_t>((static_cast<std::uint64_t>(mid < mid1) << 32U) | static_cast<std::uint32_t>(mid >> 32U));
+        mid = static_cast<std::uint64_t>(mid << 32U);
 
-        mid <<= 32U;
-
-        sig128Z.v0  += mid;
-        sig128Z.v64 += static_cast<unsigned>(sig128Z.v0 < mid ? 1U : 0U);
+        sig128Z.v0 += mid;
+        sig128Z.v1 += static_cast<unsigned>(sig128Z.v0 < mid ? 1U : 0U);
 
         if(sig128Z.v0 != 0U)
         {
-          sig128Z.v64 |= 1U;
+          sig128Z.v1 |= static_cast<unsigned>(UINT8_C(1));
         }
 
-        if(sig128Z.v64 < static_cast<std::uint64_t>(UINT64_C(0x4000000000000000)))
+        if(sig128Z.v1 < static_cast<std::uint64_t>(UINT64_C(0x4000000000000000)))
         {
           --expZ;
 
-          sig128Z.v64 <<= 1U;
+          sig128Z.v1 <<= 1U;
         }
 
-        result = softfloat_roundPackToF64(signZ, expZ, sig128Z.v64);
+        result = softfloat_roundPackToF64(signZ, expZ, sig128Z.v1);
       }
 
       return result;
@@ -1037,7 +1049,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       const auto sigExtra =
         detail::softfloat_shiftRightJam64Extra(sig, 0U, static_cast<std::uint32_t>(shiftDist));
 
-      return softfloat_roundToUI64(detail::signF64UI(a), sigExtra.v);
+      return softfloat_roundToUI64(detail::signF64UI(a), sigExtra.v1);
     }
 
     static SOFT_DOUBLE_CONSTEXPR auto f64_to__i64(std::uint64_t a) -> std::int64_t // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
@@ -1055,7 +1067,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       const auto sigExtra =
         detail::softfloat_shiftRightJam64Extra(sig, 0U, static_cast<std::uint32_t>(shiftDist));
 
-      return softfloat_roundToI64(detail::signF64UI(a), sigExtra.v);
+      return softfloat_roundToI64(detail::signF64UI(a), sigExtra.v1);
     }
 
     static SOFT_DOUBLE_CONSTEXPR auto f64_to_f32(const std::uint64_t a) -> float
