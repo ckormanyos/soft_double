@@ -484,12 +484,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   template<typename char_type, typename traits_type> auto operator>>(std::basic_istream<char_type, traits_type>& is,       soft_double& f) -> std::basic_istream<char_type, traits_type>&;
   #endif // !WIDE_DECIMAL_DISABLE_IOSTREAM
 
-  inline SOFT_DOUBLE_CONSTEXPR auto (isnan)   (soft_double x) -> bool;
-  inline SOFT_DOUBLE_CONSTEXPR auto (isinf)   (soft_double x) -> bool;
-  inline SOFT_DOUBLE_CONSTEXPR auto (isfinite)(soft_double x) -> bool;
-  inline SOFT_DOUBLE_CONSTEXPR auto  fabs     (soft_double x) -> soft_double;
+         constexpr             auto (isnan)   (soft_double x) -> bool;
+         constexpr             auto (isinf)   (soft_double x) -> bool;
+         constexpr             auto (isfinite)(soft_double x) -> bool;
+         constexpr             auto  fabs     (soft_double x) -> soft_double;
   inline SOFT_DOUBLE_CONSTEXPR auto  frexp    (soft_double x, int* expptr) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto  ldexp    (soft_double x, int expval) -> soft_double;
+         constexpr             auto  ldexp    (soft_double x, int expval) -> soft_double;
   inline SOFT_DOUBLE_CONSTEXPR auto  floor    (soft_double x) -> soft_double;
   inline SOFT_DOUBLE_CONSTEXPR auto  ceil     (soft_double x) -> soft_double;
   inline SOFT_DOUBLE_CONSTEXPR auto  sqrt     (soft_double x) -> soft_double;
@@ -1699,11 +1699,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     }
     #endif // !SOFT_DOUBLE_DISABLE_IOSTREAM
 
-    friend inline SOFT_DOUBLE_CONSTEXPR auto (isfinite)(soft_double x) -> bool { return ((!(isnan)(x)) && (!(isinf)(x))); }
-    friend inline SOFT_DOUBLE_CONSTEXPR auto (isnan)   (soft_double x) -> bool { return  (x.my_value == my_value_quiet_NaN().my_value); }
-    friend inline SOFT_DOUBLE_CONSTEXPR auto (isinf)   (soft_double x) -> bool { return ((x.my_value & my_value_infinity().my_value) == my_value_infinity().my_value); }
+    friend constexpr auto (isfinite)(soft_double x) -> bool { return ((!(isnan)(x)) && (!(isinf)(x))); }
+    friend constexpr auto (isnan)   (soft_double x) -> bool { return  (x.my_value == my_value_quiet_NaN().my_value); }
+    friend constexpr auto (isinf)   (soft_double x) -> bool { return ((x.my_value & my_value_infinity().my_value) == my_value_infinity().my_value); }
 
-    friend inline SOFT_DOUBLE_CONSTEXPR auto fabs (soft_double x) -> soft_double { return { static_cast<std::uint64_t>(x.my_value & static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF))), detail::nothing() }; }
+    friend constexpr auto fabs (soft_double x) -> soft_double { return { static_cast<std::uint64_t>(x.my_value & static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF))), detail::nothing() }; }
     friend inline SOFT_DOUBLE_CONSTEXPR auto sqrt (soft_double x) -> soft_double { return { f64_sqrt(x.my_value), detail::nothing() }; }
 
     friend inline SOFT_DOUBLE_CONSTEXPR auto frexp(soft_double x, int* expptr) -> soft_double
@@ -1731,7 +1731,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       };
     }
 
-    friend inline SOFT_DOUBLE_CONSTEXPR auto ldexp(soft_double x, int expval) -> soft_double;
+    friend constexpr auto ldexp(soft_double x, int expval) -> soft_double
+    {
+      return
+      {
+        static_cast<std::uint64_t>(static_cast<std::uint64_t>(x.my_value & static_cast<std::uint64_t>(~(static_cast<std::uint64_t>(UINT64_C(0x7FF)) << 52U))) | static_cast<std::uint64_t>(static_cast<int>(static_cast<int>(detail::expF64UI(x.my_value)) + expval)) << 52U),
+        detail::nothing()
+      };
+    }
+
     friend inline SOFT_DOUBLE_CONSTEXPR auto floor(soft_double x) -> soft_double;
     friend inline SOFT_DOUBLE_CONSTEXPR auto ceil (soft_double x) -> soft_double;
     friend inline SOFT_DOUBLE_CONSTEXPR auto exp  (soft_double x) -> soft_double;
@@ -2247,15 +2255,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     }
 
     return c;
-  }
-
-  inline constexpr auto ldexp(soft_double x, int expval) -> soft_double
-  {
-    return
-    {
-      static_cast<std::uint64_t>(static_cast<std::uint64_t>(x.my_value & static_cast<std::uint64_t>(~(static_cast<std::uint64_t>(UINT64_C(0x7FF)) << 52U))) | static_cast<std::uint64_t>(static_cast<int>(static_cast<int>(detail::expF64UI(x.my_value)) + expval)) << 52U),
-      detail::nothing()
-    };
   }
 
   inline SOFT_DOUBLE_CONSTEXPR auto floor(soft_double x) -> soft_double

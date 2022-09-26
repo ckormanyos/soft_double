@@ -151,7 +151,7 @@
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile />
       <DisableSpecificWarnings>4146</DisableSpecificWarnings>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -170,7 +170,7 @@
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile />
       <DisableSpecificWarnings>4146</DisableSpecificWarnings>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -191,7 +191,7 @@
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile />
       <DisableSpecificWarnings>4146</DisableSpecificWarnings>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -214,7 +214,7 @@
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile />
       <DisableSpecificWarnings>4146</DisableSpecificWarnings>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
