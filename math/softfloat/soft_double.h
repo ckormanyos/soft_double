@@ -305,8 +305,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     // of the struct uint64_extra result.
     return
     {
-      (dist < 64U) ? static_cast<std::uint64_t>(a << static_cast<unsigned>(static_cast<unsigned>(negate(dist)) & 63U)) | (extra != 0U ? 1U : 0U) : ((dist == 64U) ? a : ((a != 0U) || (extra != 0U)) ? 1U : 0U),
-      (dist < 64U) ? static_cast<std::uint64_t>(a >>                       static_cast<unsigned>       (dist))                                   : 0U
+      (dist < static_cast<std::uint32_t>(UINT8_C(64))) ? static_cast<std::uint64_t>(a << static_cast<unsigned>(static_cast<unsigned>(negate(dist)) & 63U)) | (extra != 0U ? 1U : 0U) : ((dist == 64U) ? a : ((a != 0U) || (extra != 0U)) ? 1U : 0U),
+      (dist < static_cast<std::uint32_t>(UINT8_C(64))) ? static_cast<std::uint64_t>(a >>                       static_cast<unsigned>       (dist))                                   : 0U
     };
   }
 
@@ -484,24 +484,24 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   template<typename char_type, typename traits_type> auto operator>>(std::basic_istream<char_type, traits_type>& is,       soft_double& f) -> std::basic_istream<char_type, traits_type>&;
   #endif // !WIDE_DECIMAL_DISABLE_IOSTREAM
 
-  inline SOFT_DOUBLE_CONSTEXPR auto isnan   (soft_double x) -> bool;
-  inline SOFT_DOUBLE_CONSTEXPR auto isinf   (soft_double x) -> bool;
-  inline SOFT_DOUBLE_CONSTEXPR auto isfinite(soft_double x) -> bool;
-  inline SOFT_DOUBLE_CONSTEXPR auto fabs    (soft_double x) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto frexp   (soft_double x, int* expptr) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto ldexp   (soft_double x, int expval) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto floor   (soft_double x) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto ceil    (soft_double x) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto sqrt    (soft_double x) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto exp     (soft_double x) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto log     (soft_double x) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto pow     (soft_double x, soft_double a) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto sin     (soft_double x) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto cos     (soft_double x) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto tan     (soft_double x) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto sinh    (soft_double x) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto cosh    (soft_double x) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto tanh    (soft_double x) -> soft_double;
+         constexpr             auto (isnan)   (soft_double x) -> bool;
+         constexpr             auto (isinf)   (soft_double x) -> bool;
+         constexpr             auto (isfinite)(soft_double x) -> bool;
+         constexpr             auto  fabs     (soft_double x) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto  frexp    (soft_double x, int* expptr) -> soft_double;
+         constexpr             auto  ldexp    (soft_double x, int expval) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto  floor    (soft_double x) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto  ceil     (soft_double x) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto  sqrt     (soft_double x) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto  exp      (soft_double x) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto  log      (soft_double x) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto  pow      (soft_double x, soft_double a) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto  sin      (soft_double x) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto  cos      (soft_double x) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto  tan      (soft_double x) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto  sinh     (soft_double x) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto  cosh     (soft_double x) -> soft_double;
+  inline SOFT_DOUBLE_CONSTEXPR auto  tanh     (soft_double x) -> soft_double;
 
   template<typename UnsignedIntegralType,
            typename std::enable_if<(   std::is_integral<UnsignedIntegralType>::value
@@ -1699,11 +1699,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     }
     #endif // !SOFT_DOUBLE_DISABLE_IOSTREAM
 
-    friend inline SOFT_DOUBLE_CONSTEXPR auto isfinite(soft_double x) -> bool { return ((!(isnan)(x)) && (!(isinf)(x))); }
-    friend inline SOFT_DOUBLE_CONSTEXPR auto isnan   (soft_double x) -> bool { return  (x.my_value == my_value_quiet_NaN().my_value); }
-    friend inline SOFT_DOUBLE_CONSTEXPR auto isinf   (soft_double x) -> bool { return ((x.my_value & my_value_infinity().my_value) == my_value_infinity().my_value); }
+    friend constexpr auto (isfinite)(soft_double x) -> bool { return ((!(isnan)(x)) && (!(isinf)(x))); }
+    friend constexpr auto (isnan)   (soft_double x) -> bool { return  (x.my_value == my_value_quiet_NaN().my_value); }
+    friend constexpr auto (isinf)   (soft_double x) -> bool { return ((x.my_value & my_value_infinity().my_value) == my_value_infinity().my_value); }
 
-    friend inline SOFT_DOUBLE_CONSTEXPR auto fabs (soft_double x) -> soft_double { return { static_cast<std::uint64_t>(x.my_value & static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF))), detail::nothing() }; }
+    friend constexpr auto fabs (soft_double x) -> soft_double { return { static_cast<std::uint64_t>(x.my_value & static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF))), detail::nothing() }; }
     friend inline SOFT_DOUBLE_CONSTEXPR auto sqrt (soft_double x) -> soft_double { return { f64_sqrt(x.my_value), detail::nothing() }; }
 
     friend inline SOFT_DOUBLE_CONSTEXPR auto frexp(soft_double x, int* expptr) -> soft_double
@@ -1731,7 +1731,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       };
     }
 
-    friend inline SOFT_DOUBLE_CONSTEXPR auto ldexp(soft_double x, int expval) -> soft_double;
+    friend constexpr auto ldexp(soft_double x, int expval) -> soft_double
+    {
+      return
+      {
+        static_cast<std::uint64_t>(static_cast<std::uint64_t>(x.my_value & static_cast<std::uint64_t>(~(static_cast<std::uint64_t>(UINT64_C(0x7FF)) << 52U))) | static_cast<std::uint64_t>(static_cast<int>(static_cast<int>(detail::expF64UI(x.my_value)) + expval)) << 52U),
+        detail::nothing()
+      };
+    }
+
     friend inline SOFT_DOUBLE_CONSTEXPR auto floor(soft_double x) -> soft_double;
     friend inline SOFT_DOUBLE_CONSTEXPR auto ceil (soft_double x) -> soft_double;
     friend inline SOFT_DOUBLE_CONSTEXPR auto exp  (soft_double x) -> soft_double;
@@ -1744,9 +1752,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     {
       soft_double result { };
 
-      if     (u == 0U) { result = soft_double::my_value_one(); }
-      else if(u == 1U) { result = x; }
-      else if(u == 2U) { result = x * x; }
+      if     (u == static_cast<UnsignedIntegralType>(UINT8_C(0))) { result = soft_double::my_value_one(); }
+      else if(u == static_cast<UnsignedIntegralType>(UINT8_C(1))) { result = x; }
+      else if(u == static_cast<UnsignedIntegralType>(UINT8_C(2))) { result = x * x; }
       else
       {
         using floating_point_type = soft_double;
@@ -1781,10 +1789,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     {
       soft_double result { };
 
-      if     (n <  0) { result = soft_double::my_value_one() / pow(x, static_cast<typename std::make_unsigned<SignedIntegralType>::type>(-n)); }
-      else if(n == 0) { result = soft_double::my_value_one(); }
-      else if(n == 1) { result = x; }
-      else if(n == 2) { result = x * x; }
+      if     (n <  static_cast<SignedIntegralType>(INT8_C(0))) { result = soft_double::my_value_one() / pow(x, static_cast<typename std::make_unsigned<SignedIntegralType>::type>(-n)); }
+      else if(n == static_cast<SignedIntegralType>(INT8_C(0))) { result = soft_double::my_value_one(); }
+      else if(n == static_cast<SignedIntegralType>(INT8_C(1))) { result = x; }
+      else if(n == static_cast<SignedIntegralType>(INT8_C(2))) { result = x * x; }
       else
       {
         using floating_point_type = soft_double;
@@ -2247,17 +2255,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     }
 
     return c;
-  }
-
-  inline SOFT_DOUBLE_CONSTEXPR auto ldexp(soft_double x, int expval) -> soft_double
-  {
-    const auto expA = static_cast<int>(detail::expF64UI(x.my_value) + expval);
-
-    return
-    {
-      static_cast<std::uint64_t>(static_cast<std::uint64_t>(x.my_value & static_cast<std::uint64_t>(~(static_cast<std::uint64_t>(UINT64_C(0x7FF)) << 52U))) | static_cast<std::uint64_t>(expA) << 52U),
-      detail::nothing()
-    };
   }
 
   inline SOFT_DOUBLE_CONSTEXPR auto floor(soft_double x) -> soft_double
