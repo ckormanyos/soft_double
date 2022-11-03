@@ -196,7 +196,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - uses: ilammy/msvc-dev-cmd@v1
-      - with:
+        with:
           toolset: 14.2
       - name: msvc-release-x64
         shell: cmd
@@ -213,7 +213,7 @@ jobs:
           fetch-depth: '0'
       - uses: actions/checkout@v1
       - uses: ilammy/msvc-dev-cmd@v1
-      - with:
+        with:
           toolset: 14.3
       - name: msvc-release-x64-vs2022
         shell: cmd
