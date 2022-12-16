@@ -1,4 +1,4 @@
-﻿soft_double
+soft_double
 ==================
 
 <p align="center">
