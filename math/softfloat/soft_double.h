@@ -68,7 +68,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   #define SOFT_DOUBLE_NUM_LIMITS_CLASS_TYPE class  // NOLINT(cppcoreguidelines-macro-usage)
   #endif
 
-  #if (defined(__has_cpp_attribute) && __has_cpp_attribute(nodescard))
+  #if (defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard))
   #define SOFT_DOUBLE_NODISCARD [[nodiscard]]
   #else
   #define SOFT_DOUBLE_NODISCARD
@@ -528,7 +528,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     ~soft_double() = default;
 
-                          constexpr auto  representation()       -> representation_type { return my_value; }
+    SOFT_DOUBLE_NODISCARD constexpr auto  representation()       -> representation_type { return my_value; }
     SOFT_DOUBLE_NODISCARD constexpr auto  representation() const -> representation_type { return my_value; }
     SOFT_DOUBLE_NODISCARD constexpr auto crepresentation() const -> representation_type { return my_value; }
 
