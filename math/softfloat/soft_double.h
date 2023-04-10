@@ -68,60 +68,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   #define SOFT_DOUBLE_NUM_LIMITS_CLASS_TYPE class  // NOLINT(cppcoreguidelines-macro-usage)
   #endif
 
-  #if (defined(_MSC_VER) && (!defined(__GNUC__) && !defined(__clang__)))
-    #if (_MSC_VER >= 1900) && defined(_HAS_CXX20) && (_HAS_CXX20 != 0)
-      #define SOFT_DOUBLE_CONSTEXPR constexpr               // NOLINT(cppcoreguidelines-macro-usage)
-      #define SOFT_DOUBLE_CONSTEXPR_IS_COMPILE_TIME_CONST 1 // NOLINT(cppcoreguidelines-macro-usage)
-      #define SOFT_DOUBLE_NODISCARD [[nodiscard]]           // NOLINT(cppcoreguidelines-macro-usage)
-    #else
-      #define SOFT_DOUBLE_CONSTEXPR
-      #define SOFT_DOUBLE_CONSTEXPR_IS_COMPILE_TIME_CONST 0 // NOLINT(cppcoreguidelines-macro-usage)
-      #define SOFT_DOUBLE_NODISCARD
-    #endif
-  #else
-    #if (defined(__cplusplus) && (__cplusplus >= 201402L))
-      #if defined(__AVR__) && (!defined(__GNUC__) || (defined(__GNUC__) && (__cplusplus >= 202002L)))
-      #define SOFT_DOUBLE_CONSTEXPR constexpr               // NOLINT(cppcoreguidelines-macro-usage)
-      #define SOFT_DOUBLE_CONSTEXPR_IS_COMPILE_TIME_CONST 1 // NOLINT(cppcoreguidelines-macro-usage)
-      #define SOFT_DOUBLE_NODISCARD [[nodiscard]]           // NOLINT(cppcoreguidelines-macro-usage)
-      #elif (defined(__cpp_lib_constexpr_algorithms) && (__cpp_lib_constexpr_algorithms>=201806))
-        #if defined(__clang__)
-          #if (__clang_major__ > 9)
-          #define SOFT_DOUBLE_CONSTEXPR constexpr               // NOLINT(cppcoreguidelines-macro-usage)
-          #define SOFT_DOUBLE_CONSTEXPR_IS_COMPILE_TIME_CONST 1 // NOLINT(cppcoreguidelines-macro-usage)
-          #define SOFT_DOUBLE_NODISCARD [[nodiscard]]           // NOLINT(cppcoreguidelines-macro-usage)
-          #else
-          #define SOFT_DOUBLE_CONSTEXPR
-          #define SOFT_DOUBLE_CONSTEXPR_IS_COMPILE_TIME_CONST 0 // NOLINT(cppcoreguidelines-macro-usage)
-          #define SOFT_DOUBLE_NODISCARD
-          #endif
-        #else
-        #define SOFT_DOUBLE_CONSTEXPR constexpr               // NOLINT(cppcoreguidelines-macro-usage)
-        #define SOFT_DOUBLE_CONSTEXPR_IS_COMPILE_TIME_CONST 1 // NOLINT(cppcoreguidelines-macro-usage)
-        #define SOFT_DOUBLE_NODISCARD [[nodiscard]]           // NOLINT(cppcoreguidelines-macro-usage)
-        #endif
-      #elif (defined(__clang__) && (__clang_major__ >= 10)) && (defined(__cplusplus) && (__cplusplus > 201703L))
-        #if defined(__x86_64__)
-        #define SOFT_DOUBLE_CONSTEXPR constexpr               // NOLINT(cppcoreguidelines-macro-usage)
-        #define SOFT_DOUBLE_CONSTEXPR_IS_COMPILE_TIME_CONST 1 // NOLINT(cppcoreguidelines-macro-usage)
-        #define SOFT_DOUBLE_NODISCARD [[nodiscard]]           // NOLINT(cppcoreguidelines-macro-usage)
-        #else
-        #define SOFT_DOUBLE_CONSTEXPR
-        #define SOFT_DOUBLE_CONSTEXPR_IS_COMPILE_TIME_CONST 0 // NOLINT(cppcoreguidelines-macro-usage)
-        #define SOFT_DOUBLE_NODISCARD
-        #endif
-      #else
-      #define SOFT_DOUBLE_CONSTEXPR
-      #define SOFT_DOUBLE_CONSTEXPR_IS_COMPILE_TIME_CONST 0 // NOLINT(cppcoreguidelines-macro-usage)
-      #define SOFT_DOUBLE_NODISCARD
-      #endif
-    #else
-      #define SOFT_DOUBLE_CONSTEXPR
-      #define SOFT_DOUBLE_CONSTEXPR_IS_COMPILE_TIME_CONST 0 // NOLINT(cppcoreguidelines-macro-usage)
-      #define SOFT_DOUBLE_NODISCARD
-    #endif
-  #endif
-
   #if(__cplusplus >= 201703L)
   namespace math::softfloat {
   #else
@@ -348,60 +294,60 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   } // namespace detail
 
-  inline SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& a, const soft_double& b) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto operator-(const soft_double& a, const soft_double& b) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto operator*(const soft_double& a, const soft_double& b) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto operator/(const soft_double& a, const soft_double& b) -> soft_double;
+  inline constexpr auto operator+(const soft_double& a, const soft_double& b) -> soft_double;
+  inline constexpr auto operator-(const soft_double& a, const soft_double& b) -> soft_double;
+  inline constexpr auto operator*(const soft_double& a, const soft_double& b) -> soft_double;
+  inline constexpr auto operator/(const soft_double& a, const soft_double& b) -> soft_double;
 
-  template<typename UnsignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
-  template<typename UnsignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator-(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
-  template<typename UnsignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator*(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
-  template<typename UnsignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator/(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
+  template<typename UnsignedIntegralType> constexpr auto operator+(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
+  template<typename UnsignedIntegralType> constexpr auto operator-(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
+  template<typename UnsignedIntegralType> constexpr auto operator*(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
+  template<typename UnsignedIntegralType> constexpr auto operator/(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
 
-  template<typename UnsignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator+(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
-  template<typename UnsignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator-(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
-  template<typename UnsignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator*(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
-  template<typename UnsignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator/(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
+  template<typename UnsignedIntegralType> constexpr auto operator+(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
+  template<typename UnsignedIntegralType> constexpr auto operator-(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
+  template<typename UnsignedIntegralType> constexpr auto operator*(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
+  template<typename UnsignedIntegralType> constexpr auto operator/(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type;
 
-  template<typename SignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
-  template<typename SignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator-(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
-  template<typename SignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator*(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
-  template<typename SignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator/(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
+  template<typename SignedIntegralType> constexpr auto operator+(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
+  template<typename SignedIntegralType> constexpr auto operator-(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
+  template<typename SignedIntegralType> constexpr auto operator*(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
+  template<typename SignedIntegralType> constexpr auto operator/(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
 
-  template<typename SignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator+(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
-  template<typename SignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator-(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
-  template<typename SignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator*(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
-  template<typename SignedIntegralType> SOFT_DOUBLE_CONSTEXPR auto operator/(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
+  template<typename SignedIntegralType> constexpr auto operator+(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
+  template<typename SignedIntegralType> constexpr auto operator-(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
+  template<typename SignedIntegralType> constexpr auto operator*(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
+  template<typename SignedIntegralType> constexpr auto operator/(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type;
 
-  inline SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& u, float f) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto operator-(const soft_double& u, float f) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto operator*(const soft_double& u, float f) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto operator/(const soft_double& u, float f) -> soft_double;
+  inline constexpr auto operator+(const soft_double& u, float f) -> soft_double;
+  inline constexpr auto operator-(const soft_double& u, float f) -> soft_double;
+  inline constexpr auto operator*(const soft_double& u, float f) -> soft_double;
+  inline constexpr auto operator/(const soft_double& u, float f) -> soft_double;
 
-  inline SOFT_DOUBLE_CONSTEXPR auto operator+(float f, const soft_double& u) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto operator-(float f, const soft_double& u) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto operator*(float f, const soft_double& u) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto operator/(float f, const soft_double& u) -> soft_double;
+  inline constexpr auto operator+(float f, const soft_double& u) -> soft_double;
+  inline constexpr auto operator-(float f, const soft_double& u) -> soft_double;
+  inline constexpr auto operator*(float f, const soft_double& u) -> soft_double;
+  inline constexpr auto operator/(float f, const soft_double& u) -> soft_double;
 
-  inline SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& u, double f) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto operator-(const soft_double& u, double f) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto operator*(const soft_double& u, double f) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto operator/(const soft_double& u, double f) -> soft_double;
+  inline constexpr auto operator+(const soft_double& u, double f) -> soft_double;
+  inline constexpr auto operator-(const soft_double& u, double f) -> soft_double;
+  inline constexpr auto operator*(const soft_double& u, double f) -> soft_double;
+  inline constexpr auto operator/(const soft_double& u, double f) -> soft_double;
 
-  inline SOFT_DOUBLE_CONSTEXPR auto operator+(double f, const soft_double& u) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto operator-(double f, const soft_double& u) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto operator*(double f, const soft_double& u) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto operator/(double f, const soft_double& u) -> soft_double;
+  inline constexpr auto operator+(double f, const soft_double& u) -> soft_double;
+  inline constexpr auto operator-(double f, const soft_double& u) -> soft_double;
+  inline constexpr auto operator*(double f, const soft_double& u) -> soft_double;
+  inline constexpr auto operator/(double f, const soft_double& u) -> soft_double;
 
-  inline SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& u, long double f) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto operator-(const soft_double& u, long double f) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto operator*(const soft_double& u, long double f) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto operator/(const soft_double& u, long double f) -> soft_double;
+  inline constexpr auto operator+(const soft_double& u, long double f) -> soft_double;
+  inline constexpr auto operator-(const soft_double& u, long double f) -> soft_double;
+  inline constexpr auto operator*(const soft_double& u, long double f) -> soft_double;
+  inline constexpr auto operator/(const soft_double& u, long double f) -> soft_double;
 
-  inline SOFT_DOUBLE_CONSTEXPR auto operator+(long double f, const soft_double& u) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto operator-(long double f, const soft_double& u) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto operator*(long double f, const soft_double& u) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto operator/(long double f, const soft_double& u) -> soft_double;
+  inline constexpr auto operator+(long double f, const soft_double& u) -> soft_double;
+  inline constexpr auto operator-(long double f, const soft_double& u) -> soft_double;
+  inline constexpr auto operator*(long double f, const soft_double& u) -> soft_double;
+  inline constexpr auto operator/(long double f, const soft_double& u) -> soft_double;
 
   constexpr auto operator< (const soft_double& a, const soft_double& b) -> bool;
   constexpr auto operator<=(const soft_double& a, const soft_double& b) -> bool;
@@ -489,30 +435,30 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   constexpr             auto (isinf)   (soft_double x) -> bool;
   constexpr             auto (isfinite)(soft_double x) -> bool;
   constexpr             auto  fabs     (soft_double x) -> soft_double;
-  SOFT_DOUBLE_CONSTEXPR auto  frexp    (soft_double x, int* expptr) -> soft_double;
+  constexpr auto  frexp    (soft_double x, int* expptr) -> soft_double;
   constexpr             auto  ldexp    (soft_double x, int expval) -> soft_double;
-  SOFT_DOUBLE_CONSTEXPR auto  floor    (soft_double x) -> soft_double;
-  SOFT_DOUBLE_CONSTEXPR auto  ceil     (soft_double x) -> soft_double;
+  constexpr auto  floor    (soft_double x) -> soft_double;
+  constexpr auto  ceil     (soft_double x) -> soft_double;
   constexpr             auto  sqrt     (soft_double x) -> soft_double;
-  SOFT_DOUBLE_CONSTEXPR auto  exp      (soft_double x) -> soft_double;
-  SOFT_DOUBLE_CONSTEXPR auto  log      (soft_double x) -> soft_double;
-  SOFT_DOUBLE_CONSTEXPR auto  pow      (soft_double x, soft_double a) -> soft_double;
-  SOFT_DOUBLE_CONSTEXPR auto  sin      (soft_double x) -> soft_double;
-  SOFT_DOUBLE_CONSTEXPR auto  cos      (soft_double x) -> soft_double;
-  SOFT_DOUBLE_CONSTEXPR auto  tan      (soft_double x) -> soft_double;
-  SOFT_DOUBLE_CONSTEXPR auto  sinh     (soft_double x) -> soft_double;
-  SOFT_DOUBLE_CONSTEXPR auto  cosh     (soft_double x) -> soft_double;
-  SOFT_DOUBLE_CONSTEXPR auto  tanh     (soft_double x) -> soft_double;
+  constexpr auto  exp      (soft_double x) -> soft_double;
+  constexpr auto  log      (soft_double x) -> soft_double;
+  constexpr auto  pow      (soft_double x, soft_double a) -> soft_double;
+  constexpr auto  sin      (soft_double x) -> soft_double;
+  constexpr auto  cos      (soft_double x) -> soft_double;
+  constexpr auto  tan      (soft_double x) -> soft_double;
+  constexpr auto  sinh     (soft_double x) -> soft_double;
+  constexpr auto  cosh     (soft_double x) -> soft_double;
+  constexpr auto  tanh     (soft_double x) -> soft_double;
 
   template<typename UnsignedIntegralType,
            typename std::enable_if<(   std::is_integral<UnsignedIntegralType>::value
                                     && std::is_unsigned<UnsignedIntegralType>::value)>::type const* = nullptr>
-  SOFT_DOUBLE_CONSTEXPR auto pow(soft_double x, UnsignedIntegralType u) -> soft_double;
+  constexpr auto pow(soft_double x, UnsignedIntegralType u) -> soft_double;
 
   template<typename SignedIntegralType,
            typename std::enable_if<(   std::is_integral<SignedIntegralType>::value
                                     && std::is_signed  <SignedIntegralType>::value)>::type const* = nullptr>
-  SOFT_DOUBLE_CONSTEXPR auto pow(soft_double x, SignedIntegralType n) -> soft_double;
+  constexpr auto pow(soft_double x, SignedIntegralType n) -> soft_double;
 
   class soft_double final
   {
@@ -570,65 +516,63 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     constexpr soft_double(std::uint64_t n, detail::nothing&&) noexcept // NOLINT(hicpp-named-parameter,readability-named-parameter)
       : my_value(static_cast<std::uint64_t>(n)) { }
 
-    SOFT_DOUBLE_CONSTEXPR ~soft_double() = default;
+    constexpr auto operator=(const soft_double&) -> soft_double& = default;
 
-    SOFT_DOUBLE_CONSTEXPR auto operator=(const soft_double&) -> soft_double& = default;
+    constexpr auto operator=(soft_double&&) noexcept -> soft_double& = default;
 
-    SOFT_DOUBLE_CONSTEXPR auto operator=(soft_double&&) noexcept -> soft_double& = default;
-
-                          constexpr auto  representation()       -> representation_type { return my_value; }
-    SOFT_DOUBLE_NODISCARD constexpr auto  representation() const -> representation_type { return my_value; }
-    SOFT_DOUBLE_NODISCARD constexpr auto crepresentation() const -> representation_type { return my_value; }
+                  constexpr auto  representation()       -> representation_type { return my_value; }
+    [[nodiscard]] constexpr auto  representation() const -> representation_type { return my_value; }
+    [[nodiscard]] constexpr auto crepresentation() const -> representation_type { return my_value; }
 
     static constexpr auto get_rep(soft_double a) -> representation_type { return a.my_value; }
 
-    SOFT_DOUBLE_CONSTEXPR operator   signed char     () const { return static_cast<signed char>     (f64_to__i32(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
-    SOFT_DOUBLE_CONSTEXPR operator   signed short    () const { return static_cast<signed short>    (f64_to__i32(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions,google-runtime-int)
-    SOFT_DOUBLE_CONSTEXPR operator   signed int      () const { return static_cast<signed int>      (f64_to__i32(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
-    SOFT_DOUBLE_CONSTEXPR operator   signed long     () const { return static_cast<signed long>     (f64_to__i64(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions,google-runtime-int)
-    SOFT_DOUBLE_CONSTEXPR operator   signed long long() const { return static_cast<signed long long>(f64_to__i64(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions,google-runtime-int)
+    constexpr operator   signed char     () const { return static_cast<signed char>     (f64_to__i32(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+    constexpr operator   signed short    () const { return static_cast<signed short>    (f64_to__i32(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions,google-runtime-int)
+    constexpr operator   signed int      () const { return static_cast<signed int>      (f64_to__i32(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+    constexpr operator   signed long     () const { return static_cast<signed long>     (f64_to__i64(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions,google-runtime-int)
+    constexpr operator   signed long long() const { return static_cast<signed long long>(f64_to__i64(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions,google-runtime-int)
 
-    SOFT_DOUBLE_CONSTEXPR operator unsigned char     () const { return static_cast<unsigned char>     (f64_to_ui32(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
-    SOFT_DOUBLE_CONSTEXPR operator unsigned short    () const { return static_cast<unsigned short>    (f64_to_ui32(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions,google-runtime-int)
-    SOFT_DOUBLE_CONSTEXPR operator unsigned int      () const { return static_cast<unsigned int>      (f64_to_ui32(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
-    SOFT_DOUBLE_CONSTEXPR operator unsigned long     () const { return static_cast<unsigned long>     (f64_to_ui64(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions,google-runtime-int)
-    SOFT_DOUBLE_CONSTEXPR operator unsigned long long() const { return static_cast<unsigned long long>(f64_to_ui64(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions,google-runtime-int)
+    constexpr operator unsigned char     () const { return static_cast<unsigned char>     (f64_to_ui32(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+    constexpr operator unsigned short    () const { return static_cast<unsigned short>    (f64_to_ui32(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions,google-runtime-int)
+    constexpr operator unsigned int      () const { return static_cast<unsigned int>      (f64_to_ui32(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+    constexpr operator unsigned long     () const { return static_cast<unsigned long>     (f64_to_ui64(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions,google-runtime-int)
+    constexpr operator unsigned long long() const { return static_cast<unsigned long long>(f64_to_ui64(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions,google-runtime-int)
 
   private:
     template<typename FloatingPointType>
-    SOFT_DOUBLE_NODISCARD SOFT_DOUBLE_CONSTEXPR auto to_float() const -> typename std::enable_if<(   (sizeof(FloatingPointType) == 4)
-                                                                                                  && std::numeric_limits<FloatingPointType>::is_iec559), FloatingPointType>::type
+    [[nodiscard]] constexpr auto to_float() const -> typename std::enable_if<(   (sizeof(FloatingPointType) == 4)
+                                                                              && std::numeric_limits<FloatingPointType>::is_iec559), FloatingPointType>::type
     {
       return f64_to_f32(my_value);
     }
 
     template<typename FloatingPointType>
-    SOFT_DOUBLE_NODISCARD SOFT_DOUBLE_CONSTEXPR auto to_float() const -> typename std::enable_if<(   (sizeof(FloatingPointType) == 8)
-                                                                                                  && std::numeric_limits<FloatingPointType>::is_iec559), FloatingPointType>::type
+    [[nodiscard]] constexpr auto to_float() const -> typename std::enable_if<(   (sizeof(FloatingPointType) == 8)
+                                                                              && std::numeric_limits<FloatingPointType>::is_iec559), FloatingPointType>::type
     {
       return static_cast<FloatingPointType>(*static_cast<const volatile FloatingPointType*>(static_cast<const volatile void*>(this)));
     }
 
   public:
-    SOFT_DOUBLE_CONSTEXPR operator float      () const noexcept { return to_float<float>(); }                            // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
-    SOFT_DOUBLE_CONSTEXPR operator double     () const noexcept { return to_float<double>(); }                           // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
-    SOFT_DOUBLE_CONSTEXPR operator long double() const noexcept { return static_cast<long double>(to_float<double>()); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+    constexpr operator float      () const noexcept { return to_float<float>(); }                            // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+    constexpr operator double     () const noexcept { return to_float<double>(); }                           // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+    constexpr operator long double() const noexcept { return static_cast<long double>(to_float<double>()); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
 
-    SOFT_DOUBLE_CONSTEXPR auto operator+=(const soft_double& other) -> soft_double& { my_value = f64_add(my_value, other.my_value); return *this; }
-    SOFT_DOUBLE_CONSTEXPR auto operator-=(const soft_double& other) -> soft_double& { my_value = f64_sub(my_value, other.my_value); return *this; }
-    SOFT_DOUBLE_CONSTEXPR auto operator*=(const soft_double& other) -> soft_double& { my_value = f64_mul(my_value, other.my_value); return *this; }
-    SOFT_DOUBLE_CONSTEXPR auto operator/=(const soft_double& other) -> soft_double& { my_value = f64_div(my_value, other.my_value); return *this; }
+    constexpr auto operator+=(const soft_double& other) -> soft_double& { my_value = f64_add(my_value, other.my_value); return *this; }
+    constexpr auto operator-=(const soft_double& other) -> soft_double& { my_value = f64_sub(my_value, other.my_value); return *this; }
+    constexpr auto operator*=(const soft_double& other) -> soft_double& { my_value = f64_mul(my_value, other.my_value); return *this; }
+    constexpr auto operator/=(const soft_double& other) -> soft_double& { my_value = f64_div(my_value, other.my_value); return *this; }
 
     // Operators pre-increment and pre-decrement.
-    SOFT_DOUBLE_CONSTEXPR auto operator++() -> soft_double& { return *this += my_value_one(); }
-    SOFT_DOUBLE_CONSTEXPR auto operator--() -> soft_double& { return *this -= my_value_one(); }
+    constexpr auto operator++() -> soft_double& { return *this += my_value_one(); }
+    constexpr auto operator--() -> soft_double& { return *this -= my_value_one(); }
 
     // Operators post-increment and post-decrement.
-    SOFT_DOUBLE_CONSTEXPR auto operator++(int) -> soft_double { const soft_double w(*this); static_cast<void>(++(*this)); return w; }
-    SOFT_DOUBLE_CONSTEXPR auto operator--(int) -> soft_double { const soft_double w(*this); static_cast<void>(--(*this)); return w; }
+    constexpr auto operator++(int) -> soft_double { const soft_double w(*this); static_cast<void>(++(*this)); return w; }
+    constexpr auto operator--(int) -> soft_double { const soft_double w(*this); static_cast<void>(--(*this)); return w; }
 
-    SOFT_DOUBLE_CONSTEXPR auto operator+() const -> const soft_double& { return *this; }
-    SOFT_DOUBLE_CONSTEXPR auto operator-() const ->       soft_double  { return { my_value ^ static_cast<std::uint64_t>(1ULL << 63U), detail::nothing() }; }
+    constexpr auto operator+() const -> const soft_double& { return *this; }
+    constexpr auto operator-() const ->       soft_double  { return { my_value ^ static_cast<std::uint64_t>(1ULL << 63U), detail::nothing() }; }
 
     static constexpr auto my_value_zero   () -> soft_double { return { static_cast<std::uint64_t>(UINT64_C(0)),                   detail::nothing() }; }
     static constexpr auto my_value_one    () -> soft_double { return { static_cast<std::uint64_t>(UINT64_C(0x3FF0000000000000)),  detail::nothing() }; }
@@ -665,7 +609,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                : (a.my_value != b.my_value)     && ((static_cast<unsigned>(detail::signF64UI(a.my_value) ? 1U : 0U) ^ static_cast<unsigned>((a.my_value < b.my_value) ? 1U : 0U)) != 0U);
     }
 
-    static SOFT_DOUBLE_CONSTEXPR auto f64_add(const std::uint64_t a, const std::uint64_t b) -> std::uint64_t
+    static constexpr auto f64_add(const std::uint64_t a, const std::uint64_t b) -> std::uint64_t
     {
       const auto signA = detail::signF64UI(a);
 
@@ -673,7 +617,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                               : softfloat_subMagsF64(a, b, signA));
     }
 
-    static SOFT_DOUBLE_CONSTEXPR auto f64_sub(const std::uint64_t a, const std::uint64_t b) -> std::uint64_t
+    static constexpr auto f64_sub(const std::uint64_t a, const std::uint64_t b) -> std::uint64_t
     {
       const auto signA = detail::signF64UI(a);
 
@@ -681,7 +625,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                               : softfloat_addMagsF64(a, b, signA));
     }
 
-    static SOFT_DOUBLE_CONSTEXPR auto f64_mul(const std::uint64_t a, const std::uint64_t b) -> std::uint64_t
+    static constexpr auto f64_mul(const std::uint64_t a, const std::uint64_t b) -> std::uint64_t
     {
       const auto signA = detail::signF64UI(a);
       const auto expA  = detail::expF64UI (a);
@@ -767,7 +711,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       return result;
     }
 
-    static SOFT_DOUBLE_CONSTEXPR auto f64_div(const std::uint64_t a, const std::uint64_t b) -> std::uint64_t
+    static constexpr auto f64_div(const std::uint64_t a, const std::uint64_t b) -> std::uint64_t
     {
       const auto signA = detail::signF64UI(a);
             auto expA  = detail::expF64UI (a);
@@ -896,7 +840,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       return result;
     }
 
-    static SOFT_DOUBLE_CONSTEXPR auto f64_sqrt(const std::uint64_t a) -> std::uint64_t
+    static constexpr auto f64_sqrt(const std::uint64_t a) -> std::uint64_t
     {
       auto expA = detail::expF64UI (a);
       auto sigA = detail::fracF64UI(a);
@@ -999,7 +943,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       return result;
     }
 
-    static SOFT_DOUBLE_CONSTEXPR auto f64_to_ui32(const std::uint64_t a) -> std::uint32_t
+    static constexpr auto f64_to_ui32(const std::uint64_t a) -> std::uint32_t
     {
       const auto expA = detail::expF64UI (a);
             auto sig  = detail::fracF64UI(a);
@@ -1019,7 +963,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       return softfloat_roundToUI32(detail::signF64UI(a), sig);
     }
 
-    static SOFT_DOUBLE_CONSTEXPR auto f64_to__i32(std::uint64_t a) -> std::int32_t // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+    static constexpr auto f64_to__i32(std::uint64_t a) -> std::int32_t // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
     {
       const auto expA = detail::expF64UI (a);
             auto sig  = detail::fracF64UI(a);
@@ -1039,7 +983,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       return softfloat_roundToI32(detail::signF64UI(a), sig);
     }
 
-    static SOFT_DOUBLE_CONSTEXPR auto f64_to_ui64(std::uint64_t a) -> std::uint64_t
+    static constexpr auto f64_to_ui64(std::uint64_t a) -> std::uint64_t
     {
       const auto expA = detail::expF64UI (a);
             auto sig  = detail::fracF64UI(a);
@@ -1057,7 +1001,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       return softfloat_roundToUI64(detail::signF64UI(a), sigExtra.v1);
     }
 
-    static SOFT_DOUBLE_CONSTEXPR auto f64_to__i64(std::uint64_t a) -> std::int64_t // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+    static constexpr auto f64_to__i64(std::uint64_t a) -> std::int64_t // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
     {
       const auto expA = detail::expF64UI (a);
             auto sig  = detail::fracF64UI(a);
@@ -1075,7 +1019,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       return softfloat_roundToI64(detail::signF64UI(a), sigExtra.v1);
     }
 
-    static SOFT_DOUBLE_CONSTEXPR auto f64_to_f32(const std::uint64_t a) -> float
+    static constexpr auto f64_to_f32(const std::uint64_t a) -> float
     {
       return
         softfloat_roundPackToF32
@@ -1093,7 +1037,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         );
     }
 
-    static SOFT_DOUBLE_CONSTEXPR auto softfloat_roundPackToF32(bool sign, std::int16_t expA, std::uint32_t sig) -> float
+    static constexpr auto softfloat_roundPackToF32(bool sign, std::int16_t expA, std::uint32_t sig) -> float
     {
       constexpr auto roundIncrement = static_cast<std::uint_fast8_t>(UINT8_C(0x40));
 
@@ -1290,7 +1234,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         );
     }
 
-    static SOFT_DOUBLE_CONSTEXPR auto softfloat_addMagsF64(std::uint64_t uiA, std::uint64_t uiB, bool signZ) -> std::uint64_t
+    static constexpr auto softfloat_addMagsF64(std::uint64_t uiA, std::uint64_t uiB, bool signZ) -> std::uint64_t
     {
       const auto expA = detail::expF64UI (uiA);
             auto sigA = detail::fracF64UI(uiA);
@@ -1364,7 +1308,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       return softfloat_roundPackToF64(signZ, expZ, sigZ);
     }
 
-    static SOFT_DOUBLE_CONSTEXPR auto softfloat_approxRecipSqrt32_1(std::uint32_t oddExpA, std::uint32_t a) -> std::uint32_t
+    static constexpr auto softfloat_approxRecipSqrt32_1(std::uint32_t oddExpA, std::uint32_t a) -> std::uint32_t
     {
       // Returns an approximation to the reciprocal of the square root of the number
       // represented by a, where a is interpreted as an unsigned fixed-point
@@ -1472,7 +1416,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       return r;
     }
 
-    static SOFT_DOUBLE_CONSTEXPR auto softfloat_normRoundPackToF64(bool sign, std::int16_t expA, std::uint64_t sig) -> std::uint64_t
+    static constexpr auto softfloat_normRoundPackToF64(bool sign, std::int16_t expA, std::uint64_t sig) -> std::uint64_t
     {
       std::uint64_t result { };
 
@@ -1510,7 +1454,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       return result;
     }
 
-    static SOFT_DOUBLE_CONSTEXPR auto softfloat_roundPackToF64(bool sign, std::int16_t expA, std::uint64_t sig) -> std::uint64_t
+    static constexpr auto softfloat_roundPackToF64(bool sign, std::int16_t expA, std::uint64_t sig) -> std::uint64_t
     {
       if(   (static_cast<std::uint16_t>(expA) >= static_cast<std::uint16_t>(UINT16_C(0x7FD)))
          && (                           expA  <  static_cast<std::int16_t> ( INT16_C(0))))
@@ -1547,7 +1491,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       return detail::packToF64UI(sign, expA, sig);
     }
 
-    static SOFT_DOUBLE_CONSTEXPR auto softfloat_subMagsF64(std::uint64_t uiA, std::uint64_t uiB, bool signZ) -> std::uint64_t
+    static constexpr auto softfloat_subMagsF64(std::uint64_t uiA, std::uint64_t uiB, bool signZ) -> std::uint64_t
     {
       std::uint64_t uiZ { };
       std::int16_t  expZ { };
@@ -1707,7 +1651,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     friend constexpr auto fabs (soft_double x) -> soft_double { return { static_cast<std::uint64_t>(x.my_value & static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF))), detail::nothing() }; }
     friend constexpr auto sqrt (soft_double x) -> soft_double { return { f64_sqrt(x.my_value), detail::nothing() }; }
 
-    friend SOFT_DOUBLE_CONSTEXPR auto frexp(soft_double x, int* expptr) -> soft_double
+    friend constexpr auto frexp(soft_double x, int* expptr) -> soft_double
     {
       const auto expA =
         static_cast<std::int16_t>
@@ -1741,15 +1685,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       };
     }
 
-    friend SOFT_DOUBLE_CONSTEXPR auto floor(soft_double x) -> soft_double;
-    friend SOFT_DOUBLE_CONSTEXPR auto ceil (soft_double x) -> soft_double;
-    friend SOFT_DOUBLE_CONSTEXPR auto exp  (soft_double x) -> soft_double;
-    friend SOFT_DOUBLE_CONSTEXPR auto log  (soft_double x) -> soft_double;
+    friend constexpr auto floor(soft_double x) -> soft_double;
+    friend constexpr auto ceil (soft_double x) -> soft_double;
+    friend constexpr auto exp  (soft_double x) -> soft_double;
+    friend constexpr auto log  (soft_double x) -> soft_double;
 
     template<typename UnsignedIntegralType,
              typename std::enable_if<(   std::is_integral<UnsignedIntegralType>::value
                                       && std::is_unsigned<UnsignedIntegralType>::value)>::type const*>
-    friend SOFT_DOUBLE_CONSTEXPR auto pow(soft_double x, UnsignedIntegralType u) -> soft_double
+    friend constexpr auto pow(soft_double x, UnsignedIntegralType u) -> soft_double
     {
       soft_double result { };
 
@@ -1786,7 +1730,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     template<typename SignedIntegralType,
              typename std::enable_if<(   std::is_integral<SignedIntegralType>::value
                                       && std::is_signed  <SignedIntegralType>::value)>::type const*>
-    friend SOFT_DOUBLE_CONSTEXPR auto pow(soft_double x, SignedIntegralType n) -> soft_double
+    friend constexpr auto pow(soft_double x, SignedIntegralType n) -> soft_double
     {
       soft_double result { };
 
@@ -1821,34 +1765,34 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       return result;
     }
 
-    friend SOFT_DOUBLE_CONSTEXPR auto sin(soft_double x) -> soft_double;
-    friend SOFT_DOUBLE_CONSTEXPR auto cos(soft_double x) -> soft_double;
-    friend SOFT_DOUBLE_CONSTEXPR auto tan(soft_double x) -> soft_double;
+    friend constexpr auto sin(soft_double x) -> soft_double;
+    friend constexpr auto cos(soft_double x) -> soft_double;
+    friend constexpr auto tan(soft_double x) -> soft_double;
 
-    friend SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& a, const soft_double& b) -> soft_double;
-    friend SOFT_DOUBLE_CONSTEXPR auto operator-(const soft_double& a, const soft_double& b) -> soft_double;
-    friend SOFT_DOUBLE_CONSTEXPR auto operator*(const soft_double& a, const soft_double& b) -> soft_double;
-    friend SOFT_DOUBLE_CONSTEXPR auto operator/(const soft_double& a, const soft_double& b) -> soft_double;
+    friend constexpr auto operator+(const soft_double& a, const soft_double& b) -> soft_double;
+    friend constexpr auto operator-(const soft_double& a, const soft_double& b) -> soft_double;
+    friend constexpr auto operator*(const soft_double& a, const soft_double& b) -> soft_double;
+    friend constexpr auto operator/(const soft_double& a, const soft_double& b) -> soft_double;
 
-    template<typename UnsignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(u) += soft_double(n); }
-    template<typename UnsignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator-(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(u) -= soft_double(n); }
-    template<typename UnsignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator*(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(u) *= soft_double(n); }
-    template<typename UnsignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator/(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(u) /= soft_double(n); }
+    template<typename UnsignedIntegralType> friend constexpr auto operator+(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(u) += soft_double(n); }
+    template<typename UnsignedIntegralType> friend constexpr auto operator-(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(u) -= soft_double(n); }
+    template<typename UnsignedIntegralType> friend constexpr auto operator*(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(u) *= soft_double(n); }
+    template<typename UnsignedIntegralType> friend constexpr auto operator/(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(u) /= soft_double(n); }
 
-    template<typename UnsignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator+(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(n) += u; }
-    template<typename UnsignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator-(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(n) -= u; }
-    template<typename UnsignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator*(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(n) *= u; }
-    template<typename UnsignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator/(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(n) /= u; }
+    template<typename UnsignedIntegralType> friend constexpr auto operator+(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(n) += u; }
+    template<typename UnsignedIntegralType> friend constexpr auto operator-(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(n) -= u; }
+    template<typename UnsignedIntegralType> friend constexpr auto operator*(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(n) *= u; }
+    template<typename UnsignedIntegralType> friend constexpr auto operator/(UnsignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(n) /= u; }
 
-    template<typename SignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(u) += soft_double(n); }
-    template<typename SignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator-(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(u) -= soft_double(n); }
-    template<typename SignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator*(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(u) *= soft_double(n); }
-    template<typename SignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator/(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(u) /= soft_double(n); }
+    template<typename SignedIntegralType> friend constexpr auto operator+(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(u) += soft_double(n); }
+    template<typename SignedIntegralType> friend constexpr auto operator-(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(u) -= soft_double(n); }
+    template<typename SignedIntegralType> friend constexpr auto operator*(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(u) *= soft_double(n); }
+    template<typename SignedIntegralType> friend constexpr auto operator/(const soft_double& u, SignedIntegralType n) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(u) /= soft_double(n); }
 
-    template<typename SignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator+(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(n) += u; }
-    template<typename SignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator-(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(n) -= u; }
-    template<typename SignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator*(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(n) *= u; }
-    template<typename SignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator/(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(n) /= u; }
+    template<typename SignedIntegralType> friend constexpr auto operator+(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(n) += u; }
+    template<typename SignedIntegralType> friend constexpr auto operator-(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(n) -= u; }
+    template<typename SignedIntegralType> friend constexpr auto operator*(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(n) *= u; }
+    template<typename SignedIntegralType> friend constexpr auto operator/(SignedIntegralType n, const soft_double& u) -> typename std::enable_if<std::is_integral<SignedIntegralType>::value && std::is_signed<SignedIntegralType>::value, soft_double>::type { return soft_double(n) /= u; }
 
     friend constexpr auto operator< (const soft_double& a, const soft_double& b) -> bool;
     friend constexpr auto operator<=(const soft_double& a, const soft_double& b) -> bool;
@@ -1907,40 +1851,40 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     friend constexpr auto operator==(long double f, const soft_double& a) -> bool;
   };
 
-  inline SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& a, const soft_double& b) -> soft_double { return { soft_double::f64_add(a.my_value, b.my_value), detail::nothing() }; }
-  inline SOFT_DOUBLE_CONSTEXPR auto operator-(const soft_double& a, const soft_double& b) -> soft_double { return { soft_double::f64_sub(a.my_value, b.my_value), detail::nothing() }; }
-  inline SOFT_DOUBLE_CONSTEXPR auto operator*(const soft_double& a, const soft_double& b) -> soft_double { return { soft_double::f64_mul(a.my_value, b.my_value), detail::nothing() }; }
-  inline SOFT_DOUBLE_CONSTEXPR auto operator/(const soft_double& a, const soft_double& b) -> soft_double { return { soft_double::f64_div(a.my_value, b.my_value), detail::nothing() }; }
+  inline constexpr auto operator+(const soft_double& a, const soft_double& b) -> soft_double { return { soft_double::f64_add(a.my_value, b.my_value), detail::nothing() }; }
+  inline constexpr auto operator-(const soft_double& a, const soft_double& b) -> soft_double { return { soft_double::f64_sub(a.my_value, b.my_value), detail::nothing() }; }
+  inline constexpr auto operator*(const soft_double& a, const soft_double& b) -> soft_double { return { soft_double::f64_mul(a.my_value, b.my_value), detail::nothing() }; }
+  inline constexpr auto operator/(const soft_double& a, const soft_double& b) -> soft_double { return { soft_double::f64_div(a.my_value, b.my_value), detail::nothing() }; }
 
-  inline SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& u, float f) -> soft_double { return soft_double(u) += soft_double(f); }
-  inline SOFT_DOUBLE_CONSTEXPR auto operator-(const soft_double& u, float f) -> soft_double { return soft_double(u) -= soft_double(f); }
-  inline SOFT_DOUBLE_CONSTEXPR auto operator*(const soft_double& u, float f) -> soft_double { return soft_double(u) *= soft_double(f); }
-  inline SOFT_DOUBLE_CONSTEXPR auto operator/(const soft_double& u, float f) -> soft_double { return soft_double(u) /= soft_double(f); }
+  inline constexpr auto operator+(const soft_double& u, float f) -> soft_double { return soft_double(u) += soft_double(f); }
+  inline constexpr auto operator-(const soft_double& u, float f) -> soft_double { return soft_double(u) -= soft_double(f); }
+  inline constexpr auto operator*(const soft_double& u, float f) -> soft_double { return soft_double(u) *= soft_double(f); }
+  inline constexpr auto operator/(const soft_double& u, float f) -> soft_double { return soft_double(u) /= soft_double(f); }
 
-  inline SOFT_DOUBLE_CONSTEXPR auto operator+(float f, const soft_double& u) -> soft_double { return soft_double(f) += u; }
-  inline SOFT_DOUBLE_CONSTEXPR auto operator-(float f, const soft_double& u) -> soft_double { return soft_double(f) -= u; }
-  inline SOFT_DOUBLE_CONSTEXPR auto operator*(float f, const soft_double& u) -> soft_double { return soft_double(f) *= u; }
-  inline SOFT_DOUBLE_CONSTEXPR auto operator/(float f, const soft_double& u) -> soft_double { return soft_double(f) /= u; }
+  inline constexpr auto operator+(float f, const soft_double& u) -> soft_double { return soft_double(f) += u; }
+  inline constexpr auto operator-(float f, const soft_double& u) -> soft_double { return soft_double(f) -= u; }
+  inline constexpr auto operator*(float f, const soft_double& u) -> soft_double { return soft_double(f) *= u; }
+  inline constexpr auto operator/(float f, const soft_double& u) -> soft_double { return soft_double(f) /= u; }
 
-  inline SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& u, double f) -> soft_double { return soft_double(u) += soft_double(f); }
-  inline SOFT_DOUBLE_CONSTEXPR auto operator-(const soft_double& u, double f) -> soft_double { return soft_double(u) -= soft_double(f); }
-  inline SOFT_DOUBLE_CONSTEXPR auto operator*(const soft_double& u, double f) -> soft_double { return soft_double(u) *= soft_double(f); }
-  inline SOFT_DOUBLE_CONSTEXPR auto operator/(const soft_double& u, double f) -> soft_double { return soft_double(u) /= soft_double(f); }
+  inline constexpr auto operator+(const soft_double& u, double f) -> soft_double { return soft_double(u) += soft_double(f); }
+  inline constexpr auto operator-(const soft_double& u, double f) -> soft_double { return soft_double(u) -= soft_double(f); }
+  inline constexpr auto operator*(const soft_double& u, double f) -> soft_double { return soft_double(u) *= soft_double(f); }
+  inline constexpr auto operator/(const soft_double& u, double f) -> soft_double { return soft_double(u) /= soft_double(f); }
 
-  inline SOFT_DOUBLE_CONSTEXPR auto operator+(double f, const soft_double& u) -> soft_double { return soft_double(f) += u; }
-  inline SOFT_DOUBLE_CONSTEXPR auto operator-(double f, const soft_double& u) -> soft_double { return soft_double(f) -= u; }
-  inline SOFT_DOUBLE_CONSTEXPR auto operator*(double f, const soft_double& u) -> soft_double { return soft_double(f) *= u; }
-  inline SOFT_DOUBLE_CONSTEXPR auto operator/(double f, const soft_double& u) -> soft_double { return soft_double(f) /= u; }
+  inline constexpr auto operator+(double f, const soft_double& u) -> soft_double { return soft_double(f) += u; }
+  inline constexpr auto operator-(double f, const soft_double& u) -> soft_double { return soft_double(f) -= u; }
+  inline constexpr auto operator*(double f, const soft_double& u) -> soft_double { return soft_double(f) *= u; }
+  inline constexpr auto operator/(double f, const soft_double& u) -> soft_double { return soft_double(f) /= u; }
 
-  inline SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& u, long double f) -> soft_double { return soft_double(u) += soft_double(static_cast<double>(f)); }
-  inline SOFT_DOUBLE_CONSTEXPR auto operator-(const soft_double& u, long double f) -> soft_double { return soft_double(u) -= soft_double(static_cast<double>(f)); }
-  inline SOFT_DOUBLE_CONSTEXPR auto operator*(const soft_double& u, long double f) -> soft_double { return soft_double(u) *= soft_double(static_cast<double>(f)); }
-  inline SOFT_DOUBLE_CONSTEXPR auto operator/(const soft_double& u, long double f) -> soft_double { return soft_double(u) /= soft_double(static_cast<double>(f)); }
+  inline constexpr auto operator+(const soft_double& u, long double f) -> soft_double { return soft_double(u) += soft_double(static_cast<double>(f)); }
+  inline constexpr auto operator-(const soft_double& u, long double f) -> soft_double { return soft_double(u) -= soft_double(static_cast<double>(f)); }
+  inline constexpr auto operator*(const soft_double& u, long double f) -> soft_double { return soft_double(u) *= soft_double(static_cast<double>(f)); }
+  inline constexpr auto operator/(const soft_double& u, long double f) -> soft_double { return soft_double(u) /= soft_double(static_cast<double>(f)); }
 
-  inline SOFT_DOUBLE_CONSTEXPR auto operator+(long double f, const soft_double& u) -> soft_double { return soft_double(static_cast<double>(f)) += u; }
-  inline SOFT_DOUBLE_CONSTEXPR auto operator-(long double f, const soft_double& u) -> soft_double { return soft_double(static_cast<double>(f)) -= u; }
-  inline SOFT_DOUBLE_CONSTEXPR auto operator*(long double f, const soft_double& u) -> soft_double { return soft_double(static_cast<double>(f)) *= u; }
-  inline SOFT_DOUBLE_CONSTEXPR auto operator/(long double f, const soft_double& u) -> soft_double { return soft_double(static_cast<double>(f)) /= u; }
+  inline constexpr auto operator+(long double f, const soft_double& u) -> soft_double { return soft_double(static_cast<double>(f)) += u; }
+  inline constexpr auto operator-(long double f, const soft_double& u) -> soft_double { return soft_double(static_cast<double>(f)) -= u; }
+  inline constexpr auto operator*(long double f, const soft_double& u) -> soft_double { return soft_double(static_cast<double>(f)) *= u; }
+  inline constexpr auto operator/(long double f, const soft_double& u) -> soft_double { return soft_double(static_cast<double>(f)) /= u; }
 
   constexpr auto operator< (const soft_double& a, const soft_double& b) -> bool { return soft_double::my_lt(a, b); }
   constexpr auto operator<=(const soft_double& a, const soft_double& b) -> bool { return soft_double::my_le(a, b); }
@@ -1993,7 +1937,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   namespace detail {
 
-  inline SOFT_DOUBLE_CONSTEXPR auto sin_pade(soft_double x) -> soft_double
+  inline constexpr auto sin_pade(soft_double x) -> soft_double
   {
     // PadeApproximant[Sin[x], {x, 0, {7,7}}]
     // FullSimplify[%]
@@ -2001,15 +1945,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     //    x (11511339840 - 1640635920 x^2 + 52785432 x^4 - 479249 x^6)
     // / (7 ( 1644477120  +  39702960 x^2 +   453960 x^4 +   2623 x^6))
 
-    SOFT_DOUBLE_CONSTEXPR soft_double coef_sin_top_0(INT64_C(+11511339840));
-    SOFT_DOUBLE_CONSTEXPR soft_double coef_sin_top_1(INT32_C(-1640635920));
-    SOFT_DOUBLE_CONSTEXPR soft_double coef_sin_top_2(INT32_C(+52785432));
-    SOFT_DOUBLE_CONSTEXPR soft_double coef_sin_top_3(INT32_C(-479249));
+    constexpr soft_double coef_sin_top_0(INT64_C(+11511339840));
+    constexpr soft_double coef_sin_top_1(INT32_C(-1640635920));
+    constexpr soft_double coef_sin_top_2(INT32_C(+52785432));
+    constexpr soft_double coef_sin_top_3(INT32_C(-479249));
 
-    SOFT_DOUBLE_CONSTEXPR soft_double coef_sin_bot_0(UINT32_C(+1644477120));
-    SOFT_DOUBLE_CONSTEXPR soft_double coef_sin_bot_1(UINT32_C(+39702960));
-    SOFT_DOUBLE_CONSTEXPR soft_double coef_sin_bot_2(UINT32_C(+453960));
-    SOFT_DOUBLE_CONSTEXPR soft_double coef_sin_bot_3(UINT32_C(+2623));
+    constexpr soft_double coef_sin_bot_0(UINT32_C(+1644477120));
+    constexpr soft_double coef_sin_bot_1(UINT32_C(+39702960));
+    constexpr soft_double coef_sin_bot_2(UINT32_C(+453960));
+    constexpr soft_double coef_sin_bot_3(UINT32_C(+2623));
 
 
     const soft_double x2(x * x);
@@ -2027,7 +1971,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return (x * top) / (bot * 7);
   }
 
-  inline SOFT_DOUBLE_CONSTEXPR auto cos_pade(soft_double x) -> soft_double
+  inline constexpr auto cos_pade(soft_double x) -> soft_double
   {
     // PadeApproximant[Cos[x] - 1, {x, 0, {8,6}}]
     // FullSimplify[%]
@@ -2035,15 +1979,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     //   (x^2 (-5491886400 + 346666320 x^2 - 7038360 x^4 + 45469 x^6))
     // / (24  (  457657200 +   9249240 x^2 +   86030 x^4 +   389 x^6))
 
-    SOFT_DOUBLE_CONSTEXPR soft_double coef_cos_top_0(INT64_C(-5491886400));
-    SOFT_DOUBLE_CONSTEXPR soft_double coef_cos_top_1(INT32_C(+346666320));
-    SOFT_DOUBLE_CONSTEXPR soft_double coef_cos_top_2(INT32_C(-7038360));
-    SOFT_DOUBLE_CONSTEXPR soft_double coef_cos_top_3(INT32_C(+45469));
+    constexpr soft_double coef_cos_top_0(INT64_C(-5491886400));
+    constexpr soft_double coef_cos_top_1(INT32_C(+346666320));
+    constexpr soft_double coef_cos_top_2(INT32_C(-7038360));
+    constexpr soft_double coef_cos_top_3(INT32_C(+45469));
 
-    SOFT_DOUBLE_CONSTEXPR soft_double coef_cos_bot_0(UINT32_C(457657200));
-    SOFT_DOUBLE_CONSTEXPR soft_double coef_cos_bot_1(UINT32_C(9249240));
-    SOFT_DOUBLE_CONSTEXPR soft_double coef_cos_bot_2(UINT32_C(86030));
-    SOFT_DOUBLE_CONSTEXPR soft_double coef_cos_bot_3(UINT32_C(389));
+    constexpr soft_double coef_cos_bot_0(UINT32_C(457657200));
+    constexpr soft_double coef_cos_bot_1(UINT32_C(9249240));
+    constexpr soft_double coef_cos_bot_2(UINT32_C(86030));
+    constexpr soft_double coef_cos_bot_3(UINT32_C(389));
 
     const soft_double x2(x * x);
 
@@ -2062,7 +2006,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   } // namespace detail
 
-  inline SOFT_DOUBLE_CONSTEXPR auto sin(soft_double x) -> soft_double // NOLINT(misc-no-recursion)
+  inline constexpr auto sin(soft_double x) -> soft_double // NOLINT(misc-no-recursion)
   {
     soft_double s { };
 
@@ -2099,15 +2043,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         //   (39251520 - 18471600 dx^2 + 1075032 dx^4 - 14615 dx^6)
         // / (39251520 +  1154160 dx^2 +   16632 dx^4 +   127 dx^6)
 
-        SOFT_DOUBLE_CONSTEXPR soft_double coef_top_0(INT32_C(+39251520));
-        SOFT_DOUBLE_CONSTEXPR soft_double coef_top_1(INT32_C(-18471600));
-        SOFT_DOUBLE_CONSTEXPR soft_double coef_top_2(INT32_C(+1075032));
-        SOFT_DOUBLE_CONSTEXPR soft_double coef_top_3(INT32_C(-14615));
+        constexpr soft_double coef_top_0(INT32_C(+39251520));
+        constexpr soft_double coef_top_1(INT32_C(-18471600));
+        constexpr soft_double coef_top_2(INT32_C(+1075032));
+        constexpr soft_double coef_top_3(INT32_C(-14615));
 
-        SOFT_DOUBLE_CONSTEXPR soft_double coef_bot_0(UINT32_C(39251520));
-        SOFT_DOUBLE_CONSTEXPR soft_double coef_bot_1(UINT32_C(1154160));
-        SOFT_DOUBLE_CONSTEXPR soft_double coef_bot_2(UINT32_C(16632));
-        SOFT_DOUBLE_CONSTEXPR soft_double coef_bot_3(UINT32_C(127));
+        constexpr soft_double coef_bot_0(UINT32_C(39251520));
+        constexpr soft_double coef_bot_1(UINT32_C(1154160));
+        constexpr soft_double coef_bot_2(UINT32_C(16632));
+        constexpr soft_double coef_bot_3(UINT32_C(127));
 
         const soft_double x2(delta_pi_half * delta_pi_half);
 
@@ -2169,7 +2113,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return s;
   }
 
-  inline SOFT_DOUBLE_CONSTEXPR auto cos(soft_double x) -> soft_double // NOLINT(misc-no-recursion)
+  inline constexpr auto cos(soft_double x) -> soft_double // NOLINT(misc-no-recursion)
   {
     soft_double c { };
 
@@ -2258,7 +2202,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return c;
   }
 
-  inline SOFT_DOUBLE_CONSTEXPR auto floor(soft_double x) -> soft_double
+  inline constexpr auto floor(soft_double x) -> soft_double
   {
     soft_double result { };
 
@@ -2280,7 +2224,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return result;
   }
 
-  inline SOFT_DOUBLE_CONSTEXPR auto ceil(soft_double x) -> soft_double
+  inline constexpr auto ceil(soft_double x) -> soft_double
   {
     soft_double result { };
 
@@ -2302,7 +2246,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return result;
   }
 
-  inline SOFT_DOUBLE_CONSTEXPR auto exp(soft_double x) -> soft_double
+  inline constexpr auto exp(soft_double x) -> soft_double
   {
     // PadeApproximant[Exp[x] - 1, {x, 0, {6, 6}}]
     // FullSimplify[%]
@@ -2334,7 +2278,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return ((n != 0) ? ldexp(result, n) : result);
   }
 
-  inline SOFT_DOUBLE_CONSTEXPR auto log(soft_double x) -> soft_double // NOLINT(misc-no-recursion)
+  inline constexpr auto log(soft_double x) -> soft_double // NOLINT(misc-no-recursion)
   {
     soft_double result { };
 
@@ -2397,31 +2341,31 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return result;
   }
 
-  inline SOFT_DOUBLE_CONSTEXPR auto pow(soft_double x, soft_double a) -> soft_double
+  inline constexpr auto pow(soft_double x, soft_double a) -> soft_double
   {
     return exp(a * log(x));
   }
 
-  inline SOFT_DOUBLE_CONSTEXPR auto tan(soft_double x) -> soft_double
+  inline constexpr auto tan(soft_double x) -> soft_double
   {
     return sin(x) / cos(x);
   }
 
-  inline SOFT_DOUBLE_CONSTEXPR auto sinh(soft_double x) -> soft_double
+  inline constexpr auto sinh(soft_double x) -> soft_double
   {
     const soft_double ep = exp(x);
 
     return (ep - (1 / ep)) / 2;
   }
 
-  inline SOFT_DOUBLE_CONSTEXPR auto cosh(soft_double x) -> soft_double
+  inline constexpr auto cosh(soft_double x) -> soft_double
   {
     const soft_double ep = exp(x);
 
     return (ep + (1 / ep)) / 2;
   }
 
-  inline SOFT_DOUBLE_CONSTEXPR auto tanh(soft_double x) -> soft_double
+  inline constexpr auto tanh(soft_double x) -> soft_double
   {
     const soft_double ep = exp(x);
     const soft_double em = 1 / ep;
