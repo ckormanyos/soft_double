@@ -92,7 +92,7 @@ $$\sqrt{\pi} \approx 1.77245385090551602730 \ldots$$
 
 This example, compiled with successful output result,
 is shown in its entirety in the following
-[short link](https://godbolt.org/z/YdMnjPohs) to [godbolt](https://godbolt.org).
+[short link](https://godbolt.org/z/j66jMqPT8) to [godbolt](https://godbolt.org).
 
 ```cpp
 #include <cmath>
@@ -104,7 +104,7 @@ is shown in its entirety in the following
 int main()
 {
   // Use a convenient alias for float64_t.
-  using float64_t = math::softfloat::soft_double;
+  using ::math::softfloat::float64_t;
 
   // Use a cached value for pi.
   const float64_t my_pi = float64_t::my_value_pi();
@@ -176,7 +176,7 @@ of a square root function and its comparison of its result
 with the known control value.
 
 See this example fully worked out at the following
-[short link](https://godbolt.org/z/Kc4vWYKbx) to [godbolt](https://godbolt.org).
+[short link](https://godbolt.org/z/5WPEq7h3q) to [godbolt](https://godbolt.org).
 The generated assembly includes nothing other than the call to `main()`
 and its subsequent `return` of the value zero
 (i.e., `main()`'s successful return-value in this example).
