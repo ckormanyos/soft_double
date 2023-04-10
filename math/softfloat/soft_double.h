@@ -575,9 +575,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     SOFT_DOUBLE_CONSTEXPR auto operator=(soft_double&&) noexcept -> soft_double& = default;
 
-                          SOFT_DOUBLE_CONSTEXPR auto  representation()       ->       representation_type& { return my_value; }
-    SOFT_DOUBLE_NODISCARD SOFT_DOUBLE_CONSTEXPR auto  representation() const -> const representation_type& { return my_value; }
-    SOFT_DOUBLE_NODISCARD SOFT_DOUBLE_CONSTEXPR auto crepresentation() const -> const representation_type& { return my_value; }
+                          constexpr auto  representation()       -> representation_type { return my_value; }
+    SOFT_DOUBLE_NODISCARD constexpr auto  representation() const -> representation_type { return my_value; }
+    SOFT_DOUBLE_NODISCARD constexpr auto crepresentation() const -> representation_type { return my_value; }
 
     static constexpr auto get_rep(soft_double a) -> representation_type { return a.my_value; }
 

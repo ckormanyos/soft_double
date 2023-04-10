@@ -16,4 +16,5 @@ FILES_PRJ  =   $(PATH_SRC)/test/test                                            
                $(PATH_SRC)/examples/example005_polylog_series                   \
                $(PATH_SRC)/examples/example007_catalan_series                   \
                $(PATH_SRC)/examples/example010_hypergeometric_2f1               \
-               $(PATH_SRC)/examples/example011_trig_trapezoid_integral
+               $(PATH_SRC)/examples/example011_trig_trapezoid_integral          \
+               $(PATH_SRC)/examples/example012_exercise_constexpr

@@ -21,6 +21,7 @@
   auto example007_catalan_series         () -> bool;
   auto example010_hypergeometric_2f1     () -> bool;
   auto example011_trig_trapezoid_integral() -> bool;
+  auto example012_exercise_constexpr     () -> bool;
 
   #if(__cplusplus >= 201703L)
   } // namespace math::softfloat
