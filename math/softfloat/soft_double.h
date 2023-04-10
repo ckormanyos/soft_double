@@ -485,7 +485,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     using representation_type = std::uint64_t;
 
-    soft_double() { };
+    constexpr soft_double() { };
 
     template<typename UnsignedIntegralType,
              typename std::enable_if<(   std::is_integral<UnsignedIntegralType>::value
