@@ -98,7 +98,7 @@ constexpr auto catalan() -> FloatingPointType
       ) / 8U
     );
 
-  return result;
+  return result; // NOLINT(performance-no-automatic-move)
 }
 
 } // namespace local
