@@ -18,6 +18,8 @@ soft_double
         <img src="https://img.shields.io/github/commit-activity/y/ckormanyos/soft_double" alt="GitHub commit activity"></a>
     <a href="https://github.com/ckormanyos/soft_double">
         <img src="https://img.shields.io/github/languages/code-size/ckormanyos/soft_double" alt="GitHub code size in bytes"></a>
+    <a href="https://godbolt.org/z/r4zrY6z4s" alt="godbolt">
+        <img src="https://img.shields.io/badge/try%20it%20on-godbolt-green" /></a>
 </p>
 
 soft_double is a C++ header-only library that implements
@@ -87,6 +89,10 @@ The following more detailed example provides an in-depth examination
 into effectively using soft_double. This code computes and checks the value of
 
 $$\sqrt{\pi} \approx 1.77245385090551602730 \ldots$$
+
+This example, compiled with successful output result,
+is shown in its entirety in the following
+[short link](https://godbolt.org/z/YdMnjPohs) to [godbolt](https://godbolt.org).
 
 ```cpp
 #include <cmath>
