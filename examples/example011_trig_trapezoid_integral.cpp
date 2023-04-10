@@ -123,7 +123,7 @@ auto cyl_bessel_j(const std::uint_fast8_t n, const float_type& x) -> float_type
 
   const float_type jn = integration_result / pi<float_type>();
 
-  return jn;
+  return jn; // NOLINT(performance-no-automatic-move)
 }
 
 } // namespace local

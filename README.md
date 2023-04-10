@@ -45,8 +45,8 @@ comparison operations, simple functions such as
 `sin`, `cos`, and more. There is also full support/specialization
 of `std::numeric_limits<soft_double>` for the `soft_double` type.
 
-The soft_double implementation is written in header-only C++11
-and is compatible for C++11, 14, 17, 20.
+The soft_double implementation is written in header-only C++14
+and is compatible for C++14, 17, 20 and beyond.
 
 ## Quick Start
 
@@ -78,7 +78,7 @@ the `avr-gcc` and other tool chains.
 ## Implementation goals
 
   - Clean header-only C++ design.
-  - Seamless portability to any modern C++11, 14, 17, 20 compiler.
+  - Seamless portability to any modern C++14, 17, 20 compiler (and beyond).
   - Achieve efficiency suitable for _bare-metal_ embedded systems.
   - Particularly useful if 64-bit native `double` or a similar built-in type is unavailable.
   - Use refactored versions of trusted algorithms based on those found in [softfloat 3e](https://github.com/ucb-bar/berkeley-softfloat-3).
@@ -92,7 +92,7 @@ $$\sqrt{\pi} \approx 1.77245385090551602730 \ldots$$
 
 This example, compiled with successful output result,
 is shown in its entirety in the following
-[short link](https://godbolt.org/z/YdMnjPohs) to [godbolt](https://godbolt.org).
+[short link](https://godbolt.org/z/j66jMqPT8) to [godbolt](https://godbolt.org).
 
 ```cpp
 #include <cmath>
@@ -104,7 +104,7 @@ is shown in its entirety in the following
 int main()
 {
   // Use a convenient alias for float64_t.
-  using float64_t = math::softfloat::soft_double;
+  using ::math::softfloat::float64_t;
 
   // Use a cached value for pi.
   const float64_t my_pi = float64_t::my_value_pi();
@@ -175,30 +175,48 @@ of `soft_double` with subsequent `constexpr` evaluation
 of a square root function and its comparison of its result
 with the known control value.
 
+See this example fully worked out at the following
+[short link](https://godbolt.org/z/5WPEq7h3q) to [godbolt](https://godbolt.org).
+The generated assembly includes nothing other than the call to `main()`
+and its subsequent `return` of the value zero
+(i.e., `main()`'s successful return-value in this example).
+
 ```cpp
+#include <cmath>
+
 #include <math/softfloat/soft_double.h>
 
 // Use a C++20 compiler for this example.
 
-// Use a cached value for pi.
-SOFT_DOUBLE_CONSTEXPR float64_t my_pi = float64_t::my_value_pi();
+int main()
+{
+  // Use a convenient alias for float64_t.
+  using ::math::softfloat::float64_t;
 
-// Compute soft_double sqrt(pi).
-SOFT_DOUBLE_CONSTEXPR float64_t s = sqrt(my_pi);
+  // Use a cached value for pi.
+  constexpr float64_t my_pi = float64_t::my_value_pi();
 
-using std::sqrt;
+  // Compute soft_double sqrt(pi).
+  constexpr float64_t s = sqrt(my_pi);
 
-// Compare with native double sqrt(pi).
-// This is a run-time comparison.
-const auto result_root_is_ok =
-  (s.crepresentation() == float64_t(sqrt(3.1415926535897932384626433832795028841972)).crepresentation());
+  using std::sqrt;
 
-SOFT_DOUBLE_CONSTEXPR auto result_root_as_constexpr_is_ok =
-  (s.crepresentation() == static_cast<typename float64_t::representation_type>(UINT64_C(0x3FFC5BF891B4EF6A)));
+  // Compare with native double sqrt(pi).
+  // This is a non-constexpr, run-time comparison.
+  const auto result_root_non_constexpr_is_ok =
+    (s.crepresentation() == float64_t(sqrt(3.1415926535897932384626433832795028841972)).crepresentation());
 
-// constexpr verification.
-// This is a compile-time comparison.
-static_assert(result_root_as_constexpr_is_ok, "Error: example001_roots_sqrt not OK!");
+  constexpr auto result_root_as_constexpr_is_ok =
+    (s.crepresentation() == static_cast<typename float64_t::representation_type>(UINT64_C(0x3FFC5BF891B4EF6A)));
+
+  // constexpr verification.
+  // This is a compile-time comparison.
+  static_assert(result_root_as_constexpr_is_ok, "Error: example001_roots_sqrt not OK!");
+
+  const auto result_is_ok = (result_root_non_constexpr_is_ok && result_root_as_constexpr_is_ok);
+
+  return (result_is_ok ? 0 : -1);
+}
 ```
 
 `constexpr`-_ness_ of `soft_double` has been checked on GCC 10 and up, clang 10 and up
@@ -266,4 +284,4 @@ that exercise various test cases.
 
 CI runs on push and pull request using GitHub Actions.
 Various compilers, operating systems, and C++ standards
-ranging from C++11, 14, 17, 20 are included in CI.
+ranging from C++14, 17, 20 are included in CI.

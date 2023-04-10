@@ -31,7 +31,7 @@ constexpr auto pi() -> float64_t
 }
 
 template<typename FloatingPointType>
-SOFT_DOUBLE_CONSTEXPR auto log_two_plus_sqrt_three() -> FloatingPointType
+constexpr auto log_two_plus_sqrt_three() -> FloatingPointType
 {
   using std::log;
   using std::sqrt;
@@ -51,7 +51,7 @@ constexpr auto log_two_plus_sqrt_three() -> float64_t
 } // namespace detail
 
 template<typename FloatingPointType>
-SOFT_DOUBLE_CONSTEXPR auto catalan() -> FloatingPointType
+constexpr auto catalan() -> FloatingPointType
 {
   using floating_point_type = FloatingPointType;
 
@@ -98,14 +98,14 @@ SOFT_DOUBLE_CONSTEXPR auto catalan() -> FloatingPointType
       ) / 8U
     );
 
-  return result;
+  return result; // NOLINT(performance-no-automatic-move)
 }
 
 } // namespace local
 
 auto math::softfloat::example007_catalan_series() -> bool
 {
-  SOFT_DOUBLE_CONSTEXPR auto c = local::catalan<float64_t>();
+  constexpr auto c = local::catalan<float64_t>();
 
   using local_representation_type = typename float64_t::representation_type;
 
@@ -120,11 +120,11 @@ auto math::softfloat::example007_catalan_series() -> bool
 
   using std::fabs;
 
-  SOFT_DOUBLE_CONSTEXPR float64_t closeness = fabs(1 - fabs(c / control));
+  constexpr float64_t closeness = fabs(1 - fabs(c / control));
 
-  SOFT_DOUBLE_CONSTEXPR auto tol = static_cast<float64_t>(std::numeric_limits<float64_t>::epsilon() * 10);
+  constexpr auto tol = static_cast<float64_t>(std::numeric_limits<float64_t>::epsilon() * 10);
 
-  SOFT_DOUBLE_CONSTEXPR auto result_is_ok = (closeness < tol);
+  constexpr auto result_is_ok = (closeness < tol);
 
   #if (defined(SOFT_DOUBLE_CONSTEXPR_IS_COMPILE_TIME_CONST) && (SOFT_DOUBLE_CONSTEXPR_IS_COMPILE_TIME_CONST != 0))
   static_assert(result_is_ok, "Error: example007_catalan_series not OK!");
