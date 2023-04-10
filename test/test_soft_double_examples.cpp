@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////
-//  Copyright Christopher Kormanyos 2020 - 2022.                 //
+//  Copyright Christopher Kormanyos 2020 - 2023.                 //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
 //  or copy at http://www.boost.org/LICENSE_1_0.txt)             //
@@ -23,6 +23,7 @@ auto test_soft_double_examples() -> bool
   result_examples_is_ok &= math::softfloat::example007_catalan_series         (); std::cout << "example007_catalan_series            : " << std::boolalpha << result_examples_is_ok << std::endl;
   result_examples_is_ok &= math::softfloat::example010_hypergeometric_2f1     (); std::cout << "example010_hypergeometric_2f1        : " << std::boolalpha << result_examples_is_ok << std::endl;
   result_examples_is_ok &= math::softfloat::example011_trig_trapezoid_integral(); std::cout << "example011_trig_trapezoid_integral   : " << std::boolalpha << result_examples_is_ok << std::endl;
+  result_examples_is_ok &= math::softfloat::example012_exercise_constexpr     (); std::cout << "example012_exercise_constexpr        : " << std::boolalpha << result_examples_is_ok << std::endl;
                                                                                   std::cout << "result_examples_is_ok                : " << std::boolalpha << result_examples_is_ok << std::endl;
 
   return result_examples_is_ok;
