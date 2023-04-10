@@ -114,6 +114,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   namespace detail {
 
+  template<typename T>
+  constexpr T my_max(T a, T b) { return ((a > b) ? a : b); }
+
   struct uint128_compound
   {
     constexpr uint128_compound(std::uint64_t a = std::uint64_t(), // NOLINT(google-explicit-constructor,hicpp-explicit-conversions,bugprone-easily-swappable-parameters)
@@ -160,8 +163,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       static_cast<std::uint64_t>
       (
           static_cast<std::uint64_t>(sign ? 1ULL << 63U : 0ULL)
-        + static_cast<std::uint64_t>(static_cast<std::uint64_t>(expA) << 52U)
-        + static_cast<std::uint64_t>(sig)
+        + static_cast<std::uint64_t>(static_cast<std::uint64_t>(static_cast<std::make_unsigned_t<IntegralTypeExp>>(expA)) << 52U)
+        + static_cast<std::uint64_t>(static_cast<std::make_unsigned_t<IntegralTypeSig>>(sig))
       );
   }
 
@@ -482,7 +485,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     using representation_type = std::uint64_t;
 
-    soft_double() = default;
+    soft_double() { };
 
     template<typename UnsignedIntegralType,
              typename std::enable_if<(   std::is_integral<UnsignedIntegralType>::value
@@ -522,7 +525,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     constexpr soft_double(long double ld)                                   // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
       : my_value(detail::uz_type<double>(static_cast<double>(ld)).my_u) { } // NOLINT(cppcoreguidelines-pro-type-union-access)
 
-    constexpr soft_double(const soft_double&) = default;
+    constexpr soft_double(const soft_double& other) : my_value(other.my_value) { };
 
     constexpr soft_double(soft_double&& other) noexcept
       : my_value(other.my_value) { }
@@ -530,9 +533,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     constexpr soft_double(std::uint64_t n, detail::nothing&&) noexcept // NOLINT(hicpp-named-parameter,readability-named-parameter)
       : my_value(static_cast<std::uint64_t>(n)) { }
 
-    constexpr auto operator=(const soft_double&) -> soft_double& = default;
+    constexpr auto operator=(const soft_double& other) -> soft_double&
+    {
+      if(this != &other)
+      {
+        my_value = other.my_value;
+      }
 
-    constexpr auto operator=(soft_double&&) noexcept -> soft_double& = default;
+      return *this;
+    }
+
+    constexpr auto operator=(soft_double&& other) noexcept -> soft_double&
+    {
+      my_value = other.my_value;
+
+      return *this;
+    }
 
     ~soft_double() = default;
 
@@ -1461,7 +1477,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         const auto safeShiftDist =
           static_cast<std::uint_fast8_t>
           (
-            (std::max)(static_cast<std::int_fast8_t>(INT8_C(0)), shiftDist)
+            detail::my_max(static_cast<std::int_fast8_t>(INT8_C(0)), shiftDist)
           );
 
         result = softfloat_roundPackToF64(sign, expA, static_cast<std::uint64_t>(sig << static_cast<unsigned>(safeShiftDist)));
@@ -1559,7 +1575,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           const auto safeShiftDist =
             static_cast<std::uint_fast8_t>
             (
-              (std::max)(static_cast<std::int_fast8_t>(INT8_C(0)), shiftDist)
+              detail::my_max(static_cast<std::int_fast8_t>(INT8_C(0)), shiftDist)
             );
 
           uiZ = detail::packToF64UI(signZ, expZ, sigDiff << static_cast<unsigned>(safeShiftDist)); // NOLINT(hicpp-signed-bitwise)
