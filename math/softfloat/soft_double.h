@@ -70,9 +70,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   #if defined(__clang__)
     #if(__cplusplus >= 201703L)
-    #define SOFT_DOUBLE_NODISCARD [[nodiscard]]
+    #define SOFT_DOUBLE_NODISCARD [[nodiscard]] // NOLINT(cppcoreguidelines-macro-usage)
     #else
-    #define SOFT_DOUBLE_NODISCARD
+    #define SOFT_DOUBLE_NODISCARD // NOLINT(cppcoreguidelines-macro-usage)
     #endif
   #else
     #if (defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard))
@@ -115,7 +115,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   namespace detail {
 
   template<typename T>
-  constexpr T my_max(T a, T b) { return ((a > b) ? a : b); }
+  constexpr auto my_max(T a, T b) noexcept -> T { return ((a > b) ? a : b); }
 
   struct uint128_compound
   {
@@ -485,7 +485,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     using representation_type = std::uint64_t;
 
-    constexpr soft_double() : my_value() { };
+    constexpr soft_double() { };
 
     template<typename UnsignedIntegralType,
              typename std::enable_if<(   std::is_integral<UnsignedIntegralType>::value
@@ -525,7 +525,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     constexpr soft_double(long double ld)                                   // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
       : my_value(detail::uz_type<double>(static_cast<double>(ld)).my_u) { } // NOLINT(cppcoreguidelines-pro-type-union-access)
 
-    constexpr soft_double(const soft_double& other) : my_value(other.my_value) { };
+    constexpr soft_double(const soft_double& other) : my_value(other.my_value) { }; // NOLINT(hicpp-use-equals-default,modernize-use-equals-default)
 
     constexpr soft_double(soft_double&& other) noexcept
       : my_value(other.my_value) { }
@@ -552,11 +552,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     ~soft_double() = default;
 
-    SOFT_DOUBLE_NODISCARD constexpr auto  representation()       -> representation_type { return my_value; }
+    SOFT_DOUBLE_NODISCARD constexpr auto  representation()       -> representation_type { return my_value; } // NOLINT(readability-make-member-function-const)
     SOFT_DOUBLE_NODISCARD constexpr auto  representation() const -> representation_type { return my_value; }
     SOFT_DOUBLE_NODISCARD constexpr auto crepresentation() const -> representation_type { return my_value; }
 
-    static constexpr auto get_rep(soft_double a) -> representation_type { return a.my_value; }
+    static constexpr auto get_rep(soft_double a) -> representation_type { return a.my_value; } // NOLINT(performance-unnecessary-value-param)
 
     constexpr operator   signed char     () const { return static_cast<signed char>     (f64_to__i32(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
     constexpr operator   signed short    () const { return static_cast<signed short>    (f64_to__i32(my_value)); } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions,google-runtime-int)
@@ -600,8 +600,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     constexpr auto operator--() -> soft_double& { return *this -= my_value_one(); }
 
     // Operators post-increment and post-decrement.
-    constexpr auto operator++(int) -> soft_double { const soft_double w(*this); static_cast<void>(++(*this)); return w; }
-    constexpr auto operator--(int) -> soft_double { const soft_double w(*this); static_cast<void>(--(*this)); return w; }
+    constexpr auto operator++(int) -> soft_double { const soft_double w(*this); static_cast<void>(++(*this)); return w; } // NOLINT(performance-no-automatic-move)
+    constexpr auto operator--(int) -> soft_double { const soft_double w(*this); static_cast<void>(--(*this)); return w; } // NOLINT(performance-no-automatic-move)
 
     constexpr auto operator+() const -> const soft_double& { return *this; }
     constexpr auto operator-() const ->       soft_double  { return { my_value ^ static_cast<std::uint64_t>(1ULL << 63U), detail::nothing() }; }
@@ -625,7 +625,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     static constexpr auto my_value_signaling_NaN() -> soft_double { return { static_cast<std::uint64_t>(UINT64_C(0x7FF8000000000000)),  detail::nothing() }; }
 
   private:
-    representation_type my_value;
+    representation_type my_value { };
 
     static constexpr auto my_le(const soft_double& a, const soft_double& b) -> bool
     {
@@ -1680,10 +1680,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     friend constexpr auto (isnan)   (soft_double x) -> bool { return  (x.my_value == my_value_quiet_NaN().my_value); }
     friend constexpr auto (isinf)   (soft_double x) -> bool { return ((x.my_value & my_value_infinity().my_value) == my_value_infinity().my_value); }
 
-    friend constexpr auto fabs (soft_double x) -> soft_double { return { static_cast<std::uint64_t>(x.my_value & static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF))), detail::nothing() }; }
-    friend constexpr auto sqrt (soft_double x) -> soft_double { return { f64_sqrt(x.my_value), detail::nothing() }; }
+    friend constexpr auto fabs (soft_double x) -> soft_double { return { static_cast<std::uint64_t>(x.my_value & static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF))), detail::nothing() }; } // NOLINT(performance-unnecessary-value-param)
+    friend constexpr auto sqrt (soft_double x) -> soft_double { return { f64_sqrt(x.my_value), detail::nothing() }; } // NOLINT(performance-unnecessary-value-param)
 
-    friend constexpr auto frexp(soft_double x, int* expptr) -> soft_double
+    friend constexpr auto frexp(soft_double x, int* expptr) -> soft_double // NOLINT(performance-unnecessary-value-param)
     {
       const auto expA =
         static_cast<std::int16_t>
@@ -1708,7 +1708,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       };
     }
 
-    friend constexpr auto ldexp(soft_double x, int expval) -> soft_double
+    friend constexpr auto ldexp(soft_double x, int expval) -> soft_double // NOLINT(performance-unnecessary-value-param)
     {
       return
       {
@@ -1725,7 +1725,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     template<typename UnsignedIntegralType,
              typename std::enable_if<(   std::is_integral<UnsignedIntegralType>::value
                                       && std::is_unsigned<UnsignedIntegralType>::value)>::type const*>
-    friend constexpr auto pow(soft_double x, UnsignedIntegralType u) -> soft_double
+    friend constexpr auto pow(soft_double x, UnsignedIntegralType u) -> soft_double // NOLINT(performance-unnecessary-value-param)
     {
       soft_double result { };
 
@@ -1969,7 +1969,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   namespace detail {
 
-  inline constexpr auto sin_pade(soft_double x) -> soft_double
+  inline constexpr auto sin_pade(soft_double x) -> soft_double // NOLINT(performance-unnecessary-value-param)
   {
     // PadeApproximant[Sin[x], {x, 0, {7,7}}]
     // FullSimplify[%]
@@ -2003,7 +2003,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return (x * top) / (bot * 7);
   }
 
-  inline constexpr auto cos_pade(soft_double x) -> soft_double
+  inline constexpr auto cos_pade(soft_double x) -> soft_double // NOLINT(performance-unnecessary-value-param)
   {
     // PadeApproximant[Cos[x] - 1, {x, 0, {8,6}}]
     // FullSimplify[%]
@@ -2234,7 +2234,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return c;
   }
 
-  inline constexpr auto floor(soft_double x) -> soft_double
+  inline constexpr auto floor(soft_double x) -> soft_double // NOLINT(performance-unnecessary-value-param)
   {
     soft_double result { };
 
@@ -2256,7 +2256,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return result;
   }
 
-  inline constexpr auto ceil(soft_double x) -> soft_double
+  inline constexpr auto ceil(soft_double x) -> soft_double // NOLINT(performance-unnecessary-value-param)
   {
     soft_double result { };
 
@@ -2278,7 +2278,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return result;
   }
 
-  inline constexpr auto exp(soft_double x) -> soft_double
+  inline constexpr auto exp(soft_double x) -> soft_double // NOLINT(performance-unnecessary-value-param)
   {
     // PadeApproximant[Exp[x] - 1, {x, 0, {6, 6}}]
     // FullSimplify[%]
@@ -2310,7 +2310,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return ((n != 0) ? ldexp(result, n) : result);
   }
 
-  inline constexpr auto log(soft_double x) -> soft_double // NOLINT(misc-no-recursion)
+  inline constexpr auto log(soft_double x) -> soft_double // NOLINT(misc-no-recursion,performance-unnecessary-value-param)
   {
     soft_double result { };
 
@@ -2378,19 +2378,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return exp(a * log(x));
   }
 
-  inline constexpr auto tan(soft_double x) -> soft_double
+  inline constexpr auto tan(soft_double x) -> soft_double // NOLINT(performance-unnecessary-value-param)
   {
     return sin(x) / cos(x);
   }
 
-  inline constexpr auto sinh(soft_double x) -> soft_double
+  inline constexpr auto sinh(soft_double x) -> soft_double // NOLINT(performance-unnecessary-value-param)
   {
     const soft_double ep = exp(x);
 
     return (ep - (1 / ep)) / 2;
   }
 
-  inline constexpr auto cosh(soft_double x) -> soft_double
+  inline constexpr auto cosh(soft_double x) -> soft_double // NOLINT(performance-unnecessary-value-param)
   {
     const soft_double ep = exp(x);
 
