@@ -176,7 +176,7 @@ of a square root function and its comparison of its result
 with the known control value.
 
 See this example fully worked out at the following
-[short link](https://godbolt.org/z/dfYjq9bsd) to [godbolt](https://godbolt.org).
+[short link](https://godbolt.org/z/Kc4vWYKbx) to [godbolt](https://godbolt.org).
 The generated assembly includes nothing other than the call to `main()`
 and its subsequent `return` of the value zero
 (i.e., `main()`'s successful return-value in this example).
@@ -191,7 +191,7 @@ and its subsequent `return` of the value zero
 int main()
 {
   // Use a convenient alias for float64_t.
-  using float64_t = ::math::softfloat::soft_double;
+  using ::math::softfloat::float64_t;
 
   // Use a cached value for pi.
   constexpr float64_t my_pi = float64_t::my_value_pi();
