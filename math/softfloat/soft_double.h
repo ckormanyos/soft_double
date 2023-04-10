@@ -68,6 +68,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   #define SOFT_DOUBLE_NUM_LIMITS_CLASS_TYPE class  // NOLINT(cppcoreguidelines-macro-usage)
   #endif
 
+  #if (defined(__has_cpp_attribute) && __has_cpp_attribute(nodescard))
+  #define SOFT_DOUBLE_NODISCARD [[nodiscard]]
+  #else
+  #define SOFT_DOUBLE_NODISCARD
+  #endif
+
   #if(__cplusplus >= 201703L)
   namespace math::softfloat {
   #else
@@ -520,9 +526,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     constexpr auto operator=(soft_double&&) noexcept -> soft_double& = default;
 
-                  constexpr auto  representation()       -> representation_type { return my_value; }
-    [[nodiscard]] constexpr auto  representation() const -> representation_type { return my_value; }
-    [[nodiscard]] constexpr auto crepresentation() const -> representation_type { return my_value; }
+    ~soft_double() = default;
+
+                          constexpr auto  representation()       -> representation_type { return my_value; }
+    SOFT_DOUBLE_NODISCARD constexpr auto  representation() const -> representation_type { return my_value; }
+    SOFT_DOUBLE_NODISCARD constexpr auto crepresentation() const -> representation_type { return my_value; }
 
     static constexpr auto get_rep(soft_double a) -> representation_type { return a.my_value; }
 
@@ -540,15 +548,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   private:
     template<typename FloatingPointType>
-    [[nodiscard]] constexpr auto to_float() const -> typename std::enable_if<(   (sizeof(FloatingPointType) == 4)
-                                                                              && std::numeric_limits<FloatingPointType>::is_iec559), FloatingPointType>::type
+    SOFT_DOUBLE_NODISCARD constexpr auto to_float() const -> typename std::enable_if<(   (sizeof(FloatingPointType) == 4)
+                                                                                      && std::numeric_limits<FloatingPointType>::is_iec559), FloatingPointType>::type
     {
       return f64_to_f32(my_value);
     }
 
     template<typename FloatingPointType>
-    [[nodiscard]] constexpr auto to_float() const -> typename std::enable_if<(   (sizeof(FloatingPointType) == 8)
-                                                                              && std::numeric_limits<FloatingPointType>::is_iec559), FloatingPointType>::type
+    SOFT_DOUBLE_NODISCARD constexpr auto to_float() const -> typename std::enable_if<(   (sizeof(FloatingPointType) == 8)
+                                                                                      && std::numeric_limits<FloatingPointType>::is_iec559), FloatingPointType>::type
     {
       return static_cast<FloatingPointType>(*static_cast<const volatile FloatingPointType*>(static_cast<const volatile void*>(this)));
     }
