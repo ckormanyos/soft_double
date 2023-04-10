@@ -163,6 +163,7 @@ how to use soft_double.
   - ![`example007_catalan_series.cpp`](./examples/example007_catalan_series.cpp) computes $\sim 15$ decimal digits of Catalan's constant using an accelerated series.
   - ![`example010_hypergeometric_2f1.cpp`](./examples/example010_hypergeometric_2f1.cpp) calculates $\sim 15$ decimal digits of a hypergeometric function value using a classic iterative rational approximation scheme.
   - ![`example011_trig_trapezoid_integral.cpp`](./examples/example011_trig_trapezoid_integral.cpp) uses trapezoid integration with an integral representation involving locally-written trigonometric sine and cosine functions to compute several cylindrical Bessel function values.
+  - ![`example012_exercise_constexpr.cpp`](./examples/example012_exercise_constexpr.cpp) verifies that C++20 `constexpr`-ness works properly for both rudimentary assignment-operation as well as an elementary square root function.
 
 ## C++14, 17, 20 `constexpr` support
 
@@ -176,7 +177,7 @@ of a square root function and its comparison of its result
 with the known control value.
 
 See this example fully worked out at the following
-[short link](https://godbolt.org/z/5WPEq7h3q) to [godbolt](https://godbolt.org).
+[short link](https://godbolt.org/z/cqYWf4c31) to [godbolt](https://godbolt.org).
 The generated assembly includes nothing other than the call to `main()`
 and its subsequent `return` of the value zero
 (i.e., `main()`'s successful return-value in this example).
@@ -199,21 +200,12 @@ int main()
   // Compute soft_double sqrt(pi).
   constexpr float64_t s = sqrt(my_pi);
 
-  using std::sqrt;
-
-  // Compare with native double sqrt(pi).
-  // This is a non-constexpr, run-time comparison.
-  const auto result_root_non_constexpr_is_ok =
-    (s.crepresentation() == float64_t(sqrt(3.1415926535897932384626433832795028841972)).crepresentation());
-
-  constexpr auto result_root_as_constexpr_is_ok =
+  constexpr auto result_is_ok =
     (s.crepresentation() == static_cast<typename float64_t::representation_type>(UINT64_C(0x3FFC5BF891B4EF6A)));
 
   // constexpr verification.
   // This is a compile-time comparison.
-  static_assert(result_root_as_constexpr_is_ok, "Error: example001_roots_sqrt not OK!");
-
-  const auto result_is_ok = (result_root_non_constexpr_is_ok && result_root_as_constexpr_is_ok);
+  static_assert(result_is_ok, "Error: example001_roots_sqrt not OK!");
 
   return (result_is_ok ? 0 : -1);
 }
