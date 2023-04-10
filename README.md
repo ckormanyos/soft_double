@@ -18,7 +18,7 @@ soft_double
         <img src="https://img.shields.io/github/commit-activity/y/ckormanyos/soft_double" alt="GitHub commit activity"></a>
     <a href="https://github.com/ckormanyos/soft_double">
         <img src="https://img.shields.io/github/languages/code-size/ckormanyos/soft_double" alt="GitHub code size in bytes"></a>
-    <a href="https://godbolt.org/z/r4zrY6z4s" alt="godbolt">
+    <a href="https://godbolt.org/z/bdz6K9nsY" alt="godbolt">
         <img src="https://img.shields.io/badge/try%20it%20on-godbolt-green" /></a>
 </p>
 
