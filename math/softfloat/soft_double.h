@@ -68,10 +68,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   #define SOFT_DOUBLE_NUM_LIMITS_CLASS_TYPE class  // NOLINT(cppcoreguidelines-macro-usage)
   #endif
 
-  #if (defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard))
-  #define SOFT_DOUBLE_NODISCARD [[nodiscard]]
+  #if defined(__clang__)
+    #if(__cplusplus >= 201703L)
+    #define SOFT_DOUBLE_NODISCARD [[nodiscard]]
+    #else
+    #define SOFT_DOUBLE_NODISCARD
+    #endif
   #else
-  #define SOFT_DOUBLE_NODISCARD
+    #if (defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard))
+    #define SOFT_DOUBLE_NODISCARD [[nodiscard]]
+    #else
+    #define SOFT_DOUBLE_NODISCARD
+    #endif
   #endif
 
   #if(__cplusplus >= 201703L)

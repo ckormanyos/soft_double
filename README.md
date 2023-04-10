@@ -45,8 +45,8 @@ comparison operations, simple functions such as
 `sin`, `cos`, and more. There is also full support/specialization
 of `std::numeric_limits<soft_double>` for the `soft_double` type.
 
-The soft_double implementation is written in header-only C++11
-and is compatible for C++11, 14, 17, 20.
+The soft_double implementation is written in header-only C++14
+and is compatible for C++14, 17, 20 and beyond.
 
 ## Quick Start
 
@@ -78,7 +78,7 @@ the `avr-gcc` and other tool chains.
 ## Implementation goals
 
   - Clean header-only C++ design.
-  - Seamless portability to any modern C++11, 14, 17, 20 compiler.
+  - Seamless portability to any modern C++14, 17, 20 compiler (and beyond).
   - Achieve efficiency suitable for _bare-metal_ embedded systems.
   - Particularly useful if 64-bit native `double` or a similar built-in type is unavailable.
   - Use refactored versions of trusted algorithms based on those found in [softfloat 3e](https://github.com/ucb-bar/berkeley-softfloat-3).
@@ -284,4 +284,4 @@ that exercise various test cases.
 
 CI runs on push and pull request using GitHub Actions.
 Various compilers, operating systems, and C++ standards
-ranging from C++11, 14, 17, 20 are included in CI.
+ranging from C++14, 17, 20 are included in CI.
