@@ -15,7 +15,7 @@
 auto math::softfloat::example012_exercise_constexpr() -> bool
 {
   // Use a convenient alias for float64_t.
-  using float64_t = ::math::softfloat::soft_double;
+  using ::math::softfloat::float64_t;
 
   // Use a cached value for pi.
   constexpr float64_t my_pi = float64_t::my_value_pi();
