@@ -155,8 +155,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   namespace detail {
 
   struct uint128_compound
-  {    constexpr uint128_compound(std::uint64_t a = std::uint64_t(), // NOLINT(google-explicit-constructor,hicpp-explicit-conversions,bugprone-easily-swappable-parameters)
-                                  std::uint64_t b = std::uint64_t())
+  {
+    constexpr uint128_compound(std::uint64_t a = std::uint64_t(), // NOLINT(google-explicit-constructor,hicpp-explicit-conversions,bugprone-easily-swappable-parameters)
+                               std::uint64_t b = std::uint64_t())
       : v0(a),
         v1(b) { }
 
@@ -484,24 +485,24 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   template<typename char_type, typename traits_type> auto operator>>(std::basic_istream<char_type, traits_type>& is,       soft_double& f) -> std::basic_istream<char_type, traits_type>&;
   #endif // !WIDE_DECIMAL_DISABLE_IOSTREAM
 
-         constexpr             auto (isnan)   (soft_double x) -> bool;
-         constexpr             auto (isinf)   (soft_double x) -> bool;
-         constexpr             auto (isfinite)(soft_double x) -> bool;
-         constexpr             auto  fabs     (soft_double x) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto  frexp    (soft_double x, int* expptr) -> soft_double;
-         constexpr             auto  ldexp    (soft_double x, int expval) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto  floor    (soft_double x) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto  ceil     (soft_double x) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto  sqrt     (soft_double x) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto  exp      (soft_double x) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto  log      (soft_double x) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto  pow      (soft_double x, soft_double a) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto  sin      (soft_double x) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto  cos      (soft_double x) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto  tan      (soft_double x) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto  sinh     (soft_double x) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto  cosh     (soft_double x) -> soft_double;
-  inline SOFT_DOUBLE_CONSTEXPR auto  tanh     (soft_double x) -> soft_double;
+  constexpr             auto (isnan)   (soft_double x) -> bool;
+  constexpr             auto (isinf)   (soft_double x) -> bool;
+  constexpr             auto (isfinite)(soft_double x) -> bool;
+  constexpr             auto  fabs     (soft_double x) -> soft_double;
+  SOFT_DOUBLE_CONSTEXPR auto  frexp    (soft_double x, int* expptr) -> soft_double;
+  constexpr             auto  ldexp    (soft_double x, int expval) -> soft_double;
+  SOFT_DOUBLE_CONSTEXPR auto  floor    (soft_double x) -> soft_double;
+  SOFT_DOUBLE_CONSTEXPR auto  ceil     (soft_double x) -> soft_double;
+  constexpr             auto  sqrt     (soft_double x) -> soft_double;
+  SOFT_DOUBLE_CONSTEXPR auto  exp      (soft_double x) -> soft_double;
+  SOFT_DOUBLE_CONSTEXPR auto  log      (soft_double x) -> soft_double;
+  SOFT_DOUBLE_CONSTEXPR auto  pow      (soft_double x, soft_double a) -> soft_double;
+  SOFT_DOUBLE_CONSTEXPR auto  sin      (soft_double x) -> soft_double;
+  SOFT_DOUBLE_CONSTEXPR auto  cos      (soft_double x) -> soft_double;
+  SOFT_DOUBLE_CONSTEXPR auto  tan      (soft_double x) -> soft_double;
+  SOFT_DOUBLE_CONSTEXPR auto  sinh     (soft_double x) -> soft_double;
+  SOFT_DOUBLE_CONSTEXPR auto  cosh     (soft_double x) -> soft_double;
+  SOFT_DOUBLE_CONSTEXPR auto  tanh     (soft_double x) -> soft_double;
 
   template<typename UnsignedIntegralType,
            typename std::enable_if<(   std::is_integral<UnsignedIntegralType>::value
@@ -1704,9 +1705,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     friend constexpr auto (isinf)   (soft_double x) -> bool { return ((x.my_value & my_value_infinity().my_value) == my_value_infinity().my_value); }
 
     friend constexpr auto fabs (soft_double x) -> soft_double { return { static_cast<std::uint64_t>(x.my_value & static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF))), detail::nothing() }; }
-    friend inline SOFT_DOUBLE_CONSTEXPR auto sqrt (soft_double x) -> soft_double { return { f64_sqrt(x.my_value), detail::nothing() }; }
+    friend constexpr auto sqrt (soft_double x) -> soft_double { return { f64_sqrt(x.my_value), detail::nothing() }; }
 
-    friend inline SOFT_DOUBLE_CONSTEXPR auto frexp(soft_double x, int* expptr) -> soft_double
+    friend SOFT_DOUBLE_CONSTEXPR auto frexp(soft_double x, int* expptr) -> soft_double
     {
       const auto expA =
         static_cast<std::int16_t>
@@ -1740,10 +1741,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       };
     }
 
-    friend inline SOFT_DOUBLE_CONSTEXPR auto floor(soft_double x) -> soft_double;
-    friend inline SOFT_DOUBLE_CONSTEXPR auto ceil (soft_double x) -> soft_double;
-    friend inline SOFT_DOUBLE_CONSTEXPR auto exp  (soft_double x) -> soft_double;
-    friend inline SOFT_DOUBLE_CONSTEXPR auto log  (soft_double x) -> soft_double;
+    friend SOFT_DOUBLE_CONSTEXPR auto floor(soft_double x) -> soft_double;
+    friend SOFT_DOUBLE_CONSTEXPR auto ceil (soft_double x) -> soft_double;
+    friend SOFT_DOUBLE_CONSTEXPR auto exp  (soft_double x) -> soft_double;
+    friend SOFT_DOUBLE_CONSTEXPR auto log  (soft_double x) -> soft_double;
 
     template<typename UnsignedIntegralType,
              typename std::enable_if<(   std::is_integral<UnsignedIntegralType>::value
@@ -1820,14 +1821,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       return result;
     }
 
-    friend inline SOFT_DOUBLE_CONSTEXPR auto sin(soft_double x) -> soft_double;
-    friend inline SOFT_DOUBLE_CONSTEXPR auto cos(soft_double x) -> soft_double;
-    friend inline SOFT_DOUBLE_CONSTEXPR auto tan(soft_double x) -> soft_double;
+    friend SOFT_DOUBLE_CONSTEXPR auto sin(soft_double x) -> soft_double;
+    friend SOFT_DOUBLE_CONSTEXPR auto cos(soft_double x) -> soft_double;
+    friend SOFT_DOUBLE_CONSTEXPR auto tan(soft_double x) -> soft_double;
 
-    friend inline SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& a, const soft_double& b) -> soft_double;
-    friend inline SOFT_DOUBLE_CONSTEXPR auto operator-(const soft_double& a, const soft_double& b) -> soft_double;
-    friend inline SOFT_DOUBLE_CONSTEXPR auto operator*(const soft_double& a, const soft_double& b) -> soft_double;
-    friend inline SOFT_DOUBLE_CONSTEXPR auto operator/(const soft_double& a, const soft_double& b) -> soft_double;
+    friend SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& a, const soft_double& b) -> soft_double;
+    friend SOFT_DOUBLE_CONSTEXPR auto operator-(const soft_double& a, const soft_double& b) -> soft_double;
+    friend SOFT_DOUBLE_CONSTEXPR auto operator*(const soft_double& a, const soft_double& b) -> soft_double;
+    friend SOFT_DOUBLE_CONSTEXPR auto operator/(const soft_double& a, const soft_double& b) -> soft_double;
 
     template<typename UnsignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator+(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(u) += soft_double(n); }
     template<typename UnsignedIntegralType> friend SOFT_DOUBLE_CONSTEXPR auto operator-(const soft_double& u, UnsignedIntegralType n) -> typename std::enable_if<std::is_integral<UnsignedIntegralType>::value && std::is_unsigned<UnsignedIntegralType>::value, soft_double>::type { return soft_double(u) -= soft_double(n); }
