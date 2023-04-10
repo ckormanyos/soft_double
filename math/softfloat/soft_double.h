@@ -485,7 +485,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     using representation_type = std::uint64_t;
 
-    constexpr soft_double() { };
+    constexpr soft_double() { }; // NOLINT(hicpp-use-equals-default,modernize-use-equals-default)
 
     template<typename UnsignedIntegralType,
              typename std::enable_if<(   std::is_integral<UnsignedIntegralType>::value
@@ -2373,9 +2373,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return result;
   }
 
-  inline constexpr auto pow(soft_double x, soft_double a) -> soft_double
+  inline constexpr auto pow(soft_double x, soft_double a) -> soft_double // NOLINT(performance-unnecessary-value-param)
   {
-    return exp(a * log(x));
+    return exp(a * log(x)); // NOLINT(performance-unnecessary-value-param)
   }
 
   inline constexpr auto tan(soft_double x) -> soft_double // NOLINT(performance-unnecessary-value-param)
@@ -2385,21 +2385,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   inline constexpr auto sinh(soft_double x) -> soft_double // NOLINT(performance-unnecessary-value-param)
   {
-    const soft_double ep = exp(x);
+    const soft_double ep = exp(x); // NOLINT(performance-unnecessary-value-param)
 
     return (ep - (1 / ep)) / 2;
   }
 
   inline constexpr auto cosh(soft_double x) -> soft_double // NOLINT(performance-unnecessary-value-param)
   {
-    const soft_double ep = exp(x);
+    const soft_double ep = exp(x); // NOLINT(performance-unnecessary-value-param)
 
     return (ep + (1 / ep)) / 2;
   }
 
-  inline constexpr auto tanh(soft_double x) -> soft_double
+  inline constexpr auto tanh(soft_double x) -> soft_double // NOLINT(performance-unnecessary-value-param)
   {
-    const soft_double ep = exp(x);
+    const soft_double ep = exp(x); // NOLINT(performance-unnecessary-value-param)
     const soft_double em = 1 / ep;
 
     return (ep - em) / (ep + em);
