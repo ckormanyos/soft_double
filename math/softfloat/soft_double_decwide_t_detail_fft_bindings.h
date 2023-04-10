@@ -45,7 +45,7 @@
   }
 
   template<>
-  constexpr auto template_fast_div_by_two<math::softfloat::float64_t>(math::softfloat::float64_t a) -> math::softfloat::float64_t
+  constexpr auto template_fast_div_by_two<math::softfloat::float64_t>(math::softfloat::float64_t a) -> math::softfloat::float64_t // NOLINT(performance-unnecessary-value-param)
   {
     return
       {

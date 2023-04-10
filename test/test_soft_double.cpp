@@ -736,7 +736,7 @@ auto test_soft_double() -> bool
     math::softfloat::float64_t result =
       local::detail::derivative(x,
                                 dx,
-                                [](const math::softfloat::float64_t my_x) -> math::softfloat::float64_t
+                                [](const math::softfloat::float64_t my_x) -> math::softfloat::float64_t // NOLINT(performance-unnecessary-value-param)
                                 {
                                   return ((my_x * my_x) / math::softfloat::float64_t(3)) + my_x;
                                 });
