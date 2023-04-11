@@ -892,12 +892,16 @@
       // This constructor is, in fact, intended to maintain
       // the full precision of the internal_float_type.
 
-      const auto delta_zero =
+      constexpr auto delta_zero =
         static_cast<internal_float_type>
         (
           (
               (std::numeric_limits<internal_float_type>::min)()
-            * (static_cast<internal_float_type>(1.0F) + std::numeric_limits<internal_float_type>::epsilon())
+            * static_cast<internal_float_type>
+              (
+                  static_cast<internal_float_type>(static_cast<unsigned>(UINT8_C(1)))
+                + std::numeric_limits<internal_float_type>::epsilon()
+              )
           )
         );
 

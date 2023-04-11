@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////
-//  Copyright Christopher Kormanyos 2012 - 2022.                 //
+//  Copyright Christopher Kormanyos 2012 - 2023.                 //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
 //  or copy at http://www.boost.org/LICENSE_1_0.txt)             //
@@ -12,6 +12,7 @@
 #include <iostream>
 #include <limits>
 #include <random>
+#include <string>
 
 #define WIDE_DECIMAL_DISABLE_IOSTREAM
 #define WIDE_DECIMAL_DISABLE_DYNAMIC_MEMORY_ALLOCATION
@@ -27,16 +28,19 @@ namespace local
 {
   auto example002b_pi_100k_digits10_callback(const std::uint32_t d10) -> void
   {
-    using char_array_type = std::array<char, static_cast<std::size_t>(UINT8_C(16))>;
+    using char_array_type = std::array<char, static_cast<std::size_t>(UINT8_C(64))>;
 
-    char_array_type p_str { };
+    auto p_str = char_array_type { };
+
     p_str.fill('\0');
 
-    char* p_end = util::baselexical_cast(d10, p_str.data());
+    auto p_end = static_cast<char*>(util::baselexical_cast(d10, p_str.data())); // NOLINT(llvm-qualified-auto,readability-qualified-auto)
 
     static_cast<void>(p_end);
 
-    std::cout << p_str.data() << std::endl;
+    const auto str_result = std::string(p_str.data());
+
+    std::cout << str_result << std::endl;
   }
 } // namespace local
 
