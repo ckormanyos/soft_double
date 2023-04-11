@@ -11,8 +11,8 @@
 #include <ctime>
 #include <iostream>
 #include <limits>
-#include <string>
 #include <random>
+#include <string>
 
 #define WIDE_DECIMAL_DISABLE_IOSTREAM
 #define WIDE_DECIMAL_DISABLE_DYNAMIC_MEMORY_ALLOCATION
@@ -34,11 +34,13 @@ namespace local
 
     p_str.fill('\0');
 
-    auto p_end = static_cast<char*>(util::baselexical_cast(d10, p_str.data()));
+    auto p_end = static_cast<char*>(util::baselexical_cast(d10, p_str.data())); // NOLINT(llvm-qualified-auto,readability-qualified-auto)
 
     static_cast<void>(p_end);
 
-    std::cout << std::string(p_str.data()) << std::endl;
+    const auto str_result = std::string(p_str.data());
+
+    std::cout << str_result << std::endl;
   }
 } // namespace local
 
