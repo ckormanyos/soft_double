@@ -11,6 +11,8 @@
 #include <cstdint>
 #include <numeric>
 
+#define SOFT_DOUBLE_DISABLE_IOSTREAM
+
 #include <math/softfloat/soft_double.h>
 #include <math/softfloat/soft_double_examples.h>
 
@@ -41,8 +43,8 @@ namespace local
 
     const T Z(-ZM); // NOLINT(readability-identifier-naming)
 
-    const T my_zero(0U);
-    const T my_one (1U);
+    const T my_zero(static_cast<unsigned>(UINT8_C(0)));
+    const T my_one (static_cast<unsigned>(UINT8_C(1)));
 
     // C
     // C INITIALIZATION :
@@ -54,8 +56,8 @@ namespace local
     const T ABZ1((Z + ABZ) + SABZ);          // NOLINT(readability-identifier-naming)
     const T ABZ2((ABZ1 + SABZ) + (3U * Z));  // NOLINT(readability-identifier-naming)
 
-    std::array<T, 4U> A { }; // NOLINT(readability-identifier-naming)
-    std::array<T, 4U> B { }; // NOLINT(readability-identifier-naming)
+    auto A = std::array<T, static_cast<std::size_t>(UINT8_C(4))> { }; // NOLINT(readability-identifier-naming)
+    auto B = std::array<T, static_cast<std::size_t>(UINT8_C(4))> { }; // NOLINT(readability-identifier-naming)
 
     B[0U] = my_one;
     A[0U] = my_one;
@@ -74,7 +76,7 @@ namespace local
 
     const T Z2(Z / 2U); // NOLINT(readability-identifier-naming)
 
-    std::array<T, 9U> D { }; // NOLINT(readability-magic-numbers,cppcoreguidelines-avoid-magic-numbers,cppcoreguidelines-avoid-magic-numbers,readability-identifier-naming)
+    auto D = std::array<T, static_cast<std::size_t>(UINT8_C(9))> { }; // NOLINT(readability-magic-numbers,cppcoreguidelines-avoid-magic-numbers,cppcoreguidelines-avoid-magic-numbers,readability-identifier-naming)
 
     D[0U] = (((T(UINT8_C(7)) / 2U) - AB) * Z2) - SABZ;     // NOLINT(readability-magic-numbers,cppcoreguidelines-avoid-magic-numbers,cppcoreguidelines-avoid-magic-numbers)
     D[1U] = ABZ1 / 4U;                                     // NOLINT(readability-magic-numbers,cppcoreguidelines-avoid-magic-numbers,cppcoreguidelines-avoid-magic-numbers)
@@ -86,7 +88,7 @@ namespace local
     D[7U] = T(3U) / 4U;                                    // NOLINT(readability-magic-numbers,cppcoreguidelines-avoid-magic-numbers,cppcoreguidelines-avoid-magic-numbers)
     D[8U] = D[7U] * Z;                                     // NOLINT(readability-magic-numbers,cppcoreguidelines-avoid-magic-numbers,cppcoreguidelines-avoid-magic-numbers)
 
-    std::array<T, 3U> G { }; // NOLINT(readability-identifier-naming)
+    auto G = std::array<T, static_cast<std::size_t>(UINT8_C(3))> { }; // NOLINT(readability-identifier-naming)
 
     // C
     // C FOR I=3,...,N , THE VALUES A(I) AND B(I) ARE CALCULATED
@@ -135,7 +137,7 @@ namespace local
       const T ratio = fabs((A[2U] * B[3U]) / (A[3U] * B[2U]));
       const T delta = fabs(my_one - ratio);
 
-      if((XI > UINT16_C(7)) && (delta < std::numeric_limits<T>::epsilon()))
+      if((XI > static_cast<std::uint_fast16_t>(UINT8_C(7))) && (delta < std::numeric_limits<T>::epsilon()))
       {
         break;
       }
