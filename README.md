@@ -221,32 +221,6 @@ for `constexpr` usage of `soft_double`. If you have an older
 compiler, you might have to check the compiler's
 ability to obtain the entire benefit of `constexpr` with `soft_double`.
 
-If full `constexpr` compliance is not available or its
-availability is unknown, the preprocessor symbols below can be useful.
-These symbols are defined or set directly within the header(s)
-of the soft_double library.
-
-```cpp
-SOFT_DOUBLE_CONSTEXPR
-SOFT_DOUBLE_CONSTEXPR_IS_COMPILE_TIME_CONST
-```
-
-The preprocessor symbol `SOFT_DOUBLE_CONSTEXPR` acts as either
-a synonym for `constexpr` or expands to nothing depending on
-whether the availability of `constexpr` support has been automatically
-detected or not.
-The preprocessor symbol `SOFT_DOUBLE_CONSTEXPR_IS_COMPILE_TIME_CONST`
-has the value of 0 or 1, where 1 indicates that `soft_double`
-values qualified with `SOFT_DOUBLE_CONSTEXPR` are actually
-compile-time constant (i.e., `constexpr`).
-
-Detection of availability of `constexpr` support is implemented
-[with preprocessor queries in soft_double.h](https://github.com/ckormanyos/soft_double/blob/2219a71a5e434c6c19e1fb33e7d5eedd7b6866a4/math/softfloat/soft_double.h#L71).
-These complicated proprocessor queries are not complete (in the sense of
-detecting all world-wide compiler/target systems). If you have
-a specific compiler/target system needing `constexpr` detection,
-please feel free to contact me directly so that this can be implemented.
-
 ## Building, testing and CI
 
 ### Build Status
@@ -275,5 +249,5 @@ It uses easy-to-understand subroutines called from
 that exercise various test cases.
 
 CI runs on push and pull request using GitHub Actions.
-Various compilers, operating systems, and C++ standards
-ranging from C++14, 17, 20 are included in CI.
+Various compilers, operating systems, and various
+C++ standards are included in CI.
