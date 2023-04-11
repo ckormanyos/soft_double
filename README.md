@@ -58,7 +58,7 @@ For instance,
 #include <math/softfloat/soft_double.h>
 
 // Use a convenient alias for float64_t.
-using float64_t = math::softfloat::soft_double;
+using ::math::softfloat::float64_t;
 
 // Use the type like built-in `double`.
 const float64_t one_third = float64_t(1U) / 3U;
