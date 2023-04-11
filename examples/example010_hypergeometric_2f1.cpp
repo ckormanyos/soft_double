@@ -14,9 +14,6 @@
 #include <math/softfloat/soft_double.h>
 #include <math/softfloat/soft_double_examples.h>
 
-static_assert(sizeof(double) == 8U, // NOLINT(readability-magic-numbers,cppcoreguidelines-avoid-magic-numbers)
-              "Error: This example requires 8 byte built-in double for verification");
-
 namespace local
 {
   template<typename T>
@@ -163,36 +160,47 @@ namespace local
 
 auto math::softfloat::example010_hypergeometric_2f1() -> bool
 {
-  const float64_t a( float64_t(2U) / 3U);
-  const float64_t b( float64_t(4U) / 3U);
-  const float64_t c( float64_t(5U) / 7U);
-  const float64_t z(-float64_t(3U) / 4U);
+  static_assert(std::numeric_limits<float64_t>::digits >= 53,
+                "Error: Incorrect float64_t type definition");
 
-  const float64_t h2f1 = local::hypergeometric_2f1(a, b, c, z);
+  const auto a = float64_t( float64_t(2U) / 3U);
+  const auto b = float64_t( float64_t(4U) / 3U);
+  const auto c = float64_t( float64_t(5U) / 7U);
+  const auto z = float64_t(-float64_t(3U) / 4U);
+
+  const auto h2f1 = local::hypergeometric_2f1(a, b, c, z);
 
   // N[Hypergeometric2F1[2/3, 4/3, 5/7, -3/4], 41]
-  const float64_t control(0.50100473608761064038202987077811306637010);
+  // 0.50100473608761064038202987077811306637010
+
+  const auto control = float64_t(UINT64_C(0x3FE0083B15946592), math::softfloat::detail::nothing());
 
   using std::fabs;
 
-  const float64_t closeness = fabs(1 - fabs(h2f1 / control));
+  const auto closeness = fabs(1 - fabs(h2f1 / control));
 
-  const bool result_is_ok = closeness < (std::numeric_limits<float64_t>::epsilon() * 10);
+  const auto result_is_ok = (closeness < (std::numeric_limits<float64_t>::epsilon() * 10));
 
   return result_is_ok;
 }
 
 // Enable this if you would like to activate this main() as a standalone example.
-#if 0
+#if defined(WIDE_INTEGER_STANDALONE_EXAMPLE010_HYPERGEOMETRIC_2F1)
 
+#if (!defined(__AVR__) && !defined(__arm__))
 #include <iomanip>
 #include <iostream>
+#endif
 
 int main()
 {
-  const bool result_is_ok = math::softfloat::example010_hypergeometric_2f1();
+  const auto result_is_ok = math::softfloat::example010_hypergeometric_2f1();
 
+  #if (!defined(__AVR__) && !defined(__arm__))
   std::cout << "result_is_ok: " << std::boolalpha << result_is_ok << std::endl;
+  #endif
+
+  return (result_is_ok ? 0 : -1);
 }
 
 #endif
