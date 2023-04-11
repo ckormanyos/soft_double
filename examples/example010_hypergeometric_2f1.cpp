@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////
-//  Copyright Christopher Kormanyos 2018 - 2022.                 //
+//  Copyright Christopher Kormanyos 2018 - 2023.                 //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
 //  or copy at http://www.boost.org/LICENSE_1_0.txt)             //
@@ -162,7 +162,7 @@ namespace local
 
 auto math::softfloat::example010_hypergeometric_2f1() -> bool
 {
-  static_assert(std::numeric_limits<float64_t>::digits >= 53,
+  static_assert(std::numeric_limits<float64_t>::digits >= static_cast<int>(INT8_C(53)),
                 "Error: Incorrect float64_t type definition");
 
   const auto a = float64_t( float64_t(2U) / 3U);
