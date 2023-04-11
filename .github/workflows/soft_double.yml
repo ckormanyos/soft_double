@@ -245,3 +245,36 @@ jobs:
           MSBuild -m soft_double_vs2022.sln -p:Configuration=Release -p:Platform=x64 /t:Rebuild
           dir %cd%\x64\Release\soft_double_vs2022.exe
           %cd%\x64\Release\soft_double_vs2022.exe
+  gcc-avr:
+    runs-on: ubuntu-22.04
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        standard: [ c++14 ]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+      - name: update-tools
+        run: sudo apt install gcc-avr avr-libc
+      - name: clone-real-time-cpp
+        run: |
+          git clone -b master --depth 1 https://github.com/ckormanyos/real-time-cpp.git ../real-time-cpp-root
+        working-directory: ./
+      - name: gcc-avr
+        run: |
+          mkdir bin
+          echo 'compile examples/example010_hypergeometric_2f1.cpp with:'
+          echo 'avr-g++ -x c++ -std=${{ matrix.standard }} -Os -Werror -Wall -Wextra -Wpedantic -pedantic -Wmain -Wundef -Wconversion -Wsign-conversion -Wunused-parameter -Wuninitialized -Wmissing-declarations -Wshadow -Wunreachable-code -Wswitch-default -Wswitch-enum -Wcast-align -Wmissing-include-dirs -Winit-self -Wfloat-equal -Wdouble-promotion -mmcu=atmega328p -mrelax -finline-functions -finline-limit=32 -fsigned-char -g -gdwarf-2 -fno-exceptions -ffunction-sections -fdata-sections -fno-rtti -fno-use-cxa-atexit -fno-exceptions -fno-threadsafe-statics -fno-enforce-eh-specs -ftemplate-depth=32 -Wzero-as-null-pointer-constant -I. -I../real-time-cpp-root/ref_app/src -I../real-time-cpp-root/ref_app/src/util/STL -DWIDE_INTEGER_STANDALONE_EXAMPLE010_HYPERGEOMETRIC_2F1 examples/example010_hypergeometric_2f1.cpp -Wl,--gc-sections -Wl,-Map,./bin/example010_hypergeometric_2f1.map -o bin/example010_hypergeometric_2f1.elf'
+          avr-g++ -x c++ -std=${{ matrix.standard }} -Os -Werror -Wall -Wextra -Wpedantic -pedantic -Wmain -Wundef -Wconversion -Wsign-conversion -Wunused-parameter -Wuninitialized -Wmissing-declarations -Wshadow -Wunreachable-code -Wswitch-default -Wswitch-enum -Wcast-align -Wmissing-include-dirs -Winit-self -Wfloat-equal -Wdouble-promotion -mmcu=atmega328p -mrelax -finline-functions -finline-limit=32 -fsigned-char -g -gdwarf-2 -fno-exceptions -ffunction-sections -fdata-sections -fno-rtti -fno-use-cxa-atexit -fno-exceptions -fno-threadsafe-statics -fno-enforce-eh-specs -ftemplate-depth=32 -Wzero-as-null-pointer-constant -I. -I../real-time-cpp-root/ref_app/src -I../real-time-cpp-root/ref_app/src/util/STL -DWIDE_INTEGER_STANDALONE_EXAMPLE010_HYPERGEOMETRIC_2F1 examples/example010_hypergeometric_2f1.cpp -Wl,--gc-sections -Wl,-Map,./bin/example010_hypergeometric_2f1.map -o bin/example010_hypergeometric_2f1.elf
+          echo
+          echo 'run objcopy with:'
+          echo 'avr-objcopy bin/example010_hypergeometric_2f1.elf -O ihex bin/example010_hypergeometric_2f1.hex'
+          avr-objcopy bin/example010_hypergeometric_2f1.elf -O ihex bin/example010_hypergeometric_2f1.hex
+          echo
+          echo 'ls -la bin/example010_hypergeometric_2f1.elf bin/example010_hypergeometric_2f1.map bin/example010_hypergeometric_2f1.hex'
+          ls -la bin/example010_hypergeometric_2f1.elf bin/example010_hypergeometric_2f1.map bin/example010_hypergeometric_2f1.hex
+        working-directory: ./

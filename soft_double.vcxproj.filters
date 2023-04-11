@@ -52,6 +52,24 @@
     <Filter Include=".gcov\make">
       <UniqueIdentifier>{eb75e937-eb5b-42b1-85d2-1b644986239e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="target">
+      <UniqueIdentifier>{c2d9b846-64a7-4472-9d93-fcfd30ca6e90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="target\build">
+      <UniqueIdentifier>{5d2e90e0-9f02-4228-ab6e-8f8048ec9fa4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="target\micros">
+      <UniqueIdentifier>{516b59e9-28a5-4421-b041-7d4a2baa31dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="target\micros\stm32f429">
+      <UniqueIdentifier>{6680c129-d68c-45b9-8210-7fe7c2a18318}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="target\micros\stm32f429\make">
+      <UniqueIdentifier>{97e94093-f5da-43a8-a6fe-5e4e30eb5b8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="target\micros\stm32f429\make\single">
+      <UniqueIdentifier>{71ebaa8b-8798-4168-b374-ab35e94b6e3c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test\test.cpp">
@@ -95,6 +113,9 @@
     </ClCompile>
     <ClCompile Include="examples\example012_exercise_constexpr.cpp">
       <Filter>examples</Filter>
+    </ClCompile>
+    <ClCompile Include="target\micros\stm32f429\make\single\crt.cpp">
+      <Filter>target\micros\stm32f429\make\single</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -177,6 +198,12 @@
     <None Include="codecov.yml" />
     <None Include=".github\workflows\soft_double_codecov.yml">
       <Filter>.github\workflows</Filter>
+    </None>
+    <None Include="target\build\test_examples_emulator.py">
+      <Filter>target\build</Filter>
+    </None>
+    <None Include="target\micros\stm32f429\make\stm32f429.ld">
+      <Filter>target\micros\stm32f429\make</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

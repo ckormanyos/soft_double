@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////
-//  Copyright Christopher Kormanyos 2018 - 2022.                 //
+//  Copyright Christopher Kormanyos 2018 - 2023.                 //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
 //  or copy at http://www.boost.org/LICENSE_1_0.txt)             //
@@ -11,11 +11,10 @@
 #include <cstdint>
 #include <numeric>
 
+#define SOFT_DOUBLE_DISABLE_IOSTREAM
+
 #include <math/softfloat/soft_double.h>
 #include <math/softfloat/soft_double_examples.h>
-
-static_assert(sizeof(double) == 8U, // NOLINT(readability-magic-numbers,cppcoreguidelines-avoid-magic-numbers)
-              "Error: This example requires 8 byte built-in double for verification");
 
 namespace local
 {
@@ -44,8 +43,8 @@ namespace local
 
     const T Z(-ZM); // NOLINT(readability-identifier-naming)
 
-    const T my_zero(0U);
-    const T my_one (1U);
+    const T my_zero(static_cast<unsigned>(UINT8_C(0)));
+    const T my_one (static_cast<unsigned>(UINT8_C(1)));
 
     // C
     // C INITIALIZATION :
@@ -57,8 +56,8 @@ namespace local
     const T ABZ1((Z + ABZ) + SABZ);          // NOLINT(readability-identifier-naming)
     const T ABZ2((ABZ1 + SABZ) + (3U * Z));  // NOLINT(readability-identifier-naming)
 
-    std::array<T, 4U> A { }; // NOLINT(readability-identifier-naming)
-    std::array<T, 4U> B { }; // NOLINT(readability-identifier-naming)
+    auto A = std::array<T, static_cast<std::size_t>(UINT8_C(4))> { }; // NOLINT(readability-identifier-naming)
+    auto B = std::array<T, static_cast<std::size_t>(UINT8_C(4))> { }; // NOLINT(readability-identifier-naming)
 
     B[0U] = my_one;
     A[0U] = my_one;
@@ -77,7 +76,7 @@ namespace local
 
     const T Z2(Z / 2U); // NOLINT(readability-identifier-naming)
 
-    std::array<T, 9U> D { }; // NOLINT(readability-magic-numbers,cppcoreguidelines-avoid-magic-numbers,cppcoreguidelines-avoid-magic-numbers,readability-identifier-naming)
+    auto D = std::array<T, static_cast<std::size_t>(UINT8_C(9))> { }; // NOLINT(readability-magic-numbers,cppcoreguidelines-avoid-magic-numbers,cppcoreguidelines-avoid-magic-numbers,readability-identifier-naming)
 
     D[0U] = (((T(UINT8_C(7)) / 2U) - AB) * Z2) - SABZ;     // NOLINT(readability-magic-numbers,cppcoreguidelines-avoid-magic-numbers,cppcoreguidelines-avoid-magic-numbers)
     D[1U] = ABZ1 / 4U;                                     // NOLINT(readability-magic-numbers,cppcoreguidelines-avoid-magic-numbers,cppcoreguidelines-avoid-magic-numbers)
@@ -89,7 +88,7 @@ namespace local
     D[7U] = T(3U) / 4U;                                    // NOLINT(readability-magic-numbers,cppcoreguidelines-avoid-magic-numbers,cppcoreguidelines-avoid-magic-numbers)
     D[8U] = D[7U] * Z;                                     // NOLINT(readability-magic-numbers,cppcoreguidelines-avoid-magic-numbers,cppcoreguidelines-avoid-magic-numbers)
 
-    std::array<T, 3U> G { }; // NOLINT(readability-identifier-naming)
+    auto G = std::array<T, static_cast<std::size_t>(UINT8_C(3))> { }; // NOLINT(readability-identifier-naming)
 
     // C
     // C FOR I=3,...,N , THE VALUES A(I) AND B(I) ARE CALCULATED
@@ -138,7 +137,7 @@ namespace local
       const T ratio = fabs((A[2U] * B[3U]) / (A[3U] * B[2U]));
       const T delta = fabs(my_one - ratio);
 
-      if((XI > UINT16_C(7)) && (delta < std::numeric_limits<T>::epsilon()))
+      if((XI > static_cast<std::uint_fast16_t>(UINT8_C(7))) && (delta < std::numeric_limits<T>::epsilon()))
       {
         break;
       }
@@ -163,36 +162,47 @@ namespace local
 
 auto math::softfloat::example010_hypergeometric_2f1() -> bool
 {
-  const float64_t a( float64_t(2U) / 3U);
-  const float64_t b( float64_t(4U) / 3U);
-  const float64_t c( float64_t(5U) / 7U);
-  const float64_t z(-float64_t(3U) / 4U);
+  static_assert(std::numeric_limits<float64_t>::digits >= static_cast<int>(INT8_C(53)),
+                "Error: Incorrect float64_t type definition");
 
-  const float64_t h2f1 = local::hypergeometric_2f1(a, b, c, z);
+  const auto a = float64_t( float64_t(2U) / 3U);
+  const auto b = float64_t( float64_t(4U) / 3U);
+  const auto c = float64_t( float64_t(5U) / 7U);
+  const auto z = float64_t(-float64_t(3U) / 4U);
+
+  const auto h2f1 = local::hypergeometric_2f1(a, b, c, z);
 
   // N[Hypergeometric2F1[2/3, 4/3, 5/7, -3/4], 41]
-  const float64_t control(0.50100473608761064038202987077811306637010);
+  // 0.50100473608761064038202987077811306637010
+
+  const auto control = float64_t(UINT64_C(0x3FE0083B15946592), math::softfloat::detail::nothing());
 
   using std::fabs;
 
-  const float64_t closeness = fabs(1 - fabs(h2f1 / control));
+  const auto closeness = fabs(1 - fabs(h2f1 / control));
 
-  const bool result_is_ok = closeness < (std::numeric_limits<float64_t>::epsilon() * 10);
+  const auto result_is_ok = (closeness < (std::numeric_limits<float64_t>::epsilon() * 10));
 
   return result_is_ok;
 }
 
 // Enable this if you would like to activate this main() as a standalone example.
-#if 0
+#if defined(WIDE_INTEGER_STANDALONE_EXAMPLE010_HYPERGEOMETRIC_2F1)
 
+#if (!defined(__AVR__) && !defined(__arm__))
 #include <iomanip>
 #include <iostream>
+#endif
 
 int main()
 {
-  const bool result_is_ok = math::softfloat::example010_hypergeometric_2f1();
+  const auto result_is_ok = math::softfloat::example010_hypergeometric_2f1();
 
+  #if (!defined(__AVR__) && !defined(__arm__))
   std::cout << "result_is_ok: " << std::boolalpha << result_is_ok << std::endl;
+  #endif
+
+  return (result_is_ok ? 0 : -1);
 }
 
 #endif
