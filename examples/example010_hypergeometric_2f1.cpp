@@ -189,20 +189,64 @@ auto math::softfloat::example010_hypergeometric_2f1() -> bool
 // Enable this if you would like to activate this main() as a standalone example.
 #if defined(WIDE_INTEGER_STANDALONE_EXAMPLE010_HYPERGEOMETRIC_2F1)
 
-#if (!defined(__AVR__) && !defined(__arm__))
+#if !defined(SOFT_DOUBLE_DISABLE_IOSTREAM)
 #include <iomanip>
 #include <iostream>
 #endif
 
-int main()
-{
-  const auto result_is_ok = math::softfloat::example010_hypergeometric_2f1();
+constexpr auto example_standalone_foodcafe = static_cast<std::uint32_t>(UINT32_C(0xF00DCAFE));
 
-  #if (!defined(__AVR__) && !defined(__arm__))
-  std::cout << "result_is_ok: " << std::boolalpha << result_is_ok << std::endl;
-  #endif
+extern "C"
+{
+  extern volatile std::uint32_t example_standalone_result;
+
+  auto example_run_standalone       (void) -> bool;
+  auto example_get_standalone_result(void) -> bool;
+
+  auto example_run_standalone(void) -> bool
+  {
+    bool result_is_ok = true;
+
+    for(unsigned i = 0U; i < 64U; ++i)
+    {
+      result_is_ok &= ::math::softfloat::example010_hypergeometric_2f1();
+    }
+
+    example_standalone_result =
+      static_cast<std::uint32_t>
+      (
+        result_is_ok ? example_standalone_foodcafe : static_cast<std::uint32_t>(UINT32_C(0xFFFFFFFF))
+      );
+
+    #if !defined(SOFT_DOUBLE_DISABLE_IOSTREAM)
+    std::cout << "result_is_ok: " << std::boolalpha << result_is_ok << std::endl;
+    #endif
+
+    return result_is_ok;
+  }
+
+  auto example_get_standalone_result(void) -> bool
+  {
+    volatile auto result_is_ok =
+      (example_standalone_result == static_cast<std::uint32_t>(UINT32_C(0xF00DCAFE)));
+
+    return result_is_ok;
+  }
+}
+
+auto main() -> int
+{
+  auto result_is_ok = true;
+
+  result_is_ok = (::example_run_standalone       () && result_is_ok);
+  result_is_ok = (::example_get_standalone_result() && result_is_ok);
 
   return (result_is_ok ? 0 : -1);
+}
+
+extern "C"
+{
+  volatile std::uint32_t example_standalone_result;
 }
 
 #endif

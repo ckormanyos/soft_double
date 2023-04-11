@@ -137,8 +137,7 @@ target system/compiler combinations lacking a built-in 64-bit floating-point typ
 
 An example tested on various microcontrollers system
 can be found in the file
-[app_benchmark_soft_double_h2f1.cpp](https://github.com/ckormanyos/real-time-cpp/blob/master/ref_app/src/app/benchmark/app_benchmark_soft_double_h2f1.cpp)
-in the [real-time-cpp](https://github.com/ckormanyos/real-time-cpp) repository.
+[`example010_hypergeometric_2f1.cpp`](./examples/example010_hypergeometric_2f1.cpp).
 This benchmark has also been tested on the 8-bit MICROCHIP ATmega328P controller
 with `avr-gcc` versions 5 and 7 (both lacking built-in 64-bit `double`).
 
@@ -247,6 +246,12 @@ The GitHub code is delivered with an affiliated MSVC project.
 It uses easy-to-understand subroutines called from
 [`main()`](https://github.com/ckormanyos/soft_double/blob/fa628ee77c002c1073256056f7dcdb57d45e758c/test/test.cpp#L13)
 that exercise various test cases.
+
+Furthermore,
+the [`example010_hypergeometric_2f1.cpp`](./examples/example010_hypergeometric_2f1.cpp)
+benchmark is built-for the 8-bit MICROCHIP ATmega328P controller
+and it is also built-for and executed-on the simulated
+32-bit ARM(R) Cortex(R)-M4F in QEMU in CI.
 
 CI runs on push and pull request using GitHub Actions.
 Various compilers, operating systems, and various
