@@ -351,8 +351,10 @@ jobs:
           ./b2 headers
       - name: gcc-clang-boost-math-snippets
         run: |
-          echo "compile ./test_soft_double_boost_math_${{ matrix.suite }}.exe"
           ${{ matrix.compiler }} -v
-          ${{ matrix.compiler }} -finline-functions -march=native -mtune=native -O3 -Wall -Wextra -Wpedantic -Wshadow -Wunused-parameter -Wuninitialized -Wunreachable-code -Winit-self -Wzero-as-null-pointer-constant -std=${{ matrix.standard }} -I. -I../boost-root test/test_soft_double_boost_math_${{ matrix.suite }}.cpp -o $test_soft_double_boost_math_{{ matrix.suite }}.exe
+          echo 'compile with ${{ matrix.compiler }} -finline-functions -march=native -mtune=native -O3 -Wall -Wextra -Wpedantic -Wshadow -Wunused-parameter -Wuninitialized -Wunreachable-code -Winit-self -Wzero-as-null-pointer-constant -std=${{ matrix.standard }} -I. -I../boost-root test/test_soft_double_boost_math_${{ matrix.suite }}.cpp -o test_soft_double_boost_math_${{ matrix.suite }}.exe'
+          ${{ matrix.compiler }} -finline-functions -march=native -mtune=native -O3 -Wall -Wextra -Wpedantic -Wshadow -Wunused-parameter -Wuninitialized -Wunreachable-code -Winit-self -Wzero-as-null-pointer-constant -std=${{ matrix.standard }} -I. -I../boost-root test/test_soft_double_boost_math_${{ matrix.suite }}.cpp -o test_soft_double_boost_math_${{ matrix.suite }}.exe
+          echo 'verify presence of ./test_soft_double_boost_math_${{ matrix.suite }}.exe'
           ls -la ./test_soft_double_boost_math_${{ matrix.suite }}.exe
+          echo 'execute ./test_soft_double_boost_math_${{ matrix.suite }}.exe'
           ./test_soft_double_boost_math_${{ matrix.suite }}.exe
