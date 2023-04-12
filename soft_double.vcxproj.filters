@@ -117,6 +117,9 @@
     <ClCompile Include="target\micros\stm32f429\make\single\crt.cpp">
       <Filter>target\micros\stm32f429\make\single</Filter>
     </ClCompile>
+    <ClCompile Include="test\test_soft_double_boost_math_cyl_bessel_j.cpp">
+      <Filter>test</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="math\wide_decimal\decwide_t.h">

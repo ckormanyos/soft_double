@@ -304,20 +304,10 @@ auto test_soft_double_edge_cases() -> bool
 {
   auto result_edge_cases_is_ok = true;
 
-  std::cout << "test_soft_double_edge_cases          : ";
-
   result_edge_cases_is_ok = (test_soft_double_edge::test_various_functions  () && result_edge_cases_is_ok);
   result_edge_cases_is_ok = (test_soft_double_edge::test_various_ostream_ops() && result_edge_cases_is_ok);
   result_edge_cases_is_ok = (test_soft_double_edge::test_various_pos_powers () && result_edge_cases_is_ok);
   result_edge_cases_is_ok = (test_soft_double_edge::test_various_64_bit_cast() && result_edge_cases_is_ok);
-
-  {
-    const auto flg = std::cout.flags();
-
-    std::cout << std::boolalpha << result_edge_cases_is_ok << std::endl;
-
-    std::cout.flags(flg);
-  }
 
   return result_edge_cases_is_ok;
 }

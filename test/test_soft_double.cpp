@@ -833,13 +833,7 @@ auto test_soft_double() -> bool
 
   const auto result_double_is_ok = (result_is_ok && result_algebra_is_ok);
 
-  {
-    const auto flg = std::cout.flags();
-
-    std::cout << "result_double_is_ok                  : " << std::boolalpha << result_double_is_ok << std::endl;
-
-    std::cout.flags(flg);
-  }
+  std::cout << "result_double_is_ok                                  : " << std::boolalpha << result_double_is_ok << std::endl;
 
   return result_double_is_ok;
 }

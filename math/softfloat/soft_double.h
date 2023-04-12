@@ -457,7 +457,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   constexpr             auto (isnan)   (soft_double x) -> bool;
   constexpr             auto (isinf)   (soft_double x) -> bool;
   constexpr             auto (isfinite)(soft_double x) -> bool;
+  constexpr             auto  abs      (soft_double x) -> soft_double;
   constexpr             auto  fabs     (soft_double x) -> soft_double;
+  constexpr             auto  fmod     (soft_double v1,
+                                        const soft_double v2) -> soft_double;
+
   constexpr auto  frexp    (soft_double x, int* expptr) -> soft_double;
   constexpr             auto  ldexp    (soft_double x, int expval) -> soft_double;
   constexpr auto  floor    (soft_double x) -> soft_double;
@@ -1686,8 +1690,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     friend constexpr auto (isnan)   (soft_double x) -> bool { return  (x.my_value == my_value_quiet_NaN().my_value); }
     friend constexpr auto (isinf)   (soft_double x) -> bool { return ((x.my_value & my_value_infinity().my_value) == my_value_infinity().my_value); }
 
-    friend constexpr auto fabs (soft_double x) -> soft_double { return { static_cast<std::uint64_t>(x.my_value & static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF))), detail::nothing() }; } // NOLINT(performance-unnecessary-value-param)
-    friend constexpr auto sqrt (soft_double x) -> soft_double { return { f64_sqrt(x.my_value), detail::nothing() }; } // NOLINT(performance-unnecessary-value-param)
+    friend constexpr auto abs (soft_double x) -> soft_double { return { static_cast<std::uint64_t>(x.my_value & static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF))), detail::nothing() }; } // NOLINT(performance-unnecessary-value-param)
+    friend constexpr auto fabs(soft_double x) -> soft_double { return { static_cast<std::uint64_t>(x.my_value & static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF))), detail::nothing() }; } // NOLINT(performance-unnecessary-value-param)
+
+    friend constexpr auto fmod(soft_double v1,
+                               const soft_double v2) -> soft_double
+    {
+      const soft_double n = ((v1 < 0) ? ceil(v1 / v2) : floor(v1 / v2));
+
+      return v1 - (n * v2);
+    }
+
+    friend constexpr auto sqrt(soft_double x) -> soft_double { return { f64_sqrt(x.my_value), detail::nothing() }; } // NOLINT(performance-unnecessary-value-param)
 
     friend constexpr auto frexp(soft_double x, int* expptr) -> soft_double // NOLINT(performance-unnecessary-value-param)
     {

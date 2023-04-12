@@ -224,7 +224,7 @@ jobs:
   msvc-release-x64:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
       - uses: ilammy/msvc-dev-cmd@v1
         with:
           toolset: 14.2
@@ -241,7 +241,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: '0'
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
       - uses: ilammy/msvc-dev-cmd@v1
         with:
           toolset: 14.3
@@ -325,3 +325,34 @@ jobs:
           echo "qemu_result" "$qemu_result"
           echo "qemu_result" "$qemu_result" | grep 'qemu_result 0'
         working-directory: ./
+  gcc-clang-boost-math-snippets:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        standard: [ c++14, c++17, c++2a ]
+        compiler: [ g++, clang++ ]
+        suite: [ cyl_bessel_j ]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+      - name: clone-submods-bootstrap-headers-boost-develop
+        run: |
+          git clone -b develop --depth 1 https://github.com/boostorg/boost.git ../boost-root
+          cd ../boost-root
+          git submodule update --init tools
+          git submodule update --init libs/config
+          git submodule update --init libs/math
+          ./bootstrap.sh
+          ./b2 headers
+      - name: gcc-clang-boost-math-snippets
+        run: |
+          echo "compile ./test_soft_double_boost_math_${{ matrix.suite }}.exe"
+          ${{ matrix.compiler }} -v
+          ${{ matrix.compiler }} -finline-functions -march=native -mtune=native -O3 -Wall -Wextra -Wpedantic -Wshadow -Wunused-parameter -Wuninitialized -Wunreachable-code -Winit-self -Wzero-as-null-pointer-constant -std=${{ matrix.standard }} -I. -I../boost-root test/test_soft_double_boost_math_${{ matrix.suite }}.cpp -o $test_soft_double_boost_math_{{ matrix.suite }}.exe
+          ls -la ./test_soft_double_boost_math_${{ matrix.suite }}.exe
+          ./test_soft_double_boost_math_${{ matrix.suite }}.exe
