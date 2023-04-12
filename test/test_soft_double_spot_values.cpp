@@ -10,17 +10,7 @@
 
 auto test_soft_double_spot_values() -> bool
 {
-  auto result_spot_values_is_ok = true;
-
-  std::cout << "test_soft_double_spot_values         : ";
-
-  {
-    const auto flg = std::cout.flags();
-
-    std::cout << std::boolalpha << result_spot_values_is_ok << std::endl;
-
-    std::cout.flags(flg);
-  }
+  const auto result_spot_values_is_ok = true;
 
   return result_spot_values_is_ok;
 }
