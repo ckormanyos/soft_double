@@ -454,19 +454,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   template<typename char_type, typename traits_type> auto operator>>(std::basic_istream<char_type, traits_type>& is,       soft_double& f) -> std::basic_istream<char_type, traits_type>&;
   #endif // !WIDE_DECIMAL_DISABLE_IOSTREAM
 
-  constexpr             auto (isnan)   (soft_double x) -> bool;
-  constexpr             auto (isinf)   (soft_double x) -> bool;
-  constexpr             auto (isfinite)(soft_double x) -> bool;
-  constexpr             auto  abs      (soft_double x) -> soft_double;
-  constexpr             auto  fabs     (soft_double x) -> soft_double;
-  constexpr             auto  fmod     (soft_double v1,
-                                        const soft_double v2) -> soft_double;
-
+  constexpr auto (isnan)   (soft_double x) -> bool;
+  constexpr auto (isinf)   (soft_double x) -> bool;
+  constexpr auto (isfinite)(soft_double x) -> bool;
+  constexpr auto  abs      (soft_double x) -> soft_double;
+  constexpr auto  fabs     (soft_double x) -> soft_double;
+  constexpr auto  fmod     (soft_double v1, soft_double v2) -> soft_double;
   constexpr auto  frexp    (soft_double x, int* expptr) -> soft_double;
-  constexpr             auto  ldexp    (soft_double x, int expval) -> soft_double;
+  constexpr auto  ldexp    (soft_double x, int expval) -> soft_double;
   constexpr auto  floor    (soft_double x) -> soft_double;
   constexpr auto  ceil     (soft_double x) -> soft_double;
-  constexpr             auto  sqrt     (soft_double x) -> soft_double;
+  constexpr auto  sqrt     (soft_double x) -> soft_double;
   constexpr auto  exp      (soft_double x) -> soft_double;
   constexpr auto  log      (soft_double x) -> soft_double;
   constexpr auto  pow      (soft_double x, soft_double a) -> soft_double;
@@ -1693,12 +1691,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     friend constexpr auto abs (soft_double x) -> soft_double { return { static_cast<std::uint64_t>(x.my_value & static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF))), detail::nothing() }; } // NOLINT(performance-unnecessary-value-param)
     friend constexpr auto fabs(soft_double x) -> soft_double { return { static_cast<std::uint64_t>(x.my_value & static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF))), detail::nothing() }; } // NOLINT(performance-unnecessary-value-param)
 
-    friend constexpr auto fmod(soft_double v1,
-                               const soft_double v2) -> soft_double
+    friend constexpr auto fmod(soft_double v1, soft_double v2) -> soft_double // NOLINT(performance-unnecessary-value-param)
     {
-      const soft_double n = ((v1 < 0) ? ceil(v1 / v2) : floor(v1 / v2));
+      const soft_double n_mod = ((v1 < 0) ? ceil(v1 / v2) : floor(v1 / v2));
 
-      return v1 - (n * v2);
+      return v1 - (n_mod * v2);
     }
 
     friend constexpr auto sqrt(soft_double x) -> soft_double { return { f64_sqrt(x.my_value), detail::nothing() }; } // NOLINT(performance-unnecessary-value-param)
