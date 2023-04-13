@@ -50,22 +50,22 @@ namespace detail
   {
     using std::fabs;
 
-    const NumericType ratio     = fabs(NumericType((NumericType(1) * a) / b));
+    const auto ratio = fabs(NumericType((NumericType(1) * a) / b));
 
-    const NumericType closeness = fabs(NumericType(1 - ratio));
+    const auto closeness = fabs(NumericType(1 - ratio));
 
     return (closeness < tol);
   }
+
 } // namespace detail
-
-using my_float_type = ::math::softfloat::float64_t;
-
-static_assert(std::numeric_limits<my_float_type>::digits == static_cast<int>(INT8_C(53)),
-              "Error: Incorrect float64_t type definition");
 
 namespace
 {
+  using my_float_type = ::math::softfloat::float64_t;
+
   using my_float_control_array_type = std::array<my_float_type, static_cast<std::size_t>(UINT8_C(10))>;
+
+  // Table[N[BesselJ[123/100, n/10], 36], {n, 1, 10, 1}]
 
   const auto boost_math_test_control =
     my_float_control_array_type
@@ -85,14 +85,15 @@ namespace
   constexpr auto my_float_control_array_size = static_cast<unsigned>(std::tuple_size<my_float_control_array_type>::value);
 }
 
+static_assert(std::numeric_limits<my_float_type>::digits == static_cast<int>(INT8_C(53)),
+              "Error: Incorrect float64_t type definition");
+
 extern my_float_type cyj;
 extern unsigned      xn;
 extern my_float_type v;
 
 auto test_soft_double_boost_math_cyl_bessel_j() -> bool
 {
-  // Table[N[BesselJ[123/100, n/10], 36], {n, 1, 10, 1}]
-
   static auto boost_math_test_n_index      = static_cast<unsigned>(UINT8_C(0));
   static auto boost_math_test_result_is_ok = true;
 
@@ -118,8 +119,8 @@ auto test_soft_double_boost_math_cyl_bessel_j() -> bool
 
   if(boost_math_test_n_index == my_float_control_array_size)
   {
-    boost_math_test_n_index = 0U;
-    xn                      = 1U;
+    boost_math_test_n_index = static_cast<unsigned>(UINT8_C(0));
+    xn                      = static_cast<unsigned>(UINT8_C(1));
   }
 
   return boost_math_test_result_is_ok;
@@ -127,15 +128,15 @@ auto test_soft_double_boost_math_cyl_bessel_j() -> bool
 
 auto main() -> int
 {
-  auto result_is_ok = true;
-
-  auto test_index = static_cast<unsigned>(UINT8_C(0));
-
   constexpr auto number_of_tests =
     static_cast<unsigned>
     (
       my_float_control_array_size * static_cast<unsigned>(UINT8_C(3))
     );
+
+  auto result_is_ok = true;
+
+  auto test_index = static_cast<unsigned>(UINT8_C(0));
 
   for( ; ((test_index < number_of_tests) && result_is_ok); ++test_index)
   {
@@ -144,15 +145,17 @@ auto main() -> int
 
   result_is_ok = ((test_index == number_of_tests) && result_is_ok);
 
-  const auto flg = std::cout.flags();
+  {
+    const auto flg = std::cout.flags();
 
-  std::cout << "result_is_ok: " << std::boolalpha << result_is_ok << std::endl;
+    std::cout << "result_is_ok: " << std::boolalpha << result_is_ok << std::endl;
 
-  std::cout.flags(flg);
+    std::cout.flags(flg);
+  }
 
   return (result_is_ok ? 0 : -1);
 }
 
-my_float_type cyj;
+my_float_type cyj { };
 unsigned      xn = static_cast<unsigned>(UINT8_C(1));
 my_float_type v  = static_cast<my_float_type>(BOOST_FLOATMAX_C(1.23));
