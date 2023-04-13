@@ -49,6 +49,24 @@
     <Filter Include=".gcov\make">
       <UniqueIdentifier>{b606cef0-2d18-4c74-ba61-ca6af55dc876}</UniqueIdentifier>
     </Filter>
+    <Filter Include="target">
+      <UniqueIdentifier>{49a41488-5c16-4cf5-923d-e04afdaa6fd0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="target\build">
+      <UniqueIdentifier>{6efdbd14-e570-44ea-a87a-a13d587a6b87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="target\micros">
+      <UniqueIdentifier>{4df70ca7-f50b-4b5c-8811-09bb93ee5286}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="target\micros\stm32f429">
+      <UniqueIdentifier>{b685cfc2-d8a0-4c4f-89c2-a1ddc7681648}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="target\micros\stm32f429\make">
+      <UniqueIdentifier>{b78f9e2a-9b15-4c19-ae9d-fe91d2218d0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="target\micros\stm32f429\make\single">
+      <UniqueIdentifier>{cfac23d0-f0e3-48d8-bc1c-26a85b412610}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test\test.cpp">
@@ -92,6 +110,12 @@
     </ClCompile>
     <ClCompile Include="examples\example012_exercise_constexpr.cpp">
       <Filter>examples</Filter>
+    </ClCompile>
+    <ClCompile Include="test\test_soft_double_boost_math_cyl_bessel_j.cpp">
+      <Filter>test</Filter>
+    </ClCompile>
+    <ClCompile Include="target\micros\stm32f429\make\single\crt.cpp">
+      <Filter>target\micros\stm32f429\make\single</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -171,6 +195,12 @@
     </None>
     <None Include=".github\workflows\soft_double_sonar.yml">
       <Filter>.github\workflows</Filter>
+    </None>
+    <None Include="target\build\test_examples_emulator.py">
+      <Filter>target\build</Filter>
+    </None>
+    <None Include="target\micros\stm32f429\make\stm32f429.ld">
+      <Filter>target\micros\stm32f429\make</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
