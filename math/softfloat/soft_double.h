@@ -1501,12 +1501,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       const auto r0 =
         static_cast<std::uint16_t>
         (
-            softfloat_approxRecipSqrt_1k0s[static_cast<std::size_t>(index)]
+            softfloat_approxRecipSqrt_1k0s[static_cast<std::size_t>(index)] // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
           - static_cast<std::uint16_t>
             (
               static_cast<std::uint32_t>
               (
-                  softfloat_approxRecipSqrt_1k1s[static_cast<std::size_t>(index)]
+                  softfloat_approxRecipSqrt_1k1s[static_cast<std::size_t>(index)] // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
                 * static_cast<std::uint32_t>(eps)
               ) >> static_cast<unsigned>(UINT8_C(20))
             )
