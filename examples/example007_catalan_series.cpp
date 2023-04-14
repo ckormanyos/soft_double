@@ -105,7 +105,14 @@ constexpr auto catalan() -> FloatingPointType
 
 auto math::softfloat::example007_catalan_series() -> bool
 {
+  #if (defined(_MSC_VER) && (_MSC_VER < 1920))
+  #pragma warning(push)
+  #pragma warning(disable : 4307)
+  #endif
   constexpr auto c = local::catalan<float64_t>();
+  #if (defined(_MSC_VER) && (_MSC_VER < 1920))
+  #pragma warning(pop)
+  #endif
 
   using local_representation_type = typename float64_t::representation_type;
 
