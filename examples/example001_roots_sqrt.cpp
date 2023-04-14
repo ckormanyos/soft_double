@@ -20,7 +20,14 @@ auto math::softfloat::example001_roots_sqrt() -> bool
   constexpr float64_t my_pi = float64_t::my_value_pi();
 
   // Compute soft_double sqrt(pi).
+  #if (defined(_MSC_VER) && (_MSC_VER < 1920))
+  #pragma warning(push)
+  #pragma warning(disable : 4307)
+  #endif
   constexpr float64_t s = sqrt(my_pi);
+  #if (defined(_MSC_VER) && (_MSC_VER < 1920))
+  #pragma warning(pop)
+  #endif
 
   using std::sqrt;
 

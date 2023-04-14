@@ -75,10 +75,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     #define SOFT_DOUBLE_NODISCARD // NOLINT(cppcoreguidelines-macro-usage)
     #endif
   #else
+    #if (defined(_MSC_VER) && (_MSC_VER < 1920))
+    #define SOFT_DOUBLE_NODISCARD
+    #else
     #if (defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard))
     #define SOFT_DOUBLE_NODISCARD [[nodiscard]]
     #else
     #define SOFT_DOUBLE_NODISCARD
+    #endif
     #endif
   #endif
 
@@ -290,8 +294,43 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     // of the struct uint64_extra result.
     return
     {
-      (dist < static_cast<std::uint32_t>(UINT8_C(64))) ? static_cast<std::uint64_t>(a << static_cast<unsigned>(static_cast<unsigned>(negate(dist)) & 63U)) | (extra != 0U ? 1U : 0U) : ((dist == 64U) ? a : ((a != 0U) || (extra != 0U)) ? 1U : 0U),
-      (dist < static_cast<std::uint32_t>(UINT8_C(64))) ? static_cast<std::uint64_t>(a >>                       static_cast<unsigned>       (dist))                                   : 0U
+      static_cast<std::uint64_t>
+      (
+        (dist < static_cast<std::uint32_t>(UINT8_C(64)))
+          ? static_cast<std::uint64_t>
+            (  static_cast<std::uint64_t>
+              (
+                a << static_cast<unsigned>
+                     (
+                       static_cast<unsigned>(negate(dist)) & static_cast<std::uint32_t>(UINT8_C(63))
+                     )
+              )
+            | static_cast<unsigned>
+              (
+                (extra != static_cast<std::uint64_t>(UINT8_C(0)))
+                  ? static_cast<unsigned>(UINT8_C(1))
+                  : static_cast<unsigned>(UINT8_C(0))
+              )
+            )
+          :
+            static_cast<std::uint64_t>
+            (
+              (dist == static_cast<std::uint32_t>(UINT8_C(64)))
+                ? a
+                : static_cast<std::uint64_t>
+                  (
+                    ((a != static_cast<std::uint64_t>(UINT8_C(0))) || (extra != static_cast<std::uint64_t>(UINT8_C(0))))
+                      ? static_cast<unsigned>(UINT8_C(1))
+                      : static_cast<unsigned>(UINT8_C(0))
+                  )
+            )
+      ),
+      static_cast<std::uint64_t>
+      (
+        (dist < static_cast<std::uint32_t>(UINT8_C(64)))
+          ? static_cast<std::uint64_t>(a >> static_cast<unsigned>(dist))
+          : static_cast<std::uint64_t>(UINT8_C(0))
+      )
     };
   }
 
@@ -639,14 +678,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     {
       return (detail::signF64UI(a.my_value) != detail::signF64UI(b.my_value))
                ? (detail::signF64UI(a.my_value) ||  (static_cast<std::uint64_t>(a.my_value | b.my_value) & static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF))) == static_cast<std::uint64_t>(UINT8_C(0)))
-               : (a.my_value == b.my_value)     || ((static_cast<unsigned>(detail::signF64UI(a.my_value) ? 1U : 0U) ^ static_cast<unsigned>((a.my_value < b.my_value) ? 1U : 0U)) != 0U);
+               : (a.my_value == b.my_value)     || ((  static_cast<unsigned>(detail::signF64UI(a.my_value) ? static_cast<unsigned>(UINT8_C(1)) : static_cast<unsigned>(UINT8_C(0)))
+                                                     ^ static_cast<unsigned>((a.my_value < b.my_value)     ? static_cast<unsigned>(UINT8_C(1)) : static_cast<unsigned>(UINT8_C(0)))) != static_cast<unsigned>(UINT8_C(0)));
     }
 
     static constexpr auto my_lt(const soft_double& a, const soft_double& b) -> bool
     {
       return (detail::signF64UI(a.my_value) != detail::signF64UI(b.my_value))
                ? (detail::signF64UI(a.my_value) &&  (static_cast<std::uint64_t>(a.my_value | b.my_value) & static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF))) != static_cast<std::uint64_t>(UINT8_C(0)))
-               : (a.my_value != b.my_value)     && ((static_cast<unsigned>(detail::signF64UI(a.my_value) ? 1U : 0U) ^ static_cast<unsigned>((a.my_value < b.my_value) ? 1U : 0U)) != 0U);
+               : (a.my_value != b.my_value)     && ((  static_cast<unsigned>(detail::signF64UI(a.my_value) ? static_cast<unsigned>(UINT8_C(1)) : static_cast<unsigned>(UINT8_C(0)))
+                                                     ^ static_cast<unsigned>((a.my_value < b.my_value)     ? static_cast<unsigned>(UINT8_C(1)) : static_cast<unsigned>(UINT8_C(0)))) != static_cast<unsigned>(UINT8_C(0)));
     }
 
     static constexpr auto f64_add(const std::uint64_t a, const std::uint64_t b) -> std::uint64_t
@@ -678,8 +719,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       const auto signZ =
         static_cast<unsigned>
         (
-          static_cast<unsigned>(signA ? 1U : 0U) ^ static_cast<unsigned>(signB ? 1U : 0U)
-        ) != 0U;
+            static_cast<unsigned>(signA ? static_cast<unsigned>(UINT8_C(1)) : static_cast<unsigned>(UINT8_C(0)))
+          ^ static_cast<unsigned>(signB ? static_cast<unsigned>(UINT8_C(1)) : static_cast<unsigned>(UINT8_C(0)))
+        ) != static_cast<unsigned>(UINT8_C(0));
 
       auto result = std::uint64_t { };
 
@@ -704,9 +746,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
         // Compute the 128-bit product of sigA and sigB.
 
-        const auto a32 = static_cast<std::uint32_t>(sigA >> 32U);
+        const auto a32 = static_cast<std::uint32_t>(sigA >> static_cast<unsigned>(UINT8_C(32)));
         const auto a0  = static_cast<std::uint32_t>(sigA);
-        const auto b32 = static_cast<std::uint32_t>(sigB >> 32U);
+        const auto b32 = static_cast<std::uint32_t>(sigB >> static_cast<unsigned>(UINT8_C(32)));
         const auto b0  = static_cast<std::uint32_t>(sigB);
 
         const auto mid1 = static_cast<std::uint64_t>(                                  (static_cast<std::uint64_t>(a32)) * b0);
@@ -728,12 +770,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           sig128Z.v1 += static_cast<std::uint64_t>(UINT64_C(0x100000000));
         }
 
-        mid = static_cast<std::uint64_t>(mid << 32U);
+        mid = static_cast<std::uint64_t>(mid << static_cast<unsigned>(UINT8_C(32)));
 
         sig128Z.v0 += mid;
-        sig128Z.v1 += static_cast<unsigned>(sig128Z.v0 < mid ? 1U : 0U);
 
-        if(sig128Z.v0 != 0U)
+        sig128Z.v1 =
+          static_cast<std::uint64_t>
+          (
+              sig128Z.v1
+            + static_cast<unsigned>((sig128Z.v0 < mid) ? static_cast<unsigned>(UINT8_C(1)) : static_cast<unsigned>(UINT8_C(0)))
+          );
+
+        if(sig128Z.v0 != static_cast<std::uint64_t>(UINT8_C(0)))
         {
           sig128Z.v1 |= static_cast<unsigned>(UINT8_C(1));
         }
@@ -742,7 +790,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         {
           --expZ;
 
-          sig128Z.v1 <<= 1U;
+          sig128Z.v1 <<= static_cast<unsigned>(UINT8_C(1));
         }
 
         result = softfloat_roundPackToF64(signZ, expZ, sig128Z.v1);
@@ -764,7 +812,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       const auto signZ =
         static_cast<unsigned>
         (
-          static_cast<unsigned>(signA ? 1U : 0U) ^ static_cast<unsigned>(signB ? 1U : 0U)
+            static_cast<unsigned>(signA ? static_cast<unsigned>(UINT8_C(1)) : static_cast<unsigned>(UINT8_C(0)))
+          ^ static_cast<unsigned>(signB ? static_cast<unsigned>(UINT8_C(1)) : static_cast<unsigned>(UINT8_C(0)))
         ) != static_cast<unsigned>(UINT8_C(0));
 
       auto result = std::uint64_t { };
@@ -1036,7 +1085,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       auto shiftDist = static_cast<std::int16_t>(static_cast<std::int16_t>(INT16_C(0x433)) - expA);
 
       const auto sigExtra =
-        detail::softfloat_shiftRightJam64Extra(sig, 0U, static_cast<std::uint32_t>(shiftDist));
+        detail::softfloat_shiftRightJam64Extra(sig, static_cast<std::uint64_t>(UINT8_C(0)), static_cast<std::uint32_t>(shiftDist));
 
       return softfloat_roundToUI64(detail::signF64UI(a), sigExtra.v1);
     }
@@ -1054,7 +1103,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       auto shiftDist = static_cast<std::int16_t>(static_cast<std::int16_t>(INT16_C(0x433)) - expA);
 
       const auto sigExtra =
-        detail::softfloat_shiftRightJam64Extra(sig, 0U, static_cast<std::uint32_t>(shiftDist));
+        detail::softfloat_shiftRightJam64Extra(sig, static_cast<std::uint64_t>(UINT8_C(0)), static_cast<std::uint32_t>(shiftDist));
 
       return softfloat_roundToI64(detail::signF64UI(a), sigExtra.v1);
     }
@@ -2070,11 +2119,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       const auto n_pi = static_cast<std::uint32_t>(x / soft_double::my_value_pi());
 
-      if(n_pi != 0U)
+      if(n_pi != static_cast<std::uint32_t>(UINT8_C(0)))
       {
         x -= (soft_double::my_value_pi() * n_pi);
 
-        if((n_pi % 2U) != 0)
+        if(static_cast<std::uint_fast8_t>(n_pi % static_cast<std::uint32_t>(UINT8_C(2))) != static_cast<std::uint_fast8_t>(UINT8_C(0)))
         {
           b_negate_sin = (!b_negate_sin);
         }
@@ -2177,11 +2226,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       const auto n_pi = static_cast<std::uint32_t>(x / soft_double::my_value_pi());
 
-      if(n_pi != 0U)
+      if(n_pi != static_cast<std::uint32_t>(UINT8_C(0)))
       {
         x -= (soft_double::my_value_pi() * n_pi);
 
-        if((n_pi % 2U) != 0)
+        if(static_cast<std::uint_fast8_t>(n_pi % static_cast<std::uint32_t>(UINT8_C(2))) != static_cast<std::uint_fast8_t>(UINT8_C(0)))
         {
           b_negate_cos = (!b_negate_cos);
         }
