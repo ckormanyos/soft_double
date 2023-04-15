@@ -138,7 +138,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   struct uint128_compound
   {
-    explicit constexpr uint128_compound(std::uint64_t a = std::uint64_t(),
+    explicit constexpr uint128_compound(std::uint64_t a = std::uint64_t(), // NOLINT(bugprone-easily-swappable-parameters)
                                         std::uint64_t b = std::uint64_t()) noexcept
       : v0(a),
         v1(b) { }
