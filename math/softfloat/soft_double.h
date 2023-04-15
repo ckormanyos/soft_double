@@ -2144,15 +2144,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     //    x (11511339840 - 1640635920 x^2 + 52785432 x^4 - 479249 x^6)
     // / (7 ( 1644477120  +  39702960 x^2 +   453960 x^4 +   2623 x^6))
 
-    const soft_double coef_sin_top_0(INT64_C(+11511339840));
-    const soft_double coef_sin_top_1(INT32_C(-1640635920));
-    const soft_double coef_sin_top_2(INT32_C(+52785432));
-    const soft_double coef_sin_top_3(INT32_C(-479249));
+    const soft_double coef_sin_top_0(static_cast<std::uint64_t>(UINT64_C(+11511339840)));
+    const soft_double coef_sin_top_1(static_cast<std::int32_t> (INT32_C (-1640635920)));
+    const soft_double coef_sin_top_2(static_cast<std::uint32_t>(UINT32_C(+52785432)));
+    const soft_double coef_sin_top_3(static_cast<std::int32_t> (INT32_C (-479249)));
 
-    const soft_double coef_sin_bot_0(UINT32_C(+1644477120));
-    const soft_double coef_sin_bot_1(UINT32_C(+39702960));
-    const soft_double coef_sin_bot_2(UINT32_C(+453960));
-    const soft_double coef_sin_bot_3(UINT32_C(+2623));
+    const soft_double coef_sin_bot_0(static_cast<std::uint32_t>(UINT32_C(+1644477120)));
+    const soft_double coef_sin_bot_1(static_cast<std::uint32_t>(UINT32_C(+39702960)));
+    const soft_double coef_sin_bot_2(static_cast<std::uint32_t>(UINT32_C(+453960)));
+    const soft_double coef_sin_bot_3(static_cast<std::uint16_t>(UINT16_C(+2623)));
 
     const soft_double x2(x * x);
 
@@ -2177,15 +2177,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     //   (x^2 (-5491886400 + 346666320 x^2 - 7038360 x^4 + 45469 x^6))
     // / (24  (  457657200 +   9249240 x^2 +   86030 x^4 +   389 x^6))
 
-    const soft_double coef_cos_top_0(static_cast<std::int32_t>(INT64_C(-5491886400)));
-    const soft_double coef_cos_top_1(static_cast<std::int32_t>(INT32_C(+346666320)));
-    const soft_double coef_cos_top_2(static_cast<std::int32_t>(INT32_C(-7038360)));
-    const soft_double coef_cos_top_3(static_cast<std::int32_t>(INT32_C(+45469)));
+    const soft_double coef_cos_top_0(static_cast<std::int64_t> (INT64_C (-5491886400)));
+    const soft_double coef_cos_top_1(static_cast<std::uint32_t>(UINT32_C(+346666320)));
+    const soft_double coef_cos_top_2(static_cast<std::int32_t> (INT32_C (-7038360)));
+    const soft_double coef_cos_top_3(static_cast<std::uint16_t>(UINT16_C(+45469)));
 
     const soft_double coef_cos_bot_0(static_cast<std::uint32_t>(UINT32_C(457657200)));
     const soft_double coef_cos_bot_1(static_cast<std::uint32_t>(UINT32_C(9249240)));
     const soft_double coef_cos_bot_2(static_cast<std::uint32_t>(UINT32_C(86030)));
-    const soft_double coef_cos_bot_3(static_cast<std::uint32_t>(UINT32_C(389)));
+    const soft_double coef_cos_bot_3(static_cast<std::uint16_t>(UINT16_C(389)));
 
     const soft_double x2(x * x);
 
@@ -2241,15 +2241,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         //   (39251520 - 18471600 dx^2 + 1075032 dx^4 - 14615 dx^6)
         // / (39251520 +  1154160 dx^2 +   16632 dx^4 +   127 dx^6)
 
-        const soft_double coef_top_0(static_cast<std::int32_t>(INT32_C(+39251520)));
-        const soft_double coef_top_1(static_cast<std::int32_t>(INT32_C(-18471600)));
-        const soft_double coef_top_2(static_cast<std::int32_t>(INT32_C(+1075032)));
-        const soft_double coef_top_3(static_cast<std::int32_t>(INT32_C(-14615)));
+        const soft_double coef_top_0(static_cast<std::uint32_t>(UINT32_C(+39251520)));
+        const soft_double coef_top_1(static_cast<std::int32_t> (INT32_C (-18471600)));
+        const soft_double coef_top_2(static_cast<std::uint32_t>(UINT32_C(+1075032)));
+        const soft_double coef_top_3(static_cast<std::int16_t> (INT16_C (-14615)));
 
         const soft_double coef_bot_0(static_cast<std::uint32_t>(UINT32_C(39251520)));
         const soft_double coef_bot_1(static_cast<std::uint32_t>(UINT32_C(1154160)));
-        const soft_double coef_bot_2(static_cast<std::uint32_t>(UINT32_C(16632)));
-        const soft_double coef_bot_3(static_cast<std::uint32_t>(UINT32_C(127)));
+        const soft_double coef_bot_2(static_cast<std::uint16_t>(UINT16_C(16632)));
+        const soft_double coef_bot_3(static_cast<std::uint8_t> (UINT8_C (127)));
 
         const soft_double x2(delta_pi_half * delta_pi_half);
 
