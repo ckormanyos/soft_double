@@ -36,7 +36,7 @@ auto bisect(const std::function<FloatingPointType(const FloatingPointType)>& pfn
   {
     // Bisection interval has no root or it has multiple roots!
 
-    return floating_point_type(0);
+    return static_cast<floating_point_type>(static_cast<int>(INT8_C(0)));
   }
 
   // Orient the search such that f > 0 lies at x + dx.

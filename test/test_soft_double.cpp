@@ -807,7 +807,7 @@ auto test_soft_double() -> bool
   const auto stop = std::clock();
 
   std::cout << "Time test_soft_double(): "
-            << float(stop - start) / float(CLOCKS_PER_SEC)
+            << static_cast<float>(stop - start) / static_cast<float>(CLOCKS_PER_SEC)
             << std::endl;
 
   const auto result_algebra_is_ok = (   result_to_f32_is_ok
