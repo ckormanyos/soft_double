@@ -38,7 +38,8 @@ TIDY_CHECKS  = "*,                                                             \
                -altera-struct-pack-align,                                      \
                -altera-unroll-loops,                                           \
                -fuchsia-*,                                                     \
-               -llvmlibc-*"
+               -llvmlibc-*,                                                    \
+               -readability-identifier-length"
 
 TIDY_FLAGS   = --extra-arg-before=--driver-mode=g++                            \
                --header-filter=decwide_t                                       \

@@ -188,7 +188,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       static_cast<std::uint64_t>
       (
           static_cast<std::uint64_t>(sign ? static_cast<std::uint64_t>(static_cast<std::uint64_t>(UINT8_C(1)) << static_cast<unsigned>(UINT8_C(63))) : static_cast<std::uint64_t>(UINT8_C(0)))
-        + static_cast<std::uint64_t>(static_cast<std::uint64_t>(static_cast<local_unsigned_exp_type>(expA)) << static_cast<unsigned>(UINT8_C(52)))
+        + static_cast<std::uint64_t>(static_cast<std::uint64_t>(static_cast<local_unsigned_exp_type>(expA)) << static_cast<unsigned>(UINT8_C(52))) // NOLINT(clang-analyzer-core.UndefinedBinaryOperatorResult)
         + static_cast<std::uint64_t>(static_cast<local_unsigned_sig_type>(sig))
       );
   }
