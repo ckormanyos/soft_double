@@ -84,8 +84,8 @@ jobs:
       - name: test
         working-directory: ${{runner.workspace}}/build
         run: ctest --verbose --output-on-failure
-  gnumake-clang-tidy-12-native:
-    runs-on: ubuntu-20.04
+  gnumake-clang-tidy-native:
+    runs-on: ubuntu-latest
     defaults:
       run:
         shell: bash
@@ -136,7 +136,7 @@ jobs:
           ls -la ./soft_double.exe
           ./soft_double.exe
   mingw-winhost-x64:
-    runs-on: windows-2019
+    runs-on: windows-latest
     defaults:
       run:
         shell: cmd
@@ -255,7 +255,7 @@ jobs:
           dir %cd%\x64\Release\soft_double_vs2022.exe
           %cd%\x64\Release\soft_double_vs2022.exe
   gcc-avr:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     defaults:
       run:
         shell: bash
