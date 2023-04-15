@@ -125,21 +125,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
            typename EnableType = void>
   struct uint_type_helper
   {
-    static_assert(((BitCount >= 8) && (BitCount <= 64)),
+    static_assert(((BitCount >= static_cast<int>(INT8_C(8))) && (BitCount <= static_cast<int>(INT8_C(64)))),
                   "Error: uint_type_helper is not intended to be used for this BitCount");
 
     using exact_unsigned_type = std::uintmax_t;
   };
 
-  template<const int BitCount> struct uint_type_helper<BitCount, typename std::enable_if<                    (BitCount <=  8)>::type> { using exact_unsigned_type = std::uint8_t;  };
-  template<const int BitCount> struct uint_type_helper<BitCount, typename std::enable_if<(BitCount >=  9) && (BitCount <= 16)>::type> { using exact_unsigned_type = std::uint16_t; };
-  template<const int BitCount> struct uint_type_helper<BitCount, typename std::enable_if<(BitCount >= 17) && (BitCount <= 32)>::type> { using exact_unsigned_type = std::uint32_t; };
-  template<const int BitCount> struct uint_type_helper<BitCount, typename std::enable_if<(BitCount >= 33) && (BitCount <= 64)>::type> { using exact_unsigned_type = std::uint64_t; };
+  template<const int BitCount> struct uint_type_helper<BitCount, typename std::enable_if<                                              (BitCount <= static_cast<int>(INT8_C( 8)))>::type> { using exact_unsigned_type = std::uint8_t;  };
+  template<const int BitCount> struct uint_type_helper<BitCount, typename std::enable_if<(BitCount >= static_cast<int>(INT8_C( 9))) && (BitCount <= static_cast<int>(INT8_C(16)))>::type> { using exact_unsigned_type = std::uint16_t; };
+  template<const int BitCount> struct uint_type_helper<BitCount, typename std::enable_if<(BitCount >= static_cast<int>(INT8_C(17))) && (BitCount <= static_cast<int>(INT8_C(32)))>::type> { using exact_unsigned_type = std::uint32_t; };
+  template<const int BitCount> struct uint_type_helper<BitCount, typename std::enable_if<(BitCount >= static_cast<int>(INT8_C(33))) && (BitCount <= static_cast<int>(INT8_C(64)))>::type> { using exact_unsigned_type = std::uint64_t; };
 
   struct uint128_compound
   {
-    constexpr uint128_compound(std::uint64_t a = std::uint64_t(), // NOLINT(google-explicit-constructor,hicpp-explicit-conversions,bugprone-easily-swappable-parameters)
-                               std::uint64_t b = std::uint64_t()) noexcept
+    explicit constexpr uint128_compound(std::uint64_t a = std::uint64_t(),
+                                        std::uint64_t b = std::uint64_t()) noexcept
       : v0(a),
         v1(b) { }
 
@@ -224,14 +224,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   constexpr auto softfloat_shiftRightJam64(std::uint64_t a, std::uint_fast16_t dist) -> std::uint64_t
   {
     return
-      (dist < static_cast<std::uint32_t>(UINT8_C(63)))
-        ? softfloat_shortShiftRightJam64(a, dist)
-        : static_cast<std::uint64_t>
-          (
-            (a != static_cast<std::uint64_t>(UINT8_C(0)))
-              ? static_cast<unsigned>(UINT8_C(1))
-              : static_cast<unsigned>(UINT8_C(0))
-          );
+      static_cast<std::uint64_t>
+      (
+        (dist < static_cast<std::uint_fast16_t>(UINT8_C(63)))
+          ? softfloat_shortShiftRightJam64(a, dist)
+          : static_cast<std::uint64_t>
+            (
+              (a != static_cast<std::uint64_t>(UINT8_C(0)))
+                ? static_cast<unsigned>(UINT8_C(1))
+                : static_cast<unsigned>(UINT8_C(0))
+            )
+      );
   }
 
   constexpr auto softfloat_countLeadingZeros8_z_table(std::uint_fast8_t index) -> std::uint_fast8_t
@@ -239,43 +242,59 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     // A constant table that translates an 8-bit unsigned integer (the array index)
     // into the number of leading 0 bits before the most-significant 1 of that
     // integer.  For integer zero (index 0), the corresponding table element is 8.
-    return   ((index < static_cast<std::uint_fast8_t>(UINT8_C(0x1))) ? static_cast<std::uint_fast8_t>(UINT8_C(4))
-           : ((index < static_cast<std::uint_fast8_t>(UINT8_C(0x2))) ? static_cast<std::uint_fast8_t>(UINT8_C(3))
-           : ((index < static_cast<std::uint_fast8_t>(UINT8_C(0x4))) ? static_cast<std::uint_fast8_t>(UINT8_C(2))
-           : ((index < static_cast<std::uint_fast8_t>(UINT8_C(0x8))) ? static_cast<std::uint_fast8_t>(UINT8_C(1))
-                                                                     : static_cast<std::uint_fast8_t>(UINT8_C(0))))));
+    return
+      static_cast<std::uint_fast8_t>
+      (
+          ((index < static_cast<std::uint_fast8_t>(UINT8_C(0x1))) ? static_cast<std::uint_fast8_t>(UINT8_C(4))
+        : ((index < static_cast<std::uint_fast8_t>(UINT8_C(0x2))) ? static_cast<std::uint_fast8_t>(UINT8_C(3))
+        : ((index < static_cast<std::uint_fast8_t>(UINT8_C(0x4))) ? static_cast<std::uint_fast8_t>(UINT8_C(2))
+        : ((index < static_cast<std::uint_fast8_t>(UINT8_C(0x8))) ? static_cast<std::uint_fast8_t>(UINT8_C(1))
+                                                                  : static_cast<std::uint_fast8_t>(UINT8_C(0))))))
+      );
   }
 
   constexpr auto softfloat_countLeadingZeros8(std::uint8_t a) -> std::uint_fast8_t
   {
     return
-      (a < static_cast<std::uint_fast8_t>(UINT8_C(0x10)))
-        ? static_cast<std::uint_fast8_t>(static_cast<unsigned>(UINT8_C(4)) + softfloat_countLeadingZeros8_z_table(static_cast<std::uint_fast8_t>(a & static_cast<std::uint8_t>(UINT8_C(0xF)))))
-        :                                                                    softfloat_countLeadingZeros8_z_table(static_cast<std::uint_fast8_t>(a >> static_cast<unsigned>(UINT8_C(4))));
+      static_cast<std::uint_fast8_t>
+      (
+        (a < static_cast<std::uint_fast8_t>(UINT8_C(0x10)))
+          ? static_cast<std::uint_fast8_t>(static_cast<unsigned>(UINT8_C(4)) + softfloat_countLeadingZeros8_z_table(static_cast<std::uint_fast8_t>(a & static_cast<std::uint8_t>(UINT8_C(0xF)))))
+          :                                                                    softfloat_countLeadingZeros8_z_table(static_cast<std::uint_fast8_t>(a >> static_cast<unsigned>(UINT8_C(4))))
+      );
   }
 
   constexpr auto softfloat_countLeadingZeros16(std::uint16_t a) -> std::uint_fast8_t
   {
     return
-      (a < static_cast<std::uint16_t>(UINT16_C(0x100)))
-        ? static_cast<std::uint_fast8_t>(static_cast<unsigned>(UINT8_C(8)) + softfloat_countLeadingZeros8(static_cast<std::uint8_t>(a)))
-        :                                                                    softfloat_countLeadingZeros8(static_cast<std::uint8_t>(a >> static_cast<unsigned>(UINT8_C(8))));
+      static_cast<std::uint_fast8_t>
+      (
+        (a < static_cast<std::uint16_t>(UINT16_C(0x100)))
+          ? static_cast<std::uint_fast8_t>(static_cast<unsigned>(UINT8_C(8)) + softfloat_countLeadingZeros8(static_cast<std::uint8_t>(a)))
+          :                                                                    softfloat_countLeadingZeros8(static_cast<std::uint8_t>(a >> static_cast<unsigned>(UINT8_C(8))))
+      );
   }
 
   constexpr auto softfloat_countLeadingZeros32(std::uint32_t a) -> std::uint_fast8_t
   {
     return
-      (a < static_cast<std::uint32_t>(UINT32_C(0x10000)))
-        ? static_cast<std::uint_fast8_t>(static_cast<unsigned>(UINT8_C(16)) + softfloat_countLeadingZeros16(static_cast<std::uint16_t>(a)))
-        :                                                                     softfloat_countLeadingZeros16(static_cast<std::uint16_t>(a >> static_cast<unsigned>(UINT8_C(16))));
+      static_cast<std::uint_fast8_t>
+      (
+        (a < static_cast<std::uint32_t>(UINT32_C(0x10000)))
+          ? static_cast<std::uint_fast8_t>(static_cast<unsigned>(UINT8_C(16)) + softfloat_countLeadingZeros16(static_cast<std::uint16_t>(a)))
+          :                                                                     softfloat_countLeadingZeros16(static_cast<std::uint16_t>(a >> static_cast<unsigned>(UINT8_C(16))))
+      );
   }
 
   constexpr auto softfloat_countLeadingZeros64(std::uint64_t a) -> std::uint_fast8_t
   {
     return
-      (a < static_cast<std::uint64_t>(UINT64_C(0x100000000)))
-        ? static_cast<std::uint_fast8_t>(static_cast<unsigned>(UINT8_C(32)) + softfloat_countLeadingZeros32(static_cast<std::uint32_t>(a)))
-        :                                                                     softfloat_countLeadingZeros32(static_cast<std::uint32_t>(a >> static_cast<unsigned>(UINT8_C(32))));
+      static_cast<std::uint_fast8_t>
+      (
+        (a < static_cast<std::uint64_t>(UINT64_C(0x100000000)))
+          ? static_cast<std::uint_fast8_t>(static_cast<unsigned>(UINT8_C(32)) + softfloat_countLeadingZeros32(static_cast<std::uint32_t>(a)))
+          :                                                                     softfloat_countLeadingZeros32(static_cast<std::uint32_t>(a >> static_cast<unsigned>(UINT8_C(32))))
+      );
   }
 
   constexpr auto softfloat_approxRecip32_1(std::uint32_t a) -> std::uint32_t
@@ -293,45 +312,46 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     // shifted value is at most 64 nonzero bits and is returned in the v field
     // of the struct uint64_extra result.
     return
-    {
-      static_cast<std::uint64_t>
-      (
-        (dist < static_cast<std::uint32_t>(UINT8_C(64)))
-          ? static_cast<std::uint64_t>
-            (  static_cast<std::uint64_t>
-              (
-                a << static_cast<unsigned>
-                     (
-                       static_cast<unsigned>(negate(dist)) & static_cast<std::uint32_t>(UINT8_C(63))
-                     )
+      uint128_compound
+      {
+        static_cast<std::uint64_t>
+        (
+          (dist < static_cast<std::uint32_t>(UINT8_C(64)))
+            ? static_cast<std::uint64_t>
+              (  static_cast<std::uint64_t>
+                (
+                  a << static_cast<unsigned>
+                       (
+                         static_cast<unsigned>(negate(dist)) & static_cast<std::uint32_t>(UINT8_C(63))
+                       )
+                )
+              | static_cast<unsigned>
+                (
+                  (extra != static_cast<std::uint64_t>(UINT8_C(0)))
+                    ? static_cast<unsigned>(UINT8_C(1))
+                    : static_cast<unsigned>(UINT8_C(0))
+                )
               )
-            | static_cast<unsigned>
+            :
+              static_cast<std::uint64_t>
               (
-                (extra != static_cast<std::uint64_t>(UINT8_C(0)))
-                  ? static_cast<unsigned>(UINT8_C(1))
-                  : static_cast<unsigned>(UINT8_C(0))
+                (dist == static_cast<std::uint32_t>(UINT8_C(64)))
+                  ? a
+                  : static_cast<std::uint64_t>
+                    (
+                      ((a != static_cast<std::uint64_t>(UINT8_C(0))) || (extra != static_cast<std::uint64_t>(UINT8_C(0))))
+                        ? static_cast<unsigned>(UINT8_C(1))
+                        : static_cast<unsigned>(UINT8_C(0))
+                    )
               )
-            )
-          :
-            static_cast<std::uint64_t>
-            (
-              (dist == static_cast<std::uint32_t>(UINT8_C(64)))
-                ? a
-                : static_cast<std::uint64_t>
-                  (
-                    ((a != static_cast<std::uint64_t>(UINT8_C(0))) || (extra != static_cast<std::uint64_t>(UINT8_C(0))))
-                      ? static_cast<unsigned>(UINT8_C(1))
-                      : static_cast<unsigned>(UINT8_C(0))
-                  )
-            )
-      ),
-      static_cast<std::uint64_t>
-      (
-        (dist < static_cast<std::uint32_t>(UINT8_C(64)))
-          ? static_cast<std::uint64_t>(a >> static_cast<unsigned>(dist))
-          : static_cast<std::uint64_t>(UINT8_C(0))
-      )
-    };
+        ),
+        static_cast<std::uint64_t>
+        (
+          (dist < static_cast<std::uint32_t>(UINT8_C(64)))
+            ? static_cast<std::uint64_t>(a >> static_cast<unsigned>(dist))
+            : static_cast<std::uint64_t>(UINT8_C(0))
+        )
+      };
   }
 
   template<typename BuiltInFloatType,
@@ -538,27 +558,27 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
              typename std::enable_if<(   std::is_integral<UnsignedIntegralType>::value
                                       && std::is_unsigned<UnsignedIntegralType>::value
                                       && (sizeof(UnsignedIntegralType) <= sizeof(std::uint32_t)))>::type const* = nullptr>
-    constexpr soft_double(UnsignedIntegralType u) : my_value(my_ui32_to_f64(static_cast<std::uint32_t>(u))) { } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+    constexpr soft_double(UnsignedIntegralType u) noexcept : my_value(my_ui32_to_f64(static_cast<std::uint32_t>(u))) { } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
 
     template<typename UnsignedIntegralType,
              typename std::enable_if<(   std::is_integral<UnsignedIntegralType>::value
                                       && std::is_unsigned<UnsignedIntegralType>::value
                                       && (!(sizeof(UnsignedIntegralType) <= sizeof(std::uint32_t))))>::type const* = nullptr>
-    constexpr soft_double(UnsignedIntegralType u) : my_value(my_ui64_to_f64(static_cast<std::uint64_t>(u))) { } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+    constexpr soft_double(UnsignedIntegralType u) noexcept : my_value(my_ui64_to_f64(static_cast<std::uint64_t>(u))) { } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
 
     template<typename SignedIntegralType,
              typename std::enable_if<(   std::is_integral<SignedIntegralType>::value
                                       && std::is_signed  <SignedIntegralType>::value
                                       && (sizeof(SignedIntegralType) <= sizeof(int32_t)))>::type const* = nullptr>
-    constexpr soft_double(SignedIntegralType n) : my_value(my__i32_to_f64(static_cast<std::int32_t>(n))) { } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+    constexpr soft_double(SignedIntegralType n) noexcept : my_value(my__i32_to_f64(static_cast<std::int32_t>(n))) { } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
 
     template<typename SignedIntegralType,
              typename std::enable_if<(   std::is_integral<SignedIntegralType>::value
                                       && std::is_signed  <SignedIntegralType>::value
                                       && (!(sizeof(SignedIntegralType) <= sizeof(int32_t))))>::type const* = nullptr>
-    constexpr soft_double(SignedIntegralType n) : my_value(my__i64_to_f64(static_cast<std::int64_t>(n))) { } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+    constexpr soft_double(SignedIntegralType n) noexcept : my_value(my__i64_to_f64(static_cast<std::int64_t>(n))) { } // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
 
-    constexpr soft_double(float f) // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+    constexpr soft_double(float f) noexcept // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
       : my_value
         (
           ((detail::expF32UI(detail::uz_type<float>(f).my_u) == static_cast<std::int16_t>(INT8_C(0))) && (detail::fracF32UI(detail::uz_type<float>(f).my_u) == static_cast<std::uint32_t>(UINT8_C(0)))) // NOLINT(cppcoreguidelines-pro-type-union-access)
@@ -586,21 +606,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
               )
         ) { }
 
-    constexpr soft_double(double d)                   // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+    constexpr soft_double(double d) noexcept          // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
       : my_value(detail::uz_type<double>(d).my_u) { } // NOLINT(cppcoreguidelines-pro-type-union-access)
 
-    constexpr soft_double(long double ld)                                   // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+    constexpr soft_double(long double ld) noexcept                          // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
       : my_value(detail::uz_type<double>(static_cast<double>(ld)).my_u) { } // NOLINT(cppcoreguidelines-pro-type-union-access)
 
-    constexpr soft_double(const soft_double& other) : my_value(other.my_value) { }; // NOLINT(hicpp-use-equals-default,modernize-use-equals-default)
+    constexpr soft_double(const soft_double& other) noexcept : my_value(other.my_value) { }; // NOLINT(hicpp-use-equals-default,modernize-use-equals-default)
 
     constexpr soft_double(soft_double&& other) noexcept
       : my_value(other.my_value) { }
 
-    constexpr soft_double(std::uint64_t n, detail::nothing&&) noexcept // NOLINT(hicpp-named-parameter,readability-named-parameter)
+    explicit constexpr soft_double(std::uint64_t n, detail::nothing&&) noexcept // NOLINT(hicpp-named-parameter,readability-named-parameter)
       : my_value(static_cast<std::uint64_t>(n)) { }
 
-    constexpr auto operator=(const soft_double& other) -> soft_double&
+    constexpr auto operator=(const soft_double& other) noexcept -> soft_double&
     {
       if(this != &other)
       {
@@ -671,25 +691,25 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     constexpr auto operator--(int) -> soft_double { const soft_double w(*this); static_cast<void>(--(*this)); return w; } // NOLINT(performance-no-automatic-move)
 
     constexpr auto operator+() const -> const soft_double& { return *this; }
-    constexpr auto operator-() const ->       soft_double  { return { my_value ^ static_cast<std::uint64_t>(static_cast<std::uint64_t>(UINT8_C(1)) << static_cast<unsigned>(UINT8_C(63))), detail::nothing() }; }
+    constexpr auto operator-() const ->       soft_double  { return soft_double { my_value ^ static_cast<std::uint64_t>(static_cast<std::uint64_t>(UINT8_C(1)) << static_cast<unsigned>(UINT8_C(63))), detail::nothing() }; }
 
-    static constexpr auto my_value_zero   () -> soft_double { return { static_cast<std::uint64_t>(UINT64_C(0)),                   detail::nothing() }; }
-    static constexpr auto my_value_one    () -> soft_double { return { static_cast<std::uint64_t>(UINT64_C(0x3FF0000000000000)),  detail::nothing() }; }
-    static constexpr auto my_value_two    () -> soft_double { return { static_cast<std::uint64_t>(UINT64_C(0x4000000000000000)),  detail::nothing() }; }
-    static constexpr auto my_value_half   () -> soft_double { return { static_cast<std::uint64_t>(UINT64_C(0x3FE0000000000000)),  detail::nothing() }; }
-    static constexpr auto my_value_pi     () -> soft_double { return { static_cast<std::uint64_t>(UINT64_C(4614256656552045848)), detail::nothing() }; }
-    static constexpr auto my_value_pi_half() -> soft_double { return { static_cast<std::uint64_t>(UINT64_C(0x3FF921FB54442D18)),  detail::nothing() }; }
-    static constexpr auto my_value_ln2    () -> soft_double { return { static_cast<std::uint64_t>(UINT64_C(4604418534313441775)), detail::nothing() }; }
+    static constexpr auto my_value_zero   () -> soft_double { return soft_double { static_cast<std::uint64_t>(UINT64_C(0)),                   detail::nothing() }; }
+    static constexpr auto my_value_one    () -> soft_double { return soft_double { static_cast<std::uint64_t>(UINT64_C(0x3FF0000000000000)),  detail::nothing() }; }
+    static constexpr auto my_value_two    () -> soft_double { return soft_double { static_cast<std::uint64_t>(UINT64_C(0x4000000000000000)),  detail::nothing() }; }
+    static constexpr auto my_value_half   () -> soft_double { return soft_double { static_cast<std::uint64_t>(UINT64_C(0x3FE0000000000000)),  detail::nothing() }; }
+    static constexpr auto my_value_pi     () -> soft_double { return soft_double { static_cast<std::uint64_t>(UINT64_C(4614256656552045848)), detail::nothing() }; }
+    static constexpr auto my_value_pi_half() -> soft_double { return soft_double { static_cast<std::uint64_t>(UINT64_C(0x3FF921FB54442D18)),  detail::nothing() }; }
+    static constexpr auto my_value_ln2    () -> soft_double { return soft_double { static_cast<std::uint64_t>(UINT64_C(4604418534313441775)), detail::nothing() }; }
 
-    static constexpr auto my_value_min()           -> soft_double { return { static_cast<std::uint64_t>(UINT64_C(4503599627370496)),    detail::nothing() }; }
-    static constexpr auto my_value_max()           -> soft_double { return { static_cast<std::uint64_t>(UINT64_C(9218868437227405311)), detail::nothing() }; }
-    static constexpr auto my_value_lowest()        -> soft_double { return { static_cast<std::uint64_t>(UINT64_C(18442240474082181119)),detail::nothing() }; }
-    static constexpr auto my_value_epsilon()       -> soft_double { return { static_cast<std::uint64_t>(UINT64_C(4372995238176751616)), detail::nothing() }; }
-    static constexpr auto my_value_round_error()   -> soft_double { return { static_cast<std::uint64_t>(UINT64_C(0x3FE0000000000000)),  detail::nothing() }; }
-    static constexpr auto my_value_denorm_min()    -> soft_double { return { static_cast<std::uint64_t>(UINT64_C(1)),                   detail::nothing() }; }
-    static constexpr auto my_value_infinity()      -> soft_double { return { static_cast<std::uint64_t>(UINT64_C(0x7FF0000000000000)),  detail::nothing() }; }
-    static constexpr auto my_value_quiet_NaN()     -> soft_double { return { static_cast<std::uint64_t>(UINT64_C(0xFFF8000000000000)),  detail::nothing() }; }
-    static constexpr auto my_value_signaling_NaN() -> soft_double { return { static_cast<std::uint64_t>(UINT64_C(0x7FF8000000000000)),  detail::nothing() }; }
+    static constexpr auto my_value_min()           -> soft_double { return soft_double { static_cast<std::uint64_t>(UINT64_C(4503599627370496)),    detail::nothing() }; }
+    static constexpr auto my_value_max()           -> soft_double { return soft_double { static_cast<std::uint64_t>(UINT64_C(9218868437227405311)), detail::nothing() }; }
+    static constexpr auto my_value_lowest()        -> soft_double { return soft_double { static_cast<std::uint64_t>(UINT64_C(18442240474082181119)),detail::nothing() }; }
+    static constexpr auto my_value_epsilon()       -> soft_double { return soft_double { static_cast<std::uint64_t>(UINT64_C(4372995238176751616)), detail::nothing() }; }
+    static constexpr auto my_value_round_error()   -> soft_double { return soft_double { static_cast<std::uint64_t>(UINT64_C(0x3FE0000000000000)),  detail::nothing() }; }
+    static constexpr auto my_value_denorm_min()    -> soft_double { return soft_double { static_cast<std::uint64_t>(UINT64_C(1)),                   detail::nothing() }; }
+    static constexpr auto my_value_infinity()      -> soft_double { return soft_double { static_cast<std::uint64_t>(UINT64_C(0x7FF0000000000000)),  detail::nothing() }; }
+    static constexpr auto my_value_quiet_NaN()     -> soft_double { return soft_double { static_cast<std::uint64_t>(UINT64_C(0xFFF8000000000000)),  detail::nothing() }; }
+    static constexpr auto my_value_signaling_NaN() -> soft_double { return soft_double { static_cast<std::uint64_t>(UINT64_C(0x7FF8000000000000)),  detail::nothing() }; }
 
   private:
     representation_type my_value { };
@@ -921,8 +941,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
         if(static_cast<std::uint_fast16_t>(sigZ & 0x1FFU) < static_cast<std::uint_fast16_t>(static_cast<std::uint_fast16_t>(UINT8_C(4)) << static_cast<unsigned>(UINT8_C(4))))
         {
-          q    &= static_cast<std::uint32_t>(~static_cast<std::uint32_t>(UINT8_C(7)));
-          sigZ &= static_cast<std::uint64_t>(~static_cast<std::uint64_t>(UINT8_C(0x7F)));
+          q    = static_cast<std::uint32_t>(q    & static_cast<std::uint32_t>(~static_cast<std::uint32_t>(UINT8_C(7))));
+          sigZ = static_cast<std::uint64_t>(sigZ & static_cast<std::uint64_t>(~static_cast<std::uint64_t>(UINT8_C(0x7F))));
 
           doubleTerm = static_cast<std::uint32_t>(q << static_cast<unsigned>(UINT8_C(1)));
 
@@ -1471,19 +1491,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       constexpr auto softfloat_approxRecipSqrt_1k0s =
         softfloat_approx_recip_sqrt_array_type
         {
-          UINT16_C(0xB4C9), UINT16_C(0xFFAB), UINT16_C(0xAA7D), UINT16_C(0xF11C),
-          UINT16_C(0xA1C5), UINT16_C(0xE4C7), UINT16_C(0x9A43), UINT16_C(0xDA29),
-          UINT16_C(0x93B5), UINT16_C(0xD0E5), UINT16_C(0x8DED), UINT16_C(0xC8B7),
-          UINT16_C(0x88C6), UINT16_C(0xC16D), UINT16_C(0x8424), UINT16_C(0xBAE1)
+          static_cast<std::uint16_t>(UINT16_C(0xB4C9)), static_cast<std::uint16_t>(UINT16_C(0xFFAB)), static_cast<std::uint16_t>(UINT16_C(0xAA7D)), static_cast<std::uint16_t>(UINT16_C(0xF11C)),
+          static_cast<std::uint16_t>(UINT16_C(0xA1C5)), static_cast<std::uint16_t>(UINT16_C(0xE4C7)), static_cast<std::uint16_t>(UINT16_C(0x9A43)), static_cast<std::uint16_t>(UINT16_C(0xDA29)),
+          static_cast<std::uint16_t>(UINT16_C(0x93B5)), static_cast<std::uint16_t>(UINT16_C(0xD0E5)), static_cast<std::uint16_t>(UINT16_C(0x8DED)), static_cast<std::uint16_t>(UINT16_C(0xC8B7)),
+          static_cast<std::uint16_t>(UINT16_C(0x88C6)), static_cast<std::uint16_t>(UINT16_C(0xC16D)), static_cast<std::uint16_t>(UINT16_C(0x8424)), static_cast<std::uint16_t>(UINT16_C(0xBAE1))
         };
 
       constexpr auto softfloat_approxRecipSqrt_1k1s =
         softfloat_approx_recip_sqrt_array_type
         {
-          UINT16_C(0xA5A5), UINT16_C(0xEA42), UINT16_C(0x8C21), UINT16_C(0xC62D),
-          UINT16_C(0x788F), UINT16_C(0xAA7F), UINT16_C(0x6928), UINT16_C(0x94B6),
-          UINT16_C(0x5CC7), UINT16_C(0x8335), UINT16_C(0x52A6), UINT16_C(0x74E2),
-          UINT16_C(0x4A3E), UINT16_C(0x68FE), UINT16_C(0x432B), UINT16_C(0x5EFD)
+          static_cast<std::uint16_t>(UINT16_C(0xA5A5)), static_cast<std::uint16_t>(UINT16_C(0xEA42)), static_cast<std::uint16_t>(UINT16_C(0x8C21)), static_cast<std::uint16_t>(UINT16_C(0xC62D)),
+          static_cast<std::uint16_t>(UINT16_C(0x788F)), static_cast<std::uint16_t>(UINT16_C(0xAA7F)), static_cast<std::uint16_t>(UINT16_C(0x6928)), static_cast<std::uint16_t>(UINT16_C(0x94B6)),
+          static_cast<std::uint16_t>(UINT16_C(0x5CC7)), static_cast<std::uint16_t>(UINT16_C(0x8335)), static_cast<std::uint16_t>(UINT16_C(0x52A6)), static_cast<std::uint16_t>(UINT16_C(0x74E2)),
+          static_cast<std::uint16_t>(UINT16_C(0x4A3E)), static_cast<std::uint16_t>(UINT16_C(0x68FE)), static_cast<std::uint16_t>(UINT16_C(0x432B)), static_cast<std::uint16_t>(UINT16_C(0x5EFD))
         };
 
       const auto index  =
@@ -1802,8 +1822,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     friend constexpr auto (isnan)   (soft_double x) -> bool { return  (x.my_value == my_value_quiet_NaN().my_value); }
     friend constexpr auto (isinf)   (soft_double x) -> bool { return ((x.my_value & my_value_infinity().my_value) == my_value_infinity().my_value); }
 
-    friend constexpr auto abs (soft_double x) -> soft_double { return { static_cast<std::uint64_t>(x.my_value & static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF))), detail::nothing() }; } // NOLINT(performance-unnecessary-value-param)
-    friend constexpr auto fabs(soft_double x) -> soft_double { return { static_cast<std::uint64_t>(x.my_value & static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF))), detail::nothing() }; } // NOLINT(performance-unnecessary-value-param)
+    friend constexpr auto abs (soft_double x) -> soft_double { return soft_double { static_cast<std::uint64_t>(x.my_value & static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF))), detail::nothing() }; } // NOLINT(performance-unnecessary-value-param)
+    friend constexpr auto fabs(soft_double x) -> soft_double { return soft_double { static_cast<std::uint64_t>(x.my_value & static_cast<std::uint64_t>(UINT64_C(0x7FFFFFFFFFFFFFFF))), detail::nothing() }; } // NOLINT(performance-unnecessary-value-param)
 
     friend constexpr auto fmod(soft_double v1, soft_double v2) -> soft_double // NOLINT(performance-unnecessary-value-param)
     {
@@ -1812,7 +1832,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       return v1 - (n_mod * v2);
     }
 
-    friend constexpr auto sqrt(soft_double x) -> soft_double { return { f64_sqrt(x.my_value), detail::nothing() }; } // NOLINT(performance-unnecessary-value-param)
+    friend constexpr auto sqrt(soft_double x) -> soft_double { return soft_double { f64_sqrt(x.my_value), detail::nothing() }; } // NOLINT(performance-unnecessary-value-param)
 
     friend constexpr auto frexp(soft_double x, int* expptr) -> soft_double // NOLINT(performance-unnecessary-value-param)
     {
@@ -1828,20 +1848,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       }
 
       return
-      {
-        detail::packToF64UI
-        (
-          detail::signF64UI(x.my_value),
-          static_cast<std::int16_t>(INT16_C(0x3FE)),
-          detail::fracF64UI(x.my_value)
-        ),
-        detail::nothing()
-      };
+        soft_double
+        {
+          detail::packToF64UI
+          (
+            detail::signF64UI(x.my_value),
+            static_cast<std::int16_t>(INT16_C(0x3FE)),
+            detail::fracF64UI(x.my_value)
+          ),
+          detail::nothing()
+        };
     }
 
     friend constexpr auto ldexp(soft_double x, int expval) -> soft_double // NOLINT(performance-unnecessary-value-param)
     {
       return
+        soft_double
         {
           static_cast<std::uint64_t>
           (
@@ -2028,10 +2050,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     friend constexpr auto operator==(long double f, const soft_double& a) -> bool;
   };
 
-  constexpr auto operator+(const soft_double& a, const soft_double& b) -> soft_double { return { soft_double::f64_add(a.my_value, b.my_value), detail::nothing() }; }
-  constexpr auto operator-(const soft_double& a, const soft_double& b) -> soft_double { return { soft_double::f64_sub(a.my_value, b.my_value), detail::nothing() }; }
-  constexpr auto operator*(const soft_double& a, const soft_double& b) -> soft_double { return { soft_double::f64_mul(a.my_value, b.my_value), detail::nothing() }; }
-  constexpr auto operator/(const soft_double& a, const soft_double& b) -> soft_double { return { soft_double::f64_div(a.my_value, b.my_value), detail::nothing() }; }
+  constexpr auto operator+(const soft_double& a, const soft_double& b) -> soft_double { return soft_double { soft_double::f64_add(a.my_value, b.my_value), detail::nothing() }; }
+  constexpr auto operator-(const soft_double& a, const soft_double& b) -> soft_double { return soft_double { soft_double::f64_sub(a.my_value, b.my_value), detail::nothing() }; }
+  constexpr auto operator*(const soft_double& a, const soft_double& b) -> soft_double { return soft_double { soft_double::f64_mul(a.my_value, b.my_value), detail::nothing() }; }
+  constexpr auto operator/(const soft_double& a, const soft_double& b) -> soft_double { return soft_double { soft_double::f64_div(a.my_value, b.my_value), detail::nothing() }; }
 
   constexpr auto operator+(const soft_double& u, float f) -> soft_double { return soft_double(u) += soft_double(f); }
   constexpr auto operator-(const soft_double& u, float f) -> soft_double { return soft_double(u) -= soft_double(f); }

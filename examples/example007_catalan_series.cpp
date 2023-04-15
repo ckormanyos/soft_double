@@ -42,10 +42,11 @@ template<>
 constexpr auto log_two_plus_sqrt_three() -> float64_t
 {
   return
-  {
-    static_cast<std::uint64_t>(UINT64_C(0x3FF5124271980435)), // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
-    math::softfloat::detail::nothing()
-  };
+    float64_t
+    {
+      static_cast<std::uint64_t>(UINT64_C(0x3FF5124271980435)), // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+      math::softfloat::detail::nothing()
+    };
 }
 
 } // namespace detail
