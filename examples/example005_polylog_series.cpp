@@ -37,7 +37,7 @@ namespace local
 
       floating_point_type y(b);
 
-      for(auto p_local = static_cast<std::uint64_t>(p); p_local != static_cast<std::uint64_t>(UINT8_C(0)); p_local >>= 1U)
+      for(auto p_local = static_cast<std::uint64_t>(p); p_local != static_cast<std::uint64_t>(UINT8_C(0)); p_local >>= 1U) // NOLINT(altera-id-dependent-backward-branch)
       {
         if(static_cast<std::uint8_t>(p_local & static_cast<std::uint8_t>(UINT8_C(1))) != static_cast<std::uint8_t>(UINT8_C(0)))
         {

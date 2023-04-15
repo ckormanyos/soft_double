@@ -25,11 +25,11 @@ auto bisect(const std::function<FloatingPointType(const FloatingPointType)>& pfn
 {
   using floating_point_type = FloatingPointType;
 
-  const floating_point_type f_lo = pfn(x_lo);
-  const floating_point_type f_hi = pfn(x_hi);
+  const auto f_lo = pfn(x_lo);
+  const auto f_hi = pfn(x_hi);
 
-  const bool f_lo_is_neg = (f_lo < floating_point_type(0.0L));
-  const bool f_hi_is_neg = (f_hi < floating_point_type(0.0L));
+  const auto f_lo_is_neg = (f_lo < static_cast<floating_point_type>(0.0L));
+  const auto f_hi_is_neg = (f_hi < static_cast<floating_point_type>(0.0L));
 
   // Make sure that there is at least one root in the interval.
   if(f_lo_is_neg == f_hi_is_neg)
@@ -40,8 +40,8 @@ auto bisect(const std::function<FloatingPointType(const FloatingPointType)>& pfn
   }
 
   // Orient the search such that f > 0 lies at x + dx.
-  floating_point_type dx;
-  floating_point_type rtb;
+  auto dx  = floating_point_type { };
+  auto rtb = floating_point_type { };
 
   if(f_lo_is_neg)
   {
@@ -55,14 +55,16 @@ auto bisect(const std::function<FloatingPointType(const FloatingPointType)>& pfn
   }
 
   // Bisection iteration loop, maximum 64 times.
-  for(std::uint_fast8_t i = 0U; i < 64U; ++i) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+  for(auto   i = static_cast<std::uint_fast8_t>(UINT8_C(0));
+             i < static_cast<std::uint_fast8_t>(UINT8_C(64));
+           ++i)
   {
     dx /= 2;
 
-    const floating_point_type xmid = rtb + dx;
-    const floating_point_type fmid = pfn(xmid);
+    const auto xmid = rtb + dx;
+    const auto fmid = pfn(xmid);
 
-    if(fmid <= floating_point_type(0.0L))
+    if(fmid <= static_cast<floating_point_type>(0.0L))
     {
       rtb = xmid;
     }
@@ -79,7 +81,7 @@ auto bisect(const std::function<FloatingPointType(const FloatingPointType)>& pfn
   }
 
   // Bisection iteration did not converge.
-  return floating_point_type(0);
+  return static_cast<floating_point_type>(static_cast<int>(INT8_C(0)));
 }
 
 struct jn_algo
@@ -191,7 +193,7 @@ auto cyl_bessel_j(const std::int32_t n, const FloatingPointType x) -> FloatingPo
   const auto n_start = (std::max)(n_start2, n_start1);
 
   // Do the recursion. The direction of the recursion is downward.
-  for(std::int32_t m = n_start; m >= 0; --m)
+  for(auto m = n_start; m >= static_cast<std::int32_t>(INT8_C(0)); --m) // NOLINT(altera-id-dependent-backward-branch)
   {
     //                                 Jn+1(x)
     // Downward recursion is:  Jn(x) = ------- * [2 * (m + 1)] - Jn+2(x)
