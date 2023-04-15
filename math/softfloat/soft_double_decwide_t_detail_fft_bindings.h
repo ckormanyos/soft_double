@@ -35,19 +35,20 @@
   template<>
   constexpr auto template_half<math::softfloat::float64_t>() -> math::softfloat::float64_t
   {
-    return { UINT64_C(0X3FE0000000000000), math::softfloat::detail::nothing() };
+    return math::softfloat::float64_t { UINT64_C(0X3FE0000000000000), math::softfloat::detail::nothing() };
   }
 
   template<>
   constexpr auto template_one<math::softfloat::float64_t>() -> math::softfloat::float64_t
   {
-    return { UINT64_C(0X3FF0000000000000), math::softfloat::detail::nothing() };
+    return math::softfloat::float64_t { UINT64_C(0X3FF0000000000000), math::softfloat::detail::nothing() };
   }
 
   template<>
   constexpr auto template_fast_div_by_two<math::softfloat::float64_t>(math::softfloat::float64_t a) -> math::softfloat::float64_t // NOLINT(performance-unnecessary-value-param)
   {
     return
+      math::softfloat::float64_t
       {
           static_cast<std::uint64_t>
           (
