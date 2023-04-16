@@ -62,11 +62,11 @@ namespace local
 
   auto test_hypergeometric_trig() -> bool
   {
-    const auto x = ::math::softfloat::float64_t { static_cast<int>(INT8_C(1)) } / static_cast<int>(INT8_C(2));
+    const auto x_half = ::math::softfloat::float64_t { static_cast<int>(INT8_C(1)) } / static_cast<int>(INT8_C(2));
 
-    const auto sinh_x_val = sinh(x);
-    const auto cosh_x_val = cosh(x);
-    const auto tanh_x_val = tanh(x);
+    const auto sinh_x_val = sinh(x_half);
+    const auto cosh_x_val = cosh(x_half);
+    const auto tanh_x_val = tanh(x_half);
 
     // N[Sinh[1/2], 20]
     // 0.52109530549374736162
@@ -87,16 +87,16 @@ namespace local
     const auto result_cosh_is_ok = detail::is_close_fraction(cosh_x_val, cosh_x_ctrl, tol_sinh_cosh);
     const auto result_tanh_is_ok = detail::is_close_fraction(tanh_x_val, tanh_x_ctrl, tol_tanh);
 
-    const auto result_hyp_trig_is_ok = (result_sinh_is_ok && result_cosh_is_ok && result_tanh_is_ok);
+    const auto result_hypergeometric_trig_is_ok = (result_sinh_is_ok && result_cosh_is_ok && result_tanh_is_ok);
 
-    return result_hyp_trig_is_ok;
+    return result_hypergeometric_trig_is_ok;
   }
 
   auto test_sin_near_pi_half() -> bool
   {
-    // Table[N[Sin[(Pi/2) - (Pi/(10 + n))], 20], {n, 0, 4, 1}]
-
     using control_value_array_type = std::array<::math::softfloat::float64_t, static_cast<std::size_t>(UINT8_C(5))>;
+
+    // Table[N[Sin[(Pi/2) - (Pi/(10 + n))], 20], {n, 0, 4, 1}]
 
     const auto control_values =
       control_value_array_type
@@ -120,19 +120,19 @@ namespace local
         static_cast<::math::softfloat::float64_t>
         (
             ::math::softfloat::float64_t::my_value_pi_half()
-          - ::math::softfloat::float64_t::my_value_pi() / (::math::softfloat::float64_t(10) + i)
+          - ::math::softfloat::float64_t::my_value_pi() / (::math::softfloat::float64_t(static_cast<unsigned>(UINT8_C(10))) + i)
         );
 
       const auto sin_x = sin(x);
 
-      const auto result_sin_is_ok = detail::is_close_fraction(sin_x, control_values[i], tol_sin);
+      const auto result_sin_is_ok = detail::is_close_fraction(sin_x, control_values.at(i), tol_sin);
 
       result_sin_near_pi_is_ok = (result_sin_is_ok && result_sin_near_pi_is_ok);
     }
 
     return result_sin_near_pi_is_ok;
   }
-}
+} // namespace local
 
 auto test_soft_double_spot_values() -> bool
 {
