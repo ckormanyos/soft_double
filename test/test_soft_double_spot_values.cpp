@@ -16,7 +16,7 @@ namespace detail
 {
   template<typename NumericType>
   auto is_close_fraction(const NumericType a,
-                         const NumericType b,
+                         const NumericType b, // NOLINT(bugprone-easily-swappable-parameters)
                          const NumericType tol = NumericType(std::numeric_limits<NumericType>::epsilon() * NumericType(100))) -> bool
   {
     using std::fabs;
