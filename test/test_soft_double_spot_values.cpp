@@ -200,6 +200,56 @@ namespace local
 
     return result_pow_is_ok;
   }
+
+  auto test_tan() -> bool
+  {
+    using control_value_array_type = std::array<::math::softfloat::float64_t, static_cast<std::size_t>(UINT8_C(9))>;
+
+    // Table[N[Tan[(Pi/4) + ((i - 4)/10)], 20], {i, 0, 8, 1}]
+
+    const auto control_values =
+      control_value_array_type
+      {
+        static_cast<::math::softfloat::float64_t>(static_cast<double>(0.40568564262187578775L)),
+        static_cast<::math::softfloat::float64_t>(static_cast<double>(0.52749150617062438754L)),
+        static_cast<::math::softfloat::float64_t>(static_cast<double>(0.66291120964507694113L)),
+        static_cast<::math::softfloat::float64_t>(static_cast<double>(0.81762880943252020647L)),
+        static_cast<::math::softfloat::float64_t>(static_cast<double>(1.0000000000000000000L)),
+        static_cast<::math::softfloat::float64_t>(static_cast<double>(1.2230488804498651731L)),
+        static_cast<::math::softfloat::float64_t>(static_cast<double>(1.5084976471214004651L)),
+        static_cast<::math::softfloat::float64_t>(static_cast<double>(1.8957651228540090217L)),
+        static_cast<::math::softfloat::float64_t>(static_cast<double>(2.4649627567226038132L))
+      };
+
+    auto result_tan_is_ok = true;
+
+    const auto tol_tan = std::numeric_limits<::math::softfloat::float64_t>::epsilon() * static_cast<::math::softfloat::float64_t>(static_cast<double>(120.0L));
+
+    for(auto   i = static_cast<std::size_t>(UINT8_C(0));
+               i < std::tuple_size<control_value_array_type>::value;
+             ++i)
+    {
+      const auto x =
+        static_cast<::math::softfloat::float64_t>
+        (
+            (::math::softfloat::float64_t::my_value_pi() / static_cast<unsigned>(UINT8_C(4)))
+          +
+            static_cast<::math::softfloat::float64_t>
+            (
+                static_cast<::math::softfloat::float64_t>(static_cast<int>(i) - static_cast<int>(INT8_C(4)))
+              / static_cast<unsigned>(UINT8_C(10))
+            )
+        );
+
+      const auto tan_x = tan(x);
+
+      const auto result_tan_x_is_ok = detail::is_close_fraction(tan_x, control_values.at(i), tol_tan);
+
+      result_tan_is_ok = (result_tan_x_is_ok && result_tan_is_ok);
+    }
+
+    return result_tan_is_ok;
+  }
 } // namespace local
 
 auto test_soft_double_spot_values() -> bool
@@ -228,6 +278,12 @@ auto test_soft_double_spot_values() -> bool
     const auto result_pow = local::test_pow();
 
     result_spot_values_is_ok = (result_pow && result_spot_values_is_ok);
+  }
+
+  {
+    const auto result_tan = local::test_tan();
+
+    result_spot_values_is_ok = (result_tan && result_spot_values_is_ok);
   }
 
   return result_spot_values_is_ok;
