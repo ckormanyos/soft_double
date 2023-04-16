@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////
-//  Copyright Christopher Kormanyos 2022.                        //
+//  Copyright Christopher Kormanyos 2022 - 2023.                  //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
 //  or copy at http://www.boost.org/LICENSE_1_0.txt)             //
@@ -49,13 +49,33 @@ namespace local
     const auto sd2 = ::math::softfloat::float64_t { f2 };
     const auto sd3 = ::math::softfloat::float64_t { f3 };
 
-    const auto result_construct_from_float_is_ok =
+    auto result_construct_from_float_is_ok =
     (
          (sd0 == ctrl_d0)
       && (sd1 == ctrl_d1)
       && (sd2 == ctrl_d2)
       && (sd3 == ctrl_d3)
     );
+
+    {
+      const auto one_sixth = sd2 / static_cast<::math::softfloat::float64_t>(static_cast<float>(3.0L));
+
+      const auto result_one_sixth_is_not_one_half_is_ok = (one_sixth != sd2);
+
+      const auto result_one_sixth_is_ok =
+        detail::is_close_fraction
+        (
+          one_sixth,
+          static_cast<::math::softfloat::float64_t>(static_cast<unsigned>(UINT8_C(1))) / static_cast<unsigned>(UINT8_C(6))
+        );
+
+      result_construct_from_float_is_ok =
+      (
+           result_one_sixth_is_not_one_half_is_ok
+        && result_one_sixth_is_ok
+        && result_construct_from_float_is_ok
+      );
+    }
 
     return result_construct_from_float_is_ok;
   }
