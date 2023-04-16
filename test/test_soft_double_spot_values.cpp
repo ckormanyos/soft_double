@@ -30,37 +30,131 @@ namespace detail
 
 } // namespace detail
 
+namespace local
+{
+  auto test_construct_from_float() -> bool
+  {
+    constexpr auto f0 = static_cast<float>(0.125L);
+    constexpr auto f1 = static_cast<float>(0.25L);
+    constexpr auto f2 = static_cast<float>(0.5L);
+    constexpr auto f3 = static_cast<float>(0.625L);
+
+    constexpr auto ctrl_d0 = ::math::softfloat::float64_t { static_cast<int>(INT8_C(1)) } / static_cast<int>(INT8_C(8));
+    constexpr auto ctrl_d1 = ::math::softfloat::float64_t { static_cast<int>(INT8_C(1)) } / static_cast<int>(INT8_C(4));
+    constexpr auto ctrl_d2 = ::math::softfloat::float64_t { static_cast<int>(INT8_C(1)) } / static_cast<int>(INT8_C(2));
+    constexpr auto ctrl_d3 = ::math::softfloat::float64_t { static_cast<int>(INT8_C(5)) } / static_cast<int>(INT8_C(8));
+
+    const auto sd0 = ::math::softfloat::float64_t { f0 };
+    const auto sd1 = ::math::softfloat::float64_t { f1 };
+    const auto sd2 = ::math::softfloat::float64_t { f2 };
+    const auto sd3 = ::math::softfloat::float64_t { f3 };
+
+    const auto result_construct_from_float_is_ok =
+    (
+         (sd0 == ctrl_d0)
+      && (sd1 == ctrl_d1)
+      && (sd2 == ctrl_d2)
+      && (sd3 == ctrl_d3)
+    );
+
+    return result_construct_from_float_is_ok;
+  }
+
+  auto test_hypergeometric_trig() -> bool
+  {
+    const auto x = ::math::softfloat::float64_t { static_cast<int>(INT8_C(1)) } / static_cast<int>(INT8_C(2));
+
+    const auto sinh_x_val = sinh(x);
+    const auto cosh_x_val = cosh(x);
+    const auto tanh_x_val = tanh(x);
+
+    // N[Sinh[1/2], 20]
+    // 0.52109530549374736162
+    const auto sinh_x_ctrl = static_cast<::math::softfloat::float64_t>(static_cast<double>(0.52109530549374736162L));
+
+    // N[Cosh[1/2], 20]
+    // 1.1276259652063807852
+    const auto cosh_x_ctrl = static_cast<::math::softfloat::float64_t>(static_cast<double>(1.1276259652063807852L));
+
+    // N[Tanh[1/2], 20]
+    // 0.46211715726000975850
+    const auto tanh_x_ctrl = static_cast<::math::softfloat::float64_t>(static_cast<double>(0.46211715726000975850L));
+
+    const auto tol_sinh_cosh = std::numeric_limits<::math::softfloat::float64_t>::epsilon() * static_cast<::math::softfloat::float64_t>(static_cast<double>(80.0L));
+    const auto tol_tanh      = std::numeric_limits<::math::softfloat::float64_t>::epsilon() * static_cast<::math::softfloat::float64_t>(static_cast<double>(80.0L));
+
+    const auto result_sinh_is_ok = detail::is_close_fraction(sinh_x_val, sinh_x_ctrl, tol_sinh_cosh);
+    const auto result_cosh_is_ok = detail::is_close_fraction(cosh_x_val, cosh_x_ctrl, tol_sinh_cosh);
+    const auto result_tanh_is_ok = detail::is_close_fraction(tanh_x_val, tanh_x_ctrl, tol_tanh);
+
+    const auto result_hyp_trig_is_ok = (result_sinh_is_ok && result_cosh_is_ok && result_tanh_is_ok);
+
+    return result_hyp_trig_is_ok;
+  }
+
+  auto test_sin_near_pi_half() -> bool
+  {
+    // Table[N[Sin[(Pi/2) - (Pi/(10 + n))], 20], {n, 0, 4, 1}]
+
+    using control_value_array_type = std::array<::math::softfloat::float64_t, static_cast<std::size_t>(UINT8_C(5))>;
+
+    const auto control_values =
+      control_value_array_type
+      {
+        static_cast<::math::softfloat::float64_t>(static_cast<double>(0.95105651629515357212L)),
+        static_cast<::math::softfloat::float64_t>(static_cast<double>(0.95949297361449738989L)),
+        static_cast<::math::softfloat::float64_t>(static_cast<double>(0.96592582628906828675L)),
+        static_cast<::math::softfloat::float64_t>(static_cast<double>(0.97094181742605202716L)),
+        static_cast<::math::softfloat::float64_t>(static_cast<double>(0.97492791218182360702L))
+      };
+
+    auto result_sin_near_pi_is_ok = true;
+
+    const auto tol_sin = std::numeric_limits<::math::softfloat::float64_t>::epsilon() * static_cast<::math::softfloat::float64_t>(static_cast<double>(60.0L));
+
+    for(auto   i = static_cast<std::size_t>(UINT8_C(0));
+               i < std::tuple_size<control_value_array_type>::value;
+             ++i)
+    {
+      const auto x =
+        static_cast<::math::softfloat::float64_t>
+        (
+            ::math::softfloat::float64_t::my_value_pi_half()
+          - ::math::softfloat::float64_t::my_value_pi() / (::math::softfloat::float64_t(10) + i)
+        );
+
+      const auto sin_x = sin(x);
+
+      const auto result_sin_is_ok = detail::is_close_fraction(sin_x, control_values[i], tol_sin);
+
+      result_sin_near_pi_is_ok = (result_sin_is_ok && result_sin_near_pi_is_ok);
+    }
+
+    return result_sin_near_pi_is_ok;
+  }
+}
+
 auto test_soft_double_spot_values() -> bool
 {
   auto result_spot_values_is_ok = true;
 
-  using ::math::softfloat::float64_t;
+  {
+    const auto result_construct_from_float_is_ok   = local::test_construct_from_float();
 
-  const auto x = float64_t { static_cast<int>(INT8_C(1)) } / static_cast<int>(INT8_C(2));
+    result_spot_values_is_ok = (result_construct_from_float_is_ok && result_spot_values_is_ok);
+  }
 
-  const auto sinh_x_val = sinh(x);
-  const auto cosh_x_val = cosh(x);
-  const auto tanh_x_val = cosh(x);
+  {
+    const auto result_hypergeometric_trig_is_ok = local::test_hypergeometric_trig();
 
-  // N[Sinh[1/2], 20]
-  // 0.52109530549374736162
-  const auto sinh_x_ctrl = static_cast<float64_t>(static_cast<double>(0.52109530549374736162L));
+    result_spot_values_is_ok = (result_hypergeometric_trig_is_ok && result_spot_values_is_ok);
+  }
 
-  // N[Cosh[1/2], 20]
-  // 1.1276259652063807852
-  const auto cosh_x_ctrl = static_cast<float64_t>(static_cast<double>(1.1276259652063807852L));
+  {
+    const auto result_sin_near_pi_half = local::test_sin_near_pi_half();
 
-  // N[Tanh[1/2], 20]
-  // 0.46211715726000975850
-  const auto tanh_x_ctrl = static_cast<float64_t>(static_cast<double>(0.46211715726000975850L));
-
-  const auto result_sinh_is_ok = detail::is_close_fraction(sinh_x_val, sinh_x_ctrl, static_cast<float64_t>(static_cast<double>(80.0L)));
-  const auto result_cosh_is_ok = detail::is_close_fraction(cosh_x_val, cosh_x_ctrl, static_cast<float64_t>(static_cast<double>(80.0L)));
-  const auto result_tanh_is_ok = detail::is_close_fraction(tanh_x_val, tanh_x_ctrl, static_cast<float64_t>(static_cast<double>(150.0L)));
-
-  const auto result_hyp_trig_is_ok = (result_sinh_is_ok && result_cosh_is_ok && result_tanh_is_ok);
-
-  result_spot_values_is_ok = (result_hyp_trig_is_ok && result_spot_values_is_ok);
+    result_spot_values_is_ok = (result_sin_near_pi_half && result_spot_values_is_ok);
+  }
 
   return result_spot_values_is_ok;
 }
