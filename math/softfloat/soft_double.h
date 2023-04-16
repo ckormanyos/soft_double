@@ -1901,8 +1901,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       else if(u == static_cast<UnsignedIntegralType>(UINT8_C(2))) { result = x * x; }
       else
       {
-        using floating_point_type = soft_double;
-
         result = soft_double::my_value_one();
 
         auto y = x;
@@ -1939,8 +1937,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       else if(n == static_cast<SignedIntegralType>(INT8_C(2))) { result = x * x; }
       else
       {
-        using floating_point_type = soft_double;
-
         result = soft_double::my_value_one();
 
         auto y = x;
