@@ -1958,7 +1958,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       }
 
       return result;
-    }
+    } // LCOV_EXCL_LINE
+    // Bogus report from LCOV on certain ditros
 
     friend constexpr auto sin(soft_double x) -> soft_double;
     friend constexpr auto cos(soft_double x) -> soft_double;
