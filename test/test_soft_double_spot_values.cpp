@@ -17,13 +17,13 @@ namespace detail
   template<typename NumericType>
   auto is_close_fraction(const NumericType a,
                          const NumericType b, // NOLINT(bugprone-easily-swappable-parameters)
-                         const NumericType tol = NumericType(std::numeric_limits<NumericType>::epsilon() * NumericType(100))) -> bool
+                         const NumericType tol = static_cast<NumericType>(std::numeric_limits<NumericType>::epsilon() * static_cast<NumericType>(100))) -> bool
   {
     using std::fabs;
 
-    const auto ratio = fabs(NumericType((NumericType(1) * a) / b));
+    const auto ratio = fabs(static_cast<NumericType>((static_cast<NumericType>(1) * a) / b));
 
-    const auto closeness = fabs(NumericType(1 - ratio));
+    const auto closeness = fabs(static_cast<NumericType>(static_cast<NumericType>(1) - ratio));
 
     return (closeness < tol);
   }
