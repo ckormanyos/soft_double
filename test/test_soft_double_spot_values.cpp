@@ -152,6 +152,54 @@ namespace local
 
     return result_sin_near_pi_is_ok;
   }
+
+  auto test_pow() -> bool
+  {
+    using control_value_array_type = std::array<::math::softfloat::float64_t, static_cast<std::size_t>(UINT8_C(5))>;
+
+    // Table[N[((12 + i)/10)^(456/100), 20], {i, 0, 4, 1}]
+
+    const auto control_values =
+      control_value_array_type
+      {
+        static_cast<::math::softfloat::float64_t>(static_cast<double>(2.2965001703927784205L)),
+        static_cast<::math::softfloat::float64_t>(static_cast<double>(3.3081232875218951210L)),
+        static_cast<::math::softfloat::float64_t>(static_cast<double>(4.6381398849287209722L)),
+        static_cast<::math::softfloat::float64_t>(static_cast<double>(6.3529602982502129259L)),
+        static_cast<::math::softfloat::float64_t>(static_cast<double>(8.5268205051338967808L))
+      };
+
+    auto result_pow_is_ok = true;
+
+    const auto tol_pow = std::numeric_limits<::math::softfloat::float64_t>::epsilon() * static_cast<::math::softfloat::float64_t>(static_cast<double>(120.0L));
+
+    for(auto   i = static_cast<std::size_t>(UINT8_C(0));
+               i < std::tuple_size<control_value_array_type>::value;
+             ++i)
+    {
+      const auto x =
+        static_cast<::math::softfloat::float64_t>
+        (
+            (::math::softfloat::float64_t(static_cast<unsigned>(UINT8_C(12))) + i)
+          / static_cast<unsigned>(UINT8_C(10))
+        );
+
+      const auto a =
+        static_cast<::math::softfloat::float64_t>
+        (
+            ::math::softfloat::float64_t(static_cast<unsigned>(UINT16_C(456)))
+          / static_cast<unsigned>(UINT8_C(100))
+        );
+
+      const auto x_pow_a = pow(x, a);
+
+      const auto result_x_pow_a_is_ok = detail::is_close_fraction(x_pow_a, control_values.at(i), tol_pow);
+
+      result_pow_is_ok = (result_x_pow_a_is_ok && result_pow_is_ok);
+    }
+
+    return result_pow_is_ok;
+  }
 } // namespace local
 
 auto test_soft_double_spot_values() -> bool
@@ -174,6 +222,12 @@ auto test_soft_double_spot_values() -> bool
     const auto result_sin_near_pi_half = local::test_sin_near_pi_half();
 
     result_spot_values_is_ok = (result_sin_near_pi_half && result_spot_values_is_ok);
+  }
+
+  {
+    const auto result_pow = local::test_pow();
+
+    result_spot_values_is_ok = (result_pow && result_spot_values_is_ok);
   }
 
   return result_spot_values_is_ok;
