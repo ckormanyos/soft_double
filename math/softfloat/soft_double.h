@@ -326,7 +326,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       );
   }
 
-  constexpr auto softfloat_shiftRightJam64Extra(std::uint64_t a, std::uint64_t extra, std::uint32_t dist) -> struct uint128_compound
+  constexpr auto softfloat_shiftRightJam64Extra(std::uint64_t a,
+                                                std::uint64_t extra,
+                                                std::uint32_t dist) -> uint128_compound
   {
     // Shifts the 128 bits formed by concatenating a and extra right by 64
     // _plus_ the number of bits given in dist, which must not be zero. This
@@ -814,8 +816,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           (
             static_cast<std::uint64_t>
             (
-                sigA
-              | static_cast<std::uint64_t>(UINT64_C(0x0010000000000000))) << static_cast<unsigned>(UINT8_C(10))
+              sigA | static_cast<std::uint64_t>(UINT64_C(0x0010000000000000))
+            ) << static_cast<unsigned>(UINT8_C(10))
           );
 
         sigB =
@@ -823,8 +825,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           (
             static_cast<std::uint64_t>
             (
-                sigB
-              | static_cast<std::uint64_t>(UINT64_C(0x0010000000000000))) << static_cast<unsigned>(UINT8_C(11))
+              sigB | static_cast<std::uint64_t>(UINT64_C(0x0010000000000000))
+            ) << static_cast<unsigned>(UINT8_C(11))
           );
 
         // Compute the 128-bit product of sigA and sigB.
@@ -837,8 +839,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         const auto mid1 = static_cast<std::uint64_t>(                                  (static_cast<std::uint64_t>(a32)) * b0);
               auto mid  = static_cast<std::uint64_t>(mid1 + static_cast<std::uint64_t>((static_cast<std::uint64_t>(b32)) * a0));
 
-        struct detail::uint128_compound
-          sig128Z
+        auto sig128Z =
+          detail::uint128_compound
           {
             static_cast<std::uint64_t>(static_cast<std::uint64_t>(a0)  * b0),
             static_cast<std::uint64_t>
@@ -1048,7 +1050,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
               static_cast<std::uint64_t>
               (
                   sigZ
-                - static_cast<std::uint_fast8_t>(static_cast<std::uint_fast8_t>(UINT8_C(1)) << static_cast<unsigned>(UINT8_C(7)))
+                - static_cast<std::uint_fast8_t>
+                  (
+                    static_cast<std::uint_fast8_t>(UINT8_C(1)) << static_cast<unsigned>(UINT8_C(7))
+                  )
               );
           }
           else
@@ -1153,10 +1158,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             + static_cast<std::uint64_t>((static_cast<std::uint64_t>(q) << static_cast<unsigned>(UINT8_C(3))))
           );
 
-        const auto sig_z_is_small =
-          (static_cast<std::uint_fast16_t>(sigZ & static_cast<std::uint_fast16_t>(UINT16_C(0x1FF))) < static_cast<std::uint_fast16_t>(UINT16_C(0x22)));
+        const auto sig_small_masked =
+          static_cast<std::uint_fast16_t>
+          (
+            sigZ & static_cast<std::uint_fast16_t>(UINT16_C(0x1FF))
+          );
 
-        if(sig_z_is_small)
+        if(sig_small_masked < static_cast<std::uint_fast16_t>(UINT16_C(0x22)))
         {
           sigZ &= static_cast<std::uint64_t>(~static_cast<std::uint64_t>(UINT8_C(0x3F)));
 
@@ -1180,7 +1188,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
               sigZ =
                 static_cast<std::uint64_t>
                 (
-                  sigZ | static_cast<unsigned>(UINT8_C(1))
+                  sigZ | static_cast<std::uint_fast8_t>(UINT8_C(1))
                 );
             }
           }
