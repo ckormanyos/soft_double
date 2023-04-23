@@ -28,13 +28,19 @@ endif
 CXXFLAGS     = -march=native                                                   \
                -mtune=native                                                   \
                -O2                                                             \
+               -std=$(STD)                                                     \
                -Wall                                                           \
                -Wextra                                                         \
+               -Wpedantic                                                      \
                -Wconversion                                                    \
                -Wsign-conversion                                               \
-               -std=$(STD)                                                     \
-               -pthread                                                        \
-               -lpthread                                                       \
+               -Wshadow                                                        \
+               -Wundef                                                         \
+               -Wunused-parameter                                              \
+               -Wuninitialized                                                 \
+               -Wunreachable-code                                              \
+               -Winit-self                                                     \
+               -Wzero-as-null-pointer-constant                                 \
                -fno-inline-functions                                           \
                -fprofile-arcs                                                  \
                -ftest-coverage
