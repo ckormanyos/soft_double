@@ -1089,15 +1089,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         const auto expZ =
           static_cast<std::int16_t>
           (
-              static_cast<std::int16_t>
+              static_cast<std::int_fast16_t>
               (
-                static_cast<std::int16_t>
+                static_cast<std::int_fast16_t> // NOLINT(hicpp-signed-bitwise)
                 (
                     expA
                   - static_cast<std::int16_t>(INT16_C(0x3FF))
-                ) >> static_cast<unsigned>(UINT8_C(1)) // NOLINT(hicpp-signed-bitwise)
+                ) >> static_cast<unsigned>(UINT8_C(1))
               )
-            + static_cast<std::int16_t>(INT16_C(0x3FE))
+            + static_cast<std::int_fast16_t>(INT16_C(0x3FE))
           );
 
         expA =
