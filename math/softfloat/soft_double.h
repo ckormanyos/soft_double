@@ -1653,8 +1653,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     static constexpr auto softfloat_roundPackToF64(bool sign, std::int16_t expA, std::uint64_t sig) -> std::uint64_t
     {
-      if(   (static_cast<std::uint16_t>(expA) >= static_cast<std::uint16_t>(UINT16_C(0x7FD)))
-         && (                           expA  <  static_cast<std::int16_t>(INT16_C(0))))
+      const auto expA_as_unsigned = static_cast<std::uint16_t>(expA);
+
+      if(   (expA_as_unsigned >= static_cast<std::uint16_t>(UINT16_C(0x7FD)))
+         && (expA < static_cast<std::int16_t>(INT16_C(0))))
       {
         sig  = detail::softfloat_shiftRightJam64(sig, static_cast<std::uint_fast16_t>(-expA));
         expA = static_cast<std::int16_t>(INT8_C(0));
