@@ -18,7 +18,7 @@ soft_double
         <img src="https://img.shields.io/github/commit-activity/y/ckormanyos/soft_double" alt="GitHub commit activity"></a>
     <a href="https://github.com/ckormanyos/soft_double">
         <img src="https://img.shields.io/github/languages/code-size/ckormanyos/soft_double" alt="GitHub code size in bytes"></a>
-    <a href="https://godbolt.org/z/saP7cdnoh" alt="godbolt">
+    <a href="https://godbolt.org/z/vj7a1bY6x" alt="godbolt">
         <img src="https://img.shields.io/badge/try%20it%20on-godbolt-green" /></a>
 </p>
 
@@ -46,7 +46,7 @@ comparison operations, simple functions such as
 of `std::numeric_limits<soft_double>` for the `soft_double` type.
 
 The soft_double implementation is written in header-only C++14
-and is compatible for C++14, 17, 20 and beyond.
+and is compatible for C++14, 17, 20, 23 and beyond.
 
 ## Quick Start
 
@@ -78,7 +78,7 @@ the `avr-gcc` and other tool chains.
 ## Implementation goals
 
   - Clean header-only C++ design.
-  - Seamless portability to any modern C++14, 17, 20 compiler (and beyond).
+  - Seamless portability to any modern C++14, 17, 20, 23 compiler (and beyond).
   - Achieve efficiency suitable for _bare-metal_ embedded systems.
   - Particularly useful if 64-bit native `double` or a similar built-in type is unavailable.
   - Use refactored versions of trusted algorithms based on those found in [softfloat 3e](https://github.com/ucb-bar/berkeley-softfloat-3).
