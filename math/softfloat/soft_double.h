@@ -2627,8 +2627,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     // Scale the argument yet again with division by 4.
     const auto expA = static_cast<int>(detail::expF64UI(a.my_value) - static_cast<int>(INT8_C(2)));
 
-    a.my_value &= static_cast<std::uint64_t>(~static_cast<std::uint64_t>(static_cast<std::uint64_t>(UINT64_C(0x7FF)) << static_cast<unsigned>(UINT8_C(52))));
-    a.my_value |= static_cast<std::uint64_t>(static_cast<std::uint64_t>(expA) << static_cast<unsigned>(UINT8_C(52)));
+    a.my_value =
+      static_cast<std::uint64_t>
+      (
+          a.my_value
+        & static_cast<std::uint64_t>
+          (
+            ~static_cast<std::uint64_t>(static_cast<std::uint64_t>(UINT64_C(0x7FF)) << static_cast<unsigned>(UINT8_C(52)))
+          )
+      );
+
+    a.my_value =
+      static_cast<std::uint64_t>
+      (
+          a.my_value
+        | static_cast<std::uint64_t>(static_cast<std::uint64_t>(expA) << static_cast<unsigned>(UINT8_C(52)))
+      );
 
     const auto a2 = a * a;
 

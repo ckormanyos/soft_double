@@ -5,13 +5,14 @@
 //  or copy at http://www.boost.org/LICENSE_1_0.txt)             //
 ///////////////////////////////////////////////////////////////////
 
-#include <chrono>
+#include <ctime>
 #include <iomanip>
 #include <iostream>
 #include <random>
 #include <sstream>
 
 #include <math/softfloat/soft_double.h>
+#include <util/utility/util_pseudorandom_time_point_seed.h>
 
 namespace test_soft_double_edge {
 
@@ -34,25 +35,6 @@ eng_dig_type eng_top; // NOLINT(cert-msc32-c,cert-msc51-cpp,cert-err58-cpp,cppco
 eng_dig_type eng_bot; // NOLINT(cert-msc32-c,cert-msc51-cpp,cert-err58-cpp,cppcoreguidelines-avoid-non-const-global-variables)
 eng_pow_type eng_pow; // NOLINT(cert-msc32-c,cert-msc51-cpp,cert-err58-cpp,cppcoreguidelines-avoid-non-const-global-variables)
 eng_d15_type eng_d15; // NOLINT(cert-msc32-c,cert-msc51-cpp,cert-err58-cpp,cppcoreguidelines-avoid-non-const-global-variables)
-
-template<typename IntegralTimePointType,
-         typename ClockType = std::chrono::high_resolution_clock>
-auto time_point() -> IntegralTimePointType
-{
-  using local_integral_time_point_type = IntegralTimePointType;
-  using local_clock_type               = ClockType;
-
-  const auto current_now =
-    static_cast<std::uintmax_t>
-    (
-      std::chrono::duration_cast<std::chrono::nanoseconds>
-      (
-        local_clock_type::now().time_since_epoch()
-      ).count()
-    );
-
-  return static_cast<local_integral_time_point_type>(current_now);
-}
 
 auto generate_soft_double_value(bool is_positive = true) -> ::math::softfloat::float64_t
 {
@@ -155,9 +137,9 @@ auto test_various_ostream_ops() -> bool
   auto result_is_ok = true;
 
   {
-    eng_sgn.seed(time_point<typename eng_sgn_type::result_type>());
-    eng_top.seed(time_point<typename eng_dig_type::result_type>());
-    eng_bot.seed(time_point<typename eng_dig_type::result_type>());
+    eng_sgn.seed(::util::util_pseudorandom_time_point_seed::value<typename eng_sgn_type::result_type>());
+    eng_top.seed(::util::util_pseudorandom_time_point_seed::value<typename eng_dig_type::result_type>());
+    eng_bot.seed(::util::util_pseudorandom_time_point_seed::value<typename eng_dig_type::result_type>());
 
     for(auto   i = static_cast<std::uint32_t>(UINT8_C(0));
                i < static_cast<std::uint32_t>(UINT32_C(100000));
@@ -179,9 +161,9 @@ auto test_various_ostream_ops() -> bool
   }
 
   {
-    eng_sgn.seed(time_point<typename eng_sgn_type::result_type>());
-    eng_top.seed(time_point<typename eng_dig_type::result_type>());
-    eng_bot.seed(time_point<typename eng_dig_type::result_type>());
+    eng_sgn.seed(::util::util_pseudorandom_time_point_seed::value<typename eng_sgn_type::result_type>());
+    eng_top.seed(::util::util_pseudorandom_time_point_seed::value<typename eng_dig_type::result_type>());
+    eng_bot.seed(::util::util_pseudorandom_time_point_seed::value<typename eng_dig_type::result_type>());
 
     for(auto   i = static_cast<std::uint32_t>(UINT8_C(0));
                i < static_cast<std::uint32_t>(UINT32_C(100000));
@@ -210,10 +192,10 @@ auto test_various_pos_powers() -> bool
   auto result_is_ok = true;
 
   {
-    eng_sgn.seed(time_point<typename eng_sgn_type::result_type>());
-    eng_top.seed(time_point<typename eng_dig_type::result_type>());
-    eng_bot.seed(time_point<typename eng_dig_type::result_type>());
-    eng_pow.seed(time_point<typename eng_pow_type::result_type>());
+    eng_sgn.seed(::util::util_pseudorandom_time_point_seed::value<typename eng_sgn_type::result_type>());
+    eng_top.seed(::util::util_pseudorandom_time_point_seed::value<typename eng_dig_type::result_type>());
+    eng_bot.seed(::util::util_pseudorandom_time_point_seed::value<typename eng_dig_type::result_type>());
+    eng_pow.seed(::util::util_pseudorandom_time_point_seed::value<typename eng_pow_type::result_type>());
 
     for(auto   i = static_cast<std::uint32_t>(UINT8_C(0));
                i < static_cast<std::uint32_t>(UINT32_C(10000));
@@ -251,8 +233,8 @@ auto test_various_64_bit_cast() -> bool
   using ::math::softfloat::float64_t;
 
   {
-    eng_sgn.seed(time_point<typename eng_sgn_type::result_type>());
-    eng_d15.seed(time_point<typename eng_d15_type::result_type>());
+    eng_sgn.seed(::util::util_pseudorandom_time_point_seed::value<typename eng_sgn_type::result_type>());
+    eng_d15.seed(::util::util_pseudorandom_time_point_seed::value<typename eng_d15_type::result_type>());
 
     for(auto   i = static_cast<std::uint32_t>(UINT8_C(0));
                i < static_cast<std::uint32_t>(UINT32_C(100000));
@@ -279,7 +261,7 @@ auto test_various_64_bit_cast() -> bool
   }
 
   {
-    eng_d15.seed(time_point<typename eng_d15_type::result_type>());
+    eng_d15.seed(::util::util_pseudorandom_time_point_seed::value<typename eng_d15_type::result_type>());
 
     for(auto   i = static_cast<std::uint32_t>(UINT8_C(0));
                i < static_cast<std::uint32_t>(UINT32_C(100000));
