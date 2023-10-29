@@ -66,7 +66,7 @@ auto math::softfloat::example002b_pi_100k() -> bool
                                   std::int32_t,
                                   local_float_type>;
 
-  const std::clock_t start = std::clock();
+  const auto start = std::clock();
 
   const local_wide_decimal_type my_pi =
     math::wide_decimal::pi<wide_decimal_digits10, local_limb_type, std::allocator<void>, local_float_type_fft, std::int32_t, local_float_type>
@@ -74,9 +74,9 @@ auto math::softfloat::example002b_pi_100k() -> bool
       local::example002b_pi_100k_digits10_callback
     );
 
-  const std::clock_t stop = std::clock();
+  const auto stop = std::clock();
 
-  std::cout << "Time example002b_pi_100k(): "
+  std::cout << "Time example002b_pi_100k()                           : "
             << static_cast<float>(stop - start) / static_cast<float>(CLOCKS_PER_SEC)
             << std::endl;
 

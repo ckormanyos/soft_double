@@ -1,12 +1,11 @@
 ///////////////////////////////////////////////////////////////////
-//  Copyright Christopher Kormanyos 2012 - 2022.                 //
+//  Copyright Christopher Kormanyos 2012 - 2023.                 //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
 //  or copy at http://www.boost.org/LICENSE_1_0.txt)             //
 ///////////////////////////////////////////////////////////////////
 
 #include <array>
-#include <chrono>
 #include <cmath>
 #include <cstdint>
 #include <ctime>
@@ -15,6 +14,7 @@
 #include <random>
 
 #include <math/softfloat/soft_double.h>
+#include <util/utility/util_pseudorandom_time_point_seed.h>
 
 #if defined(__clang__)
   #if defined __has_feature && __has_feature(thread_sanitizer)
@@ -125,25 +125,6 @@ auto get_sf_float64_t_and_double(math::softfloat::float64_t& x1, // NOLINT(googl
 }
 
 namespace detail {
-
-template<typename IntegralTimePointType,
-         typename ClockType = std::chrono::high_resolution_clock>
-auto time_point() -> IntegralTimePointType
-{
-  using local_integral_time_point_type = IntegralTimePointType;
-  using local_clock_type               = ClockType;
-
-  const auto current_now =
-    static_cast<std::uintmax_t>
-    (
-      std::chrono::duration_cast<std::chrono::nanoseconds>
-      (
-        local_clock_type::now().time_since_epoch()
-      ).count()
-    );
-
-  return static_cast<local_integral_time_point_type>(current_now);
-}
 
 template<typename real_value_type,
          typename real_function_type>
@@ -683,8 +664,8 @@ auto test_eq_(const std::uint32_t n, std::uint_fast8_t op_index) -> bool // NOLI
 
 auto test_soft_double() -> bool
 {
-  local::eng32.seed(local::detail::time_point<typename local::eng32_type::result_type>());
-  local::eng64.seed(local::detail::time_point<typename local::eng64_type::result_type>());
+  local::eng32.seed(::util::util_pseudorandom_time_point_seed::value<typename local::eng32_type::result_type>());
+  local::eng64.seed(::util::util_pseudorandom_time_point_seed::value<typename local::eng64_type::result_type>());
 
   auto result_is_ok = true;
 
@@ -761,8 +742,8 @@ auto test_soft_double() -> bool
   #endif
   std::cout << "testing to_f32_... "; const bool result_to_f32_is_ok = test_to_f32(test_to_f32_n);       std::cout << std::boolalpha << result_to_f32_is_ok << std::endl;
 
-  local::eng32.seed(local::detail::time_point<typename local::eng32_type::result_type>());
-  local::eng64.seed(local::detail::time_point<typename local::eng64_type::result_type>());
+  local::eng32.seed(::util::util_pseudorandom_time_point_seed::value<typename local::eng32_type::result_type>());
+  local::eng64.seed(::util::util_pseudorandom_time_point_seed::value<typename local::eng64_type::result_type>());
 
   std::cout << "testing frexp__... "; const auto result_frexp__is_ok = test_frexp (test_frexp_ldexp_ops_n);     std::cout << std::boolalpha << result_frexp__is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
   std::cout << "testing ldexp__... "; const auto result_ldexp__is_ok = test_ldexp (test_frexp_ldexp_ops_n);     std::cout << std::boolalpha << result_ldexp__is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
@@ -771,18 +752,18 @@ auto test_soft_double() -> bool
   std::cout << "testing sin____... "; const auto result_sin____is_ok = test_sin   ( );                          std::cout << std::boolalpha << result_sin____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
   std::cout << "testing cos____... "; const auto result_cos____is_ok = test_cos   ( );                          std::cout << std::boolalpha << result_cos____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
 
-  local::eng32.seed(local::detail::time_point<typename local::eng32_type::result_type>());
-  local::eng64.seed(local::detail::time_point<typename local::eng64_type::result_type>());
+  local::eng32.seed(::util::util_pseudorandom_time_point_seed::value<typename local::eng32_type::result_type>());
+  local::eng64.seed(::util::util_pseudorandom_time_point_seed::value<typename local::eng64_type::result_type>());
 
   std::cout << "testing floor__... "; const auto result_floor__is_ok = test_floor (test_floor_ceil_n);          std::cout << std::boolalpha << result_floor__is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
 
-  local::eng32.seed(local::detail::time_point<typename local::eng32_type::result_type>());
-  local::eng64.seed(local::detail::time_point<typename local::eng64_type::result_type>());
+  local::eng32.seed(::util::util_pseudorandom_time_point_seed::value<typename local::eng32_type::result_type>());
+  local::eng64.seed(::util::util_pseudorandom_time_point_seed::value<typename local::eng64_type::result_type>());
 
   std::cout << "testing ceil___... "; const auto result_ceil___is_ok = test_ceil  (test_floor_ceil_n);          std::cout << std::boolalpha << result_ceil___is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
 
-  local::eng32.seed(local::detail::time_point<typename local::eng32_type::result_type>());
-  local::eng64.seed(local::detail::time_point<typename local::eng64_type::result_type>());
+  local::eng32.seed(::util::util_pseudorandom_time_point_seed::value<typename local::eng32_type::result_type>());
+  local::eng64.seed(::util::util_pseudorandom_time_point_seed::value<typename local::eng64_type::result_type>());
 
   std::cout << "testing add____... "; const auto result_add____is_ok = test_ops   (test_frexp_ldexp_ops_n, 0U); std::cout << std::boolalpha << result_add____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
   std::cout << "testing sub____... "; const auto result_sub____is_ok = test_ops   (test_frexp_ldexp_ops_n, 1U); std::cout << std::boolalpha << result_sub____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
@@ -790,15 +771,15 @@ auto test_soft_double() -> bool
   std::cout << "testing div____... "; const auto result_div____is_ok = test_ops   (test_frexp_ldexp_ops_n, 3U); std::cout << std::boolalpha << result_div____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
   std::cout << "testing sqrt___... "; const auto result_sqrt___is_ok = test_ops   (test_frexp_ldexp_ops_n, 4U); std::cout << std::boolalpha << result_sqrt___is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
 
-  local::eng32.seed(local::detail::time_point<typename local::eng32_type::result_type>());
-  local::eng64.seed(local::detail::time_point<typename local::eng64_type::result_type>());
+  local::eng32.seed(::util::util_pseudorandom_time_point_seed::value<typename local::eng32_type::result_type>());
+  local::eng64.seed(::util::util_pseudorandom_time_point_seed::value<typename local::eng64_type::result_type>());
 
   std::cout << "testing lt_____... "; const auto result_lt_____is_ok = test_neq   (test_frexp_ldexp_ops_n, 0U); std::cout << std::boolalpha << result_lt_____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
   std::cout << "testing gt_____... "; const auto result_gt_____is_ok = test_neq   (test_frexp_ldexp_ops_n, 1U); std::cout << std::boolalpha << result_gt_____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
   std::cout << "testing neq____... "; const auto result_neq____is_ok = test_neq   (test_frexp_ldexp_ops_n, 2U); std::cout << std::boolalpha << result_neq____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
 
-  local::eng32.seed(local::detail::time_point<typename local::eng32_type::result_type>());
-  local::eng64.seed(local::detail::time_point<typename local::eng64_type::result_type>());
+  local::eng32.seed(::util::util_pseudorandom_time_point_seed::value<typename local::eng32_type::result_type>());
+  local::eng64.seed(::util::util_pseudorandom_time_point_seed::value<typename local::eng64_type::result_type>());
 
   std::cout << "testing eq_____... "; const auto result_eq_____is_ok = test_eq_   (test_frexp_ldexp_ops_n, 0U); std::cout << std::boolalpha << result_eq_____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
   std::cout << "testing leq____... "; const auto result_leq____is_ok = test_eq_   (test_frexp_ldexp_ops_n, 1U); std::cout << std::boolalpha << result_leq____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
@@ -806,7 +787,7 @@ auto test_soft_double() -> bool
 
   const auto stop = std::clock();
 
-  std::cout << "Time test_soft_double(): "
+  std::cout << "Time test_soft_double()                              : "
             << static_cast<float>(stop - start) / static_cast<float>(CLOCKS_PER_SEC)
             << std::endl;
 

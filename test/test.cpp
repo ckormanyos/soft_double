@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////
-//  Copyright Christopher Kormanyos 2012 - 2022.                 //
+//  Copyright Christopher Kormanyos 2012 - 2023.                 //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
 //  or copy at http://www.boost.org/LICENSE_1_0.txt)             //
@@ -57,7 +57,7 @@ auto main() -> int
 
   const auto stop = std::clock();
 
-  std::cout << "Time total: "
+  std::cout << "Time total                                           : "
             << static_cast<float>(stop - start) / static_cast<float>(CLOCKS_PER_SEC)
             << std::endl;
 
@@ -72,6 +72,10 @@ auto main() -> int
   std::cout << "result_all_is_ok                                     : " << std::boolalpha << result_all_is_ok << std::endl;
 
   std::cout.flags(flg);
+
+  const auto result_of_main = (result_all_is_ok ? 0 : -1);
+
+  std::cout << "result_of_main: " << result_of_main << std::endl;
 
   return (result_all_is_ok ? 0 : -1);
 }

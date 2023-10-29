@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////////
-//  Copyright Christopher Kormanyos 2020 - 2023.
+//  Copyright Christopher Kormanyos 2020 - 2022.
 //  Distributed under the Boost Software License,
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt
 //  or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -80,22 +80,6 @@
 
       return c;
     }
-
-    static auto reverse(OutputIterator first, OutputIterator last) -> void
-    {
-      if(first < last)
-      {
-        for(--last; first < last; static_cast<void>(++first), static_cast<void>(--last))
-        {
-          using local_value_type = typename std::iterator_traits<OutputIterator>::value_type;
-
-          const auto tmp = static_cast<local_value_type>(*first);
-
-          *first = *last;
-          *last = tmp;
-        }
-      }
-    }
   };
 
   template<typename UnsignedIntegerType,
@@ -107,19 +91,17 @@
     using unsigned_integer_type = UnsignedIntegerType;
     using output_value_type     = typename std::iterator_traits<OutputIterator>::value_type;
 
-    using baselexical_cast_helper_type = baselexical_cast_helper<OutputIterator, UpperCase, BaseRepresentation>;
-
     if(u == static_cast<unsigned_integer_type>(UINT8_C(0)))
     {
       *out =
         static_cast<output_value_type>
         (
-          baselexical_cast_helper_type::extract(static_cast<output_value_type>(UINT8_C(0)))
+          baselexical_cast_helper<OutputIterator, UpperCase, BaseRepresentation>::extract(static_cast<output_value_type>(UINT8_C(0)))
         );
     }
     else
     {
-      auto x = static_cast<unsigned_integer_type>(u);
+      unsigned_integer_type x(u);
 
       auto out_first = out;
 
@@ -134,7 +116,7 @@
         *out =
           static_cast<output_value_type>
           (
-            baselexical_cast_helper_type::extract(c)
+            baselexical_cast_helper<OutputIterator, UpperCase, BaseRepresentation>::extract(c)
           );
 
         x =
@@ -149,7 +131,7 @@
         }
       }
 
-      baselexical_cast_helper_type::reverse(out_first, out + static_cast<std::size_t>(UINT8_C(1)));
+      std::reverse(out_first, out + static_cast<std::size_t>(UINT8_C(1)));
     }
 
     return out + static_cast<std::size_t>(UINT8_C(1));
