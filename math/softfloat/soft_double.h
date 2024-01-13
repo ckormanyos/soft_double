@@ -54,7 +54,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   #include <array>
   #if defined(__has_include)
-  #if (__has_include(<bit>) != 0)
+  #if ((__has_include(<bit>) != 0) && (defined(__cpp_lib_bit_cast) && (__cpp_lib_bit_cast == 201806L)))
   #include <bit>
   #undef SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS
   #define SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS 1
