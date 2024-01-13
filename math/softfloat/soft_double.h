@@ -50,14 +50,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   //#define SOFT_DOUBLE_DISABLE_IOSTREAM
 
-  #define SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS 0
+  #define SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS 0 // NOLINT(cppcoreguidelines-macro-usage)
 
   #include <array>
   #if defined(__has_include)
-  #if (__has_include(<bit>) != 0)
+  #if ((__has_include(<bit>) != 0) && (defined(__cpp_lib_bit_cast) && (__cpp_lib_bit_cast == 201806L)))
   #include <bit>
   #undef SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS
-  #define SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS 1
+  #define SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS 1 // NOLINT(cppcoreguidelines-macro-usage)
   #endif
   #endif
   #include <cstddef>
@@ -386,6 +386,30 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       };
   }
 
+  #if   (defined(SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS) && (SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS == 0))
+
+  template<typename BuiltInFloatType,
+           typename ExactUnsignedIntegralType = typename uint_type_helper<std::numeric_limits<BuiltInFloatType>::digits>::exact_unsigned_type>
+  union uz_type
+  {
+    static_assert((   std::is_same<BuiltInFloatType, float>::value
+                   || std::is_same<BuiltInFloatType, double>::value),
+                  "Error: This template is intended for either built-in float or double, but not for any other type(s)");
+
+    using float_type    = BuiltInFloatType;
+    using unsigned_type = ExactUnsignedIntegralType;
+
+    const float_type    my_f; // NOLINT(misc-non-private-member-variables-in-classes)
+    const unsigned_type my_u; // NOLINT(misc-non-private-member-variables-in-classes)
+
+    explicit constexpr uz_type(float_type    f) noexcept : my_f(f) { }
+    explicit constexpr uz_type(unsigned_type u) noexcept : my_u(u) { }
+
+    SOFT_DOUBLE_NODISCARD constexpr auto get_f() const noexcept -> float_type    { return my_f; }
+    SOFT_DOUBLE_NODISCARD constexpr auto get_u() const noexcept -> unsigned_type { return my_u; }
+  };
+
+  #elif (defined(SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS) && (SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS == 1))
   template<typename BuiltInFloatType,
            typename ExactUnsignedIntegralType = typename uint_type_helper<std::numeric_limits<BuiltInFloatType>::digits>::exact_unsigned_type>
   struct uz_type
@@ -397,25 +421,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     using float_type    = BuiltInFloatType;
     using unsigned_type = ExactUnsignedIntegralType;
 
-    float_type my_f;
+    const float_type my_f; // NOLINT(misc-non-private-member-variables-in-classes)
 
-    constexpr auto address_of() const noexcept -> std::uintptr_t { return (uintptr_t) my_f; }
+    explicit constexpr uz_type(float_type    f) noexcept : my_f(f) { }
 
-    explicit constexpr uz_type(float_type    f) noexcept { my_f = f; }
+    explicit constexpr uz_type(unsigned_type u) noexcept : my_f(std::bit_cast<float_type>(u)) { }
 
-    #if ((defined SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS) && (SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS == 1))
-    explicit constexpr uz_type(unsigned_type u) noexcept : my_f { } { my_f = std::bit_cast<float_type>(u); }
-    #else
-    explicit constexpr uz_type(unsigned_type u) noexcept : my_f { } { my_f = *reinterpret_cast<const float_type*>(&u); }
-    #endif
-
-    #if ((defined SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS) && (SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS == 1))
-    constexpr auto get_u() const noexcept -> unsigned_type { return std::bit_cast<unsigned_type>(my_f); }
-    #else
-    constexpr auto get_u() const noexcept -> unsigned_type { return *reinterpret_cast<const unsigned_type*>(&my_f); }
-    #endif
-    constexpr auto get_f() const noexcept -> float_type    { return my_f; }
+    SOFT_DOUBLE_NODISCARD constexpr auto get_u() const noexcept -> unsigned_type { return std::bit_cast<unsigned_type>(my_f); }
+    SOFT_DOUBLE_NODISCARD constexpr auto get_f() const noexcept -> float_type    { return my_f; }
   };
+  #else
+  #error Configuration error regarding SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS
+  #endif
 
   struct nothing { };
 
@@ -651,12 +668,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
               )
         ) { }
 
-    constexpr soft_double(double d) noexcept // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
-    {
-      const auto my_uz = detail::uz_type<double>(d);
-
-      my_value = my_uz.get_u();
-    }
+    constexpr soft_double(double d) noexcept              // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+      : my_value(detail::uz_type<double>(d).get_u()) { }  // NOLINT(cppcoreguidelines-pro-type-union-access)
 
     constexpr soft_double(long double ld) noexcept                             // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
       : my_value(detail::uz_type<double>(static_cast<double>(ld)).get_u()) { } // NOLINT(cppcoreguidelines-pro-type-union-access)

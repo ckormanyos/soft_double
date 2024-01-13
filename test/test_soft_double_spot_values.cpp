@@ -50,8 +50,8 @@ namespace local
     static_assert(gravitational_constant < 1, "Error: Initialization constexpr-double does not properly work");
     static_assert(gravitational_constant != near_pi_constant, "Error: Initialization constexpr-double does not properly work");
     static_assert(4 * one_quarter_constant == 1, "Error: Initialization constexpr-double does not properly work");
-    static_assert(12 * one_quarter_constant < near_pi_constant, "Error: Initialization constexpr-double does not properly work");
-    static_assert(13 * one_quarter_constant > near_pi_constant, "Error: Initialization constexpr-double does not properly work");
+    static_assert(static_cast<int>(INT8_C(12)) * one_quarter_constant < near_pi_constant, "Error: Initialization constexpr-double does not properly work");
+    static_assert(static_cast<int>(INT8_C(13)) * one_quarter_constant > near_pi_constant, "Error: Initialization constexpr-double does not properly work");
     #endif
 
     bool result_is_ok { true };
