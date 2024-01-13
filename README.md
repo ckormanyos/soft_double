@@ -243,7 +243,8 @@ It is not mandatory to actually use this feature-test if the
 language standard being used is known to be sufficiently high
 for compatibility. The following code, for instance, uses
 `constexpr` construction from built-in `double`,
-as shown also in this short link to godbolt (TBD).
+as shown also in this
+[short link](https://godbolt.org/z/sovzoWTMc) to [godbolt](https://godbolt.org).
 
 ```cpp
 #include <math/softfloat/soft_double.h>
@@ -258,9 +259,9 @@ auto main() -> int
 
   static_assert(gravitational_constant < 1, "Error: Initialization constexpr-double does not properly work");
   static_assert(gravitational_constant != near_pi_constant, "Error: Initialization constexpr-double does not properly work");
-  static_assert(4 * one_quarter_constant == 1, "Error: Initialization constexpr-double does not properly work");
-  static_assert(12 * one_quarter_constant < near_pi_constant, "Error: Initialization constexpr-double does not properly work");
-  static_assert(13 * one_quarter_constant > near_pi_constant, "Error: Initialization constexpr-double does not properly work");
+  static_assert(static_cast<int>(INT8_C(4)) * one_quarter_constant == 1, "Error: Initialization constexpr-double does not properly work");
+  static_assert(static_cast<int>(INT8_C(12)) * one_quarter_constant < near_pi_constant, "Error: Initialization constexpr-double does not properly work");
+  static_assert(static_cast<int>(INT8_C(13)) * one_quarter_constant > near_pi_constant, "Error: Initialization constexpr-double does not properly work");
 }
 ```
 
