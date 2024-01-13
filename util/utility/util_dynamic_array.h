@@ -175,40 +175,40 @@
     }
 
     // Iterator members:
-    constexpr auto begin  ()       noexcept -> iterator               { return elems; }
-    constexpr auto end    ()       noexcept -> iterator               { return elems + elem_count; }
-    constexpr auto begin  () const noexcept -> const_iterator         { return elems; }
-    constexpr auto end    () const noexcept -> const_iterator         { return elems + elem_count; }
-    constexpr auto cbegin () const noexcept -> const_iterator         { return elems; }
-    constexpr auto cend   () const noexcept -> const_iterator         { return elems + elem_count; }
-    constexpr auto rbegin ()       noexcept -> reverse_iterator       { return reverse_iterator(elems + elem_count); }
-    constexpr auto rend   ()       noexcept -> reverse_iterator       { return reverse_iterator(elems); }
-    constexpr auto rbegin () const noexcept -> const_reverse_iterator { return const_reverse_iterator(elems + elem_count); }
-    constexpr auto rend   () const noexcept -> const_reverse_iterator { return const_reverse_iterator(elems); }
-    constexpr auto crbegin() const noexcept -> const_reverse_iterator { return const_reverse_iterator(elems + elem_count); }
-    constexpr auto crend  () const noexcept -> const_reverse_iterator { return const_reverse_iterator(elems); }
+    constexpr auto begin  ()       noexcept -> iterator               { return elems; }                                      // NOLINT(modernize-use-nodiscard)
+    constexpr auto end    ()       noexcept -> iterator               { return elems + elem_count; }                         // NOLINT(modernize-use-nodiscard)
+    constexpr auto begin  () const noexcept -> const_iterator         { return elems; }                                      // NOLINT(modernize-use-nodiscard)
+    constexpr auto end    () const noexcept -> const_iterator         { return elems + elem_count; }                         // NOLINT(modernize-use-nodiscard)
+    constexpr auto cbegin () const noexcept -> const_iterator         { return elems; }                                      // NOLINT(modernize-use-nodiscard)
+    constexpr auto cend   () const noexcept -> const_iterator         { return elems + elem_count; }                         // NOLINT(modernize-use-nodiscard)
+    constexpr auto rbegin ()       noexcept -> reverse_iterator       { return reverse_iterator(elems + elem_count); }       // NOLINT(modernize-use-nodiscard)
+    constexpr auto rend   ()       noexcept -> reverse_iterator       { return reverse_iterator(elems); }                    // NOLINT(modernize-use-nodiscard)
+    constexpr auto rbegin () const noexcept -> const_reverse_iterator { return const_reverse_iterator(elems + elem_count); } // NOLINT(modernize-use-nodiscard)
+    constexpr auto rend   () const noexcept -> const_reverse_iterator { return const_reverse_iterator(elems); }              // NOLINT(modernize-use-nodiscard)
+    constexpr auto crbegin() const noexcept -> const_reverse_iterator { return const_reverse_iterator(elems + elem_count); } // NOLINT(modernize-use-nodiscard)
+    constexpr auto crend  () const noexcept -> const_reverse_iterator { return const_reverse_iterator(elems); }              // NOLINT(modernize-use-nodiscard)
 
     // Raw pointer access.
-    constexpr auto data()       noexcept -> pointer       { return elems; }
-    constexpr auto data() const noexcept -> const_pointer { return elems; }
+    constexpr auto data()       noexcept -> pointer       { return elems; } // NOLINT(modernize-use-nodiscard)
+    constexpr auto data() const noexcept -> const_pointer { return elems; } // NOLINT(modernize-use-nodiscard)
 
     // Size and capacity.
-    constexpr auto size    () const noexcept -> size_type { return  elem_count; }
-    constexpr auto max_size() const noexcept -> size_type { return  elem_count; }
-    constexpr auto empty   () const noexcept -> bool      { return (elem_count == static_cast<size_type>(UINT8_C(0))); }
+    constexpr auto size    () const noexcept -> size_type { return  elem_count; } // NOLINT(modernize-use-nodiscard)
+    constexpr auto max_size() const noexcept -> size_type { return  elem_count; } // NOLINT(modernize-use-nodiscard)
+    constexpr auto empty   () const noexcept -> bool      { return (elem_count == static_cast<size_type>(UINT8_C(0))); } // NOLINT(modernize-use-nodiscard)
 
     // Element access members.
-    constexpr auto operator[](const size_type i)       noexcept -> reference       { return elems[i]; }
-    constexpr auto operator[](const size_type i) const noexcept -> const_reference { return elems[i]; }
+    constexpr auto operator[](const size_type i)       noexcept -> reference       { return elems[i]; } // NOLINT(modernize-use-nodiscard)
+    constexpr auto operator[](const size_type i) const noexcept -> const_reference { return elems[i]; } // NOLINT(modernize-use-nodiscard)
 
-    constexpr auto front()       noexcept -> reference       { return elems[static_cast<size_type>(UINT8_C(0))]; }
-    constexpr auto front() const noexcept -> const_reference { return elems[static_cast<size_type>(UINT8_C(0))]; }
+    constexpr auto front()       noexcept -> reference       { return elems[static_cast<size_type>(UINT8_C(0))]; } // NOLINT(modernize-use-nodiscard)
+    constexpr auto front() const noexcept -> const_reference { return elems[static_cast<size_type>(UINT8_C(0))]; } // NOLINT(modernize-use-nodiscard)
 
-    constexpr auto back()       noexcept -> reference       { return ((elem_count > static_cast<size_type>(UINT8_C(0))) ? elems[static_cast<size_type>(elem_count - static_cast<size_type>(UINT8_C(1)))] : elems[static_cast<size_type>(UINT8_C(0))]); }
-    constexpr auto back() const noexcept -> const_reference { return ((elem_count > static_cast<size_type>(UINT8_C(0))) ? elems[static_cast<size_type>(elem_count - static_cast<size_type>(UINT8_C(1)))] : elems[static_cast<size_type>(UINT8_C(0))]); }
+    constexpr auto back()       noexcept -> reference       { return ((elem_count > static_cast<size_type>(UINT8_C(0))) ? elems[static_cast<size_type>(elem_count - static_cast<size_type>(UINT8_C(1)))] : elems[static_cast<size_type>(UINT8_C(0))]); } // NOLINT(modernize-use-nodiscard)
+    constexpr auto back() const noexcept -> const_reference { return ((elem_count > static_cast<size_type>(UINT8_C(0))) ? elems[static_cast<size_type>(elem_count - static_cast<size_type>(UINT8_C(1)))] : elems[static_cast<size_type>(UINT8_C(0))]); } // NOLINT(modernize-use-nodiscard)
 
-    constexpr auto at(const size_type i)       noexcept -> reference       { return ((i < elem_count) ? elems[i] : elems[static_cast<size_type>(UINT8_C(0))]); }
-    constexpr auto at(const size_type i) const noexcept -> const_reference { return ((i < elem_count) ? elems[i] : elems[static_cast<size_type>(UINT8_C(0))]); }
+    constexpr auto at(const size_type i)       noexcept -> reference       { return ((i < elem_count) ? elems[i] : elems[static_cast<size_type>(UINT8_C(0))]); } // NOLINT(modernize-use-nodiscard)
+    constexpr auto at(const size_type i) const noexcept -> const_reference { return ((i < elem_count) ? elems[i] : elems[static_cast<size_type>(UINT8_C(0))]); } // NOLINT(modernize-use-nodiscard)
 
     // Element manipulation members.
     constexpr auto fill(const value_type& v) -> void
