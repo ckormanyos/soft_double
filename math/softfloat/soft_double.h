@@ -50,14 +50,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   //#define SOFT_DOUBLE_DISABLE_IOSTREAM
 
-  #define SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS 0
+  #define SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS 0 // NOLINT(cppcoreguidelines-macro-usage)
 
   #include <array>
   #if defined(__has_include)
   #if ((__has_include(<bit>) != 0) && (defined(__cpp_lib_bit_cast) && (__cpp_lib_bit_cast == 201806L)))
   #include <bit>
   #undef SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS
-  #define SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS 1
+  #define SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS 1 // NOLINT(cppcoreguidelines-macro-usage)
   #endif
   #endif
   #include <cstddef>
@@ -399,8 +399,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     using float_type    = BuiltInFloatType;
     using unsigned_type = ExactUnsignedIntegralType;
 
-    const float_type    my_f;
-    const unsigned_type my_u;
+    const float_type    my_f; // NOLINT(misc-non-private-member-variables-in-classes)
+    const unsigned_type my_u; // NOLINT(misc-non-private-member-variables-in-classes)
 
     explicit constexpr uz_type(float_type    f) noexcept : my_f(f) { }
     explicit constexpr uz_type(unsigned_type u) noexcept : my_u(u) { }
@@ -421,7 +421,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     using float_type    = BuiltInFloatType;
     using unsigned_type = ExactUnsignedIntegralType;
 
-    const float_type my_f;
+    const float_type my_f; // NOLINT(misc-non-private-member-variables-in-classes)
 
     explicit constexpr uz_type(float_type    f) noexcept : my_f(f) { }
 
