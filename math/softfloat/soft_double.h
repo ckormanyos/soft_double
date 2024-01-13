@@ -386,6 +386,30 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       };
   }
 
+  #if   (defined(SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS) && (SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS == 0))
+
+  template<typename BuiltInFloatType,
+           typename ExactUnsignedIntegralType = typename uint_type_helper<std::numeric_limits<BuiltInFloatType>::digits>::exact_unsigned_type>
+  union uz_type
+  {
+    static_assert((   std::is_same<BuiltInFloatType, float>::value
+                   || std::is_same<BuiltInFloatType, double>::value),
+                  "Error: This template is intended for either built-in float or double, but not for any other type(s)");
+
+    using float_type    = BuiltInFloatType;
+    using unsigned_type = ExactUnsignedIntegralType;
+
+    const float_type    my_f;
+    const unsigned_type my_u;
+
+    explicit constexpr uz_type(float_type    f) noexcept : my_f(f) { }
+    explicit constexpr uz_type(unsigned_type u) noexcept : my_u(u) { }
+
+    constexpr auto get_f() const noexcept -> float_type    { return my_f; }
+    constexpr auto get_u() const noexcept -> unsigned_type { return my_u; }
+  };
+
+  #elif (defined(SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS) && (SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS == 1))
   template<typename BuiltInFloatType,
            typename ExactUnsignedIntegralType = typename uint_type_helper<std::numeric_limits<BuiltInFloatType>::digits>::exact_unsigned_type>
   struct uz_type
@@ -403,19 +427,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     explicit constexpr uz_type(float_type    f) noexcept { my_f = f; }
 
-    #if ((defined SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS) && (SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS == 1))
     explicit constexpr uz_type(unsigned_type u) noexcept : my_f { } { my_f = std::bit_cast<float_type>(u); }
-    #else
-    explicit constexpr uz_type(unsigned_type u) noexcept : my_f { } { my_f = *reinterpret_cast<const float_type*>(&u); }
-    #endif
 
-    #if ((defined SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS) && (SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS == 1))
     constexpr auto get_u() const noexcept -> unsigned_type { return std::bit_cast<unsigned_type>(my_f); }
-    #else
-    constexpr auto get_u() const noexcept -> unsigned_type { return *reinterpret_cast<const unsigned_type*>(&my_f); }
-    #endif
     constexpr auto get_f() const noexcept -> float_type    { return my_f; }
   };
+  #else
+  #error Configuration error regarding SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS
+  #endif
 
   struct nothing { };
 
