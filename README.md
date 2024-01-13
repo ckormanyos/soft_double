@@ -24,9 +24,10 @@ soft_double
 
 soft_double is a C++ header-only library that implements
 a 64-bit double-precision floating-point data type in software.
-This data type is called `math::softfloat::soft_double`
+The data type implemented is called `::math::softfloat::soft_double`
 and it can be used essentially like a regular
 built-in 64-bit floating-point type (such as built-in `double`).
+This data type type is also aliased to `::math::softfloat::float64_t`.
 
 Some C/C++ environments do not support a built-in 64-bit floating-point type,
 which might be commonly known as `double` or `long` `double`,
