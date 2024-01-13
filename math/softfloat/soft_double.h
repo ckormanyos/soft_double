@@ -405,8 +405,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     explicit constexpr uz_type(float_type    f) noexcept : my_f(f) { }
     explicit constexpr uz_type(unsigned_type u) noexcept : my_u(u) { }
 
-    constexpr auto get_f() const noexcept -> float_type    { return my_f; }
-    constexpr auto get_u() const noexcept -> unsigned_type { return my_u; }
+    SOFT_DOUBLE_NODISCARD constexpr auto get_f() const noexcept -> float_type    { return my_f; }
+    SOFT_DOUBLE_NODISCARD constexpr auto get_u() const noexcept -> unsigned_type { return my_u; }
   };
 
   #elif (defined(SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS) && (SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS == 1))
@@ -421,16 +421,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     using float_type    = BuiltInFloatType;
     using unsigned_type = ExactUnsignedIntegralType;
 
-    float_type my_f;
+    const float_type my_f;
 
-    constexpr auto address_of() const noexcept -> std::uintptr_t { return (uintptr_t) my_f; }
+    explicit constexpr uz_type(float_type    f) noexcept : my_f(f) { }
 
-    explicit constexpr uz_type(float_type    f) noexcept { my_f = f; }
+    explicit constexpr uz_type(unsigned_type u) noexcept : my_f(std::bit_cast<float_type>(u)) { }
 
-    explicit constexpr uz_type(unsigned_type u) noexcept : my_f { } { my_f = std::bit_cast<float_type>(u); }
-
-    constexpr auto get_u() const noexcept -> unsigned_type { return std::bit_cast<unsigned_type>(my_f); }
-    constexpr auto get_f() const noexcept -> float_type    { return my_f; }
+    SOFT_DOUBLE_NODISCARD constexpr auto get_u() const noexcept -> unsigned_type { return std::bit_cast<unsigned_type>(my_f); }
+    SOFT_DOUBLE_NODISCARD constexpr auto get_f() const noexcept -> float_type    { return my_f; }
   };
   #else
   #error Configuration error regarding SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS
