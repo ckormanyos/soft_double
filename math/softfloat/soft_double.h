@@ -668,12 +668,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
               )
         ) { }
 
-    constexpr soft_double(double d) noexcept // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
-    {
-      const auto my_uz = detail::uz_type<double>(d);
-
-      my_value = my_uz.get_u();
-    }
+    constexpr soft_double(double d) noexcept              // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+      : my_value(detail::uz_type<double>(d).get_u()) { }  // NOLINT(cppcoreguidelines-pro-type-union-access)
 
     constexpr soft_double(long double ld) noexcept                             // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
       : my_value(detail::uz_type<double>(static_cast<double>(ld)).get_u()) { } // NOLINT(cppcoreguidelines-pro-type-union-access)
