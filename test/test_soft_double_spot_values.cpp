@@ -32,6 +32,48 @@ namespace detail
 
 namespace local
 {
+  auto test_constexpr_init_issue110() -> bool
+  {
+    using ::math::softfloat::float64_t;
+
+    #if ((defined SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS) && (SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS == 1))
+    constexpr auto gravitational_constant = float64_t { 6.674e-11 };
+    constexpr auto near_pi_constant       = float64_t { 3.14 };
+    constexpr auto one_quarter_constant   = float64_t { 0.25 };
+    #else
+    const auto gravitational_constant = float64_t { 6.674e-11 };
+    const auto near_pi_constant       = float64_t { 3.14 };
+    const auto one_quarter_constant   = float64_t { 0.25 };
+    #endif
+
+    #if ((defined SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS) && (SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS == 1))
+    static_assert(gravitational_constant < 1, "Error: Initialization constexpr-double does not properly work");
+    static_assert(gravitational_constant != near_pi_constant, "Error: Initialization constexpr-double does not properly work");
+    static_assert(4 * one_quarter_constant == 1, "Error: Initialization constexpr-double does not properly work");
+    static_assert(static_cast<int>(INT8_C(12)) * one_quarter_constant < near_pi_constant, "Error: Initialization constexpr-double does not properly work");
+    static_assert(static_cast<int>(INT8_C(13)) * one_quarter_constant > near_pi_constant, "Error: Initialization constexpr-double does not properly work");
+    #endif
+
+    bool result_is_ok { true };
+
+    const auto result_check_00_is_ok = (gravitational_constant < 1);
+    result_is_ok = (result_check_00_is_ok && result_is_ok);
+
+    const auto result_check_01_is_ok = (gravitational_constant != near_pi_constant);
+    result_is_ok = (result_check_01_is_ok && result_is_ok);
+
+    const auto result_check_02_is_ok = (4 * one_quarter_constant == 1);
+    result_is_ok = (result_check_02_is_ok && result_is_ok);
+
+    const auto result_check_03_is_ok = (12 * one_quarter_constant < near_pi_constant);
+    result_is_ok = (result_check_03_is_ok && result_is_ok);
+
+    const auto result_check_04_is_ok = (13 * one_quarter_constant > near_pi_constant);
+    result_is_ok = (result_check_04_is_ok && result_is_ok);
+
+    return result_is_ok;
+  }
+
   auto test_construct_from_float() -> bool
   {
     constexpr auto f0 = static_cast<float>(0.125L);
@@ -255,6 +297,12 @@ namespace local
 auto test_soft_double_spot_values() -> bool
 {
   auto result_spot_values_is_ok = true;
+
+  {
+    const auto result_constexpr_init_issue110_is_ok   = local::test_constexpr_init_issue110();
+
+    result_spot_values_is_ok = (result_constexpr_init_issue110_is_ok && result_spot_values_is_ok);
+  }
 
   {
     const auto result_construct_from_float_is_ok   = local::test_construct_from_float();

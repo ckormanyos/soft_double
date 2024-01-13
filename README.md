@@ -170,6 +170,7 @@ When using C++20, `soft_double` supports compile-time
 `constexpr` construction and evaluation of results
 of binary arithmetic, comparison operators
 and various elementary functions.
+
 The following code, for instance, shows a compile-time instantiation
 of `soft_double` with subsequent `constexpr` evaluation
 of a square root function and its comparison of its result
@@ -219,6 +220,49 @@ having standards such as C++14, 17, 2a have also been checked
 for `constexpr` usage of `soft_double`. If you have an older
 compiler, you might have to check the compiler's
 ability to obtain the entire benefit of `constexpr` with `soft_double`.
+
+In [issue 110](https://github.com/ckormanyos/soft_double/issues/110),
+the topic of `constexpr`-ness regarding construction from built-in `float`,
+`double` and `long` `double` was briefly addressed. At the moment,
+construction from built-in floating-point types adheres to C++20 `constexpr`-ness
+or higher. Perhaps in the future, an alternate programing could bring this feature
+to earlier language standards.
+
+The macro sequence below can be used to test for the feature
+of `constexpr`-ness regarding construction from built-in
+floating-point types.
+
+```cpp
+#include <math/softfloat/soft_double.h>
+
+#if ((defined SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS) && (SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS == 1))
+#endif
+```
+
+It is not mandatory to actually use this feature-test if the
+language standard being used is known to be sufficiently high
+for compatibility. The following code, for instance, uses
+`constexpr` construction from built-in `double`,
+as shown also in this short link to godbolt (TBD).
+
+```cpp
+#include <math/softfloat/soft_double.h>
+
+auto main() -> int
+{
+  using ::math::softfloat::float64_t;
+
+  constexpr auto gravitational_constant = float64_t { 6.674e-11 };
+  constexpr auto near_pi_constant       = float64_t { 3.14 };
+  constexpr auto one_quarter_constant   = float64_t { 0.25 };
+
+  static_assert(gravitational_constant < 1, "Error: Initialization constexpr-double does not properly work");
+  static_assert(gravitational_constant != near_pi_constant, "Error: Initialization constexpr-double does not properly work");
+  static_assert(4 * one_quarter_constant == 1, "Error: Initialization constexpr-double does not properly work");
+  static_assert(12 * one_quarter_constant < near_pi_constant, "Error: Initialization constexpr-double does not properly work");
+  static_assert(13 * one_quarter_constant > near_pi_constant, "Error: Initialization constexpr-double does not properly work");
+}
+```
 
 ## Building, testing and CI
 
