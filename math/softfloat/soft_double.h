@@ -50,7 +50,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   //#define SOFT_DOUBLE_DISABLE_IOSTREAM
 
+  #define SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS 0
+
   #include <array>
+  #if defined(__has_include)
+  #if (__has_include(<bit>) != 0)
+  #include <bit>
+  #undef SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS
+  #define SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS 1
+  #endif
+  #endif
   #include <cstddef>
   #include <cstdint>
   #if !defined(SOFT_DOUBLE_DISABLE_IOSTREAM)
@@ -379,7 +388,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   template<typename BuiltInFloatType,
            typename ExactUnsignedIntegralType = typename uint_type_helper<std::numeric_limits<BuiltInFloatType>::digits>::exact_unsigned_type>
-  union uz_type
+  struct uz_type
   {
     static_assert((   std::is_same<BuiltInFloatType, float>::value
                    || std::is_same<BuiltInFloatType, double>::value),
@@ -388,11 +397,24 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     using float_type    = BuiltInFloatType;
     using unsigned_type = ExactUnsignedIntegralType;
 
-    const float_type    my_f;
-    const unsigned_type my_u;
+    float_type my_f;
 
-    explicit constexpr uz_type(float_type    f) noexcept : my_f(f) { }
-    explicit constexpr uz_type(unsigned_type u) noexcept : my_u(u) { }
+    constexpr auto address_of() const noexcept -> std::uintptr_t { return (uintptr_t) my_f; }
+
+    explicit constexpr uz_type(float_type    f) noexcept { my_f = f; }
+
+    #if ((defined SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS) && (SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS == 1))
+    explicit constexpr uz_type(unsigned_type u) noexcept : my_f { } { my_f = std::bit_cast<float_type>(u); }
+    #else
+    explicit constexpr uz_type(unsigned_type u) noexcept : my_f { } { my_f = *reinterpret_cast<const float_type*>(&u); }
+    #endif
+
+    #if ((defined SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS) && (SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS == 1))
+    constexpr auto get_u() const noexcept -> unsigned_type { return std::bit_cast<unsigned_type>(my_f); }
+    #else
+    constexpr auto get_u() const noexcept -> unsigned_type { return *reinterpret_cast<const unsigned_type*>(&my_f); }
+    #endif
+    constexpr auto get_f() const noexcept -> float_type    { return my_f; }
   };
 
   struct nothing { };
@@ -604,36 +626,40 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     constexpr soft_double(float f) noexcept // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
       : my_value
         (
-          ((detail::expF32UI(detail::uz_type<float>(f).my_u) == static_cast<std::int16_t>(INT8_C(0))) && (detail::fracF32UI(detail::uz_type<float>(f).my_u) == static_cast<std::uint32_t>(UINT8_C(0)))) // NOLINT(cppcoreguidelines-pro-type-union-access)
+          ((detail::expF32UI(detail::uz_type<float>(f).get_u()) == static_cast<std::int16_t>(INT8_C(0))) && (detail::fracF32UI(detail::uz_type<float>(f).get_u()) == static_cast<std::uint32_t>(UINT8_C(0)))) // NOLINT(cppcoreguidelines-pro-type-union-access)
             ? detail::packToF64UI
               (
-                detail::signF32UI(detail::uz_type<float>(f).my_u), // NOLINT(cppcoreguidelines-pro-type-union-access)
+                detail::signF32UI(detail::uz_type<float>(f).get_u()), // NOLINT(cppcoreguidelines-pro-type-union-access)
                 static_cast<int>(INT8_C(0)),
                 static_cast<int>(INT8_C(0))
               )
             : detail::packToF64UI
               (
-                detail::signF32UI(detail::uz_type<float>(f).my_u), // NOLINT(cppcoreguidelines-pro-type-union-access)
+                detail::signF32UI(detail::uz_type<float>(f).get_u()), // NOLINT(cppcoreguidelines-pro-type-union-access)
                 static_cast<std::int32_t>
                 (
-                    static_cast<std::int32_t>(detail::expF32UI(detail::uz_type<float>(f).my_u)) // NOLINT(cppcoreguidelines-pro-type-union-access)
+                    static_cast<std::int32_t>(detail::expF32UI(detail::uz_type<float>(f).get_u())) // NOLINT(cppcoreguidelines-pro-type-union-access)
                   + static_cast<std::int32_t>(INT16_C(0x380))
                 ),
                 static_cast<std::uint64_t>
                 (
                   static_cast<std::uint64_t>
                   (
-                    detail::fracF32UI(detail::uz_type<float>(f).my_u) // NOLINT(cppcoreguidelines-pro-type-union-access)
+                    detail::fracF32UI(detail::uz_type<float>(f).get_u()) // NOLINT(cppcoreguidelines-pro-type-union-access)
                   ) << static_cast<unsigned>(UINT8_C(29))
                 )
               )
         ) { }
 
-    constexpr soft_double(double d) noexcept          // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
-      : my_value(detail::uz_type<double>(d).my_u) { } // NOLINT(cppcoreguidelines-pro-type-union-access)
+    constexpr soft_double(double d) noexcept // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+    {
+      const auto my_uz = detail::uz_type<double>(d);
 
-    constexpr soft_double(long double ld) noexcept                          // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
-      : my_value(detail::uz_type<double>(static_cast<double>(ld)).my_u) { } // NOLINT(cppcoreguidelines-pro-type-union-access)
+      my_value = my_uz.get_u();
+    }
+
+    constexpr soft_double(long double ld) noexcept                             // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
+      : my_value(detail::uz_type<double>(static_cast<double>(ld)).get_u()) { } // NOLINT(cppcoreguidelines-pro-type-union-access)
 
     constexpr soft_double(const soft_double& other) noexcept : my_value(other.my_value) { }; // NOLINT(hicpp-use-equals-default,modernize-use-equals-default)
 
@@ -1385,7 +1411,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         expA = static_cast<std::int16_t>(INT8_C(0));
       }
 
-      return detail::uz_type<float>(detail::packToF32UI(sign, expA, sig)).my_f; // NOLINT(cppcoreguidelines-pro-type-union-access)
+      return detail::uz_type<float>(detail::packToF32UI(sign, expA, sig)).get_f(); // NOLINT(cppcoreguidelines-pro-type-union-access)
     }
 
     static constexpr auto my__i32_to_f64(const std::int32_t a) -> std::uint64_t // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)

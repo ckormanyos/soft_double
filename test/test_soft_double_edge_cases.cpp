@@ -105,13 +105,13 @@ auto test_various_functions() -> bool
 
     const small_values_array_type small_values =
     {
-      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-001).my_u, ::math::softfloat::detail::nothing() }, // NOLINT(cppcoreguidelines-pro-type-union-access)
-      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-051).my_u, ::math::softfloat::detail::nothing() }, // NOLINT(cppcoreguidelines-pro-type-union-access)
-      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-101).my_u, ::math::softfloat::detail::nothing() }, // NOLINT(cppcoreguidelines-pro-type-union-access)
-      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-151).my_u, ::math::softfloat::detail::nothing() }, // NOLINT(cppcoreguidelines-pro-type-union-access)
-      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-201).my_u, ::math::softfloat::detail::nothing() }, // NOLINT(cppcoreguidelines-pro-type-union-access)
-      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-251).my_u, ::math::softfloat::detail::nothing() }, // NOLINT(cppcoreguidelines-pro-type-union-access)
-      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-301).my_u, ::math::softfloat::detail::nothing() }  // NOLINT(cppcoreguidelines-pro-type-union-access)
+      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-001).get_u(), ::math::softfloat::detail::nothing() }, // NOLINT(cppcoreguidelines-pro-type-union-access)
+      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-051).get_u(), ::math::softfloat::detail::nothing() }, // NOLINT(cppcoreguidelines-pro-type-union-access)
+      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-101).get_u(), ::math::softfloat::detail::nothing() }, // NOLINT(cppcoreguidelines-pro-type-union-access)
+      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-151).get_u(), ::math::softfloat::detail::nothing() }, // NOLINT(cppcoreguidelines-pro-type-union-access)
+      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-201).get_u(), ::math::softfloat::detail::nothing() }, // NOLINT(cppcoreguidelines-pro-type-union-access)
+      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-251).get_u(), ::math::softfloat::detail::nothing() }, // NOLINT(cppcoreguidelines-pro-type-union-access)
+      float64_t { ::math::softfloat::detail::uz_type<double>(1.0E-301).get_u(), ::math::softfloat::detail::nothing() }  // NOLINT(cppcoreguidelines-pro-type-union-access)
     };
 
     for(const auto& soft_double_elem : small_values)
@@ -208,8 +208,8 @@ auto test_various_pos_powers() -> bool
 
       using std::pow;
 
-      const auto pow_as_soft_double     = pow(arg_as_soft_double,          pos_power);
-      const auto pow_as_built_in_double = pow(arg_as_built_in_double.my_f, pos_power); // NOLINT(cppcoreguidelines-pro-type-union-access)
+      const auto pow_as_soft_double     = pow(arg_as_soft_double,             pos_power);
+      const auto pow_as_built_in_double = pow(arg_as_built_in_double.get_f(), pos_power); // NOLINT(cppcoreguidelines-pro-type-union-access)
 
       std::stringstream strm_for_soft_double;
       std::stringstream strm_for_built_in_double;
