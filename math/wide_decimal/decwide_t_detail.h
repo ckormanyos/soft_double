@@ -193,13 +193,13 @@
       static_cast<std::uint32_t>(UINT32_C(2097152))
     };
 
-    const std::uint32_t* it = util::lower_bound_unsafe(std::begin(a029750_data), std::end(a029750_data), value);
+    const auto* p_elem = util::lower_bound_unsafe(std::begin(a029750_data), std::end(a029750_data), value);
 
     const auto result =
       static_cast<std::uint32_t>
       (
-        (it != std::end(a029750_data))
-          ? *it
+        (p_elem != std::end(a029750_data))
+          ? *p_elem
           : *(std::end(a029750_data) - static_cast<std::size_t>(UINT8_C(1))) // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
       );
 
@@ -241,7 +241,9 @@
 
   constexpr auto pow10_maker_as_runtime_value(std::uint32_t n) noexcept -> std::uint32_t
   {
-    constexpr std::uint32_t local_p10_table[static_cast<std::size_t>(UINT8_C(10))] = // NOLINT(cppcoreguidelines-avoid-c-arrays,hicpp-avoid-c-arrays,modernize-avoid-c-arrays)
+    using local_p10_data_array_type = std::array<std::uint32_t, static_cast<std::size_t>(UINT8_C(10))>;
+
+    constexpr local_p10_data_array_type local_p10_data = // NOLINT(cppcoreguidelines-avoid-c-arrays,hicpp-avoid-c-arrays,modernize-avoid-c-arrays)
     {
       static_cast<std::uint32_t>(UINT32_C(1)),
       static_cast<std::uint32_t>(UINT32_C(10)),
@@ -255,12 +257,7 @@
       static_cast<std::uint32_t>(UINT32_C(1000000000))
     };
 
-    const std::uint32_t result = 
-      (
-        (n < static_cast<std::uint32_t>(sizeof(local_p10_table) / sizeof(local_p10_table[static_cast<std::size_t>(UINT8_C(0))])))
-          ? local_p10_table[static_cast<std::size_t>(n)]                        // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
-          : *(std::end(local_p10_table) - static_cast<std::size_t>(UINT8_C(1))) // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-      );
+    const auto result = (static_cast<std::size_t>(n) < std::tuple_size<local_p10_data_array_type>::value) ? local_p10_data[static_cast<std::size_t>(n)] : local_p10_data.back();
 
     return result;
   }
