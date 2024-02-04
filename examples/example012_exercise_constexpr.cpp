@@ -56,7 +56,7 @@ auto math::softfloat::example012_exercise_constexpr() -> bool
 #include <iomanip>
 #include <iostream>
 
-int main()
+auto main() -> int
 {
   const bool result_is_ok = math::softfloat::example012_exercise_constexpr();
 
