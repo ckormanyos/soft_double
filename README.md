@@ -18,7 +18,7 @@ soft_double
         <img src="https://img.shields.io/github/commit-activity/y/ckormanyos/soft_double" alt="GitHub commit activity"></a>
     <a href="https://github.com/ckormanyos/soft_double">
         <img src="https://img.shields.io/github/languages/code-size/ckormanyos/soft_double" alt="GitHub code size in bytes"></a>
-    <a href="https://godbolt.org/z/vj7a1bY6x" alt="godbolt">
+    <a href="https://godbolt.org/z/oqh333Y33" alt="godbolt">
         <img src="https://img.shields.io/badge/try%20it%20on-godbolt-green" /></a>
 </p>
 
@@ -165,7 +165,7 @@ how to use soft_double.
   - ![`example011_trig_trapezoid_integral.cpp`](./examples/example011_trig_trapezoid_integral.cpp) uses trapezoid integration with an integral representation involving locally-written trigonometric sine and cosine functions to compute several cylindrical Bessel function values.
   - ![`example012_exercise_constexpr.cpp`](./examples/example012_exercise_constexpr.cpp) verifies that C++20 `constexpr`-ness works properly for both rudimentary assignment-operation as well as an elementary square root function.
 
-## C++14, 17, 20 `constexpr` support
+## C++20 `constexpr` support
 
 When using C++20, `soft_double` supports compile-time
 `constexpr` construction and evaluation of results
@@ -212,14 +212,13 @@ int main()
 }
 ```
 
-`constexpr`-_ness_ of `soft_double` has been checked on GCC 10 and up, clang 10 and up
-(with `-std=c++20`) and VC 14.2 (with `/std:c++latest`),
-also for various embedded compilers such as `avr-gcc` 10 and up,
-`arm-non-eabi-gcc` 10 and up, and more. In addition,
-less modern compiler versions in addition to some other compilers
-having standards such as C++14, 17, 2a have also been checked
-for `constexpr` usage of `soft_double`. If you have an older
-compiler, you might have to check the compiler's
+`constexpr`-ness of `soft_double` has been checked on GCC, clang
+(with `-std=c++20` and beyond) and VC 14.2 and higher (with `/std:c++latest`),
+also for various embedded compilers such as `avr-gcc` 11 and up,
+`arm-non-eabi-gcc` 11 and up, and more.
+In addition, less modern compiler versions have been sporadically
+(not exhaustively) checked for `constexpr` usage of `soft_double`.
+If you have an older compiler, you might have to check the compiler's
 ability to obtain the entire benefit of `constexpr` with `soft_double`.
 
 In [issue 110](https://github.com/ckormanyos/soft_double/issues/110),

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////
-//  Copyright Christopher Kormanyos 2022 - 2023.                  //
+//  Copyright Christopher Kormanyos 2022 - 2024.                  //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
 //  or copy at http://www.boost.org/LICENSE_1_0.txt)             //
@@ -86,10 +86,22 @@ namespace local
     constexpr auto ctrl_d2 = ::math::softfloat::float64_t { static_cast<int>(INT8_C(1)) } / static_cast<int>(INT8_C(2));
     constexpr auto ctrl_d3 = ::math::softfloat::float64_t { static_cast<int>(INT8_C(5)) } / static_cast<int>(INT8_C(8));
 
+    #if ((defined SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS) && (SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS == 1))
+    constexpr auto sd0 = ::math::softfloat::float64_t { f0 };
+    constexpr auto sd1 = ::math::softfloat::float64_t { f1 };
+    constexpr auto sd2 = ::math::softfloat::float64_t { f2 };
+    constexpr auto sd3 = ::math::softfloat::float64_t { f3 };
+
+    static_assert(sd0 == ctrl_d0, "Error: Initialization from constexpr-float does not properly work");
+    static_assert(sd1 == ctrl_d1, "Error: Initialization from constexpr-float does not properly work");
+    static_assert(sd2 == ctrl_d2, "Error: Initialization from constexpr-float does not properly work");
+    static_assert(sd3 == ctrl_d3, "Error: Initialization from constexpr-float does not properly work");
+    #else
     const auto sd0 = ::math::softfloat::float64_t { f0 };
     const auto sd1 = ::math::softfloat::float64_t { f1 };
     const auto sd2 = ::math::softfloat::float64_t { f2 };
     const auto sd3 = ::math::softfloat::float64_t { f3 };
+    #endif
 
     auto result_construct_from_float_is_ok =
     (

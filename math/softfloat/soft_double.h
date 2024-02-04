@@ -386,7 +386,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       };
   }
 
-  #if   (defined(SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS) && (SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS == 0))
+  #if (defined(SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS) && (SOFT_DOUBLE_CONSTEXPR_BUILTIN_FLOATS == 0))
 
   template<typename BuiltInFloatType,
            typename ExactUnsignedIntegralType = typename uint_type_helper<std::numeric_limits<BuiltInFloatType>::digits>::exact_unsigned_type>
