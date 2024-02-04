@@ -97,10 +97,10 @@ namespace local
     static_assert(sd2 == ctrl_d2, "Error: Initialization from constexpr-float does not properly work");
     static_assert(sd3 == ctrl_d3, "Error: Initialization from constexpr-float does not properly work");
     #else
-    constexpr auto sd0 = ::math::softfloat::float64_t { f0 };
-    constexpr auto sd1 = ::math::softfloat::float64_t { f1 };
-    constexpr auto sd2 = ::math::softfloat::float64_t { f2 };
-    constexpr auto sd3 = ::math::softfloat::float64_t { f3 };
+    const auto sd0 = ::math::softfloat::float64_t { f0 };
+    const auto sd1 = ::math::softfloat::float64_t { f1 };
+    const auto sd2 = ::math::softfloat::float64_t { f2 };
+    const auto sd3 = ::math::softfloat::float64_t { f3 };
     #endif
 
     auto result_construct_from_float_is_ok =
