@@ -705,6 +705,47 @@ auto test_atan() -> bool
     }
   }
 
+  {
+    std::mt19937 eng(static_cast<typename std::mt19937::result_type>(UINT8_C(42))); // NOLINT(cert-msc32-c,cert-msc51-cpp)
+
+    std::uniform_int_distribution<int> dist_one(1, 1);
+
+    for(int i = 0; i < 3; ++i) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+    {
+      const math::softfloat::float64_t x_one_pos = math::softfloat::float64_t(+1) * dist_one(eng);
+      const math::softfloat::float64_t x_one_neg = math::softfloat::float64_t(-1) * dist_one(eng);
+
+      using std::atan;
+
+      const math::softfloat::float64_t atan_one_pos = atan(x_one_pos);
+      const math::softfloat::float64_t atan_one_neg = atan(x_one_neg);
+
+      const auto result_atan_one_pos_neg_is_ok = (   (+atan_one_pos == math::softfloat::float64_t::my_value_pi_half() / 2)
+                                                  && (-atan_one_neg == math::softfloat::float64_t::my_value_pi_half() / 2));
+
+      result_is_ok = (result_atan_one_pos_neg_is_ok && result_is_ok);
+    }
+  }
+
+  {
+    std::mt19937 eng(static_cast<typename std::mt19937::result_type>(UINT8_C(42))); // NOLINT(cert-msc32-c,cert-msc51-cpp)
+
+    std::uniform_int_distribution<int> dist_one(1, 1);
+
+    for(int i = 0; i < 3; ++i) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+    {
+      const math::softfloat::float64_t x_inf = math::softfloat::float64_t::my_value_infinity() * dist_one(eng);
+
+      using std::atan;
+
+      const math::softfloat::float64_t atan_inf = atan(x_inf);
+
+      const auto result_acos_inf_is_ok = (atan_inf == math::softfloat::float64_t::my_value_pi_half());
+
+      result_is_ok = (result_acos_inf_is_ok && result_is_ok);
+    }
+  }
+
   return result_is_ok;
 }
 

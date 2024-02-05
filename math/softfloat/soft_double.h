@@ -2801,29 +2801,48 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     {
       result = -atan(-x);
     }
-    else if(x > soft_double::my_value_one())
+    else if(x > soft_double::my_value_zero())
     {
-      result = soft_double::my_value_pi_half() - atan(soft_double::my_value_one() / x);
-    }
-    else
-    {
-      // The algorithm for arctangent is based on Chapter 11, page 194
-      // of Cody and Waite, Software Manual for the Elementary Functions,
-      // Prentice Hall, 1980.
-
-      constexpr soft_double sqrt_three          (static_cast<std::uint64_t>(UINT64_C(0x3FFBB67AE8584CAA)), detail::nothing());
-      constexpr soft_double two_minus_sqrt_three(static_cast<std::uint64_t>(UINT64_C(0x3FD126145E9ECD56)), detail::nothing());
-
-      if(x > two_minus_sqrt_three)
+      if((isinf)(x))
       {
-        const soft_double f { ((x * sqrt_three) - soft_double::my_value_one()) / (sqrt_three + x) };
-
-        result = (soft_double::my_value_pi() / 6) + detail::atan_pade(f);
+        result = soft_double::my_value_pi_half();
       }
       else
       {
-        result = detail::atan_pade(x);
+        if(x > soft_double::my_value_one())
+        {
+          result = soft_double::my_value_pi_half() - atan(soft_double::my_value_one() / x);
+        }
+        else if(x < soft_double::my_value_one())
+        {
+          // The algorithm for arctangent is based on Chapter 11, page 194
+          // of Cody and Waite, Software Manual for the Elementary Functions,
+          // Prentice Hall, 1980.
+
+          constexpr soft_double sqrt_three          (static_cast<std::uint64_t>(UINT64_C(0x3FFBB67AE8584CAA)), detail::nothing());
+          constexpr soft_double two_minus_sqrt_three(static_cast<std::uint64_t>(UINT64_C(0x3FD126145E9ECD56)), detail::nothing());
+
+          if(x > two_minus_sqrt_three)
+          {
+            const soft_double f { ((x * sqrt_three) - soft_double::my_value_one()) / (sqrt_three + x) };
+
+            result = (soft_double::my_value_pi() / 6) + detail::atan_pade(f);
+          }
+          else
+          {
+            result = detail::atan_pade(x);
+          }
+        }
+        else
+        {
+          // x == 1 and result = pi/4.
+          result = soft_double::my_value_pi_half() / 2;
+        }
       }
+    }
+    else
+    {
+      // x == 0 and result = 0.
     }
 
     return result;
