@@ -553,7 +553,7 @@ auto test_asin() -> bool
   }
 
   {
-    std::mt19937 eng(static_cast<typename std::mt19937::result_type>(UINT8_C(42)));
+    std::mt19937 eng(static_cast<typename std::mt19937::result_type>(UINT8_C(42))); // NOLINT(cert-msc32-c,cert-msc51-cpp)
 
     std::uniform_int_distribution<int> dist_one(1, 1);
 
