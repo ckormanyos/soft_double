@@ -11,7 +11,6 @@ FILES_PRJ  =   $(PATH_SRC)/test/test                                            
                $(PATH_SRC)/test/test_soft_double_examples                       \
                $(PATH_SRC)/test/test_soft_double_spot_values                    \
                $(PATH_SRC)/examples/example001_roots_sqrt                       \
-               $(PATH_SRC)/examples/example002b_pi_100k                         \
                $(PATH_SRC)/examples/example004_bessel_recur                     \
                $(PATH_SRC)/examples/example005_polylog_series                   \
                $(PATH_SRC)/examples/example007_catalan_series                   \

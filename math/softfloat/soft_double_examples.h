@@ -15,7 +15,6 @@
   #endif
 
   auto example001_roots_sqrt             () -> bool;
-  auto example002b_pi_100k               () -> bool;
   auto example004_bessel_recur           () -> bool;
   auto example005_polylog_series         () -> bool;
   auto example007_catalan_series         () -> bool;

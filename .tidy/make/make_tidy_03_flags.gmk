@@ -42,6 +42,5 @@ TIDY_CHECKS  = "*,                                                             \
                -readability-identifier-length"
 
 TIDY_FLAGS   = --extra-arg-before=--driver-mode=g++                            \
-               --header-filter=decwide_t                                       \
                -warnings-as-errors=*                                           \
                -checks=$(TIDY_CHECKS)

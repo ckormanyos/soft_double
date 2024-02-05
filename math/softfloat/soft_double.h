@@ -1829,7 +1829,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
         if(expA_as_unsigned >= static_cast<std::uint16_t>(UINT16_C(0x7FD)))
         {
-          sig  = detail::softfloat_shiftRightJam64(sig, static_cast<std::uint_fast16_t>(-expA));
+          sig  = detail::softfloat_shiftRightJam64(sig, static_cast<std::uint_fast16_t>(-expA)); // LCOV_EXCL_LINE
           expA = static_cast<std::int16_t>(INT8_C(0));
         }
       }
@@ -1912,7 +1912,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
           if(expZ < static_cast<std::int16_t>(INT8_C(0)))
           {
-            shiftDist = static_cast<std::int_fast8_t>(expA);
+            shiftDist = static_cast<std::int_fast8_t>(expA); // LCOV_EXCL_LINE
 
             expZ = static_cast<std::int16_t>(INT8_C(0));
           }

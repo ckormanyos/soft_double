@@ -76,5 +76,4 @@ LCOV_BRANCH := --rc lcov_branch_coverage=1
 endif
 
 LCOV_REMOVES = '/usr/*'                                                       \
-               '*decwide_t*'                                                  \
                '*util*'

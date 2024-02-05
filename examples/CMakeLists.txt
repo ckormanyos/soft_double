@@ -1,6 +1,5 @@
 add_library(Examples
   example001_roots_sqrt.cpp
-  example002b_pi_100k.cpp
   example004_bessel_recur.cpp
   example005_polylog_series.cpp
   example007_catalan_series.cpp
