@@ -71,8 +71,8 @@ std::uniform_int_distribution<std::uint32_t> dst_exp     (UINT32_C(0),          
 std::uniform_int_distribution<std::uint32_t> dst_sign    (UINT32_C(0),                UINT32_C(1));                // NOLINT(cppcoreguidelines-avoid-non-const-global-variables,cert-err58-cpp)
 
 auto get_sf_float64_t_and_double(math::softfloat::float64_t& x1, // NOLINT(google-runtime-references,readability-function-cognitive-complexity)
-                                  double&                     d1, // NOLINT(google-runtime-references)
-                                  const bool                  is_positive = false) -> void
+                                 double&                     d1, // NOLINT(google-runtime-references)
+                                 const bool                  is_positive = false) -> void
 {
   for(;;)
   {
@@ -419,13 +419,19 @@ auto test_sin() -> bool
 
     if(i == 0)
     {
-      result_is_ok &= s_x.crepresentation() == 0U;
+      const auto result_sin_zero_is_ok = (s_x.crepresentation() == 0U);
+
+      result_is_ok = (result_sin_zero_is_ok && result_is_ok);
     }
     else
     {
-      const double closeness = std::fabs(1.0 - std::fabs(static_cast<double>(s_x) / s_d));
+      using std::fabs;
 
-      result_is_ok &= (closeness < std::numeric_limits<double>::epsilon() * 50.0); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+      const auto closeness = fabs(1.0 - (static_cast<double>(s_x) / s_d));
+
+      const auto result_sin_is_ok = (closeness < std::numeric_limits<double>::epsilon() * 50.0); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+
+      result_is_ok = (result_sin_is_ok && result_is_ok);
     }
   }
 
@@ -454,11 +460,46 @@ auto test_cos() -> bool
   return result_is_ok;
 }
 
+auto test_tan() -> bool
+{
+  bool result_is_ok = true;
+
+  for(int i = 0; i < 1501; ++i) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+  {
+    const math::softfloat::float64_t x = math::softfloat::float64_t(i) / 1000;
+    const auto                       d = static_cast<double>(x);
+
+    using std::tan;
+
+    const math::softfloat::float64_t t_x = tan(x);
+    const double                     t_d = tan(d);
+
+    if(i == 0)
+    {
+      const auto result_tan_zero_is_ok = (t_x.crepresentation() == 0U);
+
+      result_is_ok = (result_tan_zero_is_ok && result_is_ok);
+    }
+    else
+    {
+      using std::fabs;
+
+      const auto closeness = fabs(1.0 - (static_cast<double>(t_x) / t_d));
+
+      const auto result_tan_is_ok = (closeness < std::numeric_limits<double>::epsilon() * 128.0); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+
+      result_is_ok = (result_tan_is_ok && result_is_ok);
+    }
+  }
+
+  return result_is_ok;
+}
+
 auto test_asin() -> bool
 {
   bool result_is_ok = true;
 
-  for(int i = 0; i < 50; ++i) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+  for(int i = 0; i < 100; ++i) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
   {
     const math::softfloat::float64_t x = math::softfloat::float64_t(i) / 100; // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
     const auto                       d = static_cast<double>(x);
@@ -509,6 +550,28 @@ auto test_asin() -> bool
     const auto result_asin_is_ok = isnan(as_x);
 
     result_is_ok = (result_asin_is_ok && result_is_ok);
+  }
+
+  {
+    std::mt19937 eng(static_cast<typename std::mt19937::result_type>(UINT8_C(42)));
+
+    std::uniform_int_distribution<int> dist_one(1, 1);
+
+    for(int i = 0; i < 3; ++i) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+    {
+      const math::softfloat::float64_t x_one_pos = math::softfloat::float64_t(+1) * dist_one(eng);
+      const math::softfloat::float64_t x_one_neg = math::softfloat::float64_t(-1) * dist_one(eng);
+
+      using std::asin;
+
+      const math::softfloat::float64_t asin_one_pos = asin(x_one_pos);
+      const math::softfloat::float64_t asin_one_neg = asin(x_one_neg);
+
+      const auto result_asin_one_pos_neg_is_ok = (   (+asin_one_pos == math::softfloat::float64_t::my_value_pi_half())
+                                                  && (-asin_one_neg == math::softfloat::float64_t::my_value_pi_half()));
+
+      result_is_ok = (result_asin_one_pos_neg_is_ok && result_is_ok);
+    }
   }
 
   return result_is_ok;
@@ -811,6 +874,7 @@ auto test_soft_double() -> bool
   std::cout << "testing log____... "; const auto result_log____is_ok = test_log   ( );                          std::cout << std::boolalpha << result_log____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
   std::cout << "testing sin____... "; const auto result_sin____is_ok = test_sin   ( );                          std::cout << std::boolalpha << result_sin____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
   std::cout << "testing cos____... "; const auto result_cos____is_ok = test_cos   ( );                          std::cout << std::boolalpha << result_cos____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing tan____... "; const auto result_tan____is_ok = test_tan   ( );                          std::cout << std::boolalpha << result_tan____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
   std::cout << "testing asin___... "; const auto result_asin___is_ok = test_asin  ( );                          std::cout << std::boolalpha << result_asin___is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
 
   local::eng32.seed(::util::util_pseudorandom_time_point_seed::value<typename local::eng32_type::result_type>());
@@ -859,6 +923,7 @@ auto test_soft_double() -> bool
                                      && result_log____is_ok
                                      && result_sin____is_ok
                                      && result_cos____is_ok
+                                     && result_tan____is_ok
                                      && result_asin___is_ok
                                      && result_floor__is_ok
                                      && result_ceil___is_ok
