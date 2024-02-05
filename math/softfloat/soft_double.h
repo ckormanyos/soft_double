@@ -2495,7 +2495,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                   * x2 + UINT32_C(34459425))
                                   * x2 + UINT32_C(14549535));
 
-    return ((x * 11) * top) / bot;
+    return ((x * static_cast<int>(INT8_C(11))) * top) / bot;
   }
 
   } // namespace detail

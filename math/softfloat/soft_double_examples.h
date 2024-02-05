@@ -1,12 +1,12 @@
 ///////////////////////////////////////////////////////////////////
-//  Copyright Christopher Kormanyos 2020 - 2022.                 //
+//  Copyright Christopher Kormanyos 2020 - 2024.                 //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
 //  or copy at http://www.boost.org/LICENSE_1_0.txt)             //
 ///////////////////////////////////////////////////////////////////
 
-#ifndef SOFT_DOUBLE_EXAMPLES_2021_04_17_H_
-  #define SOFT_DOUBLE_EXAMPLES_2021_04_17_H_
+#ifndef SOFT_DOUBLE_EXAMPLES_2021_04_17_H // NOLINT(llvm-header-guard)
+  #define SOFT_DOUBLE_EXAMPLES_2021_04_17_H
 
   #if(__cplusplus >= 201703L)
   namespace math::softfloat {
@@ -29,4 +29,4 @@
   } // namespace math
   #endif
 
-#endif // SOFT_DOUBLE_EXAMPLES_2021_04_17_H_
+#endif // SOFT_DOUBLE_EXAMPLES_2021_04_17_H
