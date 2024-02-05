@@ -2463,6 +2463,41 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return (x * top) / bot;
   }
 
+  constexpr auto atan_pade(soft_double x) -> soft_double // NOLINT(performance-unnecessary-value-param)
+  {
+    // Usa a Pade approximation of atan(x).
+    // Then simplify, extract the coefficients of numerator and denominator.
+
+    // PadeApproximant[ArcTan[x], {x, 0, {10, 10}}]
+    // FullSimplify[%]
+    // CoefficientList[Numerator[Out[2]] / (11 x), x^2]
+    // CoefficientList[Denominator[Out[2]], x^2]
+
+    // Numerator:
+    //  (11 * x) times:
+    //  1322685, 2691780, 1800162, 437580, 27985
+
+    // Denominator:
+    //   14549535, 34459425, 28378350, 9459450, 1091475, 19845
+
+    const auto x2 = x * x;
+
+    const soft_double top = (((((     + UINT32_C(27985))
+                                 * x2 + UINT32_C(437580))
+                                 * x2 + UINT32_C(1800162))
+                                 * x2 + UINT32_C(2691780))
+                                 * x2 + UINT32_C(1322685));
+
+    const soft_double bot = ((((((     + UINT32_C(19845))
+                                  * x2 + UINT32_C(1091475))
+                                  * x2 + UINT32_C(9459450))
+                                  * x2 + UINT32_C(28378350))
+                                  * x2 + UINT32_C(34459425))
+                                  * x2 + UINT32_C(14549535));
+
+    return ((x * 11) * top) / bot;
+  }
+
   } // namespace detail
 
   constexpr auto sin(soft_double x) -> soft_double // NOLINT(misc-no-recursion)
@@ -2753,6 +2788,42 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     {
       // x == -1 and result = pi.
       result = soft_double::my_value_pi();
+    }
+
+    return result;
+  }
+
+  constexpr auto atan(soft_double x) -> soft_double // NOLINT(misc-no-recursion,performance-unnecessary-value-param)
+  {
+    soft_double result { };
+
+    if(x < soft_double::my_value_zero())
+    {
+      result = -atan(-x);
+    }
+    else if(x > soft_double::my_value_one())
+    {
+      result = soft_double::my_value_pi_half() - atan(soft_double::my_value_one() / x);
+    }
+    else
+    {
+      // The algorithm for arctangent is based on Chapter 11, page 194
+      // of Cody and Waite, Software Manual for the Elementary Functions,
+      // Prentice Hall, 1980.
+
+      constexpr soft_double sqrt_three          (static_cast<std::uint64_t>(UINT64_C(0x3FFBB67AE8584CAA)), detail::nothing());
+      constexpr soft_double two_minus_sqrt_three(static_cast<std::uint64_t>(UINT64_C(0x3FD126145E9ECD56)), detail::nothing());
+
+      if(x > two_minus_sqrt_three)
+      {
+        const soft_double f { ((x * sqrt_three) - soft_double::my_value_one()) / (sqrt_three + x) };
+
+        result = (soft_double::my_value_pi() / 6) + detail::atan_pade(f);
+      }
+      else
+      {
+        result = detail::atan_pade(x);
+      }
     }
 
     return result;

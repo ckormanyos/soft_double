@@ -675,6 +675,39 @@ auto test_acos() -> bool
   return result_is_ok;
 }
 
+auto test_atan() -> bool
+{
+  bool result_is_ok = true;
+
+  for(int i = -73; i < 256; ++i) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+  {
+    const math::softfloat::float64_t x = math::softfloat::float64_t(i) / 10; // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+    const auto                       d = static_cast<double>(x);
+
+    using std::atan;
+
+    const math::softfloat::float64_t at_x = atan(x);
+    const double                     at_d = atan(d);
+
+    if(i == 0)
+    {
+      const auto result_atan_zero_is_ok = (at_x == math::softfloat::float64_t::my_value_zero());
+
+      result_is_ok = (result_atan_zero_is_ok && result_is_ok);
+    }
+    else
+    {
+      const double closeness = std::fabs(1.0 - (static_cast<double>(at_x) / at_d));
+
+      const auto result_atan_is_ok = (closeness < std::numeric_limits<double>::epsilon() * 64.0); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+
+      result_is_ok = (result_atan_is_ok && result_is_ok);
+    }
+  }
+
+  return result_is_ok;
+}
+
 auto test_floor(const std::uint32_t n) -> bool
 {
   bool result_is_ok = true;
@@ -975,6 +1008,7 @@ auto test_soft_double() -> bool
   std::cout << "testing tan____... "; const auto result_tan____is_ok = test_tan   ( );                          std::cout << std::boolalpha << result_tan____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
   std::cout << "testing asin___... "; const auto result_asin___is_ok = test_asin  ( );                          std::cout << std::boolalpha << result_asin___is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
   std::cout << "testing acos___... "; const auto result_acos___is_ok = test_acos  ( );                          std::cout << std::boolalpha << result_acos___is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing atan___... "; const auto result_atan___is_ok = test_atan  ( );                          std::cout << std::boolalpha << result_atan___is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
 
   local::eng32.seed(::util::util_pseudorandom_time_point_seed::value<typename local::eng32_type::result_type>());
   local::eng64.seed(::util::util_pseudorandom_time_point_seed::value<typename local::eng64_type::result_type>());
@@ -1025,6 +1059,7 @@ auto test_soft_double() -> bool
                                      && result_tan____is_ok
                                      && result_asin___is_ok
                                      && result_acos___is_ok
+                                     && result_atan___is_ok
                                      && result_floor__is_ok
                                      && result_ceil___is_ok
                                      && result_add____is_ok
