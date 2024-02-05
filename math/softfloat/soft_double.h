@@ -2661,12 +2661,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return c;
   }
 
-  constexpr auto tan(soft_double x) -> soft_double
+  constexpr auto tan(soft_double x) -> soft_double // NOLINT(performance-unnecessary-value-param)
   {
     return sin(x) / cos(x);
   }
 
-  constexpr auto asin(soft_double x) -> soft_double // NOLINT(misc-no-recursion)
+  constexpr auto asin(soft_double x) -> soft_double // NOLINT(misc-no-recursion,performance-unnecessary-value-param)
   {
     soft_double result { };
 
