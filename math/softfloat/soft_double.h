@@ -45,7 +45,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 -----------------------------------------------------------------------------*/
 
-#ifndef SOFT_DOUBLE_2020_10_27_H
+#ifndef SOFT_DOUBLE_2020_10_27_H // NOLINT(llvm-header-guard)
   #define SOFT_DOUBLE_2020_10_27_H
 
   //#define SOFT_DOUBLE_DISABLE_IOSTREAM
@@ -730,7 +730,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     }
 
     template<typename FloatingPointType>
-    SOFT_DOUBLE_NODISCARD constexpr auto to_float() const -> typename std::enable_if<(   (sizeof(FloatingPointType) == 8)
+    SOFT_DOUBLE_NODISCARD constexpr auto to_float() const -> typename std::enable_if<(   (sizeof(FloatingPointType) == static_cast<std::size_t>(UINT8_C(8)))
                                                                                       && std::numeric_limits<FloatingPointType>::is_iec559), FloatingPointType>::type
     {
       return static_cast<FloatingPointType>(*static_cast<const volatile FloatingPointType*>(static_cast<const volatile void*>(this)));
@@ -2119,7 +2119,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         auto y = x;
 
         for(auto p_local  = static_cast<std::uint32_t>(u);
-                 p_local != static_cast<std::uint32_t>(UINT8_C(0));
+                 p_local != static_cast<std::uint32_t>(UINT8_C(0)); // NOLINT(altera-id-dependent-backward-branch)
                  p_local  = static_cast<std::uint32_t>(p_local >> static_cast<unsigned>(UINT8_C(1))))
         {
           const auto bit_is_set =
@@ -2155,7 +2155,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         auto y = x;
 
         for(auto p_local  = static_cast<std::uint32_t>(n);
-                 p_local != static_cast<std::uint32_t>(UINT8_C(0));
+                 p_local != static_cast<std::uint32_t>(UINT8_C(0)); // NOLINT(altera-id-dependent-backward-branch)
                  p_local  = static_cast<std::uint32_t>(p_local >> static_cast<unsigned>(UINT8_C(1))))
         {
           const auto bit_zero_is_set =
@@ -2826,7 +2826,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           {
             const soft_double f { ((x * sqrt_three) - soft_double::my_value_one()) / (sqrt_three + x) };
 
-            result = (soft_double::my_value_pi() / 6) + detail::atan_pade(f);
+            result = (soft_double::my_value_pi() / static_cast<int>(INT8_C(6))) + detail::atan_pade(f);
           }
           else
           {
