@@ -1,5 +1,5 @@
 ﻿///////////////////////////////////////////////////////////////////
-//  Copyright Christopher Kormanyos 2012 - 2023.                 //
+//  Copyright Christopher Kormanyos 2012 - 2024.                 //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
 //  or copy at http://www.boost.org/LICENSE_1_0.txt)             //
@@ -45,7 +45,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 -----------------------------------------------------------------------------*/
 
-#ifndef SOFT_DOUBLE_2020_10_27_H
+#ifndef SOFT_DOUBLE_2020_10_27_H // NOLINT(llvm-header-guard)
   #define SOFT_DOUBLE_2020_10_27_H
 
   //#define SOFT_DOUBLE_DISABLE_IOSTREAM
@@ -592,6 +592,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   constexpr auto  sin      (soft_double x) -> soft_double;
   constexpr auto  cos      (soft_double x) -> soft_double;
   constexpr auto  tan      (soft_double x) -> soft_double;
+  constexpr auto  asin     (soft_double x) -> soft_double;
+  constexpr auto  acos     (soft_double x) -> soft_double;
+  constexpr auto  atan     (soft_double x) -> soft_double;
   constexpr auto  sinh     (soft_double x) -> soft_double;
   constexpr auto  cosh     (soft_double x) -> soft_double;
   constexpr auto  tanh     (soft_double x) -> soft_double;
@@ -727,7 +730,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     }
 
     template<typename FloatingPointType>
-    SOFT_DOUBLE_NODISCARD constexpr auto to_float() const -> typename std::enable_if<(   (sizeof(FloatingPointType) == 8)
+    SOFT_DOUBLE_NODISCARD constexpr auto to_float() const -> typename std::enable_if<(   (sizeof(FloatingPointType) == static_cast<std::size_t>(UINT8_C(8)))
                                                                                       && std::numeric_limits<FloatingPointType>::is_iec559), FloatingPointType>::type
     {
       return static_cast<FloatingPointType>(*static_cast<const volatile FloatingPointType*>(static_cast<const volatile void*>(this)));
@@ -1826,7 +1829,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
         if(expA_as_unsigned >= static_cast<std::uint16_t>(UINT16_C(0x7FD)))
         {
-          sig  = detail::softfloat_shiftRightJam64(sig, static_cast<std::uint_fast16_t>(-expA));
+          sig  = detail::softfloat_shiftRightJam64(sig, static_cast<std::uint_fast16_t>(-expA)); // LCOV_EXCL_LINE
           expA = static_cast<std::int16_t>(INT8_C(0));
         }
       }
@@ -1909,7 +1912,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
           if(expZ < static_cast<std::int16_t>(INT8_C(0)))
           {
-            shiftDist = static_cast<std::int_fast8_t>(expA);
+            shiftDist = static_cast<std::int_fast8_t>(expA); // LCOV_EXCL_LINE
 
             expZ = static_cast<std::int16_t>(INT8_C(0));
           }
@@ -2116,7 +2119,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         auto y = x;
 
         for(auto p_local  = static_cast<std::uint32_t>(u);
-                 p_local != static_cast<std::uint32_t>(UINT8_C(0));
+                 p_local != static_cast<std::uint32_t>(UINT8_C(0)); // NOLINT(altera-id-dependent-backward-branch)
                  p_local  = static_cast<std::uint32_t>(p_local >> static_cast<unsigned>(UINT8_C(1))))
         {
           const auto bit_is_set =
@@ -2152,7 +2155,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         auto y = x;
 
         for(auto p_local  = static_cast<std::uint32_t>(n);
-                 p_local != static_cast<std::uint32_t>(UINT8_C(0));
+                 p_local != static_cast<std::uint32_t>(UINT8_C(0)); // NOLINT(altera-id-dependent-backward-branch)
                  p_local  = static_cast<std::uint32_t>(p_local >> static_cast<unsigned>(UINT8_C(1))))
         {
           const auto bit_zero_is_set =
@@ -2409,6 +2412,92 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return soft_double::my_value_one() + ((x2 * top) / (bot * static_cast<int>(INT8_C(24))));
   }
 
+  constexpr auto asin_pade(soft_double x) -> soft_double // NOLINT(performance-unnecessary-value-param)
+  {
+    // Usa a Pade approximation of (asin(x) / x).
+    // Then simplify, extract the coefficients of numerator and denominator.
+    // Scale both numeroator and denominator by a factor of 10^29.
+    // Subsequently extract the integer parts of the coefficients.
+
+    // PadeApproximant[ArcSin[x]/x, {x, 0, {12, 12}}]
+    // FullSimplify[%]
+    // IntegerPart[N[CoefficientList[Numerator[Out[2]]/10^29, x^2], 24]]
+    // IntegerPart[N[CoefficientList[Denominator[Out[2]]/10^29, x^2], 24]]
+
+    // Numerator:
+    //  140095773199074572
+    // -388690947968573359
+    //  402271633106633823
+    // -190922593544635779
+    //  40839234741969911
+    // -3218334247465525
+    //  45053024618672
+
+    // Denominator:
+    //  140095773199074572
+    // -412040243501752455
+    //  460437824033661973
+    // -243013488210192408
+    //  60946917703998365
+    // -6321063389564933
+    //  174545740275468
+
+    const auto x2 = x * x;
+
+    const soft_double top = (((((((     + INT64_C(45053024618672))
+                                   * x2 - INT64_C(3218334247465525))
+                                   * x2 + INT64_C(40839234741969911))
+                                   * x2 - INT64_C(190922593544635779))
+                                   * x2 + INT64_C(402271633106633823))
+                                   * x2 - INT64_C(388690947968573359))
+                                   * x2 + INT64_C(140095773199074572));
+
+    const soft_double bot = (((((((     + INT64_C(174545740275468))
+                                   * x2 - INT64_C(6321063389564933))
+                                   * x2 + INT64_C(60946917703998365))
+                                   * x2 - INT64_C(243013488210192408))
+                                   * x2 + INT64_C(460437824033661973))
+                                   * x2 - INT64_C(412040243501752455))
+                                   * x2 + INT64_C(140095773199074572));
+
+    return (x * top) / bot;
+  }
+
+  constexpr auto atan_pade(soft_double x) -> soft_double // NOLINT(performance-unnecessary-value-param)
+  {
+    // Usa a Pade approximation of atan(x).
+    // Then simplify, extract the coefficients of numerator and denominator.
+
+    // PadeApproximant[ArcTan[x], {x, 0, {10, 10}}]
+    // FullSimplify[%]
+    // CoefficientList[Numerator[Out[2]] / (11 x), x^2]
+    // CoefficientList[Denominator[Out[2]], x^2]
+
+    // Numerator:
+    //  (11 * x) times:
+    //  1322685, 2691780, 1800162, 437580, 27985
+
+    // Denominator:
+    //   14549535, 34459425, 28378350, 9459450, 1091475, 19845
+
+    const auto x2 = x * x;
+
+    const soft_double top = (((((     + UINT32_C(27985))
+                                 * x2 + UINT32_C(437580))
+                                 * x2 + UINT32_C(1800162))
+                                 * x2 + UINT32_C(2691780))
+                                 * x2 + UINT32_C(1322685));
+
+    const soft_double bot = ((((((     + UINT32_C(19845))
+                                  * x2 + UINT32_C(1091475))
+                                  * x2 + UINT32_C(9459450))
+                                  * x2 + UINT32_C(28378350))
+                                  * x2 + UINT32_C(34459425))
+                                  * x2 + UINT32_C(14549535));
+
+    return ((x * static_cast<int>(INT8_C(11))) * top) / bot;
+  }
+
   } // namespace detail
 
   constexpr auto sin(soft_double x) -> soft_double // NOLINT(misc-no-recursion)
@@ -2607,6 +2696,158 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return c;
   }
 
+  constexpr auto tan(soft_double x) -> soft_double // NOLINT(performance-unnecessary-value-param)
+  {
+    return sin(x) / cos(x);
+  }
+
+  constexpr auto asin(soft_double x) -> soft_double // NOLINT(misc-no-recursion,performance-unnecessary-value-param)
+  {
+    soft_double result { };
+
+    if(x < static_cast<int>(INT8_C(0)))
+    {
+      result = -asin(-x);
+    }
+    else if(x > static_cast<int>(INT8_C(0)))
+    {
+      if(x > static_cast<int>(INT8_C(1)))
+      {
+        result = soft_double::my_value_quiet_NaN();
+      }
+      else if(x < static_cast<int>(INT8_C(1)))
+      {
+        if(x < soft_double::my_value_half())
+        {
+          result = detail::asin_pade(x);
+        }
+        else
+        {
+          result = soft_double::my_value_pi_half() - (detail::asin_pade(sqrt((soft_double::my_value_one() - x) / 2)) * 2);
+        }
+      }
+      else
+      {
+        result = soft_double::my_value_pi_half();
+      }
+    }
+    else
+    {
+      // x == 0 and result = 0.
+    }
+
+    return result;
+  }
+
+  constexpr auto acos(soft_double x) -> soft_double // NOLINT(performance-unnecessary-value-param)
+  {
+    soft_double result { };
+
+    if(x < -soft_double::my_value_one())
+    {
+      result = soft_double::my_value_quiet_NaN();
+    }
+    else if(x > -soft_double::my_value_one())
+    {
+      const auto absx = fabs(x);
+
+      if(x > soft_double::my_value_one())
+      {
+        result = soft_double::my_value_quiet_NaN();
+      }
+      else if(x < soft_double::my_value_one())
+      {
+        if(x < -soft_double::my_value_half())
+        {
+          result = soft_double::my_value_pi() - 2 * detail::asin_pade(sqrt((1 - absx) / 2));
+        }
+        else if(x < soft_double::my_value_zero())
+        {
+          result = soft_double::my_value_pi_half() + detail::asin_pade(absx);
+        }
+        else if((x > soft_double::my_value_zero()) && (x < soft_double::my_value_half()))
+        {
+          result = soft_double::my_value_pi_half() - detail::asin_pade(x);
+        }
+        else if(x >= soft_double::my_value_half())
+        {
+          result = 2 * detail::asin_pade(sqrt((1 - x) / 2));
+        }
+        else
+        {
+          result = soft_double::my_value_pi_half();
+        }
+      }
+      else
+      {
+        // x == 1 and result = zero.
+        result = soft_double::my_value_zero();
+      }
+    }
+    else
+    {
+      // x == -1 and result = pi.
+      result = soft_double::my_value_pi();
+    }
+
+    return result;
+  }
+
+  constexpr auto atan(soft_double x) -> soft_double // NOLINT(misc-no-recursion,performance-unnecessary-value-param)
+  {
+    soft_double result { };
+
+    if(x < soft_double::my_value_zero())
+    {
+      result = -atan(-x);
+    }
+    else if(x > soft_double::my_value_zero())
+    {
+      if((isinf)(x))
+      {
+        result = soft_double::my_value_pi_half();
+      }
+      else
+      {
+        if(x > soft_double::my_value_one())
+        {
+          result = soft_double::my_value_pi_half() - atan(soft_double::my_value_one() / x);
+        }
+        else if(x < soft_double::my_value_one())
+        {
+          // The algorithm for arctangent is based on Chapter 11, page 194
+          // of Cody and Waite, Software Manual for the Elementary Functions,
+          // Prentice Hall, 1980.
+
+          constexpr soft_double sqrt_three          (static_cast<std::uint64_t>(UINT64_C(0x3FFBB67AE8584CAA)), detail::nothing());
+          constexpr soft_double two_minus_sqrt_three(static_cast<std::uint64_t>(UINT64_C(0x3FD126145E9ECD56)), detail::nothing());
+
+          if(x > two_minus_sqrt_three)
+          {
+            const soft_double f { ((x * sqrt_three) - soft_double::my_value_one()) / (sqrt_three + x) };
+
+            result = (soft_double::my_value_pi() / static_cast<int>(INT8_C(6))) + detail::atan_pade(f);
+          }
+          else
+          {
+            result = detail::atan_pade(x);
+          }
+        }
+        else
+        {
+          // x == 1 and result = pi/4.
+          result = soft_double::my_value_pi_half() / 2;
+        }
+      }
+    }
+    else
+    {
+      // x == 0 and result = 0.
+    }
+
+    return result;
+  }
+
   constexpr auto floor(soft_double x) -> soft_double // NOLINT(performance-unnecessary-value-param)
   {
     auto result = soft_double { };
@@ -2779,11 +3020,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   constexpr auto pow(soft_double x, soft_double a) -> soft_double // NOLINT(performance-unnecessary-value-param)
   {
     return exp(a * log(x)); // NOLINT(performance-unnecessary-value-param)
-  }
-
-  constexpr auto tan(soft_double x) -> soft_double // NOLINT(performance-unnecessary-value-param)
-  {
-    return sin(x) / cos(x);
   }
 
   constexpr auto sinh(soft_double x) -> soft_double // NOLINT(performance-unnecessary-value-param)

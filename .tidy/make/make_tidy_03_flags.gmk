@@ -39,9 +39,9 @@ TIDY_CHECKS  = "*,                                                             \
                -altera-unroll-loops,                                           \
                -fuchsia-*,                                                     \
                -llvmlibc-*,                                                    \
-               -readability-identifier-length"
+               -readability-identifier-length,                                 \
+               -readability-identifier-naming"
 
 TIDY_FLAGS   = --extra-arg-before=--driver-mode=g++                            \
-               --header-filter=decwide_t                                       \
                -warnings-as-errors=*                                           \
                -checks=$(TIDY_CHECKS)

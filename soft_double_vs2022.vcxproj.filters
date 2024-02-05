@@ -7,20 +7,11 @@
     <Filter Include="math">
       <UniqueIdentifier>{c2136641-a346-436a-8917-c9e7b9219550}</UniqueIdentifier>
     </Filter>
-    <Filter Include="math\wide_decimal">
-      <UniqueIdentifier>{2f085500-8a6f-4d5d-bae0-5e3113acdc53}</UniqueIdentifier>
-    </Filter>
     <Filter Include="util">
       <UniqueIdentifier>{27ac977c-8b32-482e-8283-0c7e2c4a1e8b}</UniqueIdentifier>
     </Filter>
     <Filter Include="util\utility">
       <UniqueIdentifier>{26f72b73-0fe5-4e2f-90a0-fa3e7c444dc8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="util\memory">
-      <UniqueIdentifier>{bf5eae75-1bea-4964-a9c9-64c2ca5c62ec}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="math\constants">
-      <UniqueIdentifier>{40faca56-a6d0-4300-8339-fcc6ce62b688}</UniqueIdentifier>
     </Filter>
     <Filter Include=".github">
       <UniqueIdentifier>{3d779015-acbe-4b19-9668-9be66032d54a}</UniqueIdentifier>
@@ -38,34 +29,37 @@
       <UniqueIdentifier>{38edefac-355c-4ba3-b5ef-c810713509b8}</UniqueIdentifier>
     </Filter>
     <Filter Include=".tidy">
-      <UniqueIdentifier>{1e67bce6-a687-42d8-9ddf-802e4254ec22}</UniqueIdentifier>
+      <UniqueIdentifier>{db91f26a-0abe-4bb1-99ce-e891b753ef5b}</UniqueIdentifier>
     </Filter>
     <Filter Include=".tidy\make">
-      <UniqueIdentifier>{8cdf15d5-434b-43cd-9b9b-46b0df8d1bfb}</UniqueIdentifier>
+      <UniqueIdentifier>{e060f0e6-5117-43aa-b804-2a62f098c58d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include=".github\toolchains">
+      <UniqueIdentifier>{4ec239b8-1a14-49a9-b283-c08681500bb7}</UniqueIdentifier>
     </Filter>
     <Filter Include=".gcov">
-      <UniqueIdentifier>{722fa9cd-ebae-4a7a-b874-5c9d30af8b7c}</UniqueIdentifier>
+      <UniqueIdentifier>{6a78c586-06c3-4ebd-ad35-9d4723f4c488}</UniqueIdentifier>
     </Filter>
     <Filter Include=".gcov\make">
-      <UniqueIdentifier>{b606cef0-2d18-4c74-ba61-ca6af55dc876}</UniqueIdentifier>
+      <UniqueIdentifier>{eb75e937-eb5b-42b1-85d2-1b644986239e}</UniqueIdentifier>
     </Filter>
     <Filter Include="target">
-      <UniqueIdentifier>{49a41488-5c16-4cf5-923d-e04afdaa6fd0}</UniqueIdentifier>
+      <UniqueIdentifier>{c2d9b846-64a7-4472-9d93-fcfd30ca6e90}</UniqueIdentifier>
     </Filter>
     <Filter Include="target\build">
-      <UniqueIdentifier>{6efdbd14-e570-44ea-a87a-a13d587a6b87}</UniqueIdentifier>
+      <UniqueIdentifier>{5d2e90e0-9f02-4228-ab6e-8f8048ec9fa4}</UniqueIdentifier>
     </Filter>
     <Filter Include="target\micros">
-      <UniqueIdentifier>{4df70ca7-f50b-4b5c-8811-09bb93ee5286}</UniqueIdentifier>
+      <UniqueIdentifier>{516b59e9-28a5-4421-b041-7d4a2baa31dd}</UniqueIdentifier>
     </Filter>
     <Filter Include="target\micros\stm32f429">
-      <UniqueIdentifier>{b685cfc2-d8a0-4c4f-89c2-a1ddc7681648}</UniqueIdentifier>
+      <UniqueIdentifier>{6680c129-d68c-45b9-8210-7fe7c2a18318}</UniqueIdentifier>
     </Filter>
     <Filter Include="target\micros\stm32f429\make">
-      <UniqueIdentifier>{b78f9e2a-9b15-4c19-ae9d-fe91d2218d0d}</UniqueIdentifier>
+      <UniqueIdentifier>{97e94093-f5da-43a8-a6fe-5e4e30eb5b8f}</UniqueIdentifier>
     </Filter>
     <Filter Include="target\micros\stm32f429\make\single">
-      <UniqueIdentifier>{cfac23d0-f0e3-48d8-bc1c-26a85b412610}</UniqueIdentifier>
+      <UniqueIdentifier>{71ebaa8b-8798-4168-b374-ab35e94b6e3c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -96,9 +90,6 @@
     <ClCompile Include="examples\example005_polylog_series.cpp">
       <Filter>examples</Filter>
     </ClCompile>
-    <ClCompile Include="examples\example002b_pi_100k.cpp">
-      <Filter>examples</Filter>
-    </ClCompile>
     <ClCompile Include="test\test_soft_double_spot_values.cpp">
       <Filter>test</Filter>
     </ClCompile>
@@ -111,40 +102,22 @@
     <ClCompile Include="examples\example012_exercise_constexpr.cpp">
       <Filter>examples</Filter>
     </ClCompile>
-    <ClCompile Include="test\test_soft_double_boost_math_cyl_bessel_j.cpp">
-      <Filter>test</Filter>
-    </ClCompile>
     <ClCompile Include="target\micros\stm32f429\make\single\crt.cpp">
       <Filter>target\micros\stm32f429\make\single</Filter>
     </ClCompile>
+    <ClCompile Include="test\test_soft_double_boost_math_cyl_bessel_j.cpp">
+      <Filter>test</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="math\wide_decimal\decwide_t.h">
-      <Filter>math\wide_decimal</Filter>
-    </ClInclude>
-    <ClInclude Include="math\wide_decimal\decwide_t_detail_fft.h">
-      <Filter>math\wide_decimal</Filter>
-    </ClInclude>
     <ClInclude Include="util\utility\util_noncopyable.h">
       <Filter>util\utility</Filter>
     </ClInclude>
     <ClInclude Include="util\utility\util_dynamic_array.h">
       <Filter>util\utility</Filter>
     </ClInclude>
-    <ClInclude Include="util\memory\util_n_slot_array_allocator.h">
-      <Filter>util\memory</Filter>
-    </ClInclude>
     <ClInclude Include="util\utility\util_baselexical_cast.h">
       <Filter>util\utility</Filter>
-    </ClInclude>
-    <ClInclude Include="math\wide_decimal\decwide_t_detail.h">
-      <Filter>math\wide_decimal</Filter>
-    </ClInclude>
-    <ClInclude Include="math\constants\constants_pi_control_for_decwide_t.h">
-      <Filter>math\constants</Filter>
-    </ClInclude>
-    <ClInclude Include="math\wide_decimal\decwide_t_detail_ops.h">
-      <Filter>math\wide_decimal</Filter>
     </ClInclude>
     <ClInclude Include="test\test_soft_double_examples.h">
       <Filter>test</Filter>
@@ -157,9 +130,6 @@
     </ClInclude>
     <ClInclude Include="math\softfloat\soft_double.h">
       <Filter>math\softfloat</Filter>
-    </ClInclude>
-    <ClInclude Include="math\wide_decimal\decwide_t_detail_namespace.h">
-      <Filter>math\wide_decimal</Filter>
     </ClInclude>
     <ClInclude Include="util\utility\util_pseudorandom_time_point_seed.h">
       <Filter>util\utility</Filter>
@@ -179,14 +149,21 @@
       <Filter>_doc</Filter>
     </None>
     <None Include=".clang-tidy" />
+    <None Include=".tidy\make\make_tidy_01_generic.gmk">
+      <Filter>.tidy\make</Filter>
+    </None>
     <None Include=".tidy\make\make_tidy_02_files.gmk">
       <Filter>.tidy\make</Filter>
     </None>
     <None Include=".tidy\make\make_tidy_03_flags.gmk">
       <Filter>.tidy\make</Filter>
     </None>
-    <None Include=".tidy\make\make_tidy_01_generic.gmk">
-      <Filter>.tidy\make</Filter>
+    <None Include=".github\toolchains\gcc.cmake">
+      <Filter>.github\toolchains</Filter>
+    </None>
+    <None Include="sonar-project.properties" />
+    <None Include=".github\workflows\soft_double_sonar.yml">
+      <Filter>.github\workflows</Filter>
     </None>
     <None Include=".gcov\make\make_gcov_02_files.gmk">
       <Filter>.gcov\make</Filter>
@@ -198,11 +175,7 @@
       <Filter>.gcov\make</Filter>
     </None>
     <None Include="codecov.yml" />
-    <None Include="sonar-project.properties" />
     <None Include=".github\workflows\soft_double_codecov.yml">
-      <Filter>.github\workflows</Filter>
-    </None>
-    <None Include=".github\workflows\soft_double_sonar.yml">
       <Filter>.github\workflows</Filter>
     </None>
     <None Include="target\build\test_examples_emulator.py">
@@ -213,6 +186,12 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Text Include="examples\CMakeLists.txt">
+      <Filter>examples</Filter>
+    </Text>
+    <Text Include="test\CMakeLists.txt">
+      <Filter>test</Filter>
+    </Text>
     <Text Include="CMakeLists.txt" />
     <Text Include="LICENSE_1_0.txt" />
   </ItemGroup>

@@ -49,7 +49,7 @@
         #pragma warning(disable : 4996)
         #endif
         // Format the time in a calendar-style.
-        strftime(buf.data(), buf.size(), "%c", std::localtime(&now)); // NOLINT(concurrency-mt-unsafe)
+        strftime(buf.data(), buf.size(), "%c", std::localtime(&now)); // NOLINT(concurrency-mt-unsafe,cert-err33-c)
         #if defined(_MSC_VER)
         #pragma warning( pop )
         #endif
