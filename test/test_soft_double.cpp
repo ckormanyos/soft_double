@@ -577,6 +577,104 @@ auto test_asin() -> bool
   return result_is_ok;
 }
 
+auto test_acos() -> bool
+{
+  bool result_is_ok = true;
+
+  for(int i = 0; i < 100; ++i) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+  {
+    const math::softfloat::float64_t x = math::softfloat::float64_t(i) / 100; // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+    const auto                       d = static_cast<double>(x);
+
+    using std::acos;
+
+    const math::softfloat::float64_t ac_x = acos(x);
+    const double                     ac_d = acos(d);
+
+    if(i == 0)
+    {
+      const auto result_acos_zero_is_ok = (ac_x == math::softfloat::float64_t::my_value_pi_half());
+
+      result_is_ok = (result_acos_zero_is_ok && result_is_ok);
+    }
+    else
+    {
+      const double closeness = std::fabs(1.0 - (static_cast<double>(ac_x) / ac_d));
+
+      const auto result_acos_is_ok = (closeness < std::numeric_limits<double>::epsilon() * 64.0); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+
+      result_is_ok = (result_acos_is_ok && result_is_ok);
+    }
+  }
+
+  {
+    const math::softfloat::float64_t x = math::softfloat::float64_t(-33) / 100;
+    const auto                       d = static_cast<double>(x);
+
+    using std::acos;
+
+    const math::softfloat::float64_t ac_x = acos(x);
+    const double                     ac_d = acos(d);
+
+    const double closeness = std::fabs(1.0 - (static_cast<double>(ac_x) / ac_d));
+
+    const auto result_acos_is_ok = (closeness < std::numeric_limits<double>::epsilon() * 64.0); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+
+    result_is_ok = (result_acos_is_ok && result_is_ok);
+  }
+
+  {
+    const math::softfloat::float64_t x = math::softfloat::float64_t(-67) / 100;
+    const auto                       d = static_cast<double>(x);
+
+    using std::acos;
+
+    const math::softfloat::float64_t ac_x = acos(x);
+    const double                     ac_d = acos(d);
+
+    const double closeness = std::fabs(1.0 - (static_cast<double>(ac_x) / ac_d));
+
+    const auto result_acos_is_ok = (closeness < std::numeric_limits<double>::epsilon() * 64.0); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+
+    result_is_ok = (result_acos_is_ok && result_is_ok);
+  }
+
+  for(int i = 121; i < 124; ++i) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+  {
+    const math::softfloat::float64_t x = math::softfloat::float64_t(i) / 100; // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+
+    const math::softfloat::float64_t ac_x = acos(x);
+
+    const auto result_acos_is_ok = isnan(ac_x);
+
+    result_is_ok = (result_acos_is_ok && result_is_ok);
+  }
+
+  {
+    std::mt19937 eng(static_cast<typename std::mt19937::result_type>(UINT8_C(42))); // NOLINT(cert-msc32-c,cert-msc51-cpp)
+
+    std::uniform_int_distribution<int> dist_one(1, 1);
+
+    for(int i = 0; i < 3; ++i) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+    {
+      const math::softfloat::float64_t x_one_pos = math::softfloat::float64_t(+1) * dist_one(eng);
+      const math::softfloat::float64_t x_one_neg = math::softfloat::float64_t(-1) * dist_one(eng);
+
+      using std::acos;
+
+      const math::softfloat::float64_t acos_one_pos = acos(x_one_pos);
+      const math::softfloat::float64_t acos_one_neg = acos(x_one_neg);
+
+      const auto result_acos_one_pos_neg_is_ok = (   (acos_one_pos == math::softfloat::float64_t::my_value_zero())
+                                                  && (acos_one_neg == math::softfloat::float64_t::my_value_pi()));
+
+      result_is_ok = (result_acos_one_pos_neg_is_ok && result_is_ok);
+    }
+  }
+
+  return result_is_ok;
+}
+
 auto test_floor(const std::uint32_t n) -> bool
 {
   bool result_is_ok = true;
@@ -876,6 +974,7 @@ auto test_soft_double() -> bool
   std::cout << "testing cos____... "; const auto result_cos____is_ok = test_cos   ( );                          std::cout << std::boolalpha << result_cos____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
   std::cout << "testing tan____... "; const auto result_tan____is_ok = test_tan   ( );                          std::cout << std::boolalpha << result_tan____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
   std::cout << "testing asin___... "; const auto result_asin___is_ok = test_asin  ( );                          std::cout << std::boolalpha << result_asin___is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing acos___... "; const auto result_acos___is_ok = test_acos  ( );                          std::cout << std::boolalpha << result_acos___is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
 
   local::eng32.seed(::util::util_pseudorandom_time_point_seed::value<typename local::eng32_type::result_type>());
   local::eng64.seed(::util::util_pseudorandom_time_point_seed::value<typename local::eng64_type::result_type>());
@@ -925,6 +1024,7 @@ auto test_soft_double() -> bool
                                      && result_cos____is_ok
                                      && result_tan____is_ok
                                      && result_asin___is_ok
+                                     && result_acos___is_ok
                                      && result_floor__is_ok
                                      && result_ceil___is_ok
                                      && result_add____is_ok

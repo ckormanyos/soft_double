@@ -617,7 +617,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     using representation_type = std::uint64_t;
 
-    constexpr soft_double() noexcept : my_value(static_cast<std::uint64_t>(UINT8_C(0))) { }
+    constexpr soft_double() noexcept = default;
 
     template<typename UnsignedIntegralType,
              typename std::enable_if<(   std::is_integral<UnsignedIntegralType>::value
@@ -2682,11 +2682,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       }
       else if(x < static_cast<int>(INT8_C(1)))
       {
-        if(x < soft_double::my_value_epsilon())
-        {
-          result = x;
-        }
-        else if(x < soft_double::my_value_half())
+        if(x < soft_double::my_value_half())
         {
           result = detail::asin_pade(x);
         }
@@ -2703,6 +2699,60 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     else
     {
       // x == 0 and result = 0.
+    }
+
+    return result;
+  }
+
+  constexpr auto acos(soft_double x) -> soft_double // NOLINT(performance-unnecessary-value-param)
+  {
+    soft_double result { };
+
+    if(x < -soft_double::my_value_one())
+    {
+      result = soft_double::my_value_quiet_NaN();
+    }
+    else if(x > -soft_double::my_value_one())
+    {
+      const auto absx = fabs(x);
+
+      if(x > soft_double::my_value_one())
+      {
+        result = soft_double::my_value_quiet_NaN();
+      }
+      else if(x < soft_double::my_value_one())
+      {
+        if(x < -soft_double::my_value_half())
+        {
+          result = soft_double::my_value_pi() - 2 * detail::asin_pade(sqrt((1 - absx) / 2));
+        }
+        else if(x < soft_double::my_value_zero())
+        {
+          result = soft_double::my_value_pi_half() + detail::asin_pade(absx);
+        }
+        else if((x > soft_double::my_value_zero()) && (x < soft_double::my_value_half()))
+        {
+          result = soft_double::my_value_pi_half() - detail::asin_pade(x);
+        }
+        else if(x >= soft_double::my_value_half())
+        {
+          result = 2 * detail::asin_pade(sqrt((1 - x) / 2));
+        }
+        else
+        {
+          result = soft_double::my_value_pi_half();
+        }
+      }
+      else
+      {
+        // x == 1 and result = zero.
+        result = soft_double::my_value_zero();
+      }
+    }
+    else
+    {
+      // x == -1 and result = pi.
+      result = soft_double::my_value_pi();
     }
 
     return result;
