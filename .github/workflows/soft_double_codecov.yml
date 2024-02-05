@@ -50,4 +50,4 @@ jobs:
           env_vars: ubuntu-latest
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
-          functionalities: fix
+          verbose: true
