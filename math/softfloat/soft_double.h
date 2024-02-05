@@ -1,5 +1,5 @@
 ﻿///////////////////////////////////////////////////////////////////
-//  Copyright Christopher Kormanyos 2012 - 2023.                 //
+//  Copyright Christopher Kormanyos 2012 - 2024.                 //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
 //  or copy at http://www.boost.org/LICENSE_1_0.txt)             //
@@ -592,6 +592,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   constexpr auto  sin      (soft_double x) -> soft_double;
   constexpr auto  cos      (soft_double x) -> soft_double;
   constexpr auto  tan      (soft_double x) -> soft_double;
+  constexpr auto  asin     (soft_double x) -> soft_double;
+  constexpr auto  acos     (soft_double x) -> soft_double;
+  constexpr auto  atan     (soft_double x) -> soft_double;
   constexpr auto  sinh     (soft_double x) -> soft_double;
   constexpr auto  cosh     (soft_double x) -> soft_double;
   constexpr auto  tanh     (soft_double x) -> soft_double;
@@ -614,7 +617,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     using representation_type = std::uint64_t;
 
-    constexpr soft_double() noexcept = default;
+    constexpr soft_double() noexcept : my_value(static_cast<std::uint64_t>(UINT8_C(0))) { }
 
     template<typename UnsignedIntegralType,
              typename std::enable_if<(   std::is_integral<UnsignedIntegralType>::value
@@ -2409,6 +2412,57 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return soft_double::my_value_one() + ((x2 * top) / (bot * static_cast<int>(INT8_C(24))));
   }
 
+  constexpr auto asin_pade(soft_double x) -> soft_double // NOLINT(performance-unnecessary-value-param)
+  {
+    // Usa a Pade approximation of (asin(x) / x).
+    // Then simplify, extract the coefficients of numerator and denominator.
+    // Scale both numeroator and denominator by a factor of 10^29.
+    // Subsequently extract the integer parts of the coefficients.
+
+    // PadeApproximant[ArcSin[x]/x, {x, 0, {12, 12}}]
+    // FullSimplify[%]
+    // IntegerPart[N[CoefficientList[Numerator[Out[2]]/10^29, x^2], 24]]
+    // IntegerPart[N[CoefficientList[Denominator[Out[2]]/10^29, x^2], 24]]
+
+    // Numerator:
+    //  140095773199074572
+    // -388690947968573359
+    //  402271633106633823
+    // -190922593544635779
+    //  40839234741969911
+    // -3218334247465525
+    //  45053024618672
+
+    // Denominator:
+    //  140095773199074572
+    // -412040243501752455
+    //  460437824033661973
+    // -243013488210192408
+    //  60946917703998365
+    // -6321063389564933
+    //  174545740275468
+
+    const auto x2 = x * x;
+
+    const soft_double top = (((((((     + INT64_C(45053024618672))
+                                   * x2 - INT64_C(3218334247465525))
+                                   * x2 + INT64_C(40839234741969911))
+                                   * x2 - INT64_C(190922593544635779))
+                                   * x2 + INT64_C(402271633106633823))
+                                   * x2 - INT64_C(388690947968573359))
+                                   * x2 + INT64_C(140095773199074572));
+
+    const soft_double bot = (((((((     + INT64_C(174545740275468))
+                                   * x2 - INT64_C(6321063389564933))
+                                   * x2 + INT64_C(60946917703998365))
+                                   * x2 - INT64_C(243013488210192408))
+                                   * x2 + INT64_C(460437824033661973))
+                                   * x2 - INT64_C(412040243501752455))
+                                   * x2 + INT64_C(140095773199074572));
+
+    return (x * top) / bot;
+  }
+
   } // namespace detail
 
   constexpr auto sin(soft_double x) -> soft_double // NOLINT(misc-no-recursion)
@@ -2607,6 +2661,53 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return c;
   }
 
+  constexpr auto tan(soft_double x) -> soft_double
+  {
+    return sin(x) / cos(x);
+  }
+
+  constexpr auto asin(soft_double x) -> soft_double // NOLINT(misc-no-recursion)
+  {
+    soft_double result { };
+
+    if(x < static_cast<int>(INT8_C(0)))
+    {
+      result = -asin(-x);
+    }
+    else if(x > static_cast<int>(INT8_C(0)))
+    {
+      if(x > static_cast<int>(INT8_C(1)))
+      {
+        result = soft_double::my_value_quiet_NaN();
+      }
+      else if(x < static_cast<int>(INT8_C(1)))
+      {
+        if(x < soft_double::my_value_epsilon())
+        {
+          result = x;
+        }
+        else if(x < soft_double::my_value_half())
+        {
+          result = detail::asin_pade(x);
+        }
+        else
+        {
+          result = soft_double::my_value_pi_half() - (detail::asin_pade(sqrt((soft_double::my_value_one() - x) / 2)) * 2);
+        }
+      }
+      else
+      {
+        result = soft_double::my_value_pi_half();
+      }
+    }
+    else
+    {
+      // x == 0 and result = 0.
+    }
+
+    return result;
+  }
+
   constexpr auto floor(soft_double x) -> soft_double // NOLINT(performance-unnecessary-value-param)
   {
     auto result = soft_double { };
@@ -2779,11 +2880,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   constexpr auto pow(soft_double x, soft_double a) -> soft_double // NOLINT(performance-unnecessary-value-param)
   {
     return exp(a * log(x)); // NOLINT(performance-unnecessary-value-param)
-  }
-
-  constexpr auto tan(soft_double x) -> soft_double // NOLINT(performance-unnecessary-value-param)
-  {
-    return sin(x) / cos(x);
   }
 
   constexpr auto sinh(soft_double x) -> soft_double // NOLINT(performance-unnecessary-value-param)

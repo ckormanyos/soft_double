@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////
-//  Copyright Christopher Kormanyos 2012 - 2023.                 //
+//  Copyright Christopher Kormanyos 2012 - 2024.                 //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
 //  or copy at http://www.boost.org/LICENSE_1_0.txt)             //
@@ -454,6 +454,66 @@ auto test_cos() -> bool
   return result_is_ok;
 }
 
+auto test_asin() -> bool
+{
+  bool result_is_ok = true;
+
+  for(int i = 0; i < 50; ++i) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+  {
+    const math::softfloat::float64_t x = math::softfloat::float64_t(i) / 100; // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+    const auto                       d = static_cast<double>(x);
+
+    using std::asin;
+
+    const math::softfloat::float64_t as_x = asin(x);
+    const double                     as_d = asin(d);
+
+    if(i == 0)
+    {
+      const auto result_asin_zero_is_ok = (as_x.crepresentation() == 0U);
+
+      result_is_ok = (result_asin_zero_is_ok && result_is_ok);
+    }
+    else
+    {
+      const double closeness = std::fabs(1.0 - (static_cast<double>(as_x) / as_d));
+
+      const auto result_asin_is_ok = (closeness < std::numeric_limits<double>::epsilon() * 32.0); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+
+      result_is_ok = (result_asin_is_ok && result_is_ok);
+    }
+  }
+
+  {
+    const math::softfloat::float64_t x = math::softfloat::float64_t(-33) / 100;
+    const auto                       d = static_cast<double>(x);
+
+    using std::asin;
+
+    const math::softfloat::float64_t as_x = asin(x);
+    const double                     as_d = asin(d);
+
+    const double closeness = std::fabs(1.0 - (static_cast<double>(as_x) / as_d));
+
+    const auto result_asin_is_ok = ((as_x < 0) && (closeness < std::numeric_limits<double>::epsilon() * 32.0)); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+
+    result_is_ok = (result_asin_is_ok && result_is_ok);
+  }
+
+  for(int i = 121; i < 124; ++i) // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+  {
+    const math::softfloat::float64_t x = math::softfloat::float64_t(i) / 100; // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+
+    const math::softfloat::float64_t as_x = asin(x);
+
+    const auto result_asin_is_ok = isnan(as_x);
+
+    result_is_ok = (result_asin_is_ok && result_is_ok);
+  }
+
+  return result_is_ok;
+}
+
 auto test_floor(const std::uint32_t n) -> bool
 {
   bool result_is_ok = true;
@@ -751,6 +811,7 @@ auto test_soft_double() -> bool
   std::cout << "testing log____... "; const auto result_log____is_ok = test_log   ( );                          std::cout << std::boolalpha << result_log____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
   std::cout << "testing sin____... "; const auto result_sin____is_ok = test_sin   ( );                          std::cout << std::boolalpha << result_sin____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
   std::cout << "testing cos____... "; const auto result_cos____is_ok = test_cos   ( );                          std::cout << std::boolalpha << result_cos____is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+  std::cout << "testing asin___... "; const auto result_asin___is_ok = test_asin  ( );                          std::cout << std::boolalpha << result_asin___is_ok << std::endl; // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
 
   local::eng32.seed(::util::util_pseudorandom_time_point_seed::value<typename local::eng32_type::result_type>());
   local::eng64.seed(::util::util_pseudorandom_time_point_seed::value<typename local::eng64_type::result_type>());
@@ -798,6 +859,7 @@ auto test_soft_double() -> bool
                                      && result_log____is_ok
                                      && result_sin____is_ok
                                      && result_cos____is_ok
+                                     && result_asin___is_ok
                                      && result_floor__is_ok
                                      && result_ceil___is_ok
                                      && result_add____is_ok
