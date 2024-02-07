@@ -46,7 +46,8 @@ jobs:
       - name: upload-codecov
         uses: codecov/codecov-action@v4
         with:
-          file: .gcov/make/coverage.info
+          plugin: gcov
+          file: ${{ runner.workspace }}/soft_double/.gcov/make/coverage.info
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
           verbose: true
