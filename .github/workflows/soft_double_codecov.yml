@@ -41,13 +41,12 @@ jobs:
           echo
           make gcov -f make_gcov_01_generic.gmk --jobs=8 MY_ALL_COV=0 MY_CC=${{ matrix.compiler }} MY_STD=${{ matrix.standard }}
           echo
-          echo "return to wide-integer root directory"
+          echo "return to soft_double root directory"
           cd ../..
       - name: upload-codecov
         uses: codecov/codecov-action@v4
         with:
-          files: .gcov/make/coverage.info
-          env_vars: ubuntu-latest
+          file: .gcov/make/coverage.info
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
           verbose: true
