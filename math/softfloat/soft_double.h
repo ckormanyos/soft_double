@@ -1371,19 +1371,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     static constexpr auto f64_to_f32(const std::uint64_t a) -> float
     {
       return
-        softfloat_roundPackToF32
-        (
-          detail::signF64UI(a),
-          static_cast<std::int16_t>(detail::expF64UI(a) - static_cast<std::int16_t>(INT16_C(0x381))),
-          static_cast<std::uint32_t>
-          (
+        (a == 0)
+          ? 0.0F // See issue 122 at: https://github.com/ckormanyos/soft_double/issues/122
+          : softfloat_roundPackToF32
+            (
+              detail::signF64UI(a),
+              static_cast<std::int16_t>(detail::expF64UI(a) - static_cast<std::int16_t>(INT16_C(0x381))),
               static_cast<std::uint32_t>
               (
-                detail::softfloat_shortShiftRightJam64(detail::fracF64UI(a), static_cast<std::uint_fast16_t>(UINT8_C(22)))
+                  static_cast<std::uint32_t>
+                  (
+                    detail::softfloat_shortShiftRightJam64(detail::fracF64UI(a), static_cast<std::uint_fast16_t>(UINT8_C(22)))
+                  )
+                | static_cast<std::uint32_t>(UINT32_C(0x40000000))
               )
-            | static_cast<std::uint32_t>(UINT32_C(0x40000000))
-          )
-        );
+            );
     }
 
     static constexpr auto softfloat_roundPackToF32(bool sign, std::int16_t expA, std::uint32_t sig) -> float
