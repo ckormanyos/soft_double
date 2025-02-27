@@ -131,9 +131,9 @@
   }
 
   template<typename T>
-  constexpr auto swap_unsafe(T&& left, T&& right) -> void
+  constexpr auto swap_unsafe(T&& left, T&& right) -> void // NOLINT(cppcoreguidelines-missing-std-forward)
   {
-    auto tmp = std::move(static_cast<T&&>(left));
+    const T tmp { std::move(static_cast<T&&>(left)) };
 
     left  = std::move(static_cast<T&&>(right));
     right = std::move(static_cast<T&&>(tmp));

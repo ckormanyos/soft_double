@@ -101,7 +101,7 @@ auto math::softfloat::example005_polylog_series() -> bool
 }
 
 // Enable this if you would like to activate this main() as a standalone example.
-#if 0
+#if 0 // NOLINT(readability-avoid-unconditional-preprocessor-if)
 
 #include <iomanip>
 #include <iostream>
