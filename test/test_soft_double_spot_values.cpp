@@ -32,19 +32,17 @@ namespace detail
 
 namespace local
 {
-  auto test_conversion_issue_122() -> bool
+  auto test_conversion_issue_122() -> bool // LCOV_EXCL_LINE
   {
     // Create soft_double with value 0.0.
-    math::softfloat::soft_double zero(0);
+    const ::math::softfloat::soft_double zero { 0 };
 
     // Convert to float.
     const float result_zero { static_cast<float>(zero) };
 
-    // Before fix: result is 2.0f
-    // After fix: result should be 0.0f
-    const bool result_is_ok { (result_zero == 0.0F) };
-
-    return result_is_ok;
+    // Before fix: result is 2.0F.
+    // After fix: result should be 0.0F.
+    return (result_zero == 0.0F);
   }
 
   auto test_constexpr_init_issue110() -> bool

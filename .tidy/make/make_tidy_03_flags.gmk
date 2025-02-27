@@ -43,6 +43,7 @@ TIDY_CHECKS  = "*,                                                             \
                 -misc-header-include-cycle,                                    \
                 -misc-include-cleaner,                                         \
                 -misc-const-correctness,                                       \
+                -modernize-use-std-numbers,                                    \
                 -performance-avoid-endl,                                       \
                 -readability-avoid-nested-conditional-operator,                \
                 -readability-identifier-length,                                \

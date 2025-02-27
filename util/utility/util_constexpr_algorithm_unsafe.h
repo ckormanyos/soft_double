@@ -189,7 +189,7 @@
   {
     // Ensure that the type of the iterator provided is actually bidirectional.
 
-    for( ; ((first != last) && (first != --last)); ++first)
+    for( ; ((first != last) && (first != --last)); ++first) // NOLINT(bugprone-inc-dec-in-conditions)
     {
       iter_swap_unsafe(first, last);
     }

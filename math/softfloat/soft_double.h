@@ -421,7 +421,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     using float_type    = BuiltInFloatType;
     using unsigned_type = ExactUnsignedIntegralType;
 
-    const float_type my_f; // NOLINT(misc-non-private-member-variables-in-classes)
+    const float_type my_f; // NOLINT(misc-non-private-member-variables-in-classes,cppcoreguidelines-avoid-const-or-ref-data-members)
 
     explicit constexpr uz_type(float_type    f) noexcept : my_f(f) { }
 
@@ -733,7 +733,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     SOFT_DOUBLE_NODISCARD constexpr auto to_float() const -> typename std::enable_if<(   (sizeof(FloatingPointType) == static_cast<std::size_t>(UINT8_C(8)))
                                                                                       && std::numeric_limits<FloatingPointType>::is_iec559), FloatingPointType>::type
     {
-      return static_cast<FloatingPointType>(*static_cast<const volatile FloatingPointType*>(static_cast<const volatile void*>(this)));
+      return static_cast<FloatingPointType>(*static_cast<const volatile FloatingPointType*>(static_cast<const volatile void*>(this))); // NOLINT(bugprone-casting-through-void)
     }
 
   public:
