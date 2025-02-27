@@ -1,12 +1,11 @@
 ///////////////////////////////////////////////////////////////////
-//  Copyright Christopher Kormanyos 2020 - 2022.                 //
+//  Copyright Christopher Kormanyos 2020 - 2025.                 //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
 //  or copy at http://www.boost.org/LICENSE_1_0.txt)             //
 ///////////////////////////////////////////////////////////////////
 
 #include <cmath>
-#include <cstdint>
 
 #include <math/softfloat/soft_double.h>
 #include <math/softfloat/soft_double_examples.h>
@@ -48,7 +47,7 @@ auto math::softfloat::example001_roots_sqrt() -> bool
 }
 
 // Enable this if you would like to activate this main() as a standalone example.
-#if 0
+#if 0 // NOLINT(readability-avoid-unconditional-preprocessor-if)
 
 #include <iomanip>
 #include <iostream>

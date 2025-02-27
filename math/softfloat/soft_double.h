@@ -1,5 +1,5 @@
 ﻿///////////////////////////////////////////////////////////////////
-//  Copyright Christopher Kormanyos 2012 - 2024.                 //
+//  Copyright Christopher Kormanyos 2012 - 2025.                 //
 //  Distributed under the Boost Software License,                //
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt          //
 //  or copy at http://www.boost.org/LICENSE_1_0.txt)             //
@@ -421,7 +421,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     using float_type    = BuiltInFloatType;
     using unsigned_type = ExactUnsignedIntegralType;
 
-    const float_type my_f; // NOLINT(misc-non-private-member-variables-in-classes)
+    const float_type my_f; // NOLINT(misc-non-private-member-variables-in-classes,cppcoreguidelines-avoid-const-or-ref-data-members)
 
     explicit constexpr uz_type(float_type    f) noexcept : my_f(f) { }
 
@@ -733,7 +733,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     SOFT_DOUBLE_NODISCARD constexpr auto to_float() const -> typename std::enable_if<(   (sizeof(FloatingPointType) == static_cast<std::size_t>(UINT8_C(8)))
                                                                                       && std::numeric_limits<FloatingPointType>::is_iec559), FloatingPointType>::type
     {
-      return static_cast<FloatingPointType>(*static_cast<const volatile FloatingPointType*>(static_cast<const volatile void*>(this)));
+      return static_cast<FloatingPointType>(*static_cast<const volatile FloatingPointType*>(static_cast<const volatile void*>(this))); // NOLINT(bugprone-casting-through-void)
     }
 
   public:
@@ -1371,19 +1371,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     static constexpr auto f64_to_f32(const std::uint64_t a) -> float
     {
       return
-        softfloat_roundPackToF32
-        (
-          detail::signF64UI(a),
-          static_cast<std::int16_t>(detail::expF64UI(a) - static_cast<std::int16_t>(INT16_C(0x381))),
-          static_cast<std::uint32_t>
-          (
+        (a == 0)
+          ? 0.0F // See issue 122 at: https://github.com/ckormanyos/soft_double/issues/122
+          : softfloat_roundPackToF32
+            (
+              detail::signF64UI(a),
+              static_cast<std::int16_t>(detail::expF64UI(a) - static_cast<std::int16_t>(INT16_C(0x381))),
               static_cast<std::uint32_t>
               (
-                detail::softfloat_shortShiftRightJam64(detail::fracF64UI(a), static_cast<std::uint_fast16_t>(UINT8_C(22)))
+                  static_cast<std::uint32_t>
+                  (
+                    detail::softfloat_shortShiftRightJam64(detail::fracF64UI(a), static_cast<std::uint_fast16_t>(UINT8_C(22)))
+                  )
+                | static_cast<std::uint32_t>(UINT32_C(0x40000000))
               )
-            | static_cast<std::uint32_t>(UINT32_C(0x40000000))
-          )
-        );
+            );
     }
 
     static constexpr auto softfloat_roundPackToF32(bool sign, std::int16_t expA, std::uint32_t sig) -> float

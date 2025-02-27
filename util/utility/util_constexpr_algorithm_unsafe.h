@@ -131,9 +131,9 @@
   }
 
   template<typename T>
-  constexpr auto swap_unsafe(T&& left, T&& right) -> void
+  constexpr auto swap_unsafe(T&& left, T&& right) -> void // NOLINT(cppcoreguidelines-missing-std-forward)
   {
-    auto tmp = std::move(static_cast<T&&>(left));
+    const T tmp { std::move(static_cast<T&&>(left)) };
 
     left  = std::move(static_cast<T&&>(right));
     right = std::move(static_cast<T&&>(tmp));
@@ -189,7 +189,7 @@
   {
     // Ensure that the type of the iterator provided is actually bidirectional.
 
-    for( ; ((first != last) && (first != --last)); ++first)
+    for( ; ((first != last) && (first != --last)); ++first) // NOLINT(bugprone-inc-dec-in-conditions)
     {
       iter_swap_unsafe(first, last);
     }

@@ -36,7 +36,7 @@ auto bisect(const std::function<FloatingPointType(const FloatingPointType)>& pfn
   {
     // Bisection interval has no root or it has multiple roots!
 
-    return static_cast<floating_point_type>(static_cast<int>(INT8_C(0)));
+    return static_cast<floating_point_type>(static_cast<int>(INT8_C(0))); // NOLINT(readability-redundant-casting)
   }
 
   // Orient the search such that f > 0 lies at x + dx.
@@ -248,7 +248,7 @@ auto math::softfloat::example004_bessel_recur() -> bool
 }
 
 // Enable this if you would like to activate this main() as a standalone example.
-#if 0
+#if 0 // NOLINT(readability-avoid-unconditional-preprocessor-if)
 
 #include <iomanip>
 #include <iostream>

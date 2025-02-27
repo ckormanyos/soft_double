@@ -32,6 +32,19 @@ namespace detail
 
 namespace local
 {
+  auto test_conversion_issue_122() -> bool // LCOV_EXCL_LINE
+  {
+    // Create soft_double with value 0.0.
+    const ::math::softfloat::soft_double zero { 0 };
+
+    // Convert to float.
+    const float result_zero { static_cast<float>(zero) };
+
+    // Before fix: result is 2.0F.
+    // After fix: result should be 0.0F.
+    return (result_zero == 0.0F);
+  }
+
   auto test_constexpr_init_issue110() -> bool
   {
     using ::math::softfloat::float64_t;
@@ -311,7 +324,13 @@ auto test_soft_double_spot_values() -> bool
   auto result_spot_values_is_ok = true;
 
   {
-    const auto result_constexpr_init_issue110_is_ok   = local::test_constexpr_init_issue110();
+    const auto result_constexpr_init_issue122_is_ok = local::test_conversion_issue_122();
+
+    result_spot_values_is_ok = (result_constexpr_init_issue122_is_ok && result_spot_values_is_ok);
+  }
+
+  {
+    const auto result_constexpr_init_issue110_is_ok = local::test_constexpr_init_issue110();
 
     result_spot_values_is_ok = (result_constexpr_init_issue110_is_ok && result_spot_values_is_ok);
   }

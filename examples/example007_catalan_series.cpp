@@ -142,7 +142,7 @@ auto math::softfloat::example007_catalan_series() -> bool
 }
 
 // Enable this if you would like to activate this main() as a standalone example.
-#if 0
+#if 0 // NOLINT(readability-avoid-unconditional-preprocessor-if)
 
 #include <iomanip>
 #include <iostream>
