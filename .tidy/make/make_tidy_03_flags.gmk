@@ -39,6 +39,7 @@ TIDY_CHECKS  = "*,                                                             \
                -altera-unroll-loops,                                           \
                -fuchsia-*,                                                     \
                -llvmlibc-*,                                                    \
+               -misc-include-cleaner                                           \
                -readability-identifier-length,                                 \
                -readability-identifier-naming"
 
