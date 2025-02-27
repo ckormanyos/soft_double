@@ -44,7 +44,7 @@ TIDY_CHECKS  = "*,                                                             \
                 -misc-include-cleaner,                                         \
                 -misc-const-correctness,                                       \
                 -performance-avoid-endl,                                       \
-                -readability-avoid-nested-conditional-operator                 \
+                -readability-avoid-nested-conditional-operator,                \
                 -readability-identifier-length,                                \
                 -readability-identifier-naming,                                \
                 -readability-redundant-casting,                                \
