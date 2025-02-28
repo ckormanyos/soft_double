@@ -18,7 +18,7 @@ soft_double
         <img src="https://img.shields.io/github/commit-activity/y/ckormanyos/soft_double" alt="GitHub commit activity"></a>
     <a href="https://github.com/ckormanyos/soft_double">
         <img src="https://img.shields.io/github/languages/code-size/ckormanyos/soft_double" alt="GitHub code size in bytes"></a>
-    <a href="https://godbolt.org/z/oqh333Y33" alt="godbolt">
+    <a href="https://godbolt.org/z/5h813WTGo" alt="godbolt">
         <img src="https://img.shields.io/badge/try%20it%20on-godbolt-green" /></a>
 </p>
 
@@ -89,37 +89,49 @@ the `avr-gcc` and other tool chains.
 The following more detailed example provides an in-depth examination
 into effectively using soft_double. This code computes and checks the value of
 
-$$\sqrt{\pi} \approx 1.77245385090551602730 \ldots$$
+$$\sqrt{\pi}~{\approx}~1.77245385090551602730~{\ldots}$$
 
 This example, compiled with successful output result,
 is shown in its entirety in the following
-[short link](https://godbolt.org/z/j66jMqPT8) to [godbolt](https://godbolt.org).
+[short link](https://godbolt.org/z/5h813WTGo) to [godbolt](https://godbolt.org).
 
 ```cpp
 #include <cmath>
 #include <iomanip>
 #include <iostream>
+#include <sstream>
 
 #include <math/softfloat/soft_double.h>
 
-int main()
+auto main() -> int
 {
-  // Use a convenient alias for float64_t.
-  using ::math::softfloat::float64_t;
+  using ::math::softfloat::soft_double;
 
-  // Use a cached value for pi.
-  const float64_t my_pi = float64_t::my_value_pi();
+  // Initialize the soft_double value of pi with built-in double.
+  const soft_double my_pi = 3.1415926535897932384626433832795028841972;
 
-  // Compute soft_double sqrt(pi).
-  const float64_t s = sqrt(my_pi);
+  // Compute the soft_double value of sqrt(pi).
+  {
+    std::stringstream strm { };
 
-  using std::sqrt;
+    strm << "sqrt(pi) as soft-double:     " << std::fixed
+                                            << std::setprecision(static_cast<std::streamsize>(std::numeric_limits<soft_double>::max_digits10))
+                                            << sqrt(my_pi);
 
-  // Compare with native double sqrt(pi).
-  const bool result_is_ok =
-    (s.crepresentation() == float64_t(sqrt(3.1415926535897932384626433832795028841972)).crepresentation());
+    std::cout << strm.str() << std::endl;
+  }
 
-  std::cout << "result_is_ok: " << std::boolalpha << result_is_ok << std::endl;
+  {
+    std::stringstream strm { };
+
+    // Compute the built-in double value of sqrt(pi).
+    strm << "sqrt(pi) as built-in double: " << std::fixed
+                                            << std::setprecision(static_cast<std::streamsize>(std::numeric_limits<double>::max_digits10))
+                                            << std::sqrt(3.1415926535897932384626433832795028841972)
+                                            ;
+
+    std::cout << strm.str() << std::endl;
+  }
 }
 ```
 
@@ -177,7 +189,7 @@ of a square root function and its comparison of its result
 with the known control value.
 
 See this example fully worked out at the following
-[short link](https://godbolt.org/z/cqYWf4c31) to [godbolt](https://godbolt.org).
+[short link](https://godbolt.org/z/Wans3c5xb) to [godbolt](https://godbolt.org).
 The generated assembly includes nothing other than the call to `main()`
 and its subsequent `return` of the value zero
 (i.e., `main()`'s successful return-value in this example).
@@ -187,7 +199,7 @@ and its subsequent `return` of the value zero
 
 #include <math/softfloat/soft_double.h>
 
-// Use a C++20 compiler for this example.
+// Use a C++20 (or higher) compiler for this example.
 
 int main()
 {
@@ -195,13 +207,16 @@ int main()
   using ::math::softfloat::float64_t;
 
   // Use a cached value for pi.
-  constexpr float64_t my_pi = float64_t::my_value_pi();
+  constexpr float64_t my_pi { float64_t::my_value_pi() };
 
   // Compute soft_double sqrt(pi).
-  constexpr float64_t s = sqrt(my_pi);
+  constexpr float64_t s { sqrt(my_pi) };
 
-  constexpr auto result_is_ok =
-    (s.crepresentation() == static_cast<typename float64_t::representation_type>(UINT64_C(0x3FFC5BF891B4EF6A)));
+  constexpr bool
+    result_is_ok
+    {
+      (s.crepresentation() == static_cast<typename float64_t::representation_type>(UINT64_C(0x3FFC5BF891B4EF6A)))
+    };
 
   // constexpr verification.
   // This is a compile-time comparison.
@@ -300,3 +315,9 @@ and it is also built-for and executed-on the simulated
 CI runs on push and pull request using GitHub Actions.
 Various compilers, operating systems, and various
 C++ standards are included in CI.
+
+## Origins and Licensing
+
+The origins of `soft_double` in modern C++ can be traced to traditional
+[berkeley-softfloat-3](https://github.com/ucb-bar/berkeley-softfloat-3).
+Consistency with the original licensing thereof has been maintained.
