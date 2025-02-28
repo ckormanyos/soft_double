@@ -315,3 +315,9 @@ and it is also built-for and executed-on the simulated
 CI runs on push and pull request using GitHub Actions.
 Various compilers, operating systems, and various
 C++ standards are included in CI.
+
+## Origins and Licensing
+
+The origins of `soft_double` in modern C++ can be traced to traditional
+[berkeley-softfloat-3](https://github.com/ucb-bar/berkeley-softfloat-3).
+Consistency with the original licensing thereof has been maintained.
