@@ -35,7 +35,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="math\softfloat\soft_double.h" />
-    <ClInclude Include="math\softfloat\soft_double_decwide_t_detail_fft_bindings.h" />
     <ClInclude Include="math\softfloat\soft_double_examples.h" />
     <ClInclude Include="test\test_soft_double_examples.h" />
     <ClInclude Include="util\utility\util_baselexical_cast.h" />
@@ -71,6 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
+    <Text Include="COPYING.txt" />
     <Text Include="examples\CMakeLists.txt" />
     <Text Include="LICENSE_1_0.txt" />
     <Text Include="test\CMakeLists.txt" />

@@ -122,9 +122,6 @@
     <ClInclude Include="test\test_soft_double_examples.h">
       <Filter>test</Filter>
     </ClInclude>
-    <ClInclude Include="math\softfloat\soft_double_decwide_t_detail_fft_bindings.h">
-      <Filter>math\softfloat</Filter>
-    </ClInclude>
     <ClInclude Include="math\softfloat\soft_double_examples.h">
       <Filter>math\softfloat</Filter>
     </ClInclude>
@@ -194,5 +191,6 @@
     </Text>
     <Text Include="CMakeLists.txt" />
     <Text Include="LICENSE_1_0.txt" />
+    <Text Include="COPYING.txt" />
   </ItemGroup>
 </Project>

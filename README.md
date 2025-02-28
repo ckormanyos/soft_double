@@ -320,4 +320,6 @@ C++ standards are included in CI.
 
 The origins of `soft_double` in modern C++ can be traced to traditional
 [berkeley-softfloat-3](https://github.com/ucb-bar/berkeley-softfloat-3).
-Consistency with the original licensing thereof has been maintained.
+Consistency with the
+[original licensing](./COPYING.txt)
+thereof has been retained.
