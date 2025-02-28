@@ -189,7 +189,7 @@ of a square root function and its comparison of its result
 with the known control value.
 
 See this example fully worked out at the following
-[short link](https://godbolt.org/z/cqYWf4c31) to [godbolt](https://godbolt.org).
+[short link](https://godbolt.org/z/Wans3c5xb) to [godbolt](https://godbolt.org).
 The generated assembly includes nothing other than the call to `main()`
 and its subsequent `return` of the value zero
 (i.e., `main()`'s successful return-value in this example).
@@ -199,7 +199,7 @@ and its subsequent `return` of the value zero
 
 #include <math/softfloat/soft_double.h>
 
-// Use a C++20 compiler for this example.
+// Use a C++20 (or higher) compiler for this example.
 
 int main()
 {
@@ -207,13 +207,16 @@ int main()
   using ::math::softfloat::float64_t;
 
   // Use a cached value for pi.
-  constexpr float64_t my_pi = float64_t::my_value_pi();
+  constexpr float64_t my_pi { float64_t::my_value_pi() };
 
   // Compute soft_double sqrt(pi).
-  constexpr float64_t s = sqrt(my_pi);
+  constexpr float64_t s { sqrt(my_pi) };
 
-  constexpr auto result_is_ok =
-    (s.crepresentation() == static_cast<typename float64_t::representation_type>(UINT64_C(0x3FFC5BF891B4EF6A)));
+  constexpr bool
+    result_is_ok
+    {
+      (s.crepresentation() == static_cast<typename float64_t::representation_type>(UINT64_C(0x3FFC5BF891B4EF6A)))
+    };
 
   // constexpr verification.
   // This is a compile-time comparison.
