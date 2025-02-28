@@ -89,7 +89,7 @@ the `avr-gcc` and other tool chains.
 The following more detailed example provides an in-depth examination
 into effectively using soft_double. This code computes and checks the value of
 
-$$\sqrt{\pi}~{\approx}~1.77245385090551602730~{\ldots}$$
+$$\sqrt{\pi}~{\approx}~1.77245385090551602730{\ldots}$$
 
 This example, compiled with successful output result,
 is shown in its entirety in the following
