@@ -89,7 +89,7 @@ the `avr-gcc` and other tool chains.
 The following more detailed example provides an in-depth examination
 into effectively using soft_double. This code computes and checks the value of
 
-$$\sqrt{\pi}~{\approx}~1.77245385090551602730~{\ldots}$$
+$$\sqrt{\pi}~{\approx}~1.77245385090551602730{\ldots}$$
 
 This example, compiled with successful output result,
 is shown in its entirety in the following
@@ -320,4 +320,6 @@ C++ standards are included in CI.
 
 The origins of `soft_double` in modern C++ can be traced to traditional
 [berkeley-softfloat-3](https://github.com/ucb-bar/berkeley-softfloat-3).
-Consistency with the original licensing thereof has been maintained.
+Consistency with the
+[original licensing](./COPYING.txt)
+thereof has been retained.
