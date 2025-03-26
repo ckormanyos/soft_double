@@ -18,7 +18,7 @@ soft_double
         <img src="https://img.shields.io/github/commit-activity/y/ckormanyos/soft_double" alt="GitHub commit activity"></a>
     <a href="https://github.com/ckormanyos/soft_double">
         <img src="https://img.shields.io/github/languages/code-size/ckormanyos/soft_double" alt="GitHub code size in bytes"></a>
-    <a href="https://godbolt.org/z/5h813WTGo" alt="godbolt">
+    <a href="https://godbolt.org/z/dqTG9cPbT" alt="godbolt">
         <img src="https://img.shields.io/badge/try%20it%20on-godbolt-green" /></a>
 </p>
 
@@ -93,15 +93,15 @@ $$\sqrt{\pi}~{\approx}~1.77245385090551602730{\ldots}$$
 
 This example, compiled with successful output result,
 is shown in its entirety in the following
-[short link](https://godbolt.org/z/5h813WTGo) to [godbolt](https://godbolt.org).
+[short link](https://godbolt.org/z/dqTG9cPbT) to [godbolt](https://godbolt.org).
 
 ```cpp
+#include <math/softfloat/soft_double.h>
+
 #include <cmath>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
-
-#include <math/softfloat/soft_double.h>
 
 auto main() -> int
 {
@@ -189,15 +189,15 @@ of a square root function and its comparison of its result
 with the known control value.
 
 See this example fully worked out at the following
-[short link](https://godbolt.org/z/Wans3c5xb) to [godbolt](https://godbolt.org).
+[short link](https://godbolt.org/z/ec1GG1sxd) to [godbolt](https://godbolt.org).
 The generated assembly includes nothing other than the call to `main()`
 and its subsequent `return` of the value zero
 (i.e., `main()`'s successful return-value in this example).
 
 ```cpp
-#include <cmath>
-
 #include <math/softfloat/soft_double.h>
+
+#include <cmath>
 
 // Use a C++20 (or higher) compiler for this example.
 
