@@ -128,12 +128,13 @@ jobs:
           update: true
           install: git mingw-w64-ucrt-x86_64-gcc
       - name: mingw-winhost-x64
+        working-directory: ./
         run: |
           echo compile ./soft_double.exe
           ${{ matrix.compiler }} -v
           ${{ matrix.compiler }} -finline-functions -O3 -Werror -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wshadow -Wundef -Wunused-parameter -Wuninitialized -Wunreachable-code -Winit-self -Wzero-as-null-pointer-constant -m64 -std=${{ matrix.standard }} -I. examples/example001_roots_sqrt.cpp examples/example004_bessel_recur.cpp examples/example005_polylog_series.cpp examples/example007_catalan_series.cpp examples/example010_hypergeometric_2f1.cpp examples/example011_trig_trapezoid_integral.cpp examples/example012_exercise_constexpr.cpp test/test.cpp test/test_soft_double.cpp test/test_soft_double_edge_cases.cpp test/test_soft_double_examples.cpp test/test_soft_double_spot_values.cpp -o soft_double.exe
-          dir .\soft_double.exe
-          .\soft_double.exe
+          ls -la ./soft_double.exe
+          ./soft_double.exe
   gcc-clang-native-asan:
     runs-on: ubuntu-latest
     defaults:
