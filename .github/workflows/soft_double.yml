@@ -1,5 +1,5 @@
 ﻿# ------------------------------------------------------------------------------
-#  Copyright Christopher Kormanyos 2020 - 2024.
+#  Copyright Christopher Kormanyos 2020 - 2025.
 #  Distributed under the Boost Software License,
 #  Version 1.0. (See accompanying file LICENSE_1_0.txt
 #  or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -108,50 +108,33 @@ jobs:
           echo
           echo "verify empty word count of ./tmp/all.tidy_txt"
           wc ./tmp/all.tidy_txt | grep '0 0 0'
-  gcc-12-clang-14:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-    strategy:
-      fail-fast: false
-      matrix:
-        compiler: [ g++-12, clang++-14 ]
-        standard: [ c++14, c++17, c++20 ]
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: '0'
-      - name: update-tools
-        run: sudo apt install g++-12 clang-14
-      - name: gcc-clang-native
-        run: |
-          echo "compile ./soft_double.exe"
-          ${{ matrix.compiler }} -v
-          ${{ matrix.compiler }} -finline-functions -O3 -Werror -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wshadow -Wundef -Wunused-parameter -Wuninitialized -Wunreachable-code -Winit-self -Wzero-as-null-pointer-constant -march=native -O3 -std=${{ matrix.standard }} -I. examples/example001_roots_sqrt.cpp examples/example004_bessel_recur.cpp examples/example005_polylog_series.cpp examples/example007_catalan_series.cpp examples/example010_hypergeometric_2f1.cpp examples/example011_trig_trapezoid_integral.cpp examples/example012_exercise_constexpr.cpp test/test.cpp test/test_soft_double.cpp test/test_soft_double_edge_cases.cpp test/test_soft_double_examples.cpp test/test_soft_double_spot_values.cpp -o soft_double.exe
-          ls -la ./soft_double.exe
-          ./soft_double.exe
   mingw-winhost-x64:
-    runs-on: windows-2019
+    runs-on: windows-latest
     defaults:
       run:
-        shell: cmd
+        shell: msys2 {0}
     strategy:
       fail-fast: false
       matrix:
         compiler: [ g++ ]
-        standard: [ c++14, c++17, c++2a ]
+        standard: [ c++14, c++20 ]
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: '0'
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: git mingw-w64-ucrt-x86_64-gcc
       - name: mingw-winhost-x64
+        working-directory: ./
         run: |
           echo compile ./soft_double.exe
           ${{ matrix.compiler }} -v
           ${{ matrix.compiler }} -finline-functions -O3 -Werror -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wshadow -Wundef -Wunused-parameter -Wuninitialized -Wunreachable-code -Winit-self -Wzero-as-null-pointer-constant -m64 -std=${{ matrix.standard }} -I. examples/example001_roots_sqrt.cpp examples/example004_bessel_recur.cpp examples/example005_polylog_series.cpp examples/example007_catalan_series.cpp examples/example010_hypergeometric_2f1.cpp examples/example011_trig_trapezoid_integral.cpp examples/example012_exercise_constexpr.cpp test/test.cpp test/test_soft_double.cpp test/test_soft_double_edge_cases.cpp test/test_soft_double_examples.cpp test/test_soft_double_spot_values.cpp -o soft_double.exe
-          dir .\soft_double.exe
-          .\soft_double.exe
+          ls -la ./soft_double.exe
+          ./soft_double.exe
   gcc-clang-native-asan:
     runs-on: ubuntu-latest
     defaults:
